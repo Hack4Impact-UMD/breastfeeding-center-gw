@@ -3,12 +3,12 @@ import {
   onIdTokenChanged,
   type User,
   type IdTokenResult,
-} from '@firebase/auth';
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import app from '../config/firebase';
+} from "@firebase/auth";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import app from "../config/firebase";
 
 interface Props {
-  children: JSX.Element;
+  children: React.JSX.Element;
 }
 
 interface AuthContextType {

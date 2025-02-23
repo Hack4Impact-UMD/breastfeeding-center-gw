@@ -1,9 +1,9 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAuth } from './AuthProvider';
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "./AuthProvider";
 
 interface Props {
-  children: JSX.Element;
+  children: React.JSX.Element;
 }
 
 const RequireAdminAuth: React.FC<Props> = ({ children }) => {
@@ -13,7 +13,7 @@ const RequireAdminAuth: React.FC<Props> = ({ children }) => {
   // always redirect to login.
   if (authContext.loading) {
     return <div>Loading</div>;
-  } else if (!authContext.user || authContext.token.claims.role !== 'ADMIN') {
+  } else if (!authContext.user || authContext.token.claims.role !== "ADMIN") {
     return <Navigate to="/login" />;
   }
 
