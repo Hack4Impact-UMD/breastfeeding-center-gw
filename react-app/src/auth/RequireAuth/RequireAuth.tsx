@@ -1,11 +1,11 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from '../AuthProvider';
-import styles from './RequireAuth.module.css';
-import Loading from '../../components/LoadingScreen/Loading';
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "../AuthProvider";
+import styles from "./RequireAuth.module.css";
+import Loading from "../../components/LoadingScreen/Loading";
 
 interface Props {
-  children: JSX.Element;
+  children: React.JSX.Element;
 }
 
 const RequireAuth: React.FC<Props> = ({ children }) => {
