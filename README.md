@@ -26,18 +26,7 @@ This project aims to centralize data and analytics for the organization in order
 - Build Tool: [Vite](https://vitejs.dev/)
 
 **Backend:**
-Authentication, Database, and Hosting will be done using [Firebase](https://firebase.google.com/). When using Firebase, make sure to install the Firebase CLI by running the following:
-   ```
-   npm install -g firebase-tools
-   firebase login
-   ```
-   
-   If you have multiple firebase accounts, make sure to use the following commands to switch to your terpmail (or the email you have listed)
-   ```
-   firebase login:add example@terpmail.umd.edu
-   firebase login:list
-   firebase login:use example@terpmail.umd.edu
-   ```
+Authentication, Database, and Hosting: [Firebase](https://firebase.google.com/)
 
 **APIs:**
 - [Mailchimp](https://mailchimp.com/developer/marketing/docs/fundamentals/)
