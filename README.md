@@ -49,7 +49,7 @@ Authentication, Database, and Hosting will be done using [Firebase](https://fire
 
 
 ```mermaid
-%%{init: {'theme':'neutral'}}%%
+%%{init: {'theme':'default'}}%%
     flowchart TD
         mc[(Mailchimp)] --> back
         ac[(Acuity)] --> back
