@@ -1,14 +1,10 @@
 import { BrowserRouter, Routes } from "react-router-dom";
-import { ThemeProvider } from "@mui/material";
-import theme from "./muiTheme.ts";
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      {/* <AuthProvider> */}
-      <BrowserRouter>
-        <Routes>
-          {/* <Route
+    <BrowserRouter>
+      <Routes>
+        {/* <Route
                 path="/"
                 element={
                 }
@@ -18,10 +14,8 @@ function App() {
                 element={
                 }
               /> */}
-        </Routes>
-      </BrowserRouter>
-      {/* </AuthProvider> */}
-    </ThemeProvider>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
