@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
   return (
@@ -14,6 +14,16 @@ function App() {
                 element={
                 }
               /> */}
+        <Route
+          path="/testfunctions"
+          element={
+            <button
+              className={"bg-bcgw-yellow-dark rounded-lg px-2 py-1 m-2"}
+              onClick={async () => {}}>
+              TEST
+            </button>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
