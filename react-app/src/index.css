@@ -10,6 +10,18 @@
   --color-bcgw-green: #b0d9c2;
 }
 
+@layer {
+  h1 {
+    font-size: var(--text-5xl);
+  }
+  h2 {
+    font-size: var(--text-3xl);
+  }
+  h3 {
+    font-size: var(--text-2xl);
+  }
+}
+
 :root {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
     "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
