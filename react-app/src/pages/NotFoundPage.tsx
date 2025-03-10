@@ -4,7 +4,7 @@ import primaryLogo from "../assets/bcgw-logo.png";
 function NotFoundPage() {
   return (
     <>
-      <div className="flex flex-col items-center justify-center h-screen text-center space-y-2">
+      <div className="flex flex-col items-center justify-center h-screen text-center space-y-2 p-2">
         <img
           className="h-50 w-50 object-contain"
           src={primaryLogo}
