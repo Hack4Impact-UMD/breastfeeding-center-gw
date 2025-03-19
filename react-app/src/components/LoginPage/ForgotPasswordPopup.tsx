@@ -21,9 +21,24 @@
 
 import Modal from "../Modal";
 import { BiArrowBack } from "react-icons/bi";
+import { RxCross2 } from "react-icons/rx";
+import { useState } from "react";
+
 
 const ForgotPassword = (): React.JSX.Element => {
-  const content = (
+  // Toggle between the two popups
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const handleClose = () => {
+    console.log("Go back to login page"); // Or modal close function
+  };
+
+  // Success popup content
+  const handleSubmit = () => {
+    setShowSuccess(true);
+  };
+
+  const forgotPassContent = (
     <div>
       {/* Cursor becomes pointer over the padding */}
       <button
@@ -44,9 +59,7 @@ const ForgotPassword = (): React.JSX.Element => {
         <p className="font-Inter">Email Address</p>
         <input className="h-15 border-1 border-black" type="text" required />
         <button
-          onClick={() =>
-            console.log("Should submit address and next popup appears")
-          }
+          onClick={handleSubmit}
           className="my-4 w-3/4 h-17 cursor-pointer rounded-full bg-[#f4bb47] self-center text-[1.6rem] font-bold font-inter"
         >
           {/* Don't know what the font is used for submit */}
@@ -55,15 +68,34 @@ const ForgotPassword = (): React.JSX.Element => {
       </div>
     </div>
   );
-  return (
+
+  const successContent = (
     <div>
-      <Modal
-        open={true}
-        onClose={() => console.log("Go back to login page")}
-        children={content}
-        height={400}
-      />
+      <button
+        onClick={handleClose}
+        className="cursor-pointer p-4 absolute top-0 right-0"
+      >
+        <RxCross2 className="w-6 h-6" />
+      </button>
+      <div className="flex flex-col justify-center px-15 text-center mt-10">
+        <h1 className="text-[1.7rem] font-semibold">
+          Success!
+        </h1>
+        <p className="leading-tight my-4 font-inter">
+          Your email has been sent to reset. You will get an email back shortly!
+        </p>
+      </div>
     </div>
+  );
+
+  return (
+    <Modal
+      open={true} // Or pass as a prop depending on your parent component
+      onClose={handleClose}
+      height={400}
+    >
+      {showSuccess ? successContent : forgotPassContent}
+    </Modal>
   );
 };
 
