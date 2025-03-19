@@ -21,14 +21,11 @@ const ForgotPassword = (): React.JSX.Element => {
   const forgotPassContent = (
     <div>
       {/* Cursor becomes pointer over the padding */}
-      <button
-        onClick={handleClose}
-        className="cursor-pointer p-4"
-      >
+      <button onClick={handleClose} className="cursor-pointer p-4">
         <BiArrowBack className="w-8 h-6"></BiArrowBack>
       </button>
       <div className="flex flex-col justify-center px-15">
-        {/* Need to import Monsterrat into tailwind and need to center these elements properly */}
+        {/* Need to import Monsterrat into tailwind possibly with config file if doesn't work on other locals */}
         <h1 className="text-[1.7rem] font-semibold font-Monsterrat">
           Forgot Your Password?
         </h1>
@@ -37,12 +34,15 @@ const ForgotPassword = (): React.JSX.Element => {
           create a new password.{" "}
         </p>
         <p className="font-Inter">Email Address</p>
-        <input className="h-15 border-1 border-black" type="text" required />
+        <input
+          className="h-15 border-1 border-black p-2"
+          type="text"
+          required
+        />
         <button
           onClick={handleSubmit}
           className="my-4 w-3/4 h-17 cursor-pointer rounded-full bg-[#f4bb47] self-center text-[1.6rem] font-bold font-inter"
         >
-          {/* Don't know what the font is used for submit */}
           Submit
         </button>
       </div>
@@ -57,10 +57,8 @@ const ForgotPassword = (): React.JSX.Element => {
       >
         <RxCross2 className="w-6 h-6" />
       </button>
-      <div className="flex flex-col justify-center px-15 text-center mt-35">
-        <h1 className="text-[1.7rem] font-semibold">
-          Success!
-        </h1>
+      <div className="flex flex-col justify-center px-15 text-center mt-15">
+        <h1 className="text-[1.7rem] font-semibold">Success!</h1>
         <p className="leading-tight my-4 font-inter">
           Your email has been sent to reset. You will get an email back shortly!
         </p>
@@ -76,7 +74,7 @@ const ForgotPassword = (): React.JSX.Element => {
     <Modal
       open={openModal}
       onClose={handleClose}
-      height={400}
+      height={showSuccess ? 240 : 400}
     >
       {showSuccess ? successContent : forgotPassContent}
     </Modal>
