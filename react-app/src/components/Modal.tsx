@@ -17,7 +17,8 @@ const Modal = ({
       className="z-20"
       onClick={(e) => {
         e.stopPropagation();
-      }}>
+      }}
+    >
       {open ? (
         <>
           <div
@@ -26,8 +27,9 @@ const Modal = ({
           />
           <div className="fixed -translate-x-2/4 -translate-y-2/4 left-2/4 top-2/4">
             <div
-              className="w-[450px] bg-white z-10 shadow-xs rounded-2xl"
-              style={{ height: heightString }}>
+              className="w-[450px] bg-white z-10 shadow-xs border-[1.5px] border-black"
+              style={{ height: heightString }}
+            >
               {children}
             </div>
           </div>
