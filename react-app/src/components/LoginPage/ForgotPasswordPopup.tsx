@@ -66,10 +66,6 @@ const ForgotPassword = (): React.JSX.Element => {
     </div>
   );
 
-  if (!openModal) {
-    null;
-  }
-
   return (
     <Modal
       open={openModal}
