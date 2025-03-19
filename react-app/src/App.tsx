@@ -16,6 +16,8 @@ function App() {
                 element={
                 }
               /> */}
+        <Route path="/" element={<ForgotPassword />} />
+
         <Route
           path="/testfunctions"
           element={
