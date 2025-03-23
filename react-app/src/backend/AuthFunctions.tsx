@@ -63,7 +63,7 @@ export function createAdminUser(
             resolve();
           })
           .catch((error: any) => {
-            reject();
+            reject(error);
           });
       })
       .catch((error: any) => {
@@ -100,7 +100,7 @@ export function updateUserEmail(
 
     updateUserEmailCloudFunction({ email: oldEmail, newEmail: currentEmail })
       .then(async (res: any) => {
-        resolve();
+        resolve(res);
       })
       .catch((error: any) => {
         console.log(error);
