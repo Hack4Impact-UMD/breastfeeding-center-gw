@@ -8,11 +8,7 @@ import service from "../assets/services.svg";
 import { LuChevronsLeft } from "react-icons/lu";
 import { LuChevronsRight } from "react-icons/lu";
 
-type NavigationBarProps = {
-  open?: boolean;
-};
-
-const NavigationBar = (props: NavigationBarProps) => {
+const NavigationBar = () => {
   // tailwind class styling into consts
   const notActiveStyle =
     "hover:bg-[#FFEAC1] bg-white w-[100%] h-[100%] p-3 flex items-center";
@@ -40,27 +36,25 @@ const NavigationBar = (props: NavigationBarProps) => {
         navBarOpen ? "w-[250px]" : "w-[60px]"
       }`}
     >
-      <div className="flex flex-row justify-between items-center p-4 pb-0">
-        <button onClick={toggleNavBar} className="text-gray-600 flex ml-auto">
+      <div className="flex flex-row justify-between items-center pr-3 pt-1">
+        <button onClick={toggleNavBar} className="flex ml-auto">
           {navBarOpen ? ( //nav bar open chevron
-            <LuChevronsLeft className="w-6 h-6 cursor-pointer" />
+            <LuChevronsLeft className="w-8 h-8 cursor-pointer" color="black" />
           ) : (
             //nav bar closed chevron
-            <LuChevronsRight className="w-6 h-6 cursor-pointer" />
+            <LuChevronsRight className="w-8 h-8 cursor-pointer" color="black" />
           )}
         </button>
       </div>
       {navBarOpen ? ( //nav bar open content
-        <div>
-          <div className="flex flex-col items-center mb-2 pt-0 mt-0">
+        <>
+          <div className="flex flex-col items-center pt-0">
             <img
-              className="flex w-[60%] object-contain"
+              className="flex w-[60%] object-contain -mt-8"
               src={primaryLogo}
               alt="BCGW Logo"
             />
-            <p className="font-semibold text-2xl text-[#F5BB47] pb-1">
-              BCGW Data Portal
-            </p>
+            <p className="font-semibold text-2xl text-black pb-1">Dashboard</p>
           </div>
 
           {/*HOME*/}
@@ -94,7 +88,12 @@ const NavigationBar = (props: NavigationBarProps) => {
                     <img className="w-[30px] h-[30px]" src={service} />
                     <span className={categoryMargin}>Services</span>
                   </div>
-                  <span className="text-black-500">▼</span>{" "}
+                  {openServices ? (
+                    <span className="text-black-500">▲</span>
+                  ) : (
+                    <span className="text-black-500">▼</span>
+                  )}
+
                   {/* Dropdown triangle */}
                 </div>
               </NavLink>
@@ -181,13 +180,16 @@ const NavigationBar = (props: NavigationBarProps) => {
           </div>
 
           {/*LOGOUT*/}
-          <div className="absolute bottom-[20px] left-[25px] flex justify-left">
+          <div className="absolute bottom-[20px] left-[25px] flex justify-left text-[#3a3a3a]">
             <img src={logout} className="w-[30px] h-[30px]" />
-            <button className="ml-4" onClick={() => {}}>
-              LOG OUT
+            <button
+              className="ml-4 underline cursor-pointer "
+              onClick={() => {}}
+            >
+              LOGOUT
             </button>
           </div>
-        </div>
+        </>
       ) : (
         //nav bar closed content
         <div className="flex flex-col items-center mb-2 h-full justify-between">
