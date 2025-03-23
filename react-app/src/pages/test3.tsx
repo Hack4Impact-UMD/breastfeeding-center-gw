@@ -1,11 +1,10 @@
 import NavigationBar from "../components/NavigationBar";
 
-function test() {
+function test3() {
   return (
-    <div className="bg-blue-500 min-h-screen">
+    <div className="bg-purple-500 min-h-screen">
       <NavigationBar />
     </div>
-  )
-}
+  )}
 
-export default test;
+export default test3;
