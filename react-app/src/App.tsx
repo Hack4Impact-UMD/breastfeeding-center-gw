@@ -26,7 +26,7 @@ function App() {
             </button>
           }
         />
-        <Route path="/test" element={<Test />} />
+        <Route path="/" element={<Test />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,5 +1,10 @@
 import { NavLink } from "react-router";
 import primaryLogo from "../assets/bcgw-logo.png";
+import home from "../assets/home.svg";
+import logout from "../assets/logout.svg"
+import management from "../assets/management.svg"
+import service from "../assets/services.svg"
+
 
 type NavigationBarProps = {
   open?: boolean;
@@ -21,30 +26,33 @@ const NavigationBar = (props: NavigationBarProps) => {
           <NavLink
             to="/"
             className={({ isActive }) =>
-              isActive ? "bg-[#F5BB47] w-[100%] h-[100%] p-3" : "bg-white p-3"
+              isActive ? "bg-[#F5BB47] w-[100%] h-[100%] p-3 flex items-center" : "bg-white p-3 flex items-center"
             }
           >
-            Home
+            <img src={home} className="w-[30px] h-[30px]"/>
+            <span className="ml-4">Home</span>
           </NavLink>
         </div>
         <div className="flex flex-row w-[100%] cursor-pointer">
           <NavLink
             to="/"
             className={({ isActive }) =>
-              isActive ? "bg-[#F5BB47] w-[100%] h-[100%] p-3" : "bg-white p-3"
+              isActive ? "bg-[#F5BB47] w-[100%] h-[100%] p-3 flex items-cente" : "bg-white p-3 flex items-cente"
             }
           >
-            Services
+            <img src={service} className="w-[30px] h-[30px]"/>
+            <span className="ml-4">Services</span>
           </NavLink>
         </div>
         <div className="flex flex-row border-b border-[#D9D9D9] w-[100%] cursor-pointer">
           <NavLink
             to="/"
             className={({ isActive }) =>
-              isActive ? "bg-[#F5BB47] w-[100%] h-[100%] p-3" : "bg-white p-3"
+              isActive ? "bg-[#F5BB47] w-[100%] h-[100%] p-3 flex items-cente" : "bg-white p-3 flex items-cente"
             }
           >
-            User Management
+            <img src={management} className="w-[30px] h-[30px]"/>
+            <span className="ml-4">User Management</span>
           </NavLink>
         </div>
       </div>
