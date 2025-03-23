@@ -10,12 +10,7 @@ function App() {
                 path="/"
                 element={
                 }
-              />
-              <Route
-                path="*"
-                element={
-                }
-              /> */}
+              />*/}
         <Route path="/login" element={<LoginPage />} />
         <Route
           path="/testfunctions"
