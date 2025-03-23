@@ -46,8 +46,13 @@ const NavigationBar = (props: NavigationBarProps) => {
               isActive ? activeStyle : notActiveStyle
             }
           >
-            <img className="w-[30px] h-[30px]" src={service}/>
-            <span className={categoryMargin}>Services</span>
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center">
+                <img className="w-[30px] h-[30px]" src={service} />
+                <span className={categoryMargin}>Services</span>
+              </div>
+              <span className="text-black-500">▼</span> {/* Dropdown triangle */}
+            </div>
           </NavLink>
         </div>
         <div className="flex flex-row border-b border-[#D9D9D9] w-[100%] cursor-pointer">
