@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NotFoundPage from "./pages/NotFoundPage";
+import ConfirmLogoutPage from "./pages/ConfirmLogoutPage";
 import LogoutPage from "./pages/LogoutPage";
+
 
 function App() {
   return (
@@ -27,7 +29,9 @@ function App() {
             </button>
           }
         />
-        <Route path="/*" element={<LogoutPage />} />
+        <Route path="/*" element={<ConfirmLogoutPage />} />
+        <Route path="/logout" element={<LogoutPage />} />
+      <Route path="/confirm-logout" element={<ConfirmLogoutPage />} />
       </Routes>
     </BrowserRouter>
   );
