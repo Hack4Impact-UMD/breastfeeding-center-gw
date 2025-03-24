@@ -13,7 +13,7 @@ const LogoutPage = () => {
 
       <LuCircleCheck className="text-gray-500 w-38 h-38 mb-4" />
 
-      <h2 className="text-xl font-semibold text-gray-800">
+      <h2 className="text-xl font-semibold text-gray-800 mt-[12px]">
         You have been logged out.
       </h2>
 
