@@ -59,7 +59,7 @@ const LoginPage = () => {
 
         <div className="relative mb-2">
           <input // input for password
-            type={visibility ? "text" : "password"} // tenary operator to show visibility -- password
+            type={visibility ? "text" : "password"} // ternary operator to show visibility -- password
             value={password}
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
