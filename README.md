@@ -34,7 +34,7 @@ Authentication, Database, and Hosting: [Firebase](https://firebase.google.com/)
 - [Paysimple](https://documentation.paysimple.com/docs/welcome)
 - [Square](https://developer.squareup.com/reference/square) (potentially less important?)
 - [Paypal](https://developer.paypal.com/api/rest/)
-- JANE (Not really an API? apparently imported via spreadsheet)
+- JANE (imported via Excel sheet converted to JSON)
 
 
 ```mermaid
