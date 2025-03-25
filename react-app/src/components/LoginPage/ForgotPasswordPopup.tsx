@@ -6,7 +6,7 @@ import { useState } from "react";
 const ForgotPassword = (): React.JSX.Element => {
   // Toggle between the two popups
   const [showSuccess, setShowSuccess] = useState(false);
-  // Popup openned or closed
+  // Popup opened or closed
   const [openModal, setOpenModal] = useState(true);
 
   const handleClose = () => {
