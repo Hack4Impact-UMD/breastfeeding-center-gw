@@ -21,7 +21,7 @@ This project aims to centralize data and analytics for the organization in order
 
 - Framework: [React](https://react.dev/)
 - Language: [Typescript](https://www.typescriptlang.org/docs/handbook/intro.html)
-- Styling: [CSS Modules](https://github.com/css-modules/css-modules)
+- Styling: [Tailwind](https://tailwindcss.com/)
 - Libraries: [MaterialUI](https://mui.com/material-ui/), [Axios](https://axios-http.com/docs/intro)
 - Build Tool: [Vite](https://vitejs.dev/)
 
