@@ -50,7 +50,7 @@ const NavigationBar = () => {
         <>
           <div className="flex flex-col items-center pt-0">
             <img
-              className="flex w-[60%] object-contain -mt-8"
+              className="flex w-[40%] object-contain -mt-6"
               src={primaryLogo}
               alt="BCGW Logo"
             />
