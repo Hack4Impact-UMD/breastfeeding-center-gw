@@ -36,6 +36,7 @@ const NavigationBar = () => {
         navBarOpen ? "w-[250px]" : "w-[60px]"
       }`}
     >
+      <div className="flex flex-col h-full overflow-y-auto">
       <div className="flex flex-row justify-between items-center pr-3 pt-1">
         <button onClick={toggleNavBar} className="flex ml-auto">
           {navBarOpen ? ( //nav bar open chevron
@@ -180,7 +181,9 @@ const NavigationBar = () => {
           </div>
 
           {/*LOGOUT*/}
-          <div className="absolute bottom-[20px] left-[25px] flex justify-left text-[#3a3a3a]">
+          <div className="flex-grow"></div>
+          <div className="sticky bottom-0 bg-white pt-4 pb-4 border-t border-[#D9D9D9]">
+          <div className="flex justify-left text-[#3a3a3a] pl-[25px]">
             <img src={logout} className="w-[30px] h-[30px]" />
             <button
               className="ml-4 underline cursor-pointer "
@@ -188,6 +191,7 @@ const NavigationBar = () => {
             >
               LOGOUT
             </button>
+          </div>
           </div>
         </>
       ) : (
@@ -218,6 +222,7 @@ const NavigationBar = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };
