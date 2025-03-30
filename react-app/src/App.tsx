@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import Test from "./pages/test";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
                 }
               />*/}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/test" element={<Test />} />
         <Route
           path="/testfunctions"
           element={
