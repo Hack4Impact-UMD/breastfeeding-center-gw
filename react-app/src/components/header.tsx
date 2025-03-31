@@ -1,7 +1,7 @@
 import React from 'react';
 import Logo from '../assets/bcgw-logo.png';
 
-const Header = ({ firstName = "Volunteer", initials = "V" }) => {
+const Header = ({ firstName = "Volunteer", initials = "VT" }) => {
     return (
         <header className="flex justify-between items-center bg-[#021226] text-[#F2C355] px-4 py-2 shadow-md">
             <div className="flex items-center gap-2">
