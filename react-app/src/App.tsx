@@ -17,8 +17,7 @@ function App() {
           element={
             <button
               className={"bg-bcgw-yellow-dark rounded-lg px-2 py-1 m-2"}
-              onClick={async () => {}}
-            >
+              onClick={async () => {}}>
               TEST
             </button>
           }
