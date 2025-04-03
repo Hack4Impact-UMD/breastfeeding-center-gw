@@ -22,7 +22,7 @@ This project aims to centralize data and analytics for the organization in order
 - Framework: [React](https://react.dev/)
 - Language: [Typescript](https://www.typescriptlang.org/docs/handbook/intro.html)
 - Styling: [Tailwind](https://tailwindcss.com/)
-- Libraries: [MaterialUI](https://mui.com/material-ui/), [Axios](https://axios-http.com/docs/intro)
+- Libraries: [Tremor](https://tremor.so/docs/visualizations/area-chart)
 - Build Tool: [Vite](https://vitejs.dev/)
 
 **Backend:**
@@ -34,7 +34,7 @@ Authentication, Database, and Hosting: [Firebase](https://firebase.google.com/)
 - [Paysimple](https://documentation.paysimple.com/docs/welcome)
 - [Square](https://developer.squareup.com/reference/square) (potentially less important?)
 - [Paypal](https://developer.paypal.com/api/rest/)
-- JANE (imported via Excel sheet converted to JSON)
+- [Jane](https://jane.app/) (imported via Excel sheet converted to JSON)
 
 
 ```mermaid
