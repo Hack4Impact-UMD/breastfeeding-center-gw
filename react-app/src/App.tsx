@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LoginPage from "./pages/LoginPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
   return (
@@ -8,12 +10,8 @@ function App() {
                 path="/"
                 element={
                 }
-              />
-              <Route
-                path="*"
-                element={
-                }
-              /> */}
+              />*/}
+        <Route path="/login" element={<LoginPage />} />
         <Route
           path="/testfunctions"
           element={
@@ -24,6 +22,7 @@ function App() {
             </button>
           }
         />
+        <Route path="/*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );
