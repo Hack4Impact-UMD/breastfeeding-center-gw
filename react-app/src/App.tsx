@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import TwoFAPopup from "./components/TwoFAPopup";
 
 function App() {
   return (
@@ -17,12 +18,16 @@ function App() {
           element={
             <button
               className={"bg-bcgw-yellow-dark rounded-lg px-2 py-1 m-2"}
-              onClick={async () => {}}>
+              onClick={async () => {}}
+            >
               TEST
             </button>
           }
         />
+        {/*
         <Route path="/*" element={<NotFoundPage />} />
+        */}
+        <Route path="/*" element={<TwoFAPopup />} />
       </Routes>
     </BrowserRouter>
   );
