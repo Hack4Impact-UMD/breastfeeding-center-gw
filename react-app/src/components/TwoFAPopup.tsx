@@ -21,7 +21,7 @@ const TwoFAPopup = (): React.JSX.Element => {
     console.log("Resent code!");
   };
 
-  const forgotPassContent = (
+  const twoFA = (
     <div>
       <button onClick={handleClose} className="cursor-pointer p-4">
         <BiArrowBack className="w-10 h-8"></BiArrowBack>
@@ -41,7 +41,7 @@ const TwoFAPopup = (): React.JSX.Element => {
         </p>
         <button
           onClick={handleSubmit}
-          className="w-1/2 h-22 cursor-pointer rounded-full bg-[#D9D9D9] self-center text-[2rem] font-semibold font-inter"
+          className="w-1/2 h-20 cursor-pointer rounded-full bg-[#D9D9D9] self-center text-[2rem] font-semibold font-inter"
         >
           Submit
         </button>
@@ -60,7 +60,7 @@ const TwoFAPopup = (): React.JSX.Element => {
 
   return (
     <Modal open={openModal} onClose={handleClose} height={600} width={700}>
-      {forgotPassContent}
+      {twoFA}
     </Modal>
   );
 };
