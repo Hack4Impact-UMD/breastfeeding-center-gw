@@ -1,12 +1,13 @@
 import { NavLink } from "react-router";
 import { useState } from "react";
-import primaryLogo from "../assets/bcgw-logo.png";
-import home from "../assets/home.svg";
-import logout from "../assets/logout.svg";
-import management from "../assets/management.svg";
-import service from "../assets/services.svg";
+import primaryLogo from "../../assets/bcgw-logo.png";
+import home from "../../assets/home.svg";
+import logout from "../../assets/logout.svg";
+import management from "../../assets/management.svg";
+import service from "../../assets/services.svg";
 import { LuChevronsLeft } from "react-icons/lu";
 import { LuChevronsRight } from "react-icons/lu";
+import LogoutConfirmation from "./LogoutConfirmation";
 
 const NavigationBar = () => {
   // tailwind class styling into consts
@@ -20,6 +21,8 @@ const NavigationBar = () => {
   const serviceStyle = "flex flex-row w-full h-[30px] cursor-pointer";
   const [openServices, setOpenServices] = useState(false);
   const [navBarOpen, setNavBarOpen] = useState(true);
+  const [openLogoutConfirmation, setOpenLogoutConfirmation] =
+    useState<boolean>(false);
 
   const toggleServicesDropdown = () => {
     setOpenServices(!openServices);
@@ -27,6 +30,10 @@ const NavigationBar = () => {
 
   const toggleNavBar = () => {
     setNavBarOpen(!navBarOpen);
+  };
+
+  const handleLogOut = (): void => {
+    setOpenLogoutConfirmation(true);
   };
 
   return (
@@ -105,7 +112,7 @@ const NavigationBar = () => {
 
               {/*SERVICES DROPDOWN*/}
               {openServices && ( //dropdown open
-                <div className="w-full bg-white z-1">
+                <div className="w-full">
                   <div className={`${serviceStyle} border-t-0`}>
                     <NavLink
                       to="/services/jane"
@@ -181,7 +188,9 @@ const NavigationBar = () => {
             <div className="sticky bottom-0 py-4 border-t border-bcgw-gray-light">
               <button
                 className="flex justify-left items-center text-bcgw-blue-dark pl-3 gap-3 underline cursor-pointer "
-                onClick={() => {}}>
+                onClick={() => {
+                  handleLogOut();
+                }}>
                 <img src={logout} className="w-[30px] h-[30px]" />
                 LOGOUT
               </button>
@@ -221,12 +230,20 @@ const NavigationBar = () => {
               </NavLink>
             </div>
 
-            <div className="mt-auto">
+            <button
+              className="mt-auto hover:cursor-pointer"
+              onClick={() => {
+                handleLogOut();
+              }}>
               <img src={logout} className="w-[30px] h-[30px]" />
-            </div>
+            </button>
           </div>
         )}
       </div>
+      <LogoutConfirmation
+        open={openLogoutConfirmation}
+        onClose={setOpenLogoutConfirmation}
+      />
     </div>
   );
 };

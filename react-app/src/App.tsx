@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import NotFoundPage from "./pages/NotFoundPage";
-import ConfirmLogoutPage from "./pages/ConfirmLogoutPage";
+import LogoutPopup from "./components/NavigationBar/LogoutConfirmation";
 import LogoutPage from "./pages/LogoutPage";
-
+import NavigationBar from "./components/NavigationBar/NavigationBar";
 
 function App() {
   return (
@@ -25,9 +25,9 @@ function App() {
             </button>
           }
         />
-        <Route path="/*" element={<ConfirmLogoutPage />} />
+        <Route path="/home" element={<NavigationBar />} />
         <Route path="/logout" element={<LogoutPage />} />
-      <Route path="/confirm-logout" element={<ConfirmLogoutPage />} />
+        <Route path="/*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );
