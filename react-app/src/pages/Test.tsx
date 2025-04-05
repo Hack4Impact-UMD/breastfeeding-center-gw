@@ -2,25 +2,14 @@ import React from "react";
 import * as XLSX from "xlsx";
 
 interface Appointment {
-  id: string;
-  location_name: string;
-  start_at: string;
-  end_at: string;
-  patient_guid: string;
-  patient_number: string;
-  patient_prefix: string;
+  date: string;
   patient_first_name: string;
-  patient_preferred_name: string;
   patient_last_name: string;
-  treatment_name: string;
-  staff_member_name: string;
-  break: string;
-  insurance_state: string;
-  state: string;
-  first_visit: string;
-  chart_status: string;
-  notes_text: string;
-  visit_type: string; 
+  treatment_name?: string;
+  status: string;
+  notes: string;
+  visit_type: string;
+  service: string;
 }
 
 function Test() {
@@ -34,49 +23,75 @@ function Test() {
 
     // convert excel sheet to JSON
     const jsonData = XLSX.utils.sheet_to_json(worksheet, {
-      header: 1, 
+      header: 1,
     });
 
     const headers: string[] = jsonData[0] as string[];
 
     // these are target columns in excel sheet
     const relevantColumns = [
-      "id", "location_name", "start_at", "end_at", "patient_guid", 
-      "patient_number", "patient_prefix", "patient_first_name", 
-      "patient_preferred_name", "patient_last_name", "treatment_name", 
-      "staff_member_name", "break", "insurance_state", "state", 
-      "first_visit", "chart_status", "notes_text"
+      { excel: "start_at", json: "date" },
+      "patient_first_name",
+      "patient_last_name",
+      "treatment_name",
+      { excel: "chart_status", json: "status" },
+      { excel: "notes_text", json: "notes" },
     ];
 
-    // get idx of target columns 
-    const columnIndexes = relevantColumns.map((col) => headers.indexOf(col));
+    // get idx of target columns
+    const columnIndexes = relevantColumns.map((col) =>
+      headers.indexOf(typeof col === "string" ? col : col.excel)
+    );
 
     // get info from each col for each appointment
-    const extractedAppointments: Appointment[] = (jsonData.slice(1) as any[]).map((row: string[]) => {
-      const appointment = {} as Appointment;
+    const extractedAppointments: Appointment[] = (jsonData.slice(1) as any[])
+      .map((row: string[]) => {
+        const appointment = {} as Appointment;
 
-      relevantColumns.forEach((column, index) => {
-        appointment[column as keyof Appointment] = row[columnIndexes[index]] || "";
-      });
+        relevantColumns.forEach((column, index) => {
+          const columnName = typeof column === "string" ? column : column.json;
+          appointment[columnName as keyof Appointment] =
+            row[columnIndexes[index]] || "";
+        });
 
-      // get visit type from treatment_name
-      const treatment = appointment.treatment_name.toLowerCase();
-      let visitType = ""
+        // filter out data where status is not signed
+        if (appointment.status.toString().toLowerCase() !== "signed") {
+          return null;
+        }
 
-      if (treatment.includes("telehealth")) {
-        visitType = "telehealth";
-      } else if (treatment.includes("home visit")) {
-        visitType = "home visit";
-      } else if (treatment.includes("dc office")) {
-        visitType = "dc office";
-      }
+        // get visit type from treatment_name
+        const fullServiceType = appointment.treatment_name!.replace(/:/g, "");
+        const serviceLowercase = fullServiceType.toLowerCase();
+        appointment["date"] = appointment["date"].slice(0, 10);
 
-      appointment.visit_type = visitType;
+        let visitType = "";
+        let service = "";
 
-      return appointment;
-    });
+        if (serviceLowercase.includes("telehealth short")) {
+          visitType = "TELEHEALTH";
+          service = fullServiceType.substring(17);
+        } else if (serviceLowercase.includes("telehealth")) {
+          visitType = "TELEHEALTH";
+          service = fullServiceType.substring(11);
+        } else if (serviceLowercase.includes("dc office")) {
+          visitType = "DC Office";
+          service = fullServiceType.substring(10);
+        } else if (serviceLowercase.includes("home visit")) {
+          visitType = "Home Visit";
+          service = fullServiceType.substring(11);
+        }
 
-    console.log(extractedAppointments);  
+        appointment.visit_type = visitType;
+        appointment.service = service;
+        delete appointment.treatment_name;
+
+        return appointment;
+      })
+      .filter(
+        (appointment): appointment is Appointment => appointment !== null
+      );
+
+    console.log(extractedAppointments);
   };
 
   const printFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
