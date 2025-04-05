@@ -1,8 +1,13 @@
 import { LuCircleCheck } from "react-icons/lu";
-import { Link } from "react-router-dom";
+import { Link, useLocation, Navigate } from "react-router-dom";
 import Logo from "../assets/bcgw-logo2.png";
 
 const LogoutPage = () => {
+  const location = useLocation();
+  if (!location.state?.fromApp) {
+    return <Navigate to="/" />;
+  }
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-white">
       <img

@@ -231,7 +231,7 @@ const NavigationBar = () => {
             </div>
 
             <button
-              className="mt-auto hover:cursor-pointer"
+              className="mt-auto cursor-pointer"
               onClick={() => {
                 handleLogOut();
               }}>

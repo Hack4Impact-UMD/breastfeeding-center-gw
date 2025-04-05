@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Logo from "../assets/bcgw-logo.png";
-import editIcon from "../assets/management.svg";
+import editIcon from "../assets/edit.svg";
 
 const Header = () => {
   const name = "Volunteer Tester";
