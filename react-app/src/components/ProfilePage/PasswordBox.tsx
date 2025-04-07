@@ -33,6 +33,7 @@ const PasswordBox = () => {
       setOpenNewModal(true);
     } else {
       setShowIncorrectPassword(true);
+      setCurrentPasswordInput('');
     }
   };
 
@@ -53,13 +54,13 @@ const PasswordBox = () => {
   const ModalHeader = ({ onClose }: { onClose: () => void }) => (
     <>
       <div className="flex justify-between items-center m-2">
-        <h2 className="text-sm font-semibold">Change Password</h2>
+        <p className="text-lg">Change Password</p>
         <IoIosClose
           className="text-2xl cursor-pointer hover:text-gray-500"
           onClick={onClose}
         />
       </div>
-      <div className="w-full h-[1.5px] bg-black my-2" />
+      <div className="w-full h-[1.5px] bg-black my-2"/>
     </>
   );
 
@@ -101,7 +102,7 @@ const PasswordBox = () => {
           </div>
           <div className="flex justify-end p-4">
             <button
-              className={`px-4 py-2 rounded ${
+              className={`px-4 py-2 rounded border-black ${
                 !currentPasswordInput
                   ? 'bg-bcgw-gray-light text-black cursor-not-allowed'
                   : 'bg-bcgw-yellow-dark text-black hover:bg-bcgw-yellow-light'
@@ -178,7 +179,7 @@ const PasswordBox = () => {
           {/* Save Button */}
           <div className="flex justify-end p-4">
             <button
-              className={`px-4 py-2 rounded ${
+              className={`px-4 py-2 border-black rounded ${
                 !newPassword ||
                 !confirmNewPassword ||
                 newPassword !== confirmNewPassword ||
