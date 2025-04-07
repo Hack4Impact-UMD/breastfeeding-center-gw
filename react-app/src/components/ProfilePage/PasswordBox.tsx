@@ -8,7 +8,7 @@ const PasswordBox = () => {
   const [openNewModal, setOpenNewModal] = useState(false);
 
   const [currentPasswordInput, setCurrentPasswordInput] = useState('');
-  const [currentPassword, setCurrentPassword] = useState('abc123ABC!@#');
+  const [currentPassword, setCurrentPassword] = useState('abc');
   const [showIncorrectPassword, setShowIncorrectPassword] = useState(false);
 
   const [newPassword, setNewPassword] = useState('');
@@ -101,7 +101,11 @@ const PasswordBox = () => {
           </div>
           <div className="flex justify-end p-4">
             <button
-              className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
+              className={`px-4 py-2 rounded ${
+                !currentPasswordInput
+                  ? 'bg-bcgw-gray-light text-black cursor-not-allowed'
+                  : 'bg-bcgw-yellow-dark text-black hover:bg-bcgw-yellow-light'
+              }`}
               onClick={handleNextFromCurrent}
             >
               Next
@@ -179,8 +183,8 @@ const PasswordBox = () => {
                 !confirmNewPassword ||
                 newPassword !== confirmNewPassword ||
                 !validatePassword(newPassword)
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-black text-white hover:bg-gray-800'
+                  ? 'bg-bcgw-gray-light text-black cursor-not-allowed'
+                  : 'bg-bcgw-yellow-dark text-black hover:bg-bcgw-yellow-light'
               }`}
               onClick={handleNewPasswordSubmit}
               disabled={
