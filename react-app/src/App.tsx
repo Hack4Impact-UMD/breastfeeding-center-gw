@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import NotFoundPage from "./pages/NotFoundPage";
-import ProfileIcon from "./components/ProfilePage/ProfileIcon";
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
   return (
@@ -13,6 +13,7 @@ function App() {
                 }
               />*/}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
         <Route
           path="/testfunctions"
           element={
