@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
-import NotFoundPage from "./pages/NotFoundPage";
-import ProfilePage from './pages/ProfilePage';
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   return (
@@ -13,7 +12,6 @@ function App() {
                 }
               />*/}
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
         <Route
           path="/testfunctions"
           element={
@@ -24,7 +22,7 @@ function App() {
             </button>
           }
         />
-        <Route path="/*" element={<NotFoundPage />} />
+        <Route path="/*" element={<ProfilePage />} />
       </Routes>
     </BrowserRouter>
   );
