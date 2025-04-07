@@ -4,14 +4,43 @@ import NavigationBar from "../components/NavigationBar.tsx";
 import home from "../assets/management.svg";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import React from "react";
+import {
+  DatePicker,
+  DateRange,
+  DateRangePicker,
+} from "../components/DatePicker.tsx";
+import { DonutChart } from "../components/DonutChart.tsx";
+import {
+  AvailableChartColors,
+  constructCategoryColors,
+} from "../lib/chartUtils.ts";
+import { Legend } from "../components/Legend.tsx";
 
 const JanePage = () => {
   const [file, setFile] = useState<File | null>(null);
+  const [dateRange, setDateRange] = React.useState<DateRange | undefined>(
+    undefined
+  );
+  const data = [
+    {
+      name: "Home Visit",
+      amount: 0.666,
+    },
+    {
+      name: "In Office",
+      amount: 0.166,
+    },
+    {
+      name: "Telehealth",
+      amount: 0.166,
+    },
+  ];
 
   //file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
     if (selectedFile) {
+      // need to abbreviate long file name
       setFile(selectedFile);
       console.log("Selected file:", selectedFile.name);
     }
@@ -30,18 +59,26 @@ const JanePage = () => {
       <Header></Header>
       {/* <NavigationBar></NavigationBar> */}
 
-      <div className="flex flex-col h-screen w-screen p-8 pr-20 pl-14 bg-gray-200">
+      <div className="flex flex-col min-h-screen min-w-screen p-8 pr-20 pl-14 bg-gray-200">
         {/*headings*/}
-        <div className={centerItemsInDiv}>
-          <div>
+        <div className="flex justify-between">
+          <div className="flex flex-col">
             <h1 className="font-bold">JANE Statistics</h1>
-            <h2>Dashboard</h2>
+            <h2 className="font-[Montserrat] font-medium -mt-2">Dashboard</h2>
           </div>
-          <div>
-            {/*} <button className="bg-blue-500 text-white p-2 rounded">
-              Select Date Range
-            </button>*/}
+          <div className="pt-5 -mt-1">
+            <DateRangePicker
+              enableYearNavigation
+              value={dateRange}
+              onChange={setDateRange}
+              className="w-60"
+            />
           </div>
+
+          {/* <div className="flex flex-col items-center gap-y-4">
+      
+
+          </div> */}
         </div>
         {/*upload section*/}
         <div className={`${centerItemsInDiv} basis-20xs`}>
@@ -59,19 +96,14 @@ const JanePage = () => {
               onChange={handleFileChange}
               className="hidden"
             />
-            <img
-              data-tooltip-id="my-tooltip-1"
-              className="w-[30px] h-[30px]"
-              src={home}
-            />
             <ReactTooltip
               id="my-tooltip-1"
               place="bottom"
               content="totle tip"
             />
           </div>
-        {/*view spreadsheet name section*/}
-          <div className="text-left basis-200">
+          {/*view spreadsheet name section*/}
+          <div className="text-left basis-200 font-[Montserrat] font-medium">
             <h3>Most Recent Upload</h3>
             <div>
               <div className="flex items-center space-x-2">
@@ -80,7 +112,7 @@ const JanePage = () => {
                   <img
                     className="w-[30px] h-[30px] pl-3 cursor-pointer"
                     src={home}
-                    onClick={() => setFile(null)} 
+                    onClick={() => setFile(null)}
                   />
                 </div>
                 <button className={`${transparentYellowButtonStyle} ml-6 mt-2`}>
@@ -97,8 +129,34 @@ const JanePage = () => {
             <button>Graph/Table</button>
             <button className={transparentGrayButtonStyle}>Export</button>
           </div>
-          <div className="mt-3">
-            <img className="w-full bg-white" src={home} />
+          <div className="mt-3 bg-white h-full w-full flex justify-around border-1 rounded-[16px]">
+            <div className="flex flex-col w-[80%] gap-5 pl-7">
+              <h2 className="font-semibold font-Inter p-3">
+                Visits Breakdown
+                {dateRange
+                  ? `, ${dateRange.from?.toLocaleDateString()} - ${
+                      dateRange.to?.toLocaleDateString() ?? ""
+                    }`
+                  : ""}
+              </h2>
+              <div className="flex justify-center">
+                <DonutChart
+                  className="mb-5"
+                  data={data}
+                  variant="pie"
+                  category="name"
+                  value="amount"
+                  valueFormatter={(number: number) =>
+                    `${(number * 100).toFixed(1)}%`
+                  }
+                />
+              </div>
+            </div>
+            <div className="flex justify-center w-[20%] p-3">
+              <div className="flex flex-wrap justify-center gap-2 mt-4">
+                <Legend data={data} />
+              </div>
+            </div>
           </div>
         </div>
       </div>
