@@ -1,34 +1,48 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
+import LoginPage from "./pages/LoginPage/LoginPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import TwoFAPopup from "./components/TwoFAPopup";
+import LogoutPage from "./pages/LogoutPage";
+import NavigationBar from "./components/NavigationBar/NavigationBar";
+import RequireAuth from "./auth/RequireAuth";
+import { AuthProvider } from "./auth/AuthProvider";
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        {/* <Route
-                path="/"
-                element={
-                }
-              />*/}
-        <Route path="/login" element={<LoginPage />} />
-        <Route
-          path="/testfunctions"
-          element={
-            <button
-              className={"bg-bcgw-yellow-dark rounded-lg px-2 py-1 m-2"}
-              onClick={async () => {}}
-            >
-              TEST
-            </button>
-          }
-        />
-        {/*
-        <Route path="/*" element={<NotFoundPage />} />
-        */}
-        <Route path="/*" element={<TwoFAPopup />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <RequireAuth>
+                <NavigationBar />
+              </RequireAuth>
+            }
+          />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/login/twofactor" element={<TwoFAPopup />} />
+          <Route path="/logout" element={<LogoutPage />} />
+          <Route
+            path="/*"
+            element={
+              <RequireAuth>
+                <NotFoundPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/testfunctions"
+            element={
+              <button
+                className={"bg-bcgw-yellow-dark rounded-lg px-2 py-1 m-2"}
+                onClick={async () => {}}>
+                TEST
+              </button>
+            }
+          />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }
