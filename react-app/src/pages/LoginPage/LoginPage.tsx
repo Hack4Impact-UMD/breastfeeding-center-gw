@@ -2,7 +2,6 @@ import { useState } from "react";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import Logo from "../../assets/bcgw-logo.png";
 import Loading from "../../components/Loading";
-import { Navigate } from "react-router";
 import { AuthError } from "firebase/auth";
 import { authenticateUserEmailAndPassword } from "../../backend/AuthFunctions";
 import ForgotPasswordPopup from "./ForgotPasswordPopup";
@@ -49,6 +48,8 @@ const LoginPage = () => {
         .then(() => {
           setShowLoading(false);
           setOpen2FAModal(true);
+          // TODO: SET 2FA LOGIC
+          navigate("/");
         })
         .catch((error) => {
           setShowLoading(false);
