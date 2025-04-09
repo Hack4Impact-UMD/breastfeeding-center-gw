@@ -5,7 +5,7 @@ import LogoutPage from "./pages/LogoutPage";
 import NavigationBar from "./components/NavigationBar/NavigationBar";
 import RequireAuth from "./auth/RequireAuth";
 import { AuthProvider } from "./auth/AuthProvider";
-
+import { getAppointments } from "./backendTesting/test";
 function App() {
   // const navigate = useNavigate();
   return (
@@ -35,7 +35,7 @@ function App() {
             element={
               <button
                 className={"bg-bcgw-yellow-dark rounded-lg px-2 py-1 m-2"}
-                onClick={async () => {}}>
+                onClick={async () => {console.log(getAppointments())}}>
                 TEST
               </button>
             }
