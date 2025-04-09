@@ -6,8 +6,10 @@ import LogoutPage from "./pages/LogoutPage";
 import NavigationBar from "./components/NavigationBar/NavigationBar";
 import RequireAuth from "./auth/RequireAuth";
 import { AuthProvider } from "./auth/AuthProvider";
+import { Navigate } from "react-router-dom";
 
 function App() {
+  // const navigate = useNavigate();
   return (
     <BrowserRouter>
       <AuthProvider>
@@ -21,7 +23,6 @@ function App() {
             }
           />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/login/twofactor" element={<TwoFAPopup />} />
           <Route path="/logout" element={<LogoutPage />} />
           <Route
             path="/*"

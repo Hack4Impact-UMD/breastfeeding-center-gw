@@ -2,8 +2,13 @@ import Modal from "./Modal";
 import { BiArrowBack } from "react-icons/bi";
 import { useState, useRef, useEffect } from "react";
 
-const TwoFAPopup = (): React.JSX.Element => {
-  const [openModal, setOpenModal] = useState(true);
+const TwoFAPopup = ({
+  openModal,
+  onClose,
+}: {
+  openModal: boolean;
+  onClose: any;
+}): React.JSX.Element => {
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
   const [activeIndex, setActiveIndex] = useState(0);
   const [error, setError] = useState(false);
@@ -15,7 +20,7 @@ const TwoFAPopup = (): React.JSX.Element => {
   }, [activeIndex]);
 
   const handleClose = () => {
-    setOpenModal(false);
+    onClose();
   };
 
   const handleChange = (

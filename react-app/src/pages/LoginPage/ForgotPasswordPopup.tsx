@@ -104,7 +104,8 @@ const ForgotPasswordPopup = ({
     <Modal
       open={openModal}
       onClose={handleClose}
-      height={showSuccess ? 175 : 380}>
+      height={showSuccess ? 175 : 380}
+      width={475}>
       {showSuccess ? successContent : forgotPassContent}
     </Modal>
   );
