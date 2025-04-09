@@ -2,11 +2,11 @@ import { useState } from "react";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import Logo from "../../assets/bcgw-logo.png";
 import Loading from "../../components/Loading";
-import { Navigate } from "react-router";
 import { AuthError } from "firebase/auth";
 import { authenticateUserEmailAndPassword } from "../../backend/AuthFunctions";
 import ForgotPasswordPopup from "./ForgotPasswordPopup";
 import { useNavigate } from "react-router-dom";
+import TwoFAPopup from "../../components/TwoFAPopup";
 
 const LoginPage = () => {
   const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -17,6 +17,7 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [showLoading, setShowLoading] = useState<boolean>(false);
   const [openForgotModal, setOpenForgotModal] = useState<boolean>(false);
+  const [open2FAModal, setOpen2FAModal] = useState<boolean>(false);
 
   const viewPassword = () => {
     setVisibility(!visibility);
@@ -43,10 +44,11 @@ const LoginPage = () => {
     }
 
     if (emailValid && passwordValid) {
-      <Navigate to="/" />;
       authenticateUserEmailAndPassword(email, password)
         .then(() => {
           setShowLoading(false);
+          setOpen2FAModal(true);
+          // TODO: SET 2FA LOGIC
           navigate("/");
         })
         .catch((error) => {
@@ -71,7 +73,12 @@ const LoginPage = () => {
         <h1>Log In</h1>
       </div>
 
-      <form>
+      <form
+        onSubmit={(event) => {
+          if (!openForgotModal) {
+            handleSubmit(event);
+          }
+        }}>
         <input // input for email
           type="email"
           placeholder="Email Address"
@@ -131,6 +138,10 @@ const LoginPage = () => {
       <ForgotPasswordPopup
         openModal={openForgotModal}
         onClose={() => setOpenForgotModal(false)}
+      />
+      <TwoFAPopup
+        openModal={open2FAModal}
+        onClose={() => setOpen2FAModal(false)}
       />
     </div>
   );

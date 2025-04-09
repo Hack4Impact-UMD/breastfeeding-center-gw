@@ -38,7 +38,7 @@ const NavigationBar = () => {
 
   return (
     <div
-      className={`flex flex-col justify-left h-screen fixed shadow-[4px_4px_4px_0px_rgba(0,_0,_0,_0.25)] transition-all duration-200 ease-in-out ${
+      className={`flex flex-col justify-left h-screen fixed bg-white shadow-[4px_4px_4px_0px_rgba(0,_0,_0,_0.25)] transition-all duration-200 ease-in-out ${
         navBarOpen ? "w-[250px]" : "w-[60px]"
       }`}>
       <div className="flex flex-col h-full ">

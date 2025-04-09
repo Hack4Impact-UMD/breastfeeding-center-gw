@@ -7,6 +7,7 @@ import RequireAuth from "./auth/RequireAuth";
 import { AuthProvider } from "./auth/AuthProvider";
 
 function App() {
+  // const navigate = useNavigate();
   return (
     <BrowserRouter>
       <AuthProvider>
