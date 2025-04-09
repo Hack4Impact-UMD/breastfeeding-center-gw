@@ -72,7 +72,12 @@ const LoginPage = () => {
         <h1>Log In</h1>
       </div>
 
-      <form>
+      <form
+        onSubmit={(event) => {
+          if (!openForgotModal) {
+            handleSubmit(event);
+          }
+        }}>
         <input // input for email
           type="email"
           placeholder="Email Address"
