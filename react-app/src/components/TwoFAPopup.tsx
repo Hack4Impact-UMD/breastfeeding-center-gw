@@ -76,7 +76,7 @@ const TwoFAPopup = (): React.JSX.Element => {
         <BiArrowBack className="w-10 h-8" />
       </button>
       <div className="flex flex-col items-center justify-center px-15">
-        <p className="my-6 text-[2.5rem] font-semibold text-center font-Monsterrat">
+        <p className="mt-3 mb-8 text-3xl font-semibold text-center font-Montserrat">
           Two-Factor Authentication
         </p>
         <div className="flex gap-3">
@@ -98,32 +98,36 @@ const TwoFAPopup = (): React.JSX.Element => {
             />
           ))}
         </div>
-        {error && (
-          <p className="text-red-600 text-center mt-2 text-[1rem] font-medium">
-            Two-factor authentication code is incorrect
-          </p>
-        )}
+        <p
+          className={`text-red-500 text-center mt-2 ${
+            error ? "block" : "hidden"
+          }`}>
+          Two-factor authentication code is incorrect
+        </p>
 
-        <p className="leading-6 font-Inter text-[1.2rem] text-center mb-6 mt-6">
-          A message with a verification code has been <br /> sent to your phone.
-          Enter the code to continue.
+        <p
+          className={`leading-6 font-Inter text-lg text-center mb-6 mx-6 ${
+            error ? "mt-2" : "mt-10"
+          }`}>
+          The verification code has been sent to your phone. Enter the code to
+          continue.
         </p>
         <button
           onClick={handleSubmit}
           disabled={!allFilled}
-          className={`w-1/2 h-14 cursor-pointer rounded-full ${
-            allFilled ? "bg-yellow-400 hover:opacity-90" : "bg-gray-300"
-          } self-center text-[1.5rem] font-semibold font-inter transition`}
-        >
+          className={`font-bold text-lg py-4 px-20 rounded-full ${
+            allFilled
+              ? "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light cursor-pointer "
+              : "bg-bcgw-gray-light cursor-not-allowed"
+          } self-center text-lg font-bold`}>
           Submit
         </button>
 
-        <p className="leading-6 font-Inter text-[1.2rem] text-[#1239BB] text-center p-8">
-          Didn't get a verification code? <br />
+        <p className="flex flex-col gap-1.2 leading-6 font-Inter text-lg text-[#1239BB] text-center p-8">
+          Didn't get a verification code?
           <button
             onClick={handleResendCode}
-            className="underline text-[#1239BB] hover:opacity-80 transition cursor-pointer"
-          >
+            className="underline text-[#1239BB] hover:opacity-80 transition cursor-pointer">
             Resend a new code
           </button>
         </p>
@@ -132,7 +136,7 @@ const TwoFAPopup = (): React.JSX.Element => {
   );
 
   return (
-    <Modal open={openModal} onClose={handleClose} height={600} width={700}>
+    <Modal open={openModal} onClose={handleClose} height={500} width={550}>
       {twoFA}
     </Modal>
   );
