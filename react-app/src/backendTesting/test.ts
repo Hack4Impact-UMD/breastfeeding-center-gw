@@ -11,7 +11,7 @@ export function getAppointments() {
     apiKey: apiKey
   });
 
-  acuity.request('/appointments?max=100', (err: any, _: any, appointments: any) => {
+  acuity.request('/appointments?max=50', (err: any, _: any, appointments: any) => {
     if (err) {
       console.error(err);
       return;
