@@ -375,6 +375,7 @@ exports.setUserRole = onCall(
 /**
  * Gets all appointments from Acuity
  */
+
 exports.getAppointments = onCall(
   { region: "us-east4", cors: true },
   async () => {
@@ -383,14 +384,15 @@ exports.getAppointments = onCall(
       //   auth &&
       //   auth.token
       // ) {
-      acuity.request("/appointments?max=10", function (err, appointments) {
+      acuity.request("/appointments?max=2", function (err, appointments) {
         if (err) {
           console.error(err);
           reject(err);
         }
-        console.log(appointments);
-        resolve(appointments);
+        console.log(appointments.body);
+        resolve(appointments.body);
       });
+
       // } else {
       //   throw new functions.https.HttpsError(
       //     "permission-denied",
