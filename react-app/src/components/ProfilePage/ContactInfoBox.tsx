@@ -52,11 +52,11 @@ const ContactInfoBox = ({ email = "kiml2726@gmail.com", phone = "585-105-6915" }
         <FaEdit className="cursor-pointer text-gray-500" />
       </div>
 
-      <Modal open={openNewModal} onClose={() => setOpenNewModal(false)} height={300} width={600}>
-        <div className="flex flex-col h-full justify-between">
+      <Modal open={openNewModal} onClose={() => setOpenNewModal(false)} height={290} width={600}>
+        <div className="flex flex-col h-full">
           <div>
             <ModalHeader onClose={() => setOpenNewModal(false)} />
-            <div className="grid grid-cols-[170px_1fr] gap-4 m-4">
+            <div className="grid grid-cols-[170px_1fr] m-8 mb-2">
               <label className="text-sm font-medium content-center">Enter New Email:</label>
               <input
                 type="email"
@@ -68,8 +68,8 @@ const ContactInfoBox = ({ email = "kiml2726@gmail.com", phone = "585-105-6915" }
                 className="flex-1 border-[1.5px] border-black px-3 py-2"
                 placeholder="New email"
               />
-            </div>
-            <div className="grid grid-cols-[170px_1fr] gap-4 m-4">
+              <div className="h-[30px]"></div>
+              <p className="text-green-600 text-sm">valid email check here</p>
               <label className="text-sm font-medium content-center">Confirm New Email:</label>
               <input
                 type="email"
@@ -92,7 +92,7 @@ const ContactInfoBox = ({ email = "kiml2726@gmail.com", phone = "585-105-6915" }
             </div>
           </div>
 
-          <div className="flex justify-end p-4">
+          <div className="flex justify-end m-8 mt-0">
             <button
               className={`px-4 py-2 border-black rounded ${
                 !newEmail || !confirmNewEmail || newEmail !== confirmNewEmail

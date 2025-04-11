@@ -81,17 +81,17 @@ const PasswordBox = () => {
         />
       </div>
 
-      <Modal open={openCurrentModal} onClose={() => setOpenCurrentModal(false)} height={240} width={700}>
-        <div className="flex flex-col justify-between h-full">
+      <Modal open={openCurrentModal} onClose={() => setOpenCurrentModal(false)} height={220} width={600}>
+        <div className="flex flex-col h-full">
           <div>
             <ModalHeader onClose={() => setOpenCurrentModal(false)} />
-            <div className="grid grid-cols-[auto_1fr] gap-4 m-4">
+            <div className="grid grid-cols-[190px_1fr] m-8 mb-2">
               <label className="text-sm font-medium text-nowrap content-center">Enter Current Password:</label>
               <input
                 type="password"
                 value={currentPasswordInput}
                 onChange={(e) => setCurrentPasswordInput(e.target.value)}
-                className="flex-1 border-[1.5px] border-black p-2"
+                className="flex-1 border-[1.5px] border-black px-3 py-2"
                 placeholder="Current password"
               />
               <div className="h-[20px]"></div>
@@ -100,7 +100,7 @@ const PasswordBox = () => {
               )}
             </div>
           </div>
-          <div className="flex justify-end p-4">
+          <div className="flex justify-end m-8 mt-0">
             <button
               className={`px-4 py-2 rounded border-black ${
                 !currentPasswordInput
@@ -116,12 +116,12 @@ const PasswordBox = () => {
       </Modal>
 
       {/* New Password Modal */}
-      <Modal open={openNewModal} onClose={() => setOpenNewModal(false)} height={500} width={600}>
-        <div className="flex flex-col h-full justify-between">
+      <Modal open={openNewModal} onClose={() => setOpenNewModal(false)} height={450} width={600}>
+        <div className="flex flex-col h-full">
           <div>
             <ModalHeader onClose={() => setOpenNewModal(false)} />
             {/* New Password */}
-            <div className="grid grid-cols-[170px_1fr] gap-4 m-4">
+            <div className="grid grid-cols-[170px_1fr] m-8 mb-2">
               <label className="text-sm font-medium text-nowrap content-center">Enter New Password:</label>
               <input
                 type="password"
@@ -153,7 +153,7 @@ const PasswordBox = () => {
             </div>
 
             {/* Confirm New Password */}
-            <div className="grid grid-cols-[170px_1fr] gap-4 m-4">
+            <div className="grid grid-cols-[170px_1fr] mx-8">
               <label className="block text-sm font-medium content-center">Confirm New Password:</label>
               <input
                 type="password"
@@ -177,7 +177,7 @@ const PasswordBox = () => {
           </div>
 
           {/* Save Button */}
-          <div className="flex justify-end p-4">
+          <div className="flex justify-end m-8 mt-4">
             <button
               className={`px-4 py-2 border-black rounded ${
                 !newPassword ||
