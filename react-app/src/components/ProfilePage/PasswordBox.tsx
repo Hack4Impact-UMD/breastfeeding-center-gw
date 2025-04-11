@@ -81,10 +81,18 @@ const PasswordBox = () => {
         />
       </div>
 
-      <Modal open={openCurrentModal} onClose={() => setOpenCurrentModal(false)} height={220} width={600}>
+      <Modal open={openCurrentModal} onClose={() => {
+        setOpenCurrentModal(false);
+        setCurrentPasswordInput('');
+        setShowIncorrectPassword(false);
+      }} height={220} width={600}>
         <div className="flex flex-col h-full">
           <div>
-            <ModalHeader onClose={() => setOpenCurrentModal(false)} />
+            <ModalHeader onClose={() => {
+              setOpenCurrentModal(false);
+              setCurrentPasswordInput('');
+              setShowIncorrectPassword(false);
+              }} />
             <div className="grid grid-cols-[190px_1fr] m-8 mb-2">
               <label className="text-sm font-medium text-nowrap content-center">Enter Current Password:</label>
               <input
@@ -116,10 +124,24 @@ const PasswordBox = () => {
       </Modal>
 
       {/* New Password Modal */}
-      <Modal open={openNewModal} onClose={() => setOpenNewModal(false)} height={450} width={600}>
+      <Modal open={openNewModal} onClose={() => {
+          setOpenNewModal(false);
+          setNewPassword('');
+          setConfirmNewPassword('');
+          setCurrentPasswordInput('');
+          setShowPasswordRequirementsError(false);
+          setShowMatchError(false);
+        }} height={450} width={600}>
         <div className="flex flex-col h-full">
           <div>
-            <ModalHeader onClose={() => setOpenNewModal(false)} />
+            <ModalHeader onClose={() => {
+              setOpenNewModal(false);
+              setNewPassword('');
+              setConfirmNewPassword('');
+              setCurrentPasswordInput('');
+              setShowPasswordRequirementsError(false);
+              setShowMatchError(false);
+            }} />
             {/* New Password */}
             <div className="grid grid-cols-[170px_1fr] m-8 mb-2">
               <label className="text-sm font-medium text-nowrap content-center">Enter New Password:</label>
