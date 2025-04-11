@@ -5,6 +5,7 @@ import LogoutPage from "./pages/LogoutPage";
 import NavigationBar from "./components/NavigationBar/NavigationBar";
 import RequireAuth from "./auth/RequireAuth";
 import { AuthProvider } from "./auth/AuthProvider";
+import { getAppointments } from "./backend/AcuityCalls";
 
 function App() {
   // const navigate = useNavigate();
@@ -33,11 +34,17 @@ function App() {
           <Route
             path="/testfunctions"
             element={
-              <button
-                className={"bg-bcgw-yellow-dark rounded-lg px-2 py-1 m-2"}
-                onClick={async () => {}}>
-                TEST
-              </button>
+              <RequireAuth>
+                <button
+                  className={"bg-bcgw-yellow-dark rounded-lg px-2 py-1 m-2"}
+                  onClick={async () => {
+                    getAppointments()
+                      .then(() => console.log("Success"))
+                      .catch();
+                  }}>
+                  TEST
+                </button>
+              </RequireAuth>
             }
           />
         </Routes>
