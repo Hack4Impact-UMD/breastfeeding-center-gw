@@ -6,8 +6,15 @@ const { onCall } = require("firebase-functions/v2/https");
 const admin = require("firebase-admin");
 admin.initializeApp();
 const db = admin.firestore();
-// const dotenv = require("dotenv");
-// require("dotenv").config();
+const dotenv = require("dotenv");
+require("dotenv").config();
+var Acuity = require("acuityscheduling");
+
+const acuity = Acuity.basic({
+  userId: process.env.ACUITY_USER_ID,
+  apiKey: process.env.ACUITY_API_KEY,
+});
+
 /*
  * Creates a new admin.
  * Takes an object as a parameter that should contain an email, first name, and last name.
@@ -361,6 +368,35 @@ exports.setUserRole = onCall(
           "Only an admin user can change roles. If you are an admin, make sure the arguments passed into the function are correct."
         );
       }
+    });
+  }
+);
+
+/**
+ * Gets all appointments from Acuity
+ */
+exports.getAppointments = onCall(
+  { region: "us-east4", cors: true },
+  async () => {
+    return new Promise(async (resolve, reject) => {
+      // if (
+      //   auth &&
+      //   auth.token
+      // ) {
+      acuity.request("/appointments?max=10", function (err, appointments) {
+        if (err) {
+          console.error(err);
+          reject(err);
+        }
+        console.log(appointments);
+        resolve(appointments);
+      });
+      // } else {
+      //   throw new functions.https.HttpsError(
+      //     "permission-denied",
+      //     "Only an admin user can change roles. If you are an admin, make sure the arguments passed into the function are correct."
+      //   );
+      // }
     });
   }
 );
