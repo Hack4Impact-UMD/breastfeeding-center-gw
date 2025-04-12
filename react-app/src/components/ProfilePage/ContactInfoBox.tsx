@@ -5,16 +5,24 @@ import Modal from '../Modal';
 
 const ContactInfoBox = ({ email = "kiml2726@gmail.com", phone = "585-105-6915" }) => {
   const [openNewModal, setOpenNewModal] = useState(false);
-
   const [newEmail, setNewEmail] = useState('');
   const [confirmNewEmail, setConfirmNewEmail] = useState('');
   const [showEmailMatchError, setShowEmailMatchError] = useState(false);
+  const [showEmailInvalidError, setShowEmailInvalidError] = useState(false);
+
+  const validateEmail = (email) => {
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return re.test(email);
+  };
 
   const handleNewEmailSubmit = () => {
     const isMatch = newEmail === confirmNewEmail;
+    const isEmailValid = validateEmail(newEmail);
+    
     setShowEmailMatchError(!isMatch);
+    setShowEmailInvalidError(!isEmailValid);
 
-    if (isMatch) {
+    if (isMatch && isEmailValid) {
       console.log('Updated email to:', newEmail);
       setNewEmail('');
       setConfirmNewEmail('');
@@ -64,11 +72,15 @@ const ContactInfoBox = ({ email = "kiml2726@gmail.com", phone = "585-105-6915" }
                 onChange={(e) => {
                   setNewEmail(e.target.value);
                   setShowEmailMatchError(e.target.value !== confirmNewEmail);
+                  setShowEmailInvalidError(e.target.value? !validateEmail(e.target.value) : false);
                 }}
                 className="flex-1 border-[1.5px] border-black px-3 py-2"
                 placeholder="New email"
               />
             </div>
+            {newEmail && showEmailInvalidError && (
+              <p className="text-red-600 text-sm ml-4 mb-2">Please enter a valid email address.</p>
+            )}
             <div className="grid grid-cols-[170px_1fr] gap-4 m-4">
               <label className="text-sm font-medium content-center">Confirm New Email:</label>
               <input
@@ -95,12 +107,12 @@ const ContactInfoBox = ({ email = "kiml2726@gmail.com", phone = "585-105-6915" }
           <div className="flex justify-end p-4">
             <button
               className={`px-4 py-2 border-black rounded ${
-                !newEmail || !confirmNewEmail || newEmail !== confirmNewEmail
+                !newEmail || !confirmNewEmail || newEmail !== confirmNewEmail || showEmailInvalidError
                   ? 'bg-bcgw-gray-light text-black cursor-not-allowed'
                   : 'bg-bcgw-yellow-dark text-black hover:bg-bcgw-yellow-light'
               }`}
               onClick={handleNewEmailSubmit}
-              disabled={!newEmail || !confirmNewEmail || newEmail !== confirmNewEmail}
+              disabled={!newEmail || !confirmNewEmail || newEmail !== confirmNewEmail || showEmailInvalidError}
             >
               Save
             </button>
