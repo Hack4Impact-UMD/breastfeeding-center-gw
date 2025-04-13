@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 @import "tailwindcss";
+@config '../tailwind.config.ts';
 
 @theme {
   --color-bcgw-yellow-dark: #f5bb47;
@@ -21,6 +22,9 @@
   }
   h3 {
     font-size: var(--text-2xl);
+  }
+  .opacity-1 {
+    opacity: 100%;
   }
 }
 
