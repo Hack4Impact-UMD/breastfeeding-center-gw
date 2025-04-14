@@ -11,7 +11,7 @@ function App() {
                 element={
                 }
               />*/}
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<LoginPage />} />
         <Route
           path="/testfunctions"
           element={
@@ -22,7 +22,7 @@ function App() {
             </button>
           }
         />
-        <Route path="/*" element={<ProfilePage />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Routes>
     </BrowserRouter>
   );

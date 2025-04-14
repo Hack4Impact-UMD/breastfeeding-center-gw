@@ -3,9 +3,10 @@ import { FaEdit } from 'react-icons/fa';
 import { IoIosClose } from 'react-icons/io';
 import Modal from '../Modal';
 
-const ContactInfoBox = ({ email = "kiml2726@gmail.com", phone = "585-105-6915" }) => {
+const ContactInfoBox = ({ initalEmail = "kiml2726@gmail.com", phone = "585-105-6915" }) => {
   const [openNewModal, setOpenNewModal] = useState(false);
-  const [newEmail, setNewEmail] = useState('');
+  const [email, setEmail] = useState(initalEmail); // display value
+  const [newEmail, setNewEmail] = useState(''); // value while changing email & used for checks 
   const [confirmNewEmail, setConfirmNewEmail] = useState('');
   const [showEmailMatchError, setShowEmailMatchError] = useState(false);
   const [showEmailInvalidError, setShowEmailInvalidError] = useState(false);
@@ -24,7 +25,7 @@ const ContactInfoBox = ({ email = "kiml2726@gmail.com", phone = "585-105-6915" }
 
     if (isMatch && isEmailValid) {
       console.log('Updated email to:', newEmail);
-      setNewEmail('');
+      setEmail(newEmail);
       setConfirmNewEmail('');
       setOpenNewModal(false);
     }
@@ -50,8 +51,11 @@ const ContactInfoBox = ({ email = "kiml2726@gmail.com", phone = "585-105-6915" }
 
       <div className="flex justify-between items-center mb-2">
         <p className="font-bold text-sm w-24">Email</p>
-        <p className="text-sm text-gray-800 flex-1">{email}</p>
-        <FaEdit className="cursor-pointer text-gray-500" onClick={() => setOpenNewModal(true)} />
+        <p className="text-sm text-gray-800 flex-1">{newEmail}</p>
+        <FaEdit className="cursor-pointer text-gray-500" onClick={() => {
+          setNewEmail(email);
+          setOpenNewModal(true)
+        }} />
       </div>
 
       <div className="flex justify-between items-center">
@@ -60,11 +64,11 @@ const ContactInfoBox = ({ email = "kiml2726@gmail.com", phone = "585-105-6915" }
         <FaEdit className="cursor-pointer text-gray-500" />
       </div>
 
-      <Modal open={openNewModal} onClose={() => setOpenNewModal(false)} height={300} width={600}>
-        <div className="flex flex-col h-full justify-between">
+      <Modal open={openNewModal} onClose={() => setOpenNewModal(false)} height={290} width={600}>
+        <div className="flex flex-col h-full">
           <div>
             <ModalHeader onClose={() => setOpenNewModal(false)} />
-            <div className="grid grid-cols-[170px_1fr] gap-4 m-4">
+            <div className="grid grid-cols-[170px_1fr] m-8 mb-2">
               <label className="text-sm font-medium content-center">Enter New Email:</label>
               <input
                 type="email"
@@ -77,11 +81,8 @@ const ContactInfoBox = ({ email = "kiml2726@gmail.com", phone = "585-105-6915" }
                 className="flex-1 border-[1.5px] border-black px-3 py-2"
                 placeholder="New email"
               />
-            </div>
-            {newEmail && showEmailInvalidError && (
-              <p className="text-red-600 text-sm ml-4 mb-2">Please enter a valid email address.</p>
-            )}
-            <div className="grid grid-cols-[170px_1fr] gap-4 m-4">
+              <div className="h-[30px]"></div>
+              <p className="text-green-600 text-sm">valid email check here</p>
               <label className="text-sm font-medium content-center">Confirm New Email:</label>
               <input
                 type="email"
@@ -104,7 +105,7 @@ const ContactInfoBox = ({ email = "kiml2726@gmail.com", phone = "585-105-6915" }
             </div>
           </div>
 
-          <div className="flex justify-end p-4">
+          <div className="flex justify-end m-8 mt-0">
             <button
               className={`px-4 py-2 border-black rounded ${
                 !newEmail || !confirmNewEmail || newEmail !== confirmNewEmail || showEmailInvalidError
