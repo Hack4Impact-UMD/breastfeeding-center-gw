@@ -5,8 +5,13 @@ import home from "../assets/management.svg";
 import React from "react";
 import { PieArcSeries, PieChart } from "reaviz";
 import { Jane } from "../types/JaneType.ts";
-import { getJaneTypes } from "../backend/JaneFunctions"
-import { addJaneSpreadsheet, getAllJaneData, deleteJaneById } from "../backend/FirestoreCalls"
+import { getJaneTypes } from "../backend/JaneFunctions";
+import {
+  addJaneSpreadsheet,
+  getAllJaneData,
+  deleteJaneById,
+} from "../backend/FirestoreCalls";
+import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 
 const JanePage = () => {
   //styles
@@ -33,8 +38,8 @@ const JanePage = () => {
       try {
         const janeData = await getJaneTypes(e);
         console.log("Extracted Jane data:", janeData);
-  
-        setJaneData(janeData); 
+
+        setJaneData(janeData);
       } catch (error) {
         console.error("Error extracting Jane data:", error);
       }
@@ -64,15 +69,17 @@ const JanePage = () => {
       date: "2025-01-08T05:00:00.000Z",
       babyDob: "2026-01-01",
     },
-    {apptId: "107850",
-    babyDob: "01/01/2026",
-    date: "2025-01-01T18:00:00.000Z",
-    email: "email@gmail.com",
-    firstName: "Pilar",
-    insurance: "[{:name=>\"BCBS/Carefirst\", :number=>\"NIW596M84436\", :invoice_state=>\"unpaid\", :claim_state=>\"unsubmitted\", :claim_id=>8810}]",
-    lastName: "Whitaker",
-    treatment: "Prenatal Prep for Lactation",
-    visitType: "TELEHEALTH",
+    {
+      apptId: "107850",
+      babyDob: "01/01/2026",
+      date: "2025-01-01T18:00:00.000Z",
+      email: "email@gmail.com",
+      firstName: "Pilar",
+      insurance:
+        '[{:name=>"BCBS/Carefirst", :number=>"NIW596M84436", :invoice_state=>"unpaid", :claim_state=>"unsubmitted", :claim_id=>8810}]',
+      lastName: "Whitaker",
+      treatment: "Prenatal Prep for Lactation",
+      visitType: "TELEHEALTH",
     },
   ];
 
@@ -158,31 +165,60 @@ const JanePage = () => {
     },
   ];
 
-  //dummy dates
-  const START_DATE = new Date("2025-01-01");
-  const END_DATE = new Date("2025-01-05");
+  //date picker
+  const [dateRange, setDateRange] = useState<{
+    startDate: Date | null;
+    endDate: Date | null;
+  }>({
+    startDate: null,
+    endDate: null,
+  });
+
+  //setting dates
+  const handleDateRangeChange = (newRange: DateValueType) => {
+    if (newRange && newRange.startDate && newRange.endDate) {
+      setDateRange({
+        startDate: newRange.startDate,
+        endDate: newRange.endDate,
+      });
+    } else {
+      setDateRange({
+        startDate: null,
+        endDate: null,
+      });
+    }
+  };
 
   //convert dates to strings for display
   const formatDate = (date: Date) =>
     date.toLocaleDateString("en-US", {
-      year: "2-digit",
+      year: "numeric",
       month: "numeric",
       day: "numeric",
     });
 
-  //find number of appointments of each type
+  //store count for visitType
   const visitTypeCounts: Record<string, number> = {};
 
+  //filter data by date
   const filteredData = data.filter((jane) => {
-    const appointmentDate = new Date(jane.date);
-    return appointmentDate >= START_DATE && appointmentDate <= END_DATE;
+    if (dateRange.startDate && dateRange.endDate) {
+      const appointmentDate = new Date(jane.date);
+      return (
+        appointmentDate >= dateRange.startDate &&
+        appointmentDate <= dateRange.endDate
+      );
+    }
+    return true; //no date selected
   });
 
+  //count number of each visit type
   filteredData.forEach((jane) => {
     const type = jane.visitType || "Unknown";
     visitTypeCounts[type] = (visitTypeCounts[type] || 0) + 1;
   });
 
+  //set number of each visit type for chart
   const chartData = Object.entries(visitTypeCounts).map(([key, value]) => ({
     key,
     data: value,
@@ -204,8 +240,16 @@ const JanePage = () => {
             <h2>Dashboard</h2>
           </div>
           {/*date picker*/}
-          <div>
-            <span>DATE PICKER</span>
+          <div className="w-60">
+            <Datepicker
+              placeholder="Select Date Range"
+              showShortcuts={true}
+              asSingle={false}
+              value={dateRange}
+              onChange={handleDateRangeChange}
+              primaryColor={"yellow"}
+              displayFormat="MM/DD/YYYY"
+            />
           </div>
         </div>
         {/*upload section*/}
@@ -226,8 +270,13 @@ const JanePage = () => {
             />
           </div>
           {/*view most recent upload section*/}
-          <button onClick={handleUploadToFirebase}>Test Upload to Firestore</button>;
-          <button onClick={() => handleDelete("3jzCJmpwUrqbR639ETbv")}>Delete</button>
+          <button onClick={handleUploadToFirebase}>
+            Test Upload to Firestore
+          </button>
+          ;
+          <button onClick={() => handleDelete("3jzCJmpwUrqbR639ETbv")}>
+            Delete
+          </button>
           <div className="text-left basis-200">
             <h3>Most Recent Upload</h3>
             <div>
@@ -257,16 +306,31 @@ const JanePage = () => {
           <div className={chartDiv}>
             {/*chart title*/}
             <span className="self-start font-semibold text-xl mb-2">
-              Visit Breakdown: {formatDate(START_DATE)} - {formatDate(END_DATE)}
+              Visit Breakdown:{" "}
+              {dateRange.startDate
+                ? formatDate(dateRange.startDate)
+                : "Start Date Not Selected"}
+              {" - "}
+              {dateRange.endDate
+                ? formatDate(dateRange.endDate)
+                : "End Date Not Selected"}{" "}
             </span>
             {/*chart*/}
-            <PieChart
-              data={chartData}
-              margins={[-50, 0, 0, 0]}
-              series={
-                <PieArcSeries doughnut={true} colorScheme={chartColors}/>  
-              }
-            />
+            {chartData.length > 0 ? (
+              <div
+                className="chartContainer"
+                style={{ width: "1000px", height: "400px" }}
+              >
+                <PieChart
+                  data={chartData}
+                  series={
+                    <PieArcSeries doughnut={true} colorScheme={chartColors} />
+                  }
+                />
+              </div>
+            ) : (
+              <div>No data available for selected date range</div>
+            )}
             {/*legend*/}
             <div className="mt-4 flex flex-wrap justify-center gap-4">
               {chartData.map((item, index) => (
