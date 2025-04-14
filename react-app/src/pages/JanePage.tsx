@@ -5,6 +5,8 @@ import home from "../assets/management.svg";
 import React from "react";
 import { PieArcSeries, PieChart } from "reaviz";
 import { Jane } from "../types/JaneType.ts";
+import { getJaneTypes } from "../backend/JaneFunctions"
+import { addJaneSpreadsheet, getAllJaneData, deleteJaneById } from "../backend/FirestoreCalls"
 
 const JanePage = () => {
   //styles
@@ -20,13 +22,81 @@ const JanePage = () => {
 
   //file upload
   const [file, setFile] = useState<File | null>(null);
+  const [janeData, setJaneData] = useState<Jane[]>([]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
     if (selectedFile) {
       setFile(selectedFile);
       console.log("Selected file:", selectedFile.name);
+
+      try {
+        const janeData = await getJaneTypes(e);
+        console.log("Extracted Jane data:", janeData);
+  
+        setJaneData(janeData); 
+      } catch (error) {
+        console.error("Error extracting Jane data:", error);
+      }
     }
+  };
+
+  const sampleJaneData: Jane[] = [
+    {
+      apptId: "108685",
+      firstName: "Menaka",
+      lastName: "Kalaskar",
+      email: "email@gmail.com",
+      visitType: "HOMEVISIT",
+      treatment: "Lactation Appt, NW DC",
+      insurance: "DC",
+      date: "2025-01-01T16:00:00.000Z",
+      babyDob: "2026-01-01",
+    },
+    {
+      apptId: "109461",
+      firstName: "Mateo",
+      lastName: "Meca Rivera",
+      email: "email@gmail.com",
+      visitType: "OFFICE",
+      treatment: "Postpartum Lactation Appointment",
+      insurance: "MD",
+      date: "2025-01-08T05:00:00.000Z",
+      babyDob: "2026-01-01",
+    },
+    {apptId: "107850",
+    babyDob: "01/01/2026",
+    date: "2025-01-01T18:00:00.000Z",
+    email: "email@gmail.com",
+    firstName: "Pilar",
+    insurance: "[{:name=>\"BCBS/Carefirst\", :number=>\"NIW596M84436\", :invoice_state=>\"unpaid\", :claim_state=>\"unsubmitted\", :claim_id=>8810}]",
+    lastName: "Whitaker",
+    treatment: "Prenatal Prep for Lactation",
+    visitType: "TELEHEALTH",
+    },
+  ];
+
+  const handleUploadToFirebase = async () => {
+    try {
+      await addJaneSpreadsheet(sampleJaneData);
+      console.log("Upload complete!");
+    } catch (error) {
+      console.error("Upload error:", error);
+    }
+  };
+
+  const testGetAllJaneData = async () => {
+    try {
+      const allJanes = await getAllJaneData();
+      console.log("All Jane entries:", allJanes);
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    await deleteJaneById(id);
+    console.log("Deleted Jane with ID:", id);
   };
 
   //DUMMY DATA FOR CHART
@@ -156,6 +226,8 @@ const JanePage = () => {
             />
           </div>
           {/*view most recent upload section*/}
+          <button onClick={handleUploadToFirebase}>Test Upload to Firestore</button>;
+          <button onClick={() => handleDelete("3jzCJmpwUrqbR639ETbv")}>Delete</button>
           <div className="text-left basis-200">
             <h3>Most Recent Upload</h3>
             <div>
