@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../components/header.tsx";
-//import NavigationBar from "../components/NavigationBar.tsx";
+import NavigationBar from "../components/NavigationBar/NavigationBar.tsx";
 import home from "../assets/management.svg";
 import React from "react";
 import { PieArcSeries, PieChart } from "reaviz";
@@ -12,6 +12,7 @@ import {
   deleteJaneById,
 } from "../backend/FirestoreCalls";
 import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
+import Loading from "../components/Loading.tsx";
 
 const JanePage = () => {
   //styles
@@ -28,6 +29,11 @@ const JanePage = () => {
   //file upload
   const [file, setFile] = useState<File | null>(null);
   const [janeData, setJaneData] = useState<Jane[]>([]);
+  const [filteredData, setFilteredData] = useState<Jane[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [chartData, setChartData] = useState<{ key: string; data: number }[]>(
+    []
+  );
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
@@ -106,65 +112,6 @@ const JanePage = () => {
     console.log("Deleted Jane with ID:", id);
   };
 
-  //DUMMY DATA FOR CHART
-  const data: Jane[] = [
-    {
-      apptId: "1",
-      firstName: "bub",
-      lastName: "bubb",
-      email: "b@gma.com",
-      visitType: "TELEHEALTH",
-      treatment: "JAHSGJA",
-      insurance: "ashgah",
-      date: "2025-01-01",
-      babyDob: "2023-05-20",
-    },
-    {
-      apptId: "2",
-      firstName: "huhh",
-      lastName: "hbuuh",
-      email: "bdsjh@hotmail.com",
-      visitType: "HOMEVISIT",
-      treatment: "Checkup",
-      insurance: "khgkh",
-      date: "2025-01-02",
-      babyDob: "2023-04-15",
-    },
-    {
-      apptId: "3",
-      firstName: "Charles",
-      lastName: "Charles",
-      email: "charles@myspace.com",
-      visitType: "TELEHEALTH",
-      treatment: "duddd",
-      insurance: "skdjh",
-      date: "2025-01-03",
-      babyDob: "2023-02-10",
-    },
-    {
-      apptId: "4",
-      firstName: "jhsgj",
-      lastName: "sjhgjs",
-      email: "diana@tel.com",
-      visitType: "OFFICE",
-      treatment: "milk",
-      insurance: "life",
-      date: "2025-01-04",
-      babyDob: "2023-01-25",
-    },
-    {
-      apptId: "5",
-      firstName: "looooop",
-      lastName: "gmail",
-      email: "lp@example.com",
-      visitType: "OFFICE",
-      treatment: "milk",
-      insurance: "life",
-      date: "2025-01-05",
-      babyDob: "2023-03-25",
-    },
-  ];
-
   //date picker
   const [dateRange, setDateRange] = useState<{
     startDate: Date | null;
@@ -197,47 +144,83 @@ const JanePage = () => {
       day: "numeric",
     });
 
-  //store count for visitType
-  const visitTypeCounts: Record<string, number> = {};
+  // //store count for visitType
+  // const visitTypeCounts: Record<string, number> = {};
 
   //filter data by date
-  const filteredData = data.filter((jane) => {
-    if (dateRange.startDate && dateRange.endDate) {
-      const appointmentDate = new Date(jane.date);
-      return (
-        appointmentDate >= dateRange.startDate &&
-        appointmentDate <= dateRange.endDate
-      );
-    }
-    return true; //no date selected
-  });
+  // const filteredData = janeData.filter((jane) => {
+  //   if (dateRange.startDate && dateRange.endDate) {
+  //     const appointmentDate = new Date(jane.date);
+  //     return (
+  //       appointmentDate >= dateRange.startDate &&
+  //       appointmentDate <= dateRange.endDate
+  //     );
+  //   }
+  //   return true; //no date selected
+  // });
 
-  //count number of each visit type
-  filteredData.forEach((jane) => {
-    const type = jane.visitType || "Unknown";
-    visitTypeCounts[type] = (visitTypeCounts[type] || 0) + 1;
-  });
+  // //count number of each visit type
+  // filteredData.forEach((jane) => {
+  //   const type = jane.visitType || "Unknown";
+  //   visitTypeCounts[type] = (visitTypeCounts[type] || 0) + 1;
+  // });
 
-  //set number of each visit type for chart
-  const chartData = Object.entries(visitTypeCounts).map(([key, value]) => ({
-    key,
-    data: value,
-  }));
+  // //set number of each visit type for chart
+  // const chartData = Object.entries(visitTypeCounts).map(([key, value]) => ({
+  //   key,
+  //   data: value,
+  // }));
 
   //chart colors
   const chartColors = ["#ffae53", "#4fd2c6", "#66e201"];
 
+  useEffect(() => {
+    setLoading(true);
+    getAllJaneData().then((janeData) => {
+      //store count for visitType
+      const visitTypeCounts: Record<string, number> = {};
+      //filter data by date
+      const filteredData = janeData.filter((jane) => {
+        if (dateRange.startDate && dateRange.endDate) {
+          const appointmentDate = new Date(jane.date);
+          console.log("date is", appointmentDate);
+          return (
+            appointmentDate >= dateRange.startDate &&
+            appointmentDate <= dateRange.endDate
+          );
+        }
+        return true; //no date selected
+      });
+      //count number of each visit type
+      filteredData.forEach((jane) => {
+        const type = jane.visitType || "Unknown";
+        visitTypeCounts[type] = (visitTypeCounts[type] || 0) + 1;
+      });
+      //set number of each visit type for chart
+      const chartData = Object.entries(visitTypeCounts).map(([key, value]) => ({
+        key,
+        data: value,
+      }));
+
+      setFilteredData(filteredData);
+      setJaneData(janeData);
+      setChartData(chartData);
+      setLoading(false);
+      console.log(filteredData);
+    });
+  }, [dateRange]);
+
   return (
     <>
-      <Header></Header>
-      {/* <NavigationBar></NavigationBar> */}
+      <Header />
+      {/* <NavigationBar /> */}
 
       <div className="flex flex-col min-h-screen w-full p-8 pr-20 pl-14 bg-gray-200">
         {/*headings*/}
         <div className={centerItemsInDiv}>
           <div>
             <h1 className="font-bold">JANE Statistics</h1>
-            <h2>Dashboard</h2>
+            <h2 className="font-[Montserrat]">Dashboard</h2>
           </div>
           {/*date picker*/}
           <div className="w-60">
@@ -256,7 +239,7 @@ const JanePage = () => {
         <div className={`${centerItemsInDiv} basis-20xs`}>
           <div className={centerItemsInDiv}>
             <button
-              className={`${buttonStyle} mr-5`}
+              className={`${buttonStyle} mr-5 text-nowrap`}
               onClick={() => document.getElementById("file-input")?.click()}
             >
               UPLOAD NEW SPREADSHEET
@@ -277,7 +260,7 @@ const JanePage = () => {
           <button onClick={() => handleDelete("3jzCJmpwUrqbR639ETbv")}>
             Delete
           </button>
-          <div className="text-left basis-200">
+          <div className="text-left basis-200 font-[Montserrat]">
             <h3>Most Recent Upload</h3>
             <div>
               <div className="flex items-center space-x-2">
@@ -289,9 +272,6 @@ const JanePage = () => {
                     onClick={() => setFile(null)}
                   />
                 </div>
-                <button className={`${transparentYellowButtonStyle} ml-6 mt-2`}>
-                  Jane Doe
-                </button>
               </div>
             </div>
           </div>
@@ -321,12 +301,16 @@ const JanePage = () => {
                 className="chartContainer"
                 style={{ width: "1000px", height: "400px" }}
               >
-                <PieChart
-                  data={chartData}
-                  series={
-                    <PieArcSeries doughnut={true} colorScheme={chartColors} />
-                  }
-                />
+                {loading ? (
+                  <Loading />
+                ) : (
+                  <PieChart
+                    data={chartData}
+                    series={
+                      <PieArcSeries doughnut={true} colorScheme={chartColors} />
+                    }
+                  />
+                )}
               </div>
             ) : (
               <div>No data available for selected date range</div>
