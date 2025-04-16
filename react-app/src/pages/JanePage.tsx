@@ -29,7 +29,6 @@ const JanePage = () => {
   //file upload
   const [file, setFile] = useState<File | null>(null);
   const [janeData, setJaneData] = useState<Jane[]>([]);
-  const [filteredData, setFilteredData] = useState<Jane[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [chartData, setChartData] = useState<{ key: string; data: number }[]>(
     []
@@ -128,6 +127,7 @@ const JanePage = () => {
         startDate: newRange.startDate,
         endDate: newRange.endDate,
       });
+      // filter function here
     } else {
       setDateRange({
         startDate: null,
@@ -144,32 +144,33 @@ const JanePage = () => {
       day: "numeric",
     });
 
-  // //store count for visitType
-  // const visitTypeCounts: Record<string, number> = {};
+  const filterData = () => {
+    //store count for visitType
+    const visitTypeCounts: Record<string, number> = {};
+    // filter data by date
+    const filteredData = janeData.filter((jane) => {
+      if (dateRange.startDate && dateRange.endDate) {
+        const appointmentDate = new Date(jane.date);
+        return (
+          appointmentDate >= dateRange.startDate &&
+          appointmentDate <= dateRange.endDate
+        );
+      }
+      return true; //no date selected
+    });
+    //count number of each visit type
+    filteredData.forEach((jane) => {
+      const type = jane.visitType || "Unknown";
+      visitTypeCounts[type] = (visitTypeCounts[type] || 0) + 1;
+    });
+    //set number of each visit type for chart
+    const chartData = Object.entries(visitTypeCounts).map(([key, value]) => ({
+      key,
+      data: value,
+    }));
 
-  //filter data by date
-  // const filteredData = janeData.filter((jane) => {
-  //   if (dateRange.startDate && dateRange.endDate) {
-  //     const appointmentDate = new Date(jane.date);
-  //     return (
-  //       appointmentDate >= dateRange.startDate &&
-  //       appointmentDate <= dateRange.endDate
-  //     );
-  //   }
-  //   return true; //no date selected
-  // });
-
-  // //count number of each visit type
-  // filteredData.forEach((jane) => {
-  //   const type = jane.visitType || "Unknown";
-  //   visitTypeCounts[type] = (visitTypeCounts[type] || 0) + 1;
-  // });
-
-  // //set number of each visit type for chart
-  // const chartData = Object.entries(visitTypeCounts).map(([key, value]) => ({
-  //   key,
-  //   data: value,
-  // }));
+    setChartData(chartData);
+  };
 
   //chart colors
   const chartColors = ["#ffae53", "#4fd2c6", "#66e201"];
@@ -177,37 +178,18 @@ const JanePage = () => {
   useEffect(() => {
     setLoading(true);
     getAllJaneData().then((janeData) => {
-      //store count for visitType
-      const visitTypeCounts: Record<string, number> = {};
-      //filter data by date
-      const filteredData = janeData.filter((jane) => {
-        if (dateRange.startDate && dateRange.endDate) {
-          const appointmentDate = new Date(jane.date);
-          console.log("date is", appointmentDate);
-          return (
-            appointmentDate >= dateRange.startDate &&
-            appointmentDate <= dateRange.endDate
-          );
-        }
-        return true; //no date selected
-      });
-      //count number of each visit type
-      filteredData.forEach((jane) => {
-        const type = jane.visitType || "Unknown";
-        visitTypeCounts[type] = (visitTypeCounts[type] || 0) + 1;
-      });
-      //set number of each visit type for chart
-      const chartData = Object.entries(visitTypeCounts).map(([key, value]) => ({
-        key,
-        data: value,
-      }));
-
-      setFilteredData(filteredData);
       setJaneData(janeData);
-      setChartData(chartData);
+      console.log("jane data loaded");
       setLoading(false);
-      console.log(filteredData);
     });
+  }, []);
+
+  useEffect(() => {
+    filterData();
+  }, [janeData]);
+
+  useEffect(() => {
+    filterData();
   }, [dateRange]);
 
   return (
@@ -287,13 +269,11 @@ const JanePage = () => {
             {/*chart title*/}
             <span className="self-start font-semibold text-xl mb-2">
               Visit Breakdown:{" "}
-              {dateRange.startDate
-                ? formatDate(dateRange.startDate)
-                : "Start Date Not Selected"}
-              {" - "}
-              {dateRange.endDate
-                ? formatDate(dateRange.endDate)
-                : "End Date Not Selected"}{" "}
+              {dateRange.startDate && dateRange.endDate
+                ? formatDate(dateRange.startDate) +
+                  " - " +
+                  formatDate(dateRange.endDate)
+                : "All Data"}
             </span>
             {/*chart*/}
             {chartData.length > 0 ? (
