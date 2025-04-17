@@ -194,120 +194,126 @@ const JanePage = () => {
 
   return (
     <>
-      <Header />
-      {/* <NavigationBar /> */}
-
-      <div className="flex flex-col min-h-screen w-full p-8 pr-20 pl-14 bg-gray-200">
-        {/*headings*/}
-        <div className={centerItemsInDiv}>
-          <div>
-            <h1 className="font-bold">JANE Statistics</h1>
-            <h2 className="font-[Montserrat]">Dashboard</h2>
-          </div>
-          {/*date picker*/}
-          <div className="w-60">
-            <Datepicker
-              placeholder="Select Date Range"
-              showShortcuts={true}
-              asSingle={false}
-              value={dateRange}
-              onChange={handleDateRangeChange}
-              primaryColor={"yellow"}
-              displayFormat="MM/DD/YYYY"
-            />
-          </div>
-        </div>
-        {/*upload section*/}
-        <div className={`${centerItemsInDiv} basis-20xs`}>
+      <NavigationBar />
+      {/* <div className="flex flex-col min-h-screen w-full p-8 pr-20 pl-14 bg-gray-200"> */}
+      <div className="ml-[250px] flex flex-col min-h-screen min-w-[80%] bg-gray-200 overflow-x-hidden">
+        <Header />
+        <div className="flex flex-col p-8 pr-20 pl-14 min-h-screen">
+          {/*headings*/}
           <div className={centerItemsInDiv}>
-            <button
-              className={`${buttonStyle} mr-5 text-nowrap`}
-              onClick={() => document.getElementById("file-input")?.click()}
-            >
-              UPLOAD NEW SPREADSHEET
-            </button>
-            <input
-              id="file-input"
-              type="file"
-              accept=".xlsx, .csv"
-              onChange={handleFileChange}
-              className="hidden"
-            />
-          </div>
-          {/*view most recent upload section*/}
-          <button onClick={handleUploadToFirebase}>
-            Test Upload to Firestore
-          </button>
-          ;
-          <button onClick={() => handleDelete("3jzCJmpwUrqbR639ETbv")}>
-            Delete
-          </button>
-          <div className="text-left basis-200 font-[Montserrat]">
-            <h3>Most Recent Upload</h3>
             <div>
-              <div className="flex items-center space-x-2">
-                <div className="flex items-center space-x-2 bg-white p-1 pt-0 pb-0 mt-2">
-                  <div>{file ? `${file.name}` : "No file uploaded yet"}</div>
-                  <img
-                    className="w-[30px] h-[30px] pl-3 cursor-pointer"
-                    src={home}
-                    onClick={() => setFile(null)}
-                  />
+              <h1 className="font-bold">JANE Statistics</h1>
+              <h2 className="font-[Montserrat]">Dashboard</h2>
+            </div>
+            {/*date picker*/}
+            <div className="w-60">
+              <Datepicker
+                placeholder="Select Date Range"
+                showShortcuts={true}
+                asSingle={false}
+                value={dateRange}
+                onChange={handleDateRangeChange}
+                primaryColor={"yellow"}
+                displayFormat="MM/DD/YYYY"
+              />
+            </div>
+          </div>
+          {/*upload section*/}
+          <div className={`${centerItemsInDiv} basis-20xs`}>
+            <div className={centerItemsInDiv}>
+              <button
+                className={`${buttonStyle} mr-5 text-nowrap`}
+                onClick={() => document.getElementById("file-input")?.click()}
+              >
+                UPLOAD NEW SPREADSHEET
+              </button>
+              <input
+                id="file-input"
+                type="file"
+                accept=".xlsx, .csv"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+            </div>
+            {/*view most recent upload section*/}
+            <button onClick={handleUploadToFirebase}>
+              Test Upload to Firestore
+            </button>
+            ;
+            <button onClick={() => handleDelete("3jzCJmpwUrqbR639ETbv")}>
+              Delete
+            </button>
+            <div className="text-left basis-200 font-[Montserrat]">
+              <h3>Most Recent Upload</h3>
+              <div>
+                <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 bg-white p-1 pt-0 pb-0 mt-2">
+                    <div>{file ? `${file.name}` : "No file uploaded yet"}</div>
+                    <img
+                      className="w-[30px] h-[30px] pl-3 cursor-pointer"
+                      src={home}
+                      onClick={() => setFile(null)}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/*graphs*/}
-        <div>
-          <div className={`${centerItemsInDiv} pt-4`}>
-            <button>Graph/Table</button>
-            <button className={transparentGrayButtonStyle}>Export</button>
-          </div>
-          <div className={chartDiv}>
-            {/*chart title*/}
-            <span className="self-start font-semibold text-xl mb-2">
-              Visit Breakdown:{" "}
-              {dateRange.startDate && dateRange.endDate
-                ? formatDate(dateRange.startDate) +
-                  " - " +
-                  formatDate(dateRange.endDate)
-                : "All Data"}
-            </span>
-            {/*chart*/}
-            {chartData.length > 0 ? (
-              <div
-                className="chartContainer"
-                style={{ width: "1000px", height: "400px" }}
-              >
-                {loading ? (
-                  <Loading />
-                ) : (
-                  <PieChart
-                    data={chartData}
-                    series={
-                      <PieArcSeries doughnut={true} colorScheme={chartColors} />
-                    }
-                  />
-                )}
-              </div>
-            ) : (
-              <div>No data available for selected date range</div>
-            )}
-            {/*legend*/}
-            <div className="mt-4 flex flex-wrap justify-center gap-4">
-              {chartData.map((item, index) => (
-                <div key={item.key} className="flex items-center gap-2">
-                  <div
-                    className="w-10 h-4"
-                    style={{
-                      backgroundColor: chartColors[index % chartColors.length],
-                    }}
-                  />
-                  <span>{item.key}</span>
+          {/*graphs*/}
+          <div>
+            <div className={`${centerItemsInDiv} pt-4`}>
+              <button>Graph/Table</button>
+              <button className={transparentGrayButtonStyle}>Export</button>
+            </div>
+            <div className={chartDiv}>
+              {/*chart title*/}
+              <span className="self-start font-semibold text-xl mb-2">
+                Visit Breakdown:{" "}
+                {dateRange.startDate && dateRange.endDate
+                  ? formatDate(dateRange.startDate) +
+                    " - " +
+                    formatDate(dateRange.endDate)
+                  : "All Data"}
+              </span>
+              {/*chart*/}
+              {chartData.length > 0 ? (
+                <div
+                  className="chartContainer"
+                  style={{ width: "1000px", height: "400px" }}
+                >
+                  {loading ? (
+                    <Loading />
+                  ) : (
+                    <PieChart
+                      data={chartData}
+                      series={
+                        <PieArcSeries
+                          doughnut={true}
+                          colorScheme={chartColors}
+                        />
+                      }
+                    />
+                  )}
                 </div>
-              ))}
+              ) : (
+                <div>No data available for selected date range</div>
+              )}
+              {/*legend*/}
+              <div className="mt-4 flex flex-wrap justify-center gap-4">
+                {chartData.map((item, index) => (
+                  <div key={item.key} className="flex items-center gap-2">
+                    <div
+                      className="w-10 h-4"
+                      style={{
+                        backgroundColor:
+                          chartColors[index % chartColors.length],
+                      }}
+                    />
+                    <span>{item.key}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
