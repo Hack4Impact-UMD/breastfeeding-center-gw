@@ -3,7 +3,7 @@ import Header from "../components/header.tsx";
 import NavigationBar from "../components/NavigationBar/NavigationBar.tsx";
 import home from "../assets/management.svg";
 import React from "react";
-import { PieArcSeries, PieChart } from "reaviz";
+import { PieArcSeries, PieChart, FunnelChart } from "reaviz";
 import { Jane } from "../types/JaneType.ts";
 import { getJaneTypes } from "../backend/JaneFunctions";
 import {
@@ -85,6 +85,33 @@ const JanePage = () => {
       lastName: "Whitaker",
       treatment: "Prenatal Prep for Lactation",
       visitType: "TELEHEALTH",
+    },
+  ];
+
+  const funnelData = [
+    {
+      data: 58,
+      key: "First week",
+    },
+    {
+      data: 43,
+      key: "Second week",
+    },
+    {
+      data: 23,
+      key: "Third week",
+    },
+    {
+      data: 15,
+      key: "Fourth week",
+    },
+    {
+      data: 8,
+      key: "Fifth week",
+    },
+    {
+      data: 5,
+      key: "Sixth week",
     },
   ];
 
@@ -269,12 +296,12 @@ const JanePage = () => {
             <div className={chartDiv}>
               {/*chart title*/}
               <span className="self-start font-semibold text-xl mb-2">
-                Visit Breakdown:{" "}
+                Visit Breakdown:
                 {dateRange.startDate && dateRange.endDate
                   ? formatDate(dateRange.startDate) +
                     " - " +
                     formatDate(dateRange.endDate)
-                  : "All Data"}
+                  : " All Data"}
               </span>
               {/*chart*/}
               {chartData.length > 0 ? (
@@ -314,6 +341,18 @@ const JanePage = () => {
                   </div>
                 ))}
               </div>
+            </div>
+            {/*funnel chart*/}
+            <div className={chartDiv}>
+              <span className="self-start font-semibold text-xl mb-2">
+                Retention Rate:
+                {dateRange.startDate && dateRange.endDate
+                  ? formatDate(dateRange.startDate) +
+                    " - " +
+                    formatDate(dateRange.endDate)
+                  : " All Data"}
+              </span>
+              <FunnelChart height={300} width={600} data={funnelData} />
             </div>
           </div>
         </div>
