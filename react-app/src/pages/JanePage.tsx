@@ -29,6 +29,9 @@ const JanePage = () => {
   const chartDiv =
     "flex flex-col items-center justify-center bg-white border-2 border-black p-5 mt-2 rounded-lg";
 
+//nav bar open/closed
+const [navBarOpen, setNavBarOpen] = useState(true);
+
   //file upload
   const [file, setFile] = useState<File | null>(null);
   const [janeData, setJaneData] = useState<Jane[]>([]);
@@ -247,9 +250,12 @@ const JanePage = () => {
 
   return (
     <>
-      <NavigationBar />
-      {/* <div className="flex flex-col min-h-screen w-full p-8 pr-20 pl-14 bg-gray-200"> */}
-      <div className="ml-[250px] flex flex-col min-h-screen min-w-[80%] bg-gray-200 overflow-x-hidden">
+      <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
+      <div
+        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
+          navBarOpen ? "ml-[250px]" : "ml-[60px]"  //set margin of content to 250px when nav bar is open and 60px when closed
+        }`}
+      >
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-14 min-h-screen">
           {/*headings*/}

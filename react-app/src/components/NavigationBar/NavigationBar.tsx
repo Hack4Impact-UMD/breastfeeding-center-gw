@@ -9,8 +9,15 @@ import { LuChevronsLeft } from "react-icons/lu";
 import { LuChevronsRight } from "react-icons/lu";
 import LogoutConfirmation from "./LogoutConfirmation";
 
-const NavigationBar = () => {
-  // tailwind class styling into consts
+interface NavigationBarProps {
+  navBarOpen: boolean;
+  setNavBarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const NavigationBar: React.FC<NavigationBarProps> = ({
+  navBarOpen,
+  setNavBarOpen,
+}) => {  
   const notActiveStyle =
     "hover:bg-bcgw-yellow-light bg-white w-full h-full p-3 flex items-center";
   const activeStyle = "bg-bcgw-yellow-dark w-full h-full p-3 flex items-center";
@@ -20,7 +27,6 @@ const NavigationBar = () => {
   const serviceMargin = "ml-12";
   const serviceStyle = "flex flex-row w-full h-[30px] cursor-pointer";
   const [openServices, setOpenServices] = useState(false);
-  const [navBarOpen, setNavBarOpen] = useState(true);
   const [openLogoutConfirmation, setOpenLogoutConfirmation] =
     useState<boolean>(false);
 
