@@ -6,6 +6,7 @@ import NavigationBar from "./components/NavigationBar/NavigationBar";
 import RequireAuth from "./auth/RequireAuth";
 import { AuthProvider } from "./auth/AuthProvider";
 import JanePage from "./pages/JanePage";
+import JaneData from "./pages/JaneData";
 
 function App() {
   // const navigate = useNavigate();
@@ -24,6 +25,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/logout" element={<LogoutPage />} />
           <Route path="/services/jane" element={<JanePage />} />
+          <Route path="/services/jane/data" element={<JaneData />} />
           <Route
             path="/*"
             element={

@@ -40,6 +40,7 @@ const JanePage = () => {
       setFile(selectedFile);
       console.log("Selected file:", selectedFile.name);
 
+      //translate data into jane types and set local data
       try {
         const janeData = await getJaneTypes(e);
         console.log("Extracted Jane data:", janeData);
@@ -48,6 +49,14 @@ const JanePage = () => {
       } catch (error) {
         console.error("Error extracting Jane data:", error);
       }
+
+      //add data to firebase
+      // try {
+      //   await addJaneSpreadsheet(sampleJaneData);
+      //   console.log("Upload complete!");
+      // } catch (error) {
+      //   console.error("Upload error:", error);
+      // }
     }
   };
 
@@ -115,13 +124,8 @@ const JanePage = () => {
     },
   ];
 
-  const handleUploadToFirebase = async () => {
-    try {
-      await addJaneSpreadsheet(sampleJaneData);
-      console.log("Upload complete!");
-    } catch (error) {
-      console.error("Upload error:", error);
-    }
+  const openUploadedData = async () => {
+    
   };
 
   const testGetAllJaneData = async () => {
@@ -261,15 +265,13 @@ const JanePage = () => {
                 onChange={handleFileChange}
                 className="hidden"
               />
+              {/*view most recent upload section*/}
+              <button 
+                className={`${buttonStyle} mr-5 text-nowrap`}
+                onClick={openUploadedData}>
+                VIEW UPLOADED DATA
+              </button>
             </div>
-            {/*view most recent upload section*/}
-            <button onClick={handleUploadToFirebase}>
-              Test Upload to Firestore
-            </button>
-            ;
-            <button onClick={() => handleDelete("3jzCJmpwUrqbR639ETbv")}>
-              Delete
-            </button>
             <div className="text-left basis-200 font-[Montserrat]">
               <h3>Most Recent Upload</h3>
               <div>
