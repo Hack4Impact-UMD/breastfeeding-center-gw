@@ -384,7 +384,7 @@ exports.getAppointments = onCall(
       //   auth &&
       //   auth.token
       // ) {
-      acuity.request("/appointments?max=2", function (err, appointments) {
+      acuity.request("/appointments?max=10", function (err, appointments) {
         if (err) {
           console.error(err);
           reject(err);
@@ -402,3 +402,31 @@ exports.getAppointments = onCall(
     });
   }
 );
+
+/*
+Will retrieve baby due / birth date and where will / were they born
+*/
+
+exports.getBabyInfo = onCall({ region: "us-east4", cors: true }, async () => {
+  return new Promise(async (resolve, reject) => {
+    // if (
+    //   auth &&
+    //   auth.token
+    // ) {
+    acuity.request("/appointments?max=10", function (err, appointments) {
+      if (err) {
+        console.error(err);
+        reject(err);
+      }
+      console.log(appointments.body);
+      resolve(appointments.body);
+    });
+
+    // } else {
+    //   throw new functions.https.HttpsError(
+    //     "permission-denied",
+    //     "Only an admin user can change roles. If you are an admin, make sure the arguments passed into the function are correct."
+    //   );
+    // }
+  });
+});
