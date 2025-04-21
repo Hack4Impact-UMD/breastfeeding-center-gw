@@ -128,7 +128,7 @@ Different formats:
           }
         });
         console.log(userMap);
-        return userMap;
+        resolve(babyInfo.data);
       })
       .catch((error: any) => {
         reject(error);
