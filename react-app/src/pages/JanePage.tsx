@@ -3,6 +3,7 @@ import Header from "../components/header.tsx";
 import NavigationBar from "../components/NavigationBar/NavigationBar.tsx";
 import home from "../assets/management.svg";
 import React from "react";
+import { useRef } from "react";
 import { PieArcSeries, PieChart, FunnelChart } from "reaviz";
 import { Jane } from "../types/JaneType.ts";
 import { getJaneTypes } from "../backend/JaneFunctions";
@@ -13,6 +14,8 @@ import {
 } from "../backend/FirestoreCalls";
 import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import Loading from "../components/Loading.tsx";
+import { toPng } from 'html-to-image';
+import download from 'downloadjs';
 
 const JanePage = () => {
   //styles
@@ -33,6 +36,8 @@ const JanePage = () => {
   const [chartData, setChartData] = useState<{ key: string; data: number }[]>(
     []
   );
+  const pieChartRef = useRef<HTMLDivElement>(null);
+  const funnelChartRef = useRef<HTMLDivElement>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
@@ -140,6 +145,23 @@ const JanePage = () => {
   const handleDelete = async (id: string) => {
     await deleteJaneById(id);
     console.log("Deleted Jane with ID:", id);
+  };
+
+  const handleExport = async (
+    ref: React.RefObject<HTMLDivElement | null>,
+    filename: string
+  ) => {
+    const element = ref.current;
+    if (!element) {
+      return;
+    }
+
+    try {
+      const dataUrl = await toPng(element); 
+      download(dataUrl, `${filename}.png`);
+    } catch (error) {
+      console.error("Export failed:", error);
+    }
   };
 
   //date picker
@@ -265,12 +287,6 @@ const JanePage = () => {
                 onChange={handleFileChange}
                 className="hidden"
               />
-              {/*view most recent upload section*/}
-              <button 
-                className={`${buttonStyle} mr-5 text-nowrap`}
-                onClick={openUploadedData}>
-                VIEW UPLOADED DATA
-              </button>
             </div>
             <div className="text-left basis-200 font-[Montserrat]">
               <h3>Most Recent Upload</h3>
@@ -293,7 +309,12 @@ const JanePage = () => {
           <div>
             <div className={`${centerItemsInDiv} pt-4`}>
               <button>Graph/Table</button>
-              <button className={transparentGrayButtonStyle}>Export</button>
+              <button
+                className={transparentGrayButtonStyle}
+                onClick={() => handleExport(pieChartRef, "visit_breakdown")}
+              >
+                Export
+              </button>
             </div>
             <div className={chartDiv}>
               {/*chart title*/}
@@ -309,6 +330,7 @@ const JanePage = () => {
               {chartData.length > 0 ? (
                 <div
                   className="chartContainer"
+                  ref={pieChartRef} 
                   style={{ width: "1000px", height: "400px" }}
                 >
                   {loading ? (
