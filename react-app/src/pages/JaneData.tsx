@@ -15,21 +15,21 @@ import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import Loading from "../components/Loading.tsx";
 
 const JaneData = () => {
-    //styles
-    const buttonStyle =
-        "bg-bcgw-yellow-dark text-lg border-1 border-black-500 py-2 px-8 rounded-full cursor-pointer";
-    const transparentYellowButtonStyle =
-        "bg-transparent text-bcgw-yellow-dark border-2 border-bcgw-yellow-dark py-1 px-2 rounded-full cursor-pointer";
-    const transparentGrayButtonStyle =
-        "bg-transparent text-gray border-2 border-gray py-1 px-6 rounded-full cursor-pointer";
-    const centerItemsInDiv = "flex justify-between items-center";
+  //styles
+  const buttonStyle =
+    "bg-bcgw-yellow-dark text-lg border-1 border-black-500 py-2 px-8 rounded-full cursor-pointer";
+  const transparentYellowButtonStyle =
+    "bg-transparent text-bcgw-yellow-dark border-2 border-bcgw-yellow-dark py-1 px-2 rounded-full cursor-pointer";
+  const transparentGrayButtonStyle =
+    "bg-transparent text-gray border-2 border-gray py-1 px-6 rounded-full cursor-pointer";
+  const centerItemsInDiv = "flex justify-between items-center";
 
-    //file upload
-    const [file, setFile] = useState<File | null>(null);
-    const [janeData, setJaneData] = useState<Jane[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
+  //file upload
+  const [file, setFile] = useState<File | null>(null);
+  const [janeData, setJaneData] = useState<Jane[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
     if (selectedFile) {
       setFile(selectedFile);
@@ -116,49 +116,48 @@ const JaneData = () => {
     //setChartData(chartData);
   };
 
-    return (
-        <>
-          <NavigationBar />
-          {/* <div className="flex flex-col min-h-screen w-full p-8 pr-20 pl-14 bg-gray-200"> */}
-          <div className="ml-[250px] flex flex-col min-h-screen min-w-[80%] bg-gray-200 overflow-x-hidden">
-            <Header />
-            <div className="flex flex-col p-8 pr-20 pl-14 min-h-screen">
-                {/*headings*/}
-                <div className={centerItemsInDiv}>
-                    <div>
-                    <h1 className="font-bold">JANE Statistics</h1>
-                    <h2 className="font-[Montserrat]">Dashboard</h2>
-                    </div>
-                    {/*date picker*/}
-                    <div className="w-60">
-                    <Datepicker
-                        placeholder="Select Date Range"
-                        showShortcuts={true}
-                        asSingle={false}
-                        value={dateRange}
-                        onChange={handleDateRangeChange}
-                        primaryColor={"yellow"}
-                        displayFormat="MM/DD/YYYY"
-                    />
-                    </div>
-                </div>
-                {/*upload section*/}
-                <div className={`${centerItemsInDiv} basis-20xs`}>
-                    <div className={centerItemsInDiv}>
-                    <button
-                        className={`${buttonStyle} mr-5 text-nowrap`}
-                        onClick={() => document.getElementById("file-input")?.click()}
-                    >
-                        UPLOAD NEW SPREADSHEET
-                    </button>
-                    <input
-                        id="file-input"
-                        type="file"
-                        accept=".xlsx, .csv"
-                        onChange={handleFileChange}
-                        className="hidden"
-                    />
-                    </div>
+  return (
+    <>
+      <NavigationBar />
+      {/* <div className="flex flex-col min-h-screen w-full p-8 pr-20 pl-14 bg-gray-200"> */}
+      <div className="ml-[250px] flex flex-col min-h-screen min-w-[80%] bg-gray-200 overflow-x-hidden">
+        <Header />
+        <div className="flex flex-col p-8 pr-20 pl-14 min-h-screen">
+          {/*headings*/}
+          <div className={centerItemsInDiv}>
+            <div>
+              <h1 className="font-bold">JANE Statistics</h1>
+              <h2 className="font-[Montserrat]">Dashboard</h2>
+            </div>
+            {/*date picker*/}
+            <div className="w-60">
+              <Datepicker
+                placeholder="Select Date Range"
+                showShortcuts={true}
+                asSingle={false}
+                value={dateRange}
+                onChange={handleDateRangeChange}
+                primaryColor={"yellow"}
+                displayFormat="MM/DD/YYYY"
+              />
+            </div>
+          </div>
+          {/*upload section*/}
+          <div className={`${centerItemsInDiv} basis-20xs`}>
+            <div className={centerItemsInDiv}>
+              <button
+                className={`${buttonStyle} mr-5 text-nowrap`}
+                onClick={() => document.getElementById("file-input")?.click()}>
+                UPLOAD NEW SPREADSHEET
+              </button>
+              <input
+                id="file-input"
+                type="file"
+                accept=".xlsx, .csv"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+            </div>
           </div>
         </div>
       </div>

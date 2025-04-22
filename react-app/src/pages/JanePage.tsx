@@ -14,8 +14,8 @@ import {
 } from "../backend/FirestoreCalls";
 import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import Loading from "../components/Loading.tsx";
-import { toPng } from 'html-to-image';
-import download from 'downloadjs';
+import { toPng } from "html-to-image";
+import download from "downloadjs";
 
 const JanePage = () => {
   //styles
@@ -129,9 +129,7 @@ const JanePage = () => {
     },
   ];
 
-  const openUploadedData = async () => {
-    
-  };
+  const openUploadedData = async () => {};
 
   const testGetAllJaneData = async () => {
     try {
@@ -157,7 +155,7 @@ const JanePage = () => {
     }
 
     try {
-      const dataUrl = await toPng(element); 
+      const dataUrl = await toPng(element);
       download(dataUrl, `${filename}.png`);
     } catch (error) {
       console.error("Export failed:", error);
@@ -276,8 +274,7 @@ const JanePage = () => {
             <div className={centerItemsInDiv}>
               <button
                 className={`${buttonStyle} mr-5 text-nowrap`}
-                onClick={() => document.getElementById("file-input")?.click()}
-              >
+                onClick={() => document.getElementById("file-input")?.click()}>
                 UPLOAD NEW SPREADSHEET
               </button>
               <input
@@ -311,8 +308,7 @@ const JanePage = () => {
               <button>Graph/Table</button>
               <button
                 className={transparentGrayButtonStyle}
-                onClick={() => handleExport(pieChartRef, "visit_breakdown")}
-              >
+                onClick={() => handleExport(pieChartRef, "visit_breakdown")}>
                 Export
               </button>
             </div>
@@ -330,9 +326,8 @@ const JanePage = () => {
               {chartData.length > 0 ? (
                 <div
                   className="chartContainer"
-                  ref={pieChartRef} 
-                  style={{ width: "1000px", height: "400px" }}
-                >
+                  ref={pieChartRef}
+                  style={{ width: "1000px", height: "400px" }}>
                   {loading ? (
                     <Loading />
                   ) : (
