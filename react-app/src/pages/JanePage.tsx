@@ -4,7 +4,13 @@ import NavigationBar from "../components/NavigationBar/NavigationBar.tsx";
 import home from "../assets/management.svg";
 import React from "react";
 import { useRef } from "react";
-import { PieArcSeries, PieChart, FunnelChart } from "reaviz";
+import {
+  PieArcSeries,
+  PieChart,
+  FunnelChart,
+  FunnelSeries,
+  FunnelAxisLabel,
+} from "reaviz";
 import { Jane } from "../types/JaneType.ts";
 import { getJaneTypes } from "../backend/JaneFunctions";
 import {
@@ -14,8 +20,8 @@ import {
 } from "../backend/FirestoreCalls";
 import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import Loading from "../components/Loading.tsx";
-import { toPng } from 'html-to-image';
-import download from 'downloadjs';
+import { toPng } from "html-to-image";
+import download from "downloadjs";
 
 const JanePage = () => {
   //styles
@@ -29,8 +35,8 @@ const JanePage = () => {
   const chartDiv =
     "flex flex-col items-center justify-center bg-white border-2 border-black p-5 mt-2 rounded-lg";
 
-//nav bar open/closed
-const [navBarOpen, setNavBarOpen] = useState(true);
+  //nav bar open/closed
+  const [navBarOpen, setNavBarOpen] = useState(true);
 
   //file upload
   const [file, setFile] = useState<File | null>(null);
@@ -132,9 +138,7 @@ const [navBarOpen, setNavBarOpen] = useState(true);
     },
   ];
 
-  const openUploadedData = async () => {
-    
-  };
+  const openUploadedData = async () => {};
 
   const testGetAllJaneData = async () => {
     try {
@@ -160,7 +164,7 @@ const [navBarOpen, setNavBarOpen] = useState(true);
     }
 
     try {
-      const dataUrl = await toPng(element); 
+      const dataUrl = await toPng(element);
       download(dataUrl, `${filename}.png`);
     } catch (error) {
       console.error("Export failed:", error);
@@ -253,7 +257,7 @@ const [navBarOpen, setNavBarOpen] = useState(true);
       <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
       <div
         className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
-          navBarOpen ? "ml-[250px]" : "ml-[60px]"  //set margin of content to 250px when nav bar is open and 60px when closed
+          navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
         }`}
       >
         <Header />
@@ -336,7 +340,7 @@ const [navBarOpen, setNavBarOpen] = useState(true);
               {chartData.length > 0 ? (
                 <div
                   className="chartContainer"
-                  ref={pieChartRef} 
+                  ref={pieChartRef}
                   style={{ width: "1000px", height: "400px" }}
                 >
                   {loading ? (
