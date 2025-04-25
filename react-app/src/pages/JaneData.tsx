@@ -15,7 +15,6 @@ import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import Loading from "../components/Loading.tsx";
 import { columns } from "../components/DataTable/Columns.tsx";
 import { DataTable } from "../components/DataTable/DataTable.tsx";
-import { DataTablePagination } from "@/components/DataTable/DataTablePagination.tsx";
 
 const JaneData = () => {
   //styles
