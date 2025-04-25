@@ -13,6 +13,9 @@ import {
 } from "../backend/FirestoreCalls";
 import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import Loading from "../components/Loading.tsx";
+import { columns } from "../components/DataTable/Columns.tsx";
+import { DataTable } from "../components/DataTable/DataTable.tsx";
+import { DataTablePagination } from "@/components/DataTable/DataTablePagination.tsx";
 
 const JaneData = () => {
   //styles
@@ -116,6 +119,175 @@ const JaneData = () => {
     //setChartData(chartData);
   };
 
+  const sampleJaneData: Jane[] = [
+    {
+      apptId: "108685",
+      firstName: "Menaka",
+      lastName: "Kalaskar",
+      email: "email@gmail.com",
+      visitType: "HOMEVISIT",
+      treatment: "Lactation Appt, NW DC",
+      insurance: "DC",
+      date: "2025-01-01T16:00:00.000Z",
+      babyDob: "2026-01-01",
+    },
+    {
+      apptId: "109461",
+      firstName: "Mateo",
+      lastName: "Meca Rivera",
+      email: "email@gmail.com",
+      visitType: "OFFICE",
+      treatment: "Postpartum Lactation Appointment",
+      insurance: "MD",
+      date: "2025-01-08T05:00:00.000Z",
+      babyDob: "2026-01-01",
+    },
+    {
+      apptId: "107850",
+      babyDob: "01/01/2026",
+      date: "2025-01-01T18:00:00.000Z",
+      email: "email@gmail.com",
+      firstName: "Pilar",
+      insurance:
+        '[{:name=>"BCBS/Carefirst", :number=>"NIW596M84436", :invoice_state=>"unpaid", :claim_state=>"unsubmitted", :claim_id=>8810}]',
+      lastName: "Whitaker",
+      treatment: "Prenatal Prep for Lactation",
+      visitType: "TELEHEALTH",
+    },
+    {
+      apptId: "107850",
+      babyDob: "01/01/2026",
+      date: "2025-01-01T18:00:00.000Z",
+      email: "email@gmail.com",
+      firstName: "Pilar",
+      insurance:
+        '[{:name=>"BCBS/Carefirst", :number=>"NIW596M84436", :invoice_state=>"unpaid", :claim_state=>"unsubmitted", :claim_id=>8810}]',
+      lastName: "Whitaker",
+      treatment: "Prenatal Prep for Lactation",
+      visitType: "TELEHEALTH",
+    },
+    {
+      apptId: "107850",
+      babyDob: "01/01/2026",
+      date: "2025-01-01T18:00:00.000Z",
+      email: "email@gmail.com",
+      firstName: "Pilar",
+      insurance:
+        '[{:name=>"BCBS/Carefirst", :number=>"NIW596M84436", :invoice_state=>"unpaid", :claim_state=>"unsubmitted", :claim_id=>8810}]',
+      lastName: "Whitaker",
+      treatment: "Prenatal Prep for Lactation",
+      visitType: "TELEHEALTH",
+    },
+    {
+      apptId: "107850",
+      babyDob: "01/01/2026",
+      date: "2025-01-01T18:00:00.000Z",
+      email: "email@gmail.com",
+      firstName: "Pilar",
+      insurance:
+        '[{:name=>"BCBS/Carefirst", :number=>"NIW596M84436", :invoice_state=>"unpaid", :claim_state=>"unsubmitted", :claim_id=>8810}]',
+      lastName: "Whitaker",
+      treatment: "Prenatal Prep for Lactation",
+      visitType: "TELEHEALTH",
+    },
+    {
+      apptId: "107850",
+      babyDob: "01/01/2026",
+      date: "2025-01-01T18:00:00.000Z",
+      email: "email@gmail.com",
+      firstName: "Pilar",
+      insurance:
+        '[{:name=>"BCBS/Carefirst", :number=>"NIW596M84436", :invoice_state=>"unpaid", :claim_state=>"unsubmitted", :claim_id=>8810}]',
+      lastName: "Whitaker",
+      treatment: "Prenatal Prep for Lactation",
+      visitType: "TELEHEALTH",
+    },
+    {
+      apptId: "107850",
+      babyDob: "01/01/2026",
+      date: "2025-01-01T18:00:00.000Z",
+      email: "email@gmail.com",
+      firstName: "Pilar",
+      insurance:
+        '[{:name=>"BCBS/Carefirst", :number=>"NIW596M84436", :invoice_state=>"unpaid", :claim_state=>"unsubmitted", :claim_id=>8810}]',
+      lastName: "Whitaker",
+      treatment: "Prenatal Prep for Lactation",
+      visitType: "TELEHEALTH",
+    },
+    {
+      apptId: "107850",
+      babyDob: "01/01/2026",
+      date: "2025-01-01T18:00:00.000Z",
+      email: "email@gmail.com",
+      firstName: "Pilar",
+      insurance:
+        '[{:name=>"BCBS/Carefirst", :number=>"NIW596M84436", :invoice_state=>"unpaid", :claim_state=>"unsubmitted", :claim_id=>8810}]',
+      lastName: "Whitaker",
+      treatment: "Prenatal Prep for Lactation",
+      visitType: "TELEHEALTH",
+    },
+    {
+      apptId: "107850",
+      babyDob: "01/01/2026",
+      date: "2025-01-01T18:00:00.000Z",
+      email: "email@gmail.com",
+      firstName: "Pilar",
+      insurance:
+        '[{:name=>"BCBS/Carefirst", :number=>"NIW596M84436", :invoice_state=>"unpaid", :claim_state=>"unsubmitted", :claim_id=>8810}]',
+      lastName: "Whitaker",
+      treatment: "Prenatal Prep for Lactation",
+      visitType: "TELEHEALTH",
+    },
+    {
+      apptId: "107850",
+      babyDob: "01/01/2026",
+      date: "2025-01-01T18:00:00.000Z",
+      email: "email@gmail.com",
+      firstName: "Pilar",
+      insurance:
+        '[{:name=>"BCBS/Carefirst", :number=>"NIW596M84436", :invoice_state=>"unpaid", :claim_state=>"unsubmitted", :claim_id=>8810}]',
+      lastName: "Whitaker",
+      treatment: "Prenatal Prep for Lactation",
+      visitType: "TELEHEALTH",
+    },
+    {
+      apptId: "107850",
+      babyDob: "01/01/2026",
+      date: "2025-01-01T18:00:00.000Z",
+      email: "email@gmail.com",
+      firstName: "Pilar",
+      insurance:
+        '[{:name=>"BCBS/Carefirst", :number=>"NIW596M84436", :invoice_state=>"unpaid", :claim_state=>"unsubmitted", :claim_id=>8810}]',
+      lastName: "Whitaker",
+      treatment: "Prenatal Prep for Lactation",
+      visitType: "TELEHEALTH",
+    },
+    {
+      apptId: "107850",
+      babyDob: "01/01/2026",
+      date: "2025-01-01T18:00:00.000Z",
+      email: "email@gmail.com",
+      firstName: "Pilar",
+      insurance:
+        '[{:name=>"BCBS/Carefirst", :number=>"NIW596M84436", :invoice_state=>"unpaid", :claim_state=>"unsubmitted", :claim_id=>8810}]',
+      lastName: "Whitaker",
+      treatment: "Prenatal Prep for Lactation",
+      visitType: "TELEHEALTH",
+    },
+    {
+      apptId: "107850",
+      babyDob: "01/01/2026",
+      date: "2025-01-01T18:00:00.000Z",
+      email: "email@gmail.com",
+      firstName: "Pilar",
+      insurance:
+        '[{:name=>"BCBS/Carefirst", :number=>"NIW596M84436", :invoice_state=>"unpaid", :claim_state=>"unsubmitted", :claim_id=>8810}]',
+      lastName: "Whitaker",
+      treatment: "Prenatal Prep for Lactation",
+      visitType: "TELEHEALTH",
+    },
+  ];
+
   return (
     <>
       <NavigationBar />
@@ -147,7 +319,8 @@ const JaneData = () => {
             <div className={centerItemsInDiv}>
               <button
                 className={`${buttonStyle} mr-5 text-nowrap`}
-                onClick={() => document.getElementById("file-input")?.click()}>
+                onClick={() => document.getElementById("file-input")?.click()}
+              >
                 UPLOAD NEW SPREADSHEET
               </button>
               <input
@@ -159,6 +332,7 @@ const JaneData = () => {
               />
             </div>
           </div>
+          <DataTable columns={columns} data={sampleJaneData} />
         </div>
       </div>
     </>
