@@ -5,7 +5,7 @@ import LogoutPage from "./pages/LogoutPage";
 import NavigationBar from "./components/NavigationBar/NavigationBar";
 import RequireAuth from "./auth/RequireAuth";
 import { AuthProvider } from "./auth/AuthProvider";
-import { getBabyInfo } from "./backend/AcuityCalls";
+import { getBabyInfo, getClientAppointments } from "./backend/AcuityCalls";
 
 function App() {
   // const navigate = useNavigate();
@@ -41,6 +41,11 @@ function App() {
                     getBabyInfo()
                       .then(() => console.log("Success"))
                       .catch();
+
+                    getClientAppointments()
+                      .then(() => console.log("Success"))
+                      .catch();
+
                   }}
                 >
                   TEST

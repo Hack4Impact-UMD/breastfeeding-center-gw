@@ -1,5 +1,22 @@
 import { functions } from "../config/firebase";
 import { httpsCallable } from "firebase/functions";
+
+
+interface RawClassInfo {
+  date: Date;
+  instructor: string | null;
+  title: string | null;
+}
+
+interface ClientRawAppointments {
+  [id: number]: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    appointments: RawClassInfo[];
+  };
+}
+
 /*
 Write functions to retrieve the following information 
 
@@ -133,5 +150,116 @@ Different formats:
       .catch((error: any) => {
         reject(error);
       });
+  });
+}
+const CLASS_NAME_TO_CATEGORY: Record<string, string> = {
+  // Childbirth
+  "Childbirth Express (2-Day and 1-WKND)": "Childbirth",
+  "Natural Childbirth": "Childbirth",
+  "Doula Meet + Greet": "Childbirth",
+  "Comfort, Communication & Positions": "Childbirth",
+  "Evening Lamaze Series": "Childbirth",
+  "Prep for Postpartum Recovery": "Childbirth",
+
+  // Postpartum
+  "Optimizing Sleep, Prenatal-5m": "Postpartum",
+  "Perinatal Rights at Work": "Postpartum",
+  "Pumping Strategies + RTW": "Postpartum",
+  "Starting Solids - Feeding 101": "Postpartum",
+  "Feeding 102 - Overcoming Challenges in Feeding": "Postpartum",
+  "Postpartum Nutrition": "Postpartum",
+  "Rose PT Postpartum Pelvic Health": "Postpartum",
+  "Bottles & Other Feeding Tools": "Postpartum",
+
+  // Prenatal
+  "Breastfeeding + Pumping Basics": "Prenatal",
+  "Baby Care": "Prenatal",
+  "Babywearing 101": "Prenatal",
+  "Financial Planning for Baby": "Prenatal",
+  "Rose PT Prenatal Pelvic Health": "Prenatal",
+  // (If you want “Bottles & Other Feeding Tools” here too,
+  // add it again or remove above.)
+
+  // Infant Massage
+  "Infant Massage": "Infant Massage",
+
+  // Parent Groups
+  "Navigating Perinatal Stress": "Parent Groups",
+  "Feeding + Postpartum with 0-4m Olds": "Parent Groups",
+  "Feeding + Postpartum with 4-12m Olds": "Parent Groups",
+  "Feeding + Postpartum with Toddlers": "Parent Groups",
+};
+
+
+/** A “true” class appointment */
+interface ClassEntry {
+  date: Date;
+  instructor: string | null;
+  title: string | null;
+  classType: string | null;
+  didAttend: boolean;
+}
+
+/** One record per client, now *only* classes */
+interface ClientAppointments {
+  firstName: string;
+  lastName: string;
+  email: string;
+  classes: ClassEntry[];
+}
+
+export function getClientAppointments(): Promise<Record<number, ClientAppointments>> {
+  return new Promise((resolve, reject) => {
+    const fn = httpsCallable(functions, "getAppointments");
+    fn()
+      .then((res: any) => {
+        const clientMap: Record<number, ClientAppointments> = {};
+        const CLASS_CATS = new Set([
+          "Childbirth Classes",
+          "Postpartum Classes",
+          "Prenatal Classes",
+          "Infant Massage",
+          "Parent Groups",
+        ]);
+
+        res.data.forEach((appt: any) => {
+          const {
+            id,
+            firstName,
+            lastName,
+            email,
+            calendar,
+            type,
+            category,
+            datetime,
+            canceled,
+          } = appt;
+
+          // only initialize the classes array
+          if (!clientMap[id]) {
+            clientMap[id] = {
+              firstName,
+              lastName,
+              email,
+              classes: [],
+            };
+          }
+
+          // if it's a class, push it; otherwise ignore
+          if (category && CLASS_CATS.has(category)) {
+            clientMap[id].classes.push({
+              date: new Date(datetime),
+              instructor: calendar || null,
+              title: type || null,
+              classType: category,
+              didAttend: !canceled,
+            });
+          }
+        });
+
+        console.log("Clients with only classes (and the date, instructor, class name, and class type):", clientMap);
+        resolve(clientMap);
+      })
+      .catch(reject);
   });
 }
