@@ -191,7 +191,7 @@ const CLASS_NAME_TO_CATEGORY: Record<string, string> = {
 };
 
 
-/** A “true” class appointment */
+/** class appointment */
 interface ClassEntry {
   date: Date;
   instructor: string | null;
@@ -200,7 +200,7 @@ interface ClassEntry {
   didAttend: boolean;
 }
 
-/** One record per client, now *only* classes */
+/** One record per client, now classes not appointments */
 interface ClientAppointments {
   firstName: string;
   lastName: string;
