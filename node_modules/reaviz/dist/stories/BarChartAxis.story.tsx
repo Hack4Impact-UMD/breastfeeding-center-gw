@@ -1,0 +1,266 @@
+import React from 'react';
+import { StackedBarChart } from 'reaviz';
+import { binnedDateData } from 'reaviz-data-utils';
+import {
+  Bar,
+  StackedBarSeries,
+  RangeLines,
+  BarSeries,
+  StackedNormalizedBarSeries,
+  BarLabel,
+  GuideBar,
+  HistogramBarSeries,
+  MarimekkoBarSeries
+} from 'reaviz';
+import { GridlineSeries, Gridline } from 'reaviz';
+import {
+  LinearXAxis,
+  LinearXAxisTickSeries,
+  LinearYAxis,
+  LinearYAxisTickSeries,
+  LinearYAxisTickLabel,
+  LinearXAxisTickLabel
+} from 'reaviz';
+import { Gradient, GradientStop } from 'reaviz';
+import { getXScale, getYScale } from 'reaviz';
+import { BarChart } from 'reaviz';
+
+export default {
+  tags: ['snapshot'],
+  title: 'Charts/Bar Chart/Axis',
+  component: BarChart,
+  subcomponents: {
+    BarSeries,
+    StackedBarSeries,
+    StackedNormalizedBarSeries,
+    MarimekkoBarSeries,
+    RangeLines,
+    Bar,
+    BarLabel,
+    GuideBar,
+    HistogramBarSeries
+  }
+};
+
+export const TopBottomAxis = () => {
+  const scale = getXScale({
+    type: 'category',
+    width: 450,
+    data: [
+      {
+        key: 'Closed',
+        data: 0,
+        x: 'Closed'
+      },
+      {
+        key: 'Opened',
+        data: 0,
+        x: 'Opened'
+      }
+    ],
+    isMultiSeries: false,
+    isDiverging: true
+  });
+
+  return (
+    <StackedBarChart
+      id="top-bottom-axis"
+      width={450}
+      height={200}
+      margins={0}
+      data={binnedDateData}
+      gridlines={<GridlineSeries line={<Gridline direction="x" />} />}
+      series={
+        <StackedBarSeries
+          layout="horizontal"
+          type="stackedDiverging"
+          colorScheme={['#ACB7C9', '#418AD7']}
+          bar={[
+            <Bar
+              width={10}
+              gradient={
+                <Gradient
+                  stops={[
+                    <GradientStop offset="5%" stopOpacity={0.25} key="start" />,
+                    <GradientStop offset="90%" stopOpacity={0.7} key="stop" />
+                  ]}
+                />
+              }
+              rangeLines={<RangeLines position="top" strokeWidth={3} />}
+            />,
+            <Bar
+              width={10}
+              gradient={
+                <Gradient
+                  stops={[
+                    <GradientStop offset="5%" stopOpacity={0.7} key="stop" />,
+                    <GradientStop offset="90%" stopOpacity={0.25} key="start" />
+                  ]}
+                />
+              }
+              rangeLines={<RangeLines position="top" strokeWidth={3} />}
+            />
+          ]}
+        />
+      }
+      xAxis={
+        <LinearXAxis
+          orientation="horizontal"
+          position="end"
+          tickSeries={
+            <LinearXAxisTickSeries
+              line={null}
+              label={
+                <LinearXAxisTickLabel
+                  padding={5}
+                  position="end"
+                  format={(d) => `${d < 0 ? d * -1 : d}`}
+                />
+              }
+            />
+          }
+        />
+      }
+      secondaryAxis={[
+        <LinearYAxis
+          orientation="horizontal"
+          type="category"
+          scale={scale}
+          tickSeries={
+            <LinearYAxisTickSeries
+              line={null}
+              label={<LinearYAxisTickLabel padding={20} position="start" />}
+            />
+          }
+        />
+      ]}
+      yAxis={
+        <LinearYAxis
+          type="category"
+          position="center"
+          orientation="vertical"
+          tickSeries={<LinearYAxisTickSeries line={null} label={null} />}
+        />
+      }
+    />
+  );
+};
+
+TopBottomAxis.story = {
+  name: 'Top + Bottom Axis'
+};
+
+export const LeftRightAxis = () => {
+  const scale = getYScale({
+    type: 'category',
+    height: 200,
+    data: [
+      {
+        key: 'Closed',
+        data: 0,
+        y: 'Closed'
+      },
+      {
+        key: 'Opened',
+        data: 0,
+        y: 'Opened'
+      }
+    ],
+    isMultiSeries: false,
+    isDiverging: true
+  });
+
+  return (
+    <StackedBarChart
+      id="left-right-axis"
+      width={450}
+      height={200}
+      margins={0}
+      data={binnedDateData}
+      gridlines={<GridlineSeries line={<Gridline direction="y" />} />}
+      series={
+        <StackedBarSeries
+          type="stackedDiverging"
+          colorScheme={['#ACB7C9', '#418AD7']}
+          bar={[
+            <Bar
+              width={25}
+              gradient={
+                <Gradient
+                  stops={[
+                    <GradientStop offset="5%" stopOpacity={0.25} key="start" />,
+                    <GradientStop offset="90%" stopOpacity={0.7} key="stop" />
+                  ]}
+                />
+              }
+              rangeLines={<RangeLines position="top" strokeWidth={3} />}
+            />,
+            <Bar
+              width={25}
+              gradient={
+                <Gradient
+                  stops={[
+                    <GradientStop offset="5%" stopOpacity={0.7} key="stop" />,
+                    <GradientStop offset="90%" stopOpacity={0.25} key="start" />
+                  ]}
+                />
+              }
+              rangeLines={<RangeLines position="top" strokeWidth={3} />}
+            />
+          ]}
+        />
+      }
+      yAxis={
+        <LinearYAxis
+          roundDomains={true}
+          position="end"
+          axisLine={null}
+          tickSeries={
+            <LinearYAxisTickSeries
+              line={null}
+              label={
+                <LinearYAxisTickLabel
+                  padding={5}
+                  position="end"
+                  format={(d) => `${d < 0 ? d * -1 : d}`}
+                />
+              }
+            />
+          }
+        />
+      }
+      xAxis={
+        <LinearXAxis
+          type="category"
+          position="center"
+          tickSeries={<LinearXAxisTickSeries line={null} label={null} />}
+        />
+      }
+      secondaryAxis={[
+        <LinearYAxis
+          type="category"
+          position="start"
+          axisLine={null}
+          scale={scale}
+          tickSeries={
+            <LinearYAxisTickSeries
+              line={null}
+              label={
+                <LinearYAxisTickLabel
+                  padding={20}
+                  position="start"
+                  rotation={270}
+                  align="start"
+                />
+              }
+            />
+          }
+        />
+      ]}
+    />
+  );
+};
+
+LeftRightAxis.story = {
+  name: 'Left + Right Axis'
+};

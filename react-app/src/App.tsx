@@ -18,7 +18,7 @@ function App() {
             path="/"
             element={
               <RequireAuth>
-                <NavigationBar />
+                <AcuityDashboard />
               </RequireAuth>
             }
           />
