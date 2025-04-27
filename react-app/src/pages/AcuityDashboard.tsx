@@ -165,7 +165,7 @@ export default function AcuityDashboard() {
 
               {/* Class dropdown */}
               <div className="flex items-center space-x-2">
-                <label className="text-sm font-medium">Class:</label>
+                <label className="text-sm font-medium"></label>
                 <select
                   className="border rounded-md px-2 py-1 text-sm"
                   value={selectedClass}
@@ -199,7 +199,7 @@ export default function AcuityDashboard() {
 
               {/* Instructor dropdown */}
               <div className="flex items-center space-x-2">
-                <label className="text-sm font-medium">Instructor:</label>
+                <label className="text-sm font-medium"></label>
                 <select
                   className="border rounded-md px-2 py-1 text-sm"
                   value={selectedInstructor}
