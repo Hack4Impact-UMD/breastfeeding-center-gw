@@ -115,7 +115,7 @@ const JaneData = () => {
       data: value,
     }));
 
-    //setChartData(chartData);
+    // setChartData(chartData);
   };
 
   const sampleJaneData: Jane[] = [
