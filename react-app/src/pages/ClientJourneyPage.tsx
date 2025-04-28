@@ -1,6 +1,17 @@
 import { useState } from "react";
 import Header from "../components/header.tsx";
 import NavigationBar from "../components/NavigationBar/NavigationBar.tsx";
+import {
+  acuityColumns,
+  AcuityData,
+  JaneConsults,
+  janeConsultsColumns,
+  OneTimePurchase,
+  oneTimePurchaseColumns,
+  paysimpleColumns,
+  PaySimpleRentals,
+} from "@/components/DataTable/Columns.tsx";
+import { ClientJourneyTable } from "@/components/DataTable/ClientJourneyTable.tsx";
 
 const ClientJourney = () => {
   //nav bar
@@ -9,12 +20,77 @@ const ClientJourney = () => {
   //styles
   const centerItemsInDiv = "flex justify-between items-center";
   const dividingLine = "w-full h-1 border-t border-black-500 mt-3 mb-3";
-  const tableSection = "py-3 pb-9 space-y-3";
+  const tableSection = "py-3 space-y-3";
 
   //client basic info
   const name = "Jane Doe";
   const children = "James Doe";
   const partners = "John Doe";
+
+  const sampleAcuityData: AcuityData[] = [
+    {
+      class: "Class A",
+      instructor: "A. Smith",
+      date: "3/01/24",
+    },
+    {
+      class: "Class B",
+      instructor: "A. Smith",
+      date: "3/01/23",
+    },
+  ];
+
+  const sampleJaneConsults: JaneConsults[] = [
+    {
+      clinician: "B. Green",
+      date: "2/01/24",
+      service: "TELEHEALTH Postpartum",
+      visitType: "TELEHEALTH",
+      insurance: "Insurance Name",
+    },
+    {
+      clinician: "B. Green",
+      date: "1/12/24",
+      service: "DC Office: Postpartum Lac",
+      visitType: "HOMEVISIT",
+      insurance: "Insurance Name",
+    },
+    {
+      clinician: "C. Johnson",
+      date: "3/23/23",
+      service: "DC Office: Postpartum Lac",
+      visitType: "HOMEVISIT",
+      insurance: "Insurance Name",
+    },
+  ];
+
+  const samplePaysimple: PaySimpleRentals[] = [
+    {
+      item: "Item A",
+      totalCost: 20,
+      rate: 10,
+      startDate: "2/2/24",
+      endDate: "2/9/24",
+      rentalLength: 7,
+    },
+    {
+      item: "Item B",
+      totalCost: 30,
+      rate: 10,
+      startDate: "2/2/24",
+      endDate: "2/9/24",
+      rentalLength: 14,
+    },
+  ];
+
+  const sampleOTPs: OneTimePurchase[] = [
+    {
+      item: "Item A",
+      cost: 20,
+      date: "1/12/24",
+      platform: "Square",
+    },
+  ];
 
   return (
     <>
@@ -56,22 +132,34 @@ const ClientJourney = () => {
           <div>
             <div className={tableSection}>
               <h2 className="font-bold">Acuity Classes</h2>
-              <div className="border-2 border-black">I AM A TABsLE</div>
+              <ClientJourneyTable
+                columns={acuityColumns}
+                data={sampleAcuityData}
+              />
             </div>
 
             <div className={tableSection}>
               <h2 className="font-bold">JANE Consults</h2>
-              <div className="border-2 border-black">I AM A TABsLE</div>
+              <ClientJourneyTable
+                columns={janeConsultsColumns}
+                data={sampleJaneConsults}
+              />
             </div>
 
             <div className={tableSection}>
               <h2 className="font-bold">Paysimple Rentals</h2>
-              <div className="border-2 border-black">I AM A TABsLE</div>
+              <ClientJourneyTable
+                columns={paysimpleColumns}
+                data={samplePaysimple}
+              />
             </div>
 
             <div className={tableSection}>
               <h2 className="font-bold">One-Time Purchases</h2>
-              <div className="border-2 border-black">I AM A TABsLE</div>
+              <ClientJourneyTable
+                columns={oneTimePurchaseColumns}
+                data={sampleOTPs}
+              />
             </div>
           </div>
         </div>

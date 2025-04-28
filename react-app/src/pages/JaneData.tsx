@@ -336,8 +336,7 @@ const JaneData = () => {
             </div>
           </div>
 
-          {/* <DataTable columns={janeDataColumns} data={sampleJaneData} /> */}
-          <ClientJourneyTable columns={acuityColumns} data={sampleAcuityData} />
+          <DataTable columns={janeDataColumns} data={sampleJaneData} />
         </div>
       </div>
     </>

@@ -99,47 +99,49 @@ export function ClientJourneyTable<TData, TValue>({
         </Table>
       </div>
 
-      <div className="flex items-center justify-end space-x-2 py-2">
-        <Select
-          value={`${table.getState().pagination.pageSize}`}
-          onValueChange={(value) => {
-            table.setPageSize(Number(value));
-          }}
-        >
-          <SelectTrigger className="h-8 w-[70px] bg-white cursor-pointer">
-            <SelectValue placeholder={table.getState().pagination.pageSize} />
-          </SelectTrigger>
-          <SelectContent side="right" className="bg-white">
-            {[10, 20, 30, 40, 50].map((pageSize) => (
-              <SelectItem key={pageSize} value={`${pageSize}`}>
-                {pageSize}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <button
-          className={`border border-black w-5 h-5 flex items-center justify-center pb-1 ${
-            table.getCanPreviousPage()
-              ? "cursor-pointer"
-              : "cursor-not-allowed opacity-50"
-          }`}
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          {"<"}
-        </button>
-        <button
-          className={`border border-black w-5 h-5 flex items-center justify-center pb-1 ${
-            table.getCanNextPage()
-              ? "cursor-pointer"
-              : "cursor-not-allowed opacity-50"
-          }`}
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          {">"}
-        </button>
-      </div>
+      {table.getRowModel().rows?.length > 10 && (
+        <div className="flex items-center justify-end space-x-2 py-2">
+          <Select
+            value={`${table.getState().pagination.pageSize}`}
+            onValueChange={(value) => {
+              table.setPageSize(Number(value));
+            }}
+          >
+            <SelectTrigger className="h-8 w-[70px] bg-white cursor-pointer">
+              <SelectValue placeholder={table.getState().pagination.pageSize} />
+            </SelectTrigger>
+            <SelectContent side="right" className="bg-white">
+              {[10, 20, 30, 40, 50].map((pageSize) => (
+                <SelectItem key={pageSize} value={`${pageSize}`}>
+                  {pageSize}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <button
+            className={`border border-black w-5 h-5 flex items-center justify-center pb-1 ${
+              table.getCanPreviousPage()
+                ? "cursor-pointer"
+                : "cursor-not-allowed opacity-50"
+            }`}
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            {"<"}
+          </button>
+          <button
+            className={`border border-black w-5 h-5 flex items-center justify-center pb-1 ${
+              table.getCanNextPage()
+                ? "cursor-pointer"
+                : "cursor-not-allowed opacity-50"
+            }`}
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            {">"}
+          </button>
+        </div>
+      )}
     </>
   );
 }

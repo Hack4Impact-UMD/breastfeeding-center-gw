@@ -1,26 +1,23 @@
 import Modal from "./Modal";
 import { BiArrowBack } from "react-icons/bi";
 
-const deleteRowPopup = ({
+const DeleteRowPopup = ({
   openModal,
   onClose,
 }: {
   openModal: boolean;
   onClose: any;
 }): React.JSX.Element => {
-
   const yellowSquareButtonStyle =
     "bg-bcgw-yellow-dark text-lg border border-black-500 px-8 py-5 h-8 w-30 rounded-lg cursor-pointer flex items-center justify-center";
-    const clearSquareButtonStyle =
+  const clearSquareButtonStyle =
     "text-lg border border-black-500 px-8 py-5 h-8 w-30 rounded-lg cursor-pointer flex items-center justify-center";
 
   const handleClose = () => {
     onClose();
   };
 
-  const handleSubmit = () => {
-    
-  };
+  const handleSubmit = () => {};
 
   const deleteRow = (
     <div>
@@ -36,16 +33,10 @@ const deleteRowPopup = ({
           Are you sure you want to delete the following row(s)?
         </p>
         <div className="flex justify-center gap-8">
-        <button
-            onClick={handleClose}
-            className={clearSquareButtonStyle}
-          >
+          <button onClick={handleClose} className={clearSquareButtonStyle}>
             Cancel
           </button>
-          <button
-            onClick={handleSubmit}
-            className={yellowSquareButtonStyle}
-          >
+          <button onClick={handleSubmit} className={yellowSquareButtonStyle}>
             Confirm
           </button>
         </div>
@@ -60,4 +51,4 @@ const deleteRowPopup = ({
   );
 };
 
-export default deleteRowPopup;
+export default DeleteRowPopup;
