@@ -56,7 +56,7 @@ const JanePage = () => {
         //add data to firebase
         try {
           console.log(parsedJaneData);
-          await addJaneSpreadsheet(parsedJaneData);
+          //await addJaneSpreadsheet(parsedJaneData);
           console.log("Upload complete!");
         } catch (error) {
           console.error("Upload error:", error);

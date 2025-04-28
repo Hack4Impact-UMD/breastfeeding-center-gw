@@ -45,13 +45,11 @@ export async function getJaneTypes(
             // Convert Excel serial number to JS Date
             const date = new Date(Math.round((value - 25569) * 86400 * 1000));
             // Format it as ISO or however you want
-            (jane as any)[columnName] = date.toLocaleString("en-US", {
-              timeZone: "UTC",
-            });
+            (jane as any)[columnName] = date.toISOString();
           } else if (typeof value === "string" && value.trim() !== "") {
             // If Excel or XLSX already parsed it into a string
             const jsDate = new Date(value);
-            (jane as any)[columnName] = jsDate.toLocaleString("en-US");
+            (jane as any)[columnName] = jsDate.toISOString();
           }
           console.log(jane.date)
         }
@@ -81,10 +79,6 @@ export async function getJaneTypes(
       jane.visitType = visitType;
       jane.treatment = treatment;
       delete (jane as any).treatment_name;
-
-      console.log(new Date(jane.date).toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }));
       
       jane.email = "email@gmail.com"; // hardcoded
       jane.babyDob = "01/01/2026";    // hardcoded
