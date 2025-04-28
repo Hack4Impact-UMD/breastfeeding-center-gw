@@ -105,6 +105,37 @@ export default function AcuityDashboard() {
       ? allInstructorData
       : allInstructorData.filter((item) => item.key === selectedInstructor);
 
+  // ── Order By dropdown state & data ─────────────────────────
+  // Not implemented yet
+  const [selectedOrder, setSelectedOrder] = useState("Order By");
+  const allOrders = [
+    {
+      key: "Midwife Education",
+      data: [
+        { key: new Date("2025-02-19"), data: 10 },
+        { key: new Date("2025-02-26"), data: 15 },
+        { key: new Date("2025-03-05"), data: 14 },
+        { key: new Date("2025-03-12"), data: 18 },
+        { key: new Date("2025-03-19"), data: 20 },
+      ],
+    },
+    {
+      key: "Childbirth Classes",
+      data: [
+        { key: new Date("2025-02-19"), data: 12 },
+        { key: new Date("2025-02-26"), data: 14 },
+        { key: new Date("2025-03-05"), data: 16 },
+        { key: new Date("2025-03-12"), data: 13 },
+        { key: new Date("2025-03-19"), data: 18 },
+      ],
+    },
+  ];
+
+  const filteredOrderedData =
+    selectedOrder === "Order By"
+      ? allClassData
+      : allClassData.filter((item) => item.key === selectedClass);
+
   return (
     <div className="flex min-h-screen">
       <NavigationBar />
@@ -126,6 +157,21 @@ export default function AcuityDashboard() {
               <h2 className="text-xl font-semibold">
                 Class Attendance By Trimester, <br /> 2/19/25 - 3/19/25
               </h2>
+              {/* Order By */}
+              <div className="flex items-center space-x-2">
+                <label className="text-sm font-medium"></label>
+                <select
+                  className="border rounded-md px-2 py-1 text-sm"
+                  value={selectedOrder}
+                  onChange={(e) => setSelectedOrder(e.target.value)}
+                >
+                  <option>Order By</option>
+                  {allOrders.map((c) => (
+                    <option key={c.key}>{c.key}</option>
+                  ))}
+                </select>
+              </div>
+
               {/* Class dropdown */}
               <div className="flex items-center space-x-2">
                 <label className="text-sm font-medium"></label>

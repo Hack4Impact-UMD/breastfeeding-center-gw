@@ -1,7 +1,6 @@
 import { functions } from "../config/firebase";
 import { httpsCallable } from "firebase/functions";
 
-
 interface RawClassInfo {
   date: Date;
   instructor: string | null;
@@ -190,7 +189,6 @@ const CLASS_NAME_TO_CATEGORY: Record<string, string> = {
   "Feeding + Postpartum with Toddlers": "Parent Groups",
 };
 
-
 /** class appointment */
 interface ClassEntry {
   date: Date;
@@ -208,7 +206,9 @@ interface ClientAppointments {
   classes: ClassEntry[];
 }
 
-export function getClientAppointments(): Promise<Record<number, ClientAppointments>> {
+export function getClientAppointments(): Promise<
+  Record<number, ClientAppointments>
+> {
   return new Promise((resolve, reject) => {
     const fn = httpsCallable(functions, "getAppointments");
     fn()
@@ -257,7 +257,10 @@ export function getClientAppointments(): Promise<Record<number, ClientAppointmen
           }
         });
 
-        console.log("Clients with only classes (and the date, instructor, class name, and class type):", clientMap);
+        console.log(
+          "Clients with only classes (and the date, instructor, class name, and class type):",
+          clientMap
+        );
         resolve(clientMap);
       })
       .catch(reject);
