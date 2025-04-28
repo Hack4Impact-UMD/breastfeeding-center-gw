@@ -39,6 +39,36 @@ export default function AcuityDashboard() {
         { key: new Date("2025-03-19"), data: 12 },
       ],
     },
+    {
+      key: "Postpartum Classes",
+      data: [
+        { key: new Date("2025-02-19"), data: 1 },
+        { key: new Date("2025-02-26"), data: 2 },
+        { key: new Date("2025-03-05"), data: 3 },
+        { key: new Date("2025-03-12"), data: 4 },
+        { key: new Date("2025-03-19"), data: 5 },
+      ],
+    },
+    {
+      key: "Prenatal Classes",
+      data: [
+        { key: new Date("2025-02-19"), data: 5 },
+        { key: new Date("2025-02-26"), data: 20 },
+        { key: new Date("2025-03-05"), data: 7 },
+        { key: new Date("2025-03-12"), data: 9 },
+        { key: new Date("2025-03-19"), data: 2 },
+      ],
+    },
+    {
+      key: "Infant Massage",
+      data: [
+        { key: new Date("2025-02-19"), data: 5 },
+        { key: new Date("2025-02-26"), data: 12 },
+        { key: new Date("2025-03-05"), data: 4 },
+        { key: new Date("2025-03-12"), data: 5 },
+        { key: new Date("2025-03-19"), data: 6 },
+      ],
+    },
   ];
   const filteredClassData =
     selectedClass === "All Classes"
@@ -46,7 +76,8 @@ export default function AcuityDashboard() {
       : allClassData.filter((item) => item.key === selectedClass);
 
   // ── INSTRUCTOR dropdown state & data ─────────────────────────
-  const [selectedInstructor, setSelectedInstructor] = useState("All Classes");
+  const [selectedInstructor, setSelectedInstructor] =
+    useState("All Instructors");
   const allInstructorData = [
     {
       key: "Midwife Education",
@@ -70,7 +101,7 @@ export default function AcuityDashboard() {
     },
   ];
   const filteredInstructorData =
-    selectedInstructor === "All Classes"
+    selectedInstructor === "All Instructors"
       ? allInstructorData
       : allInstructorData.filter((item) => item.key === selectedInstructor);
 
@@ -93,8 +124,22 @@ export default function AcuityDashboard() {
           <div className="bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black">
             <div className="flex justify-between items-center space-x-4">
               <h2 className="text-xl font-semibold">
-                Class Attendance By Trimester, 2/19/25 - 3/19/25
+                Class Attendance By Trimester, <br /> 2/19/25 - 3/19/25
               </h2>
+              {/* Class dropdown */}
+              <div className="flex items-center space-x-2">
+                <label className="text-sm font-medium"></label>
+                <select
+                  className="border rounded-md px-2 py-1 text-sm"
+                  value={selectedClass}
+                  onChange={(e) => setSelectedClass(e.target.value)}
+                >
+                  <option>All Classes</option>
+                  {allClassData.map((c) => (
+                    <option key={c.key}>{c.key}</option>
+                  ))}
+                </select>
+              </div>
               <button className="text-blue-600 text-sm">Export</button>
             </div>
             <div className="w-full h-96">
@@ -102,8 +147,9 @@ export default function AcuityDashboard() {
                 width="100%"
                 height={350}
                 data={[
+                  /* Can get data here from backend hard-coded for now. */
                   {
-                    key: "Midwife Education",
+                    key: "Childbirth Classes",
                     data: [
                       { key: "1st Trimester", data: 10 },
                       { key: "2nd Trimester", data: 15 },
@@ -112,12 +158,48 @@ export default function AcuityDashboard() {
                     ],
                   },
                   {
-                    key: "Childbirth Classes",
+                    key: "Midwife Education",
                     data: [
                       { key: "1st Trimester", data: 12 },
                       { key: "2nd Trimester", data: 18 },
                       { key: "3rd Trimester", data: 22 },
                       { key: "Postpartum", data: 8 },
+                    ],
+                  },
+                  {
+                    key: "Comfort, Communication...",
+                    data: [
+                      { key: "1st Trimester", data: 32 },
+                      { key: "2nd Trimester", data: 5 },
+                      { key: "3rd Trimester", data: 20 },
+                      { key: "Postpartum", data: 9 },
+                    ],
+                  },
+                  {
+                    key: "2-Day Childbirth...",
+                    data: [
+                      { key: "1st Trimester", data: 21 },
+                      { key: "2nd Trimester", data: 10 },
+                      { key: "3rd Trimester", data: 17 },
+                      { key: "Postpartum", data: 2 },
+                    ],
+                  },
+                  {
+                    key: "Evening...",
+                    data: [
+                      { key: "1st Trimester", data: 21 },
+                      { key: "2nd Trimester", data: 10 },
+                      { key: "3rd Trimester", data: 17 },
+                      { key: "Postpartum", data: 2 },
+                    ],
+                  },
+                  {
+                    key: "Navigating Perinatal...",
+                    data: [
+                      { key: "1st Trimester", data: 21 },
+                      { key: "2nd Trimester", data: 10 },
+                      { key: "3rd Trimester", data: 17 },
+                      { key: "Postpartum", data: 2 },
                     ],
                   },
                 ]}
@@ -132,12 +214,12 @@ export default function AcuityDashboard() {
                             stops={[
                               <GradientStop
                                 offset="5%"
-                                stopOpacity={0.1}
+                                stopOpacity={1.0}
                                 key="start"
                               />,
                               <GradientStop
                                 offset="90%"
-                                stopOpacity={0.7}
+                                stopOpacity={1.0}
                                 key="stop"
                               />,
                             ]}
@@ -149,7 +231,13 @@ export default function AcuityDashboard() {
                         guide={<GuideBar />}
                       />
                     }
-                    colorScheme="cybertron"
+                    colorScheme={[
+                      "#FCD484",
+                      "#FFAA00",
+                      "#5DB9FF",
+                      "#1661A9",
+                      "#05182A",
+                    ]}
                   />
                 }
               />
@@ -160,7 +248,7 @@ export default function AcuityDashboard() {
           <div className="bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black">
             <div className="flex justify-between items-center space-x-4">
               <h2 className="text-xl font-semibold">
-                Class Popularity Over Time, 2/19/25 - 3/19/25
+                Class Popularity Over Time, <br /> 2/19/25 - 3/19/25
               </h2>
 
               {/* Class dropdown */}
@@ -194,7 +282,8 @@ export default function AcuityDashboard() {
           <div className="bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black">
             <div className="flex justify-between items-center space-x-4">
               <h2 className="text-xl font-semibold">
-                Instructor Popularity Over Time, 2/19/25 - 3/19/25
+                Instructor Popularity Over Time,
+                <br /> 2/19/25 - 3/19/25
               </h2>
 
               {/* Instructor dropdown */}
