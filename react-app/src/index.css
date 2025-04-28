@@ -7,6 +7,8 @@
   --color-bcgw-blue-dark: #05182a;
   --color-bcgw-gray-light: #d9d9d9;
   --color-bcgw-gray-dark: #6d6d6d;
+  --font-Montserrat: "Montserrat", sans-serif;
+  --font-Inter: "Inter", sans-serif;
 }
 
 @layer {
