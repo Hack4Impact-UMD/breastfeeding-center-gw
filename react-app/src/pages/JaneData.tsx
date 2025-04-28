@@ -4,17 +4,18 @@ import NavigationBar from "../components/NavigationBar/NavigationBar.tsx";
 import home from "../assets/management.svg";
 import React from "react";
 import { PieArcSeries, PieChart, FunnelChart } from "reaviz";
-import { Jane } from "../types/JaneType.ts";
+import { Jane, JaneID } from "../types/JaneType.ts";
 import { getJaneTypes } from "../backend/JaneFunctions";
 import {
   addJaneSpreadsheet,
   getAllJaneData,
-  deleteJaneById,
+  deleteJaneByIds,
 } from "../backend/FirestoreCalls";
 import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import Loading from "../components/Loading.tsx";
 import {
   janeDataColumns,
+  janeIDDataColumns,
   acuityColumns,
   AcuityData,
 } from "../components/DataTable/Columns.tsx";
@@ -33,35 +34,22 @@ const JaneData = () => {
 
   //file upload
   const [file, setFile] = useState<File | null>(null);
-  const [janeData, setJaneData] = useState<Jane[]>([]);
+  const [janeData, setJaneData] = useState<JaneID[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [navBarOpen, setNavBarOpen] = useState(true);
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files ? e.target.files[0] : null;
-    if (selectedFile) {
-      setFile(selectedFile);
-      console.log("Selected file:", selectedFile.name);
-
-      //translate data into jane types and set local data
+  useEffect(() => {
+    const fetchJaneData = async () => {
       try {
-        const janeData = await getJaneTypes(e);
-        console.log("Extracted Jane data:", janeData);
-
-        setJaneData(janeData);
+        const data = await getAllJaneData();
+        setJaneData(data);
       } catch (error) {
-        console.error("Error extracting Jane data:", error);
+        console.error("Failed to fetch Jane data:", error);
       }
-
-      //add data to firebase
-      // try {
-      //   await addJaneSpreadsheet(sampleJaneData);
-      //   console.log("Upload complete!");
-      // } catch (error) {
-      //   console.error("Upload error:", error);
-      // }
-    }
-  };
+    };
+  
+    fetchJaneData();
+  }, []);
 
   //date picker
   const [dateRange, setDateRange] = useState<{
@@ -305,6 +293,18 @@ const JaneData = () => {
     },
   ];
 
+  const handleDelete = async (rows: JaneID[]) => {
+    try {
+      const ids = rows.map(entry => entry.id)
+      await deleteJaneByIds(ids);
+      const updatedData = await getAllJaneData();
+      setJaneData(updatedData);
+    } catch (error) {
+      console.error("Failed to delete Jane entry:", error);
+    }
+  };
+  
+
   return (
     <>
       <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
@@ -336,7 +336,7 @@ const JaneData = () => {
             </div>
           </div>
 
-          <DataTable columns={janeDataColumns} data={sampleJaneData} />
+          <DataTable columns={janeIDDataColumns} data={janeData} handleDelete={handleDelete} />
         </div>
       </div>
     </>

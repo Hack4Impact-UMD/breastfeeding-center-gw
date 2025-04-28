@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Jane, VistType } from "@/types/JaneType";
+import { Jane, VistType, JaneID } from "@/types/JaneType";
 import { Checkbox } from "@/components/ui/checkbox";
 
 export type AcuityData = {
@@ -100,6 +100,8 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     header: "INSURANCE",
   },
 ];
+
+export const janeIDDataColumns: ColumnDef<JaneID>[] = janeDataColumns as ColumnDef<JaneID>[];
 
 export const acuityColumns: ColumnDef<AcuityData>[] = [
   {

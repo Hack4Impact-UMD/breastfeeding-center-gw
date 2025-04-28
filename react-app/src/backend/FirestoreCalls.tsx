@@ -1,24 +1,30 @@
 // firestore calls
-import { collection, getDocs, query, where, addDoc, doc, deleteDoc } from "firebase/firestore";
+import { collection, getDocs, query, where, addDoc, doc, deleteDoc, getDoc } from "firebase/firestore";
 import { db } from "../config/firebase"; 
 import { Jane, JaneID } from "../types/JaneType";
 
 export const addJaneSpreadsheet = async (janeList: Jane[]) => {
     const janeCollection = collection(db, "Jane");
-
-    for (const entry of janeList) {
-        // Check for existing doc with same apptId
+    let uploadsAttempted = 0;
+    let uploadsSkipped = 0;
+  
+    const uploadPromises = janeList.map(async (entry) => {
         const q = query(janeCollection, where("apptId", "==", entry.apptId));
         const existing = await getDocs(q);
-
+  
         if (!existing.empty) {
             console.log(`Skipping duplicate: apptId ${entry.apptId}`);
-            continue;
+            uploadsSkipped++;
+            return; // Skip duplicate
         }
-
+  
         await addDoc(janeCollection, entry);
         console.log(`Added appointment: ${entry.apptId}`);
-    }
+        uploadsAttempted++;
+    });
+  
+    await Promise.all(uploadPromises);
+    console.log(`Upload Summary: Attempted: ${uploadsAttempted}, Skipped: ${uploadsSkipped}`);
 };
 
 export const getAllJaneData = async (): Promise<JaneID[]> => {
@@ -33,8 +39,11 @@ export const getAllJaneData = async (): Promise<JaneID[]> => {
     return janeList;
 };
 
-export const deleteJaneById = async (id: string): Promise<void> => {
-    const janeDocRef = doc(db, "Jane", id);
-    await deleteDoc(janeDocRef);
+export const deleteJaneByIds = async (idList: string[]): Promise<void> => {
+    const deletePromises = idList.map(async (entry) => {
+        const janeDocRef = doc(db, "Jane", entry);
+        await deleteDoc(janeDocRef);
+    });
+    
+    await Promise.all(deletePromises);
 };
-

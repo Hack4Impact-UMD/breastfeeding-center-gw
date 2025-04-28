@@ -37,15 +37,17 @@ import { useState } from "react";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  handleDelete?: (selectedRows: TData[]) => void;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  handleDelete,
 }: DataTableProps<TData, TValue>) {
   const [globalFilter, setGlobalFilter] = useState("");
   const [rowSelection, setRowSelection] = useState({}); // record of indices that are selected
-  const [rowsSelected, setRowsSelected] = useState<Jane[]>([]);
+  const [rowsSelected, setRowsSelected] = useState<TData[]>([]);
 
   //delete row popup
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -67,7 +69,7 @@ export function DataTable<TData, TValue>({
   useEffect(() => {
     setRowsSelected(
       Object.values(table.getSelectedRowModel().rowsById).map(
-        (item) => item.original as Jane
+        (item) => item.original
       )
     );
   }, [rowSelection]);
@@ -82,9 +84,10 @@ export function DataTable<TData, TValue>({
         <button
           className={`${
             rowsSelected.length === 0
-              ? "bg-bcgw-gray-light cursor-not-allowed"
+              ? "bg-bcgw-gray-light cursor-not-allowed" 
               : "bg-bcgw-yellow-dark cursor-pointer"
           } text-sm border-1 border-black-500 py-2 px-8 rounded-full`}
+          disabled={rowsSelected.length === 0}
           onClick={openModal}
         >
           Delete
@@ -196,7 +199,17 @@ export function DataTable<TData, TValue>({
           {">"}
         </button>
       </div>
-      <DeleteRowPopup openModal={isModalOpen} onClose={closeModal} />
+      <DeleteRowPopup
+        openModal={isModalOpen}
+        onClose={closeModal}
+        onConfirm={() => {
+          if (handleDelete) {
+            handleDelete(rowsSelected);
+            setRowSelection({});
+            console.log(rowsSelected);
+          }
+        }}
+      />
     </>
   );
 }
