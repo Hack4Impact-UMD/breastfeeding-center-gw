@@ -3,7 +3,6 @@ import { Input } from "@/components/ui/input";
 import { SearchIcon } from "lucide-react";
 import React, { useEffect } from "react";
 import { Jane } from "@/types/JaneType";
-import DeleteRowPopup from "../DeleteRowPopup";
 
 import {
   ColumnDef,
@@ -33,26 +32,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useState } from "react";
+import { LuListFilter } from "react-icons/lu";
 
-interface DataTableProps<TData, TValue> {
+interface ClientListTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
-export function DataTable<TData, TValue>({
+export function ClientListTable<TData, TValue>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+}: ClientListTableProps<TData, TValue>) {
+  const filterButtonStyle =
+    "bg-bcgw-yellow-dark text-lg border border-black-500 px-6 h-8 rounded-lg cursor-pointer flex items-center justify-center";
   const [globalFilter, setGlobalFilter] = useState("");
   const [rowSelection, setRowSelection] = useState({}); // record of indices that are selected
   const [rowsSelected, setRowsSelected] = useState<Jane[]>([]);
-
-  //delete row popup
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
   const table = useReactTable({
     data,
     columns,
@@ -80,14 +75,13 @@ export function DataTable<TData, TValue>({
     <>
       <div className="flex items-center gap-5 py-4">
         <button
-          className={`${
-            rowsSelected.length === 0
-              ? "bg-bcgw-gray-light cursor-not-allowed"
-              : "bg-bcgw-yellow-dark cursor-pointer"
-          } text-sm border-1 border-black-500 py-2 px-8 rounded-full`}
-          onClick={openModal}
+          className={`${filterButtonStyle} mr-5 text-nowrap`}
+          onClick={() => document.getElementById("file-input")?.click()}
         >
-          Delete
+          <div className="flex items-center justify-center space-x-6">
+            <LuListFilter className="w-5 h-5" />
+            <span className="text-base">Filter</span>{" "}
+          </div>
         </button>
         <div className="w-full max-w-sm items-center gap-1.5">
           <div className="relative">
@@ -103,9 +97,9 @@ export function DataTable<TData, TValue>({
           </div>
         </div>
       </div>
-      <div className="border border-2">
+      <div className="">
         <Table>
-          <TableHeader className="bg-[#0C3D6B33]">
+          <TableHeader className="bg-[#0C3D6B80] border-1">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -128,8 +122,7 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() ? "selected" : "unselected"}
-                  className="data-[state=selected]:bg-gray data-[state=unselected]:bg-white"
+                  data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
@@ -196,7 +189,6 @@ export function DataTable<TData, TValue>({
           {">"}
         </button>
       </div>
-      <DeleteRowPopup openModal={isModalOpen} onClose={closeModal} />
     </>
   );
 }

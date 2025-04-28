@@ -7,6 +7,9 @@ import RequireAuth from "./auth/RequireAuth";
 import { AuthProvider } from "./auth/AuthProvider";
 import JanePage from "./pages/JanePage";
 import JaneData from "./pages/JaneData";
+import { SetStateAction } from "react";
+import ClientListPage from "./pages/ClientListPage";
+import ClientJourneyPage from "./pages/ClientJourneyPage";
 
 function App() {
   // const navigate = useNavigate();
@@ -18,7 +21,9 @@ function App() {
             path="/"
             element={
               <RequireAuth>
-                <NavigationBar />
+                <NavigationBar navBarOpen={false} setNavBarOpen={function (value: SetStateAction<boolean>): void {
+                  throw new Error("Function not implemented.");
+                } } />
               </RequireAuth>
             }
           />
@@ -26,6 +31,9 @@ function App() {
           <Route path="/logout" element={<LogoutPage />} />
           <Route path="/services/jane" element={<JanePage />} />
           <Route path="/services/jane/data" element={<JaneData />} />
+          <Route path="/services/clientlist" element={<ClientListPage />} />
+          <Route path="/services/clientjourney" element={<ClientJourneyPage />} />
+
           <Route
             path="/*"
             element={

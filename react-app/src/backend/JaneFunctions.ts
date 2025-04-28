@@ -11,7 +11,7 @@ export async function getJaneTypes(
 
   const jsonData = XLSX.utils.sheet_to_json(worksheet, {
     header: 1,
-    raw: false,
+    raw: true,
   });
 
   const headers: string[] = jsonData[0] as string[];
@@ -36,6 +36,17 @@ export async function getJaneTypes(
       relevantColumns.forEach((column, index) => {
         const columnName = typeof column === "string" ? column : column.json;
         (jane as any)[columnName] = row[columnIndexes[index]] || "";
+
+        if (columnName === "date") {
+          const value = (jane as any)[columnName];
+        
+          if (typeof value === "number") {
+            // Convert Excel serial number to JS Date
+            const date = new Date(Math.round((value - 25569) * 86400 * 1000));
+            // Format it as ISO or however you want
+            (jane as any)[columnName] = date.toISOString().replace("T", " ").substring(0, 16);
+          }
+        }
       });
 
       // Process visit type and treatment from treatment_name
@@ -63,7 +74,9 @@ export async function getJaneTypes(
       jane.treatment = treatment;
       delete (jane as any).treatment_name;
 
-      jane.date = new Date(jane.date).toISOString();
+      jane.date = new Date(jane.date).toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      });
       
       jane.email = "email@gmail.com"; // hardcoded
       jane.babyDob = "01/01/2026";    // hardcoded

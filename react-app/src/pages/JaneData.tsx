@@ -13,8 +13,13 @@ import {
 } from "../backend/FirestoreCalls";
 import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import Loading from "../components/Loading.tsx";
-import { columns } from "../components/DataTable/Columns.tsx";
+import {
+  janeDataColumns,
+  acuityColumns,
+  AcuityData,
+} from "../components/DataTable/Columns.tsx";
 import { DataTable } from "../components/DataTable/DataTable.tsx";
+import { ClientJourneyTable } from "@/components/DataTable/ClientJourneyTable.tsx";
 
 const JaneData = () => {
   //styles
@@ -30,6 +35,7 @@ const JaneData = () => {
   const [file, setFile] = useState<File | null>(null);
   const [janeData, setJaneData] = useState<Jane[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [navBarOpen, setNavBarOpen] = useState(true);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
@@ -118,6 +124,18 @@ const JaneData = () => {
     // setChartData(chartData);
   };
 
+  const sampleAcuityData: AcuityData[] = [
+    {
+      class: "Class A",
+      instructor: "A. Smith",
+      date: "3/01/24",
+    },
+    {
+      class: "Class B",
+      instructor: "A. Smith",
+      date: "3/01/23",
+    },
+  ];
   const sampleJaneData: Jane[] = [
     {
       apptId: "108685",
@@ -289,9 +307,13 @@ const JaneData = () => {
 
   return (
     <>
-      <NavigationBar />
+      <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
       {/* <div className="flex flex-col min-h-screen w-full p-8 pr-20 pl-14 bg-gray-200"> */}
-      <div className="ml-[250px] flex flex-col min-h-screen min-w-[80%] bg-gray-200 overflow-x-hidden">
+      <div
+        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
+          navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
+        }`}
+      >
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-14 min-h-screen">
           {/*headings*/}
@@ -313,25 +335,8 @@ const JaneData = () => {
               />
             </div>
           </div>
-          {/*upload section*/}
-          <div className={`${centerItemsInDiv} basis-20xs`}>
-            <div className={centerItemsInDiv}>
-              <button
-                className={`${buttonStyle} mr-5 text-nowrap`}
-                onClick={() => document.getElementById("file-input")?.click()}
-              >
-                UPLOAD NEW SPREADSHEET
-              </button>
-              <input
-                id="file-input"
-                type="file"
-                accept=".xlsx, .csv"
-                onChange={handleFileChange}
-                className="hidden"
-              />
-            </div>
-          </div>
-          <DataTable columns={columns} data={sampleJaneData} />
+
+          <DataTable columns={janeDataColumns} data={sampleJaneData} />
         </div>
       </div>
     </>
