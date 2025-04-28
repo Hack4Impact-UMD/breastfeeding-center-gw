@@ -33,73 +33,27 @@ import {
 } from "@/components/ui/table";
 import { useState } from "react";
 
-interface DataTableProps<TData, TValue> {
+interface ClientJourneyTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
-export function DataTable<TData, TValue>({
+export function ClientJourneyTable<TData, TValue>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
-  const [globalFilter, setGlobalFilter] = useState("");
-  const [rowSelection, setRowSelection] = useState({}); // record of indices that are selected
-  const [rowsSelected, setRowsSelected] = useState<Jane[]>([]);
+}: ClientJourneyTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onGlobalFilterChange: setGlobalFilter,
-    onRowSelectionChange: setRowSelection,
-    state: { globalFilter, rowSelection },
   });
-
-  useEffect(() => {
-    setRowsSelected(
-      Object.values(table.getSelectedRowModel().rowsById).map(
-        (item) => item.original as Jane
-      )
-    );
-  }, [rowSelection]);
-
-  useEffect(() => {
-    console.log(rowsSelected);
-  }, [rowsSelected]);
 
   return (
     <>
-      <div className="flex items-center gap-5 py-4">
-        <button
-          className={`${
-            rowsSelected.length === 0
-              ? "bg-bcgw-gray-light cursor-not-allowed"
-              : "bg-bcgw-yellow-dark cursor-pointer"
-          } text-sm border-1 border-black-500 py-2 px-8 rounded-full`}
-          onClick={() => {
-            console.log("delete?", rowsSelected);
-          }}
-        >
-          Delete
-        </button>
-        <div className="w-full max-w-sm items-center gap-1.5">
-          <div className="relative">
-            <Input
-              placeholder="Search"
-              value={table.getState().globalFilter ?? ""}
-              onChange={(event) => table.setGlobalFilter(event.target.value)}
-              className="w-full rounded-none bg-[#D4D4D4] pr-8 placeholder:text-black focus-visible:ring-1 focus-visible:border-transparent"
-            />
-            <div className="absolute right-2.5 top-2.5 h-4 w-4">
-              <SearchIcon className="h-4 w-4" />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="border border-2">
+      <div className="">
         <Table>
-          <TableHeader className="bg-[#0C3D6B33]">
+          <TableHeader className="bg-[#0C3D6B33] border-1 border-black">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -120,11 +74,7 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() ? "selected" : "unselected"}
-                  className="data-[state=selected]:bg-gray data-[state=unselected]:bg-white"
-                >
+                <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(

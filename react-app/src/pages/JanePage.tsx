@@ -31,6 +31,7 @@ const JanePage = () => {
   const centerItemsInDiv = "flex justify-between items-center";
   const chartDiv =
     "flex flex-col items-center justify-center bg-white border-2 border-black p-5 mt-2 rounded-lg";
+  const chartDivContainer = "min-w-[300px] max-w-[50%]"
 
   //file upload
   const [file, setFile] = useState<File | null>(null);
@@ -249,11 +250,11 @@ const JanePage = () => {
   return (
     <>
       <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
-       <div
-         className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
-           navBarOpen ? "ml-[250px]" : "ml-[60px]"  //set margin of content to 250px when nav bar is open and 60px when closed
-         }`}
-       >
+      <div
+        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
+          navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
+        }`}
+      >
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-14 min-h-screen">
           {/*headings*/}
@@ -280,7 +281,8 @@ const JanePage = () => {
             <div className={centerItemsInDiv}>
               <button
                 className={`${buttonStyle} mr-5 text-nowrap`}
-                onClick={() => document.getElementById("file-input")?.click()}>
+                onClick={() => document.getElementById("file-input")?.click()}
+              >
                 UPLOAD NEW SPREADSHEET
               </button>
               <input
@@ -291,7 +293,9 @@ const JanePage = () => {
                 className="hidden"
               />
             </div>
-            <div className="text-left basis-200 font-[Montserrat]">
+            <div className="flex flex-row items-start shrink-0 space-x-18">
+
+            <div className="text-left font-[Montserrat]">
               <h3>Most Recent Upload</h3>
               <div>
                 <div className="flex items-center space-x-2">
@@ -306,78 +310,105 @@ const JanePage = () => {
                 </div>
               </div>
             </div>
+            <div className="pt-12">
+              <p>
+                <i>Date Time</i>
+              </p>
+            </div>
+            <div className="pt-12">
+              <p>
+                <i>Name</i>
+              </p>
+            </div>
+            </div>
           </div>
 
           {/*graphs*/}
-          <div>
-            <div className={`${centerItemsInDiv} pt-4`}>
-              <button>Graph/Table</button>
-              <button
-                className={transparentGrayButtonStyle}
-                onClick={() => handleExport(pieChartRef, "visit_breakdown")}>
-                Export
-              </button>
-            </div>
-            <div className={chartDiv}>
-              {/*chart title*/}
-              <span className="self-start font-semibold text-xl mb-2">
-                Visit Breakdown:
-                {dateRange.startDate && dateRange.endDate
-                  ? formatDate(dateRange.startDate) +
-                    " - " +
-                    formatDate(dateRange.endDate)
-                  : " All Data"}
-              </span>
-              {/*chart*/}
-              {chartData.length > 0 ? (
-                <div
-                  className="chartContainer"
-                  ref={pieChartRef}
-                  style={{ width: "1000px", height: "400px" }}>
-                  {loading ? (
-                    <Loading />
-                  ) : (
-                    <PieChart
-                      data={chartData}
-                      series={
-                        <PieArcSeries
-                          doughnut={true}
-                          colorScheme={chartColors}
-                        />
-                      }
-                    />
-                  )}
-                </div>
-              ) : (
-                <div>No data available for selected date range</div>
-              )}
-              {/*legend*/}
-              <div className="mt-4 flex flex-wrap justify-center gap-4">
-                {chartData.map((item, index) => (
-                  <div key={item.key} className="flex items-center gap-2">
-                    <div
-                      className="w-10 h-4"
-                      style={{
-                        backgroundColor:
-                          chartColors[index % chartColors.length],
-                      }}
-                    />
-                    <span>{item.key}</span>
+          <div className="flex flex-wrap gap-8 pt-3">
+            <div className="flex-1 min-w-[300px] max-w-[40%]">
+              <div className={`${centerItemsInDiv} pt-4`}>
+                <button>Graph/Table</button>
+                <button
+                  className={transparentGrayButtonStyle}
+                  onClick={() => handleExport(pieChartRef, "visit_breakdown")}
+                >
+                  Export
+                </button>
+              </div>
+              <div className={chartDiv}>
+                {/*chart title*/}
+                <span className="self-start font-semibold text-xl mb-2">
+                  Visit Breakdown:
+                  {dateRange.startDate && dateRange.endDate
+                    ? formatDate(dateRange.startDate) +
+                      " - " +
+                      formatDate(dateRange.endDate)
+                    : " All Data"}
+                </span>
+                {/*chart*/}
+                {chartData.length > 0 ? (
+                  <div
+                    className="chartContainer"
+                    ref={pieChartRef}
+                    style={{ width: "250px", height: "250px" }}
+                  >
+                    {loading ? (
+                      <Loading />
+                    ) : (
+                      <PieChart
+                        data={chartData}
+                        series={
+                          <PieArcSeries
+                            doughnut={true}
+                            colorScheme={chartColors}
+                            label={null}
+                          />
+                        }
+                      />
+                    )}
                   </div>
-                ))}
+                ) : (
+                  <div>No data available for selected date range</div>
+                )}
+                {/*legend*/}
+                <div className="mt-4 flex flex-wrap justify-center gap-4">
+                  {chartData.map((item, index) => (
+                    <div key={item.key} className="flex items-center gap-2">
+                      <div
+                        className="w-10 h-4"
+                        style={{
+                          backgroundColor:
+                            chartColors[index % chartColors.length],
+                        }}
+                      />
+                      <span>{item.key}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
             {/*funnel chart*/}
-            <div className={chartDiv}>
-              <span className="self-start font-semibold text-xl mb-2">
-                Retention Rate:
-                {dateRange.startDate && dateRange.endDate
-                  ? formatDate(dateRange.startDate) +
-                    " - " +
-                    formatDate(dateRange.endDate)
-                  : " All Data"}
-              </span>
-              <FunnelChart height={300} width={600} data={funnelData} />
+            <div className="flex-1 min-w-[300px] max-w-[60%]">
+              <div className={`${centerItemsInDiv} pt-4`}>
+                <button>Graph/Table</button>
+                <button
+                  className={transparentGrayButtonStyle}
+                  onClick={() => handleExport(pieChartRef, "visit_breakdown")}
+                >
+                  Export
+                </button>
+              </div>
+              <div className={chartDiv}>
+                <span className="self-start font-semibold text-xl mb-2">
+                  Retention Rate:
+                  {dateRange.startDate && dateRange.endDate
+                    ? formatDate(dateRange.startDate) +
+                      " - " +
+                      formatDate(dateRange.endDate)
+                    : " All Data"}
+                </span>
+                <FunnelChart height={290} data={funnelData} />
+              </div>
             </div>
           </div>
         </div>
