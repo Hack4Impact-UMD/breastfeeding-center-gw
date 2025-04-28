@@ -15,6 +15,14 @@ const acuity = Acuity.basic({
   apiKey: process.env.ACUITY_API_KEY,
 });
 
+const CLASS_CATEGORIES = [
+  "Childbirth Classes",
+  "Postpartum Classes",
+  "Prenatal Classes",
+  "Infant Massage",
+  "Parent Groups",
+];
+
 /*
  * Creates a new admin.
  * Takes an object as a parameter that should contain an email, first name, and last name.
@@ -430,3 +438,41 @@ exports.getBabyInfo = onCall({ region: "us-east4", cors: true }, async () => {
     // }
   });
 });
+
+exports.getClientAppointments = onCall(
+  { region: "us-east4", cors: true },
+  async () => {
+    return new Promise((resolve, reject) => {
+      // Fetch raw appointments from Acuity
+      acuity.request("/appointments?max=100", (err, resp) => {
+        if (err) {
+          console.error("Acuity error:", err);
+          return reject(err);
+        }
+
+        const raw = resp.body;
+        const clientMap = {};
+
+        raw.forEach((appt) => {
+          // Skip anything that isn't one of our class categories
+          if (!CLASS_CATEGORIES.includes(appt.category)) return;
+
+          const id = appt.id;
+          if (!clientMap[id]) {
+            clientMap[id] = { appointments: [] };
+          }
+
+          clientMap[id].appointments.push({
+            date: new Date(appt.datetime),
+            instructor: appt.calendar || null,
+            title: appt.type || null,
+            classType: appt.category,
+            didAttend: !appt.canceled,
+          });
+        });
+
+        resolve(clientMap);
+      });
+    });
+  }
+);

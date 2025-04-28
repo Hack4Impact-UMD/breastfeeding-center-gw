@@ -1,7 +1,9 @@
-import { useState } from "react";
+ // import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   LineChart,
   LineSeries,
+  Line,
   StackedBarChart,
   StackedBarSeries,
   Bar,
@@ -12,12 +14,65 @@ import {
 } from "reaviz";
 import NavigationBar from "../components/NavigationBar/NavigationBar";
 import Header from "../components/header";
+import { getClientAppointments } from "../backend/AcuityCalls";
 
 export default function AcuityDashboard() {
-  const [navBarOpen, setNavBarOpen] = useState(true);
+  const [navBarOpen, setNavBarOpen] = useState(true)
+
+  const [raw, setRaw] = useState<any[]>([])
+
+  // useEffect(() => {
+  //   getClientAppointments()
+  //     .then(data => setRaw(data))
+  //     .catch(console.error)
+  // }, [])
+
+  // 1) state for your flat class list
+  const [allClasses, setAllClasses] = useState<any[]>([])
+
+  // 2) on mount, fetch + normalize
+  useEffect(() => {
+    getClientAppointments()
+      .then((res: any) => {
+        // your API lives under res.result
+        const byId = res.result ?? res
+        const clients = Object.values(byId)
+        // flatten out the `classes` array on each client
+        const flat = clients.flatMap((c: any) => c.classes || [])
+        console.log('🔹 total bookings:', flat.length, flat[0])
+        setAllClasses(flat)
+      })
+      .catch(console.error)
+  }, [])
+
+  // 3) pivot into Reaviz series
+  const classOverTime = useMemo(() => {
+    const map = new Map<string, Map<number, number>>()
+    allClasses.forEach((rec) => {
+      const dt = typeof rec.date?.toDate === "function"
+        ? rec.date.toDate()
+        : new Date(rec.date)
+      const ts = Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate())
+      const key = rec.classType
+      if (!map.has(key)) map.set(key, new Map())
+      const m = map.get(key)!
+      m.set(ts, (m.get(ts) || 0) + 1)
+    })
+
+    return Array.from(map.entries()).map(([cls, m]) => ({
+      key: cls,
+      data: Array.from(m.entries())
+        .sort(([a], [b]) => a - b)
+        .map(([ts, count]) => ({ key: new Date(ts), data: count })),
+    }))
+  }, [allClasses])
+
+
 
   // ── CLASS dropdown state & data ───────────────────────────────
   const [selectedClass, setSelectedClass] = useState("All Classes");
+
+
   const allClassData = [
     {
       key: "Midwife Education",
@@ -142,9 +197,8 @@ export default function AcuityDashboard() {
 
       {/* Main Content */}
       <div
-        className={`flex-1 flex flex-col transition-all duration-300 ${
-          navBarOpen ? "ml-64" : "ml-20"
-        }`}
+        className={`flex-1 flex flex-col transition-all duration-300 ${navBarOpen ? "ml-64" : "ml-20"
+          }`}
       >
         <Header setNavBarOpen={setNavBarOpen} />
 
@@ -306,8 +360,8 @@ export default function AcuityDashboard() {
                   onChange={(e) => setSelectedClass(e.target.value)}
                 >
                   <option>All Classes</option>
-                  {allClassData.map((c) => (
-                    <option key={c.key}>{c.key}</option>
+                  {allClassData.map((series) => (
+                    <option key={series.key}>{series.key}</option>
                   ))}
                 </select>
               </div>
@@ -318,8 +372,19 @@ export default function AcuityDashboard() {
               <LineChart
                 height={300}
                 width="100%"
-                data={filteredClassData}
-                series={<LineSeries type="grouped" />}
+                data={
+                  selectedClass === "All Classes"
+                    ? classOverTime
+                    : classOverTime.filter((c) => c.key === selectedClass)
+                }
+                series={
+                  <LineSeries
+                    type="grouped"
+                    interpolation="linear"
+                    line={<Line strokeWidth={3} />}
+                    colorScheme="cybertron"
+                  />
+                }
               />
             </div>
           </div>
@@ -363,3 +428,4 @@ export default function AcuityDashboard() {
     </div>
   );
 }
+
