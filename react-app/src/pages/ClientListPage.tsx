@@ -3,6 +3,7 @@ import Header from "../components/header.tsx";
 import NavigationBar from "../components/NavigationBar/NavigationBar.tsx";
 import { LuListFilter } from "react-icons/lu";
 import { LuSearch } from "react-icons/lu";
+import DeleteRowPopup from "@/components/DeleteRowPopup.tsx";
 
 const ClientList = () => {
   //nav bar
@@ -11,10 +12,15 @@ const ClientList = () => {
   //search bar
   const [searchQuery, setSearchQuery] = useState("");
 
+  //delete row popup
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   //styles
   const filterButtonStyle =
     "bg-bcgw-yellow-dark text-lg border border-black-500 px-6 h-8 rounded-lg cursor-pointer flex items-center justify-center";
-  ("bg-transparent text-bcgw-yellow-dark border-2 border-bcgw-yellow-dark py-1 px-2 rounded-full cursor-pointer");
   const centerItemsInDiv = "flex justify-between items-center";
 
   return (
@@ -67,6 +73,13 @@ const ClientList = () => {
 
           {/*table section*/}
           <div>I AM A TABLE</div>
+          <button
+            onClick={openModal}
+            className={filterButtonStyle}
+          >
+            DELETE POPUP
+          </button>
+          <DeleteRowPopup openModal={isModalOpen} onClose={closeModal} />
         </div>
       </div>
     </>
