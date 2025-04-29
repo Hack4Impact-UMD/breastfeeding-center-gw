@@ -1,4 +1,4 @@
-import Modal from "./Modal";
+import Modal from "../Modal";
 import { BiArrowBack } from "react-icons/bi";
 
 const DeleteRowPopup = ({

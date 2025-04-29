@@ -12,6 +12,7 @@ import {
   PaySimpleRentals,
 } from "@/components/DataTable/Columns.tsx";
 import { ClientJourneyTable } from "@/components/DataTable/ClientJourneyTable.tsx";
+import { DataTable } from "@/components/DataTable/DataTable.tsx";
 
 const ClientJourney = () => {
   //nav bar
@@ -106,7 +107,6 @@ const ClientJourney = () => {
           <div className={centerItemsInDiv}>
             <div>
               <h1 className="font-bold">Client Journey</h1>
-              <h2 className="font-[Montserrat]">Dashboard</h2>
             </div>
           </div>
 
@@ -132,33 +132,37 @@ const ClientJourney = () => {
           <div>
             <div className={tableSection}>
               <h2 className="font-bold">Acuity Classes</h2>
-              <ClientJourneyTable
+              <DataTable
                 columns={acuityColumns}
                 data={sampleAcuityData}
+                tableType="journey"
               />
             </div>
 
             <div className={tableSection}>
               <h2 className="font-bold">JANE Consults</h2>
-              <ClientJourneyTable
+              <DataTable
                 columns={janeConsultsColumns}
                 data={sampleJaneConsults}
+                tableType="journey"
               />
             </div>
 
             <div className={tableSection}>
               <h2 className="font-bold">Paysimple Rentals</h2>
-              <ClientJourneyTable
+              <DataTable
                 columns={paysimpleColumns}
                 data={samplePaysimple}
+                tableType="journey"
               />
             </div>
 
             <div className={tableSection}>
               <h2 className="font-bold">One-Time Purchases</h2>
-              <ClientJourneyTable
+              <DataTable
                 columns={oneTimePurchaseColumns}
                 data={sampleOTPs}
+                tableType="journey"
               />
             </div>
           </div>

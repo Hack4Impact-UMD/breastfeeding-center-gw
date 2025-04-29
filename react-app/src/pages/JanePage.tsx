@@ -7,10 +7,7 @@ import { useRef } from "react";
 import { PieArcSeries, PieChart, FunnelChart } from "reaviz";
 import { Jane } from "../types/JaneType.ts";
 import { getJaneTypes } from "../backend/JaneFunctions";
-import {
-  addJaneSpreadsheet,
-  getAllJaneData,
-} from "../backend/FirestoreCalls";
+import { addJaneSpreadsheet, getAllJaneData } from "../backend/FirestoreCalls";
 import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import Loading from "../components/Loading.tsx";
 import { toPng } from "html-to-image";
@@ -30,7 +27,7 @@ const JanePage = () => {
   const centerItemsInDiv = "flex justify-between items-center";
   const chartDiv =
     "flex flex-col items-center justify-center bg-white border-2 border-black p-5 mt-2 rounded-lg";
-  const chartDivContainer = "min-w-[300px] max-w-[50%]"
+  const chartDivContainer = "min-w-[300px] max-w-[50%]";
 
   //file upload
   const [file, setFile] = useState<File | null>(null);
@@ -244,8 +241,7 @@ const JanePage = () => {
           {/*headings*/}
           <div className={centerItemsInDiv}>
             <div>
-              <h1 className="font-bold">JANE Statistics</h1>
-              <h2 className="font-[Montserrat]">Dashboard</h2>
+              <h1 className="font-bold">JANE</h1>
             </div>
             {/*date picker*/}
             <div className="w-60">
@@ -261,7 +257,7 @@ const JanePage = () => {
             </div>
           </div>
           {/*upload section*/}
-          <div className={`${centerItemsInDiv} basis-20xs`}>
+          <div className={`${centerItemsInDiv} basis-20xs mt-6`}>
             <div className={centerItemsInDiv}>
               <button
                 className={`${buttonStyle} mr-5 text-nowrap`}
@@ -276,34 +272,6 @@ const JanePage = () => {
                 onChange={handleFileChange}
                 className="hidden"
               />
-            </div>
-            <div className="flex flex-row items-start shrink-0 space-x-18">
-
-            <div className="text-left font-[Montserrat]">
-              <h3>Most Recent Upload</h3>
-              <div>
-                <div className="flex items-center space-x-2">
-                  <div className="flex items-center space-x-2 bg-white p-1 pt-0 pb-0 mt-2">
-                    <div>{file ? `${file.name}` : "No file uploaded yet"}</div>
-                    <img
-                      className="w-[30px] h-[30px] pl-3 cursor-pointer"
-                      src={home}
-                      onClick={() => setFile(null)}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="pt-12">
-              <p>
-                <i>Date Time</i>
-              </p>
-            </div>
-            <div className="pt-12">
-              <p>
-                <i>Name</i>
-              </p>
-            </div>
             </div>
           </div>
 

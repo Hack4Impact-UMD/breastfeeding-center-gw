@@ -101,7 +101,8 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
   },
 ];
 
-export const janeIDDataColumns: ColumnDef<JaneID>[] = janeDataColumns as ColumnDef<JaneID>[];
+export const janeIDDataColumns: ColumnDef<JaneID>[] =
+  janeDataColumns as ColumnDef<JaneID>[];
 
 export const acuityColumns: ColumnDef<AcuityData>[] = [
   {
@@ -149,6 +150,15 @@ export const paysimpleColumns: ColumnDef<PaySimpleRentals>[] = [
   {
     accessorKey: "totalCost",
     header: "Total Cost",
+    cell: ({ row }) => {
+      const amount = parseFloat(row.getValue("totalCost"));
+      const formatted = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+      }).format(amount);
+
+      return formatted;
+    },
   },
   {
     accessorKey: "rate",
@@ -176,6 +186,15 @@ export const oneTimePurchaseColumns: ColumnDef<OneTimePurchase>[] = [
   {
     accessorKey: "cost",
     header: "Cost",
+    cell: ({ row }) => {
+      const amount = parseFloat(row.getValue("cost"));
+      const formatted = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+      }).format(amount);
+
+      return formatted;
+    },
   },
   {
     accessorKey: "date",

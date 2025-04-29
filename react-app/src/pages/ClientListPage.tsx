@@ -1,11 +1,8 @@
 import { useState } from "react";
 import Header from "../components/header.tsx";
 import NavigationBar from "../components/NavigationBar/NavigationBar.tsx";
-import { LuListFilter } from "react-icons/lu";
-import { LuSearch } from "react-icons/lu";
-import DeleteRowPopup from "@/components/DeleteRowPopup.tsx";
 import { Client, clientListColumns } from "@/components/DataTable/Columns.tsx";
-import { ClientListTable } from "@/components/DataTable/ClientListTable.tsx";
+import { DataTable } from "@/components/DataTable/DataTable.tsx";
 
 const ClientList = () => {
   //nav bar
@@ -23,6 +20,87 @@ const ClientList = () => {
       janeConsults: 3,
       rentals: 2,
       purchases: 1,
+    },
+    {
+      firstName: "Jane",
+      lastName: "Doe",
+      email: "jdoe@gmail.com",
+      acuityClasses: 2,
+      janeConsults: 1,
+      rentals: 2,
+      purchases: 1,
+    },
+    {
+      firstName: "Jane",
+      lastName: "Doe",
+      email: "jdoe@gmail.com",
+      acuityClasses: 1,
+      janeConsults: 3,
+      rentals: 5,
+      purchases: 1,
+    },
+    {
+      firstName: "Jane",
+      lastName: "Doe",
+      email: "jdoe@gmail.com",
+      acuityClasses: 1,
+      janeConsults: 3,
+      rentals: 2,
+      purchases: 4,
+    },
+    {
+      firstName: "Jane",
+      lastName: "Doe",
+      email: "jdoe@gmail.com",
+      acuityClasses: 2,
+      janeConsults: 2,
+      rentals: 1,
+      purchases: 1,
+    },
+    {
+      firstName: "Jane",
+      lastName: "Doe",
+      email: "jdoe@gmail.com",
+      acuityClasses: 2,
+      janeConsults: 3,
+      rentals: 3,
+      purchases: 0,
+    },
+    {
+      firstName: "Jane",
+      lastName: "Doe",
+      email: "jdoe@gmail.com",
+      acuityClasses: 1,
+      janeConsults: 1,
+      rentals: 0,
+      purchases: 0,
+    },
+    {
+      firstName: "Jane",
+      lastName: "Doe",
+      email: "jdoe@gmail.com",
+      acuityClasses: 4,
+      janeConsults: 5,
+      rentals: 9,
+      purchases: 2,
+    },
+    {
+      firstName: "Jane",
+      lastName: "Doe",
+      email: "jdoe@gmail.com",
+      acuityClasses: 1,
+      janeConsults: 4,
+      rentals: 9,
+      purchases: 2,
+    },
+    {
+      firstName: "Jane",
+      lastName: "Doe",
+      email: "jdoe@gmail.com",
+      acuityClasses: 3,
+      janeConsults: 4,
+      rentals: 1,
+      purchases: 6,
     },
   ];
 
@@ -44,10 +122,11 @@ const ClientList = () => {
           </div>
 
           {/*table section*/}
-          <div className="mt-6">
-            <ClientListTable
+          <div className="mt-5">
+            <DataTable
               columns={clientListColumns}
               data={sampleClientData}
+              tableType="clientList"
             />
           </div>
         </div>
