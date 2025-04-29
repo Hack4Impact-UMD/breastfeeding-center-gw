@@ -29,9 +29,31 @@ function CustomBar(props: any) {
   );
 }
 
+function getWeekRange(date: Date) {
+  const selected = new Date(date);
+  const day = selected.getDay(); // 0 (Sun) to 6 (Sat)
+  const diffToMonday = (day === 0 ? -6 : 1) - day;
+  const monday = new Date(selected);
+  monday.setDate(selected.getDate() + diffToMonday);
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  return { monday, sunday };
+}
+
+function formatDate(date: Date) {
+  const m = date.getMonth() + 1;
+  const d = date.getDate();
+  const y = date.getFullYear().toString().slice(-2);
+  return `${m}/${d}/${y}`;
+}
+
 export default function PaysimpleDashboard() {
   const [viewMode, setViewMode] = useState("Months");
   const [chartView, setChartView] = useState("Graph");
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const { monday, sunday } = getWeekRange(selectedDate);
+  const formattedRange = `${formatDate(monday)} - ${formatDate(sunday)}`;
 
   const dataMonths = [
     { key: "Medela Symphony", data: 14 },
@@ -59,10 +81,32 @@ export default function PaysimpleDashboard() {
       <div className="flex-1 flex flex-col transition-all duration-300 ml-64">
         <Header setNavBarOpen={() => {}} />
 
-        <main className="p-6 space-y-10">
+        <main className="p-6 space-y-6">
           <h1 className="text-3xl font-bold">PAYSIMPLE</h1>
 
+          {/* Date Picker + Export */}
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <label htmlFor="week-picker" className="text-sm font-medium">
+                Select Date
+              </label>
+              <input
+                id="week-picker"
+                type="date"
+                className="border rounded-md px-2 py-1 text-sm"
+                value={selectedDate.toISOString().split("T")[0]}
+                onChange={(e) => setSelectedDate(new Date(e.target.value))}
+              />
+            </div>
+
+            <button className="bg-gray-200 border border-gray-400 text-sm px-4 py-1 rounded-md shadow">
+              Export
+            </button>
+          </div>
+
+          {/* Chart box */}
           <div className="bg-white rounded-2xl shadow p-6 space-y-6 border">
+            {/* Graph/Table Toggle + View Mode */}
             <div className="flex justify-between space-x-4">
               <div className="space-x-2">
                 <button
@@ -87,24 +131,22 @@ export default function PaysimpleDashboard() {
                 </button>
               </div>
 
-              <div className="flex items-center space-x-2">
-                <select
-                  value={viewMode}
-                  onChange={(e) => handleViewChange(e.target.value)}
-                  className="border rounded-md px-2 py-1 text-sm"
-                >
-                  <option value="Months">Months</option>
-                  <option value="Weeks">Weeks</option>
-                </select>
-
-                <button className="text-blue-600 text-sm">Export</button>
-              </div>
+              <select
+                value={viewMode}
+                onChange={(e) => handleViewChange(e.target.value)}
+                className="border rounded-md px-2 py-1 text-sm"
+              >
+                <option value="Months">Months</option>
+                <option value="Weeks">Weeks</option>
+              </select>
             </div>
 
+            {/* Title */}
             <h2 className="text-xl font-semibold">
-              Average Rental Duration By Item, 4/21/24 - 4/21/25
+              Average Rental Duration By Item, {formattedRange}
             </h2>
 
+            {/* Chart or Table */}
             <div className="w-full h-[500px] flex">
               {chartView === "Graph" ? (
                 <BarChart
@@ -116,8 +158,8 @@ export default function PaysimpleDashboard() {
                       layout="horizontal"
                       bar={<CustomBar />}
                       barThickness={40}
-                      xAxis={<LinearXAxis axisLine={true} tickLine={true} />} // show x-axis
-                      yAxis={<LinearYAxis showGridLines={false} axisLine={true} tickLine={true} />} // show y-axis
+                      xAxis={<LinearXAxis axisLine={true} tickLine={true} />}
+                      yAxis={<LinearYAxis showGridLines={false} axisLine={true} tickLine={true} />}
                     />
                   }
                 />
