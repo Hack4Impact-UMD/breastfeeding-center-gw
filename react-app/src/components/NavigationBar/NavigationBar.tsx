@@ -3,6 +3,7 @@ import { useState } from "react";
 import primaryLogo from "../../assets/bcgw-logo.png";
 import home from "../../assets/home.svg";
 import logout from "../../assets/logout.svg";
+import clients from "../../assets/clients.svg";
 import management from "../../assets/management.svg";
 import service from "../../assets/services.svg";
 import { LuChevronsLeft } from "react-icons/lu";
@@ -148,35 +149,20 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                       <span className={serviceMargin}>PaySimple</span>
                     </NavLink>
                   </div>
-                  <div className={serviceStyle}>
-                    <NavLink
-                      to="/services/milkdepot"
-                      className={({ isActive }) =>
-                        isActive ? activeStyle : notActiveStyle
-                      }>
-                      <span className={serviceMargin}>Milk Depot</span>
-                    </NavLink>
-                  </div>
-                  <div className={serviceStyle}>
-                    <NavLink
-                      to="/services/mailchimp"
-                      className={({ isActive }) =>
-                        isActive ? activeStyle : notActiveStyle
-                      }>
-                      <span className={serviceMargin}>Mailchimp</span>
-                    </NavLink>
-                  </div>
-                  <div className={serviceStyle}>
-                    <NavLink
-                      to="/services/paypal"
-                      className={({ isActive }) =>
-                        isActive ? activeStyle : notActiveStyle
-                      }>
-                      <span className={serviceMargin}>Paypal</span>
-                    </NavLink>
-                  </div>
                 </div>
               )}
+
+              {/*CLIENT JOURNEY*/}
+              <div className="flex flex-row border-b border-bcgw-gray-light w-full cursor-pointer">
+                <NavLink
+                  to="/clients"
+                  className={({ isActive }) =>
+                    isActive ? activeStyle : notActiveStyle
+                  }>
+                  <img className="w-[30px] h-[30px]" src={clients} />
+                  <span className={categoryMargin}>Client Journey</span>
+                </NavLink>
+              </div>
 
               {/*USER MANAGEMENT*/}
               <div className="flex flex-row border-b border-bcgw-gray-light w-full cursor-pointer">
@@ -227,6 +213,14 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                   setOpenServices(true);
                 }}>
                 <img className="w-[30px] h-[30px]" src={service} />
+              </NavLink>
+
+              <NavLink
+                to="/clients"
+                className={({ isActive }) =>
+                  isActive ? activeIconStyle : notActiveIconStyle
+                }>
+                <img className="w-[30px] h-[30px]" src={clients} />
               </NavLink>
 
               <NavLink
