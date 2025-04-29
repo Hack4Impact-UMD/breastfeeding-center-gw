@@ -9,26 +9,30 @@ import {
 import NavigationBar from "../components/NavigationBar/NavigationBar";
 import Header from "../components/header";
 
-function CustomBar(props: any) {
-  const colors: Record<string, string> = {
-    "Medela Symphony": "#05182A",
-    "Ameda Platinum": "#FFB726",
-    "Spectra S3": "#1264B1",
-    "Medela BabyWeigh Scale": "#FFDD98",
-    "Medela BabyCheck Scale": "#7EC8FF"
-  };
+// record of colors to use for each rental item
+const colors: Record<string, string> = {
+  "Medela Symphony": "#05182A",
+  "Ameda Platinum": "#FFB726",
+  "Spectra S3": "#1264B1",
+  "Medela BabyWeigh Scale": "#FFDD98",
+  "Medela BabyCheck Scale": "#7EC8FF"
+};
 
+// custom bar component
+function CustomBar(props: any) {
+  console.log("CustomBar:", props.data?.key, colors[props.data?.key]);
+  const label = props.data?.key;
   return (
     <Bar
       {...props}
       style={{
-        fill: colors[String(props.id)] || "#000000"
+        fill: colors[label] || "#000000"
       }}
-      cornerRadius={8}
     />
   );
 }
 
+// getting the date from user input 
 function getWeekRange(date: Date) {
   const selected = new Date(date);
   const day = selected.getDay(); // 0 (Sun) to 6 (Sat)
@@ -40,6 +44,7 @@ function getWeekRange(date: Date) {
   return { monday, sunday };
 }
 
+// format the date to put in title
 function formatDate(date: Date) {
   const m = date.getMonth() + 1;
   const d = date.getDate();
@@ -48,6 +53,7 @@ function formatDate(date: Date) {
 }
 
 export default function PaysimpleDashboard() {
+  // use state for toggles/buttons/changing of information
   const [viewMode, setViewMode] = useState("Months");
   const [chartView, setChartView] = useState("Graph");
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -55,6 +61,7 @@ export default function PaysimpleDashboard() {
   const { monday, sunday } = getWeekRange(selectedDate);
   const formattedRange = `${formatDate(monday)} - ${formatDate(sunday)}`;
 
+  // data
   const dataMonths = [
     { key: "Medela Symphony", data: 14 },
     { key: "Ameda Platinum", data: 12 },
@@ -63,6 +70,7 @@ export default function PaysimpleDashboard() {
     { key: "Medela BabyCheck Scale", data: 13 }
   ];
 
+  // weeks data is different, multiply each month's data by 4
   const dataWeeks = dataMonths.map((item) => ({
     key: item.key,
     data: item.data * 4
@@ -82,108 +90,122 @@ export default function PaysimpleDashboard() {
         <Header setNavBarOpen={() => {}} />
 
         <main className="p-6 space-y-6">
-          <h1 className="text-3xl font-bold">PAYSIMPLE</h1>
+  {/* Page Title */}
+  <h1 className="text-3xl font-bold">PAYSIMPLE</h1>
 
-          {/* Date Picker + Export */}
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <label htmlFor="week-picker" className="text-sm font-medium">
-                Select Date
-              </label>
-              <input
-                id="week-picker"
-                type="date"
-                className="border rounded-md px-2 py-1 text-sm"
-                value={selectedDate.toISOString().split("T")[0]}
-                onChange={(e) => setSelectedDate(new Date(e.target.value))}
-              />
-            </div>
+  {/* Top-right: Date Picker */}
+  <div className="flex justify-end">
+    <div className="flex items-center gap-2">
+      <label htmlFor="week-picker" className="text-sm font-medium">
+        Select Date
+      </label>
+      <input
+        id="week-picker"
+        type="date"
+        className="border rounded-md px-2 py-1 text-sm"
+        value={selectedDate.toISOString().split("T")[0]}
+        onChange={(e) => setSelectedDate(new Date(e.target.value))}
+      />
+    </div>
+  </div>
 
-            <button className="bg-gray-200 border border-gray-400 text-sm px-4 py-1 rounded-md shadow">
-              Export
-            </button>
-          </div>
+  <div className="flex justify-between items-center">
+    <div className="space-x-2">
+      <button
+        className={`px-4 py-1 rounded-md border ${
+          chartView === "Graph"
+            ? "bg-gray-300 text-black"
+            : "bg-white text-gray-500"
+        } cursor-pointer`}
+        onClick={() => setChartView("Graph")}
+      >
+        Graph
+      </button>
+      <button
+        className={`px-4 py-1 rounded-md border ${
+          chartView === "Table"
+            ? "bg-gray-300 text-black"
+            : "bg-white text-gray-500"
+        } cursor-pointer`}
+        onClick={() => setChartView("Table")}
+      >
+        Table
+      </button>
+    </div>
 
-          {/* Chart box */}
-          <div className="bg-white rounded-2xl shadow p-6 space-y-6 border">
-            {/* Graph/Table Toggle + View Mode */}
-            <div className="flex justify-between space-x-4">
-              <div className="space-x-2">
-                <button
-                  className={`px-4 py-1 rounded-md border ${
-                    chartView === "Graph"
-                      ? "bg-gray-300 text-black"
-                      : "bg-white text-gray-500"
-                  }`}
-                  onClick={() => setChartView("Graph")}
-                >
-                  Graph
-                </button>
-                <button
-                  className={`px-4 py-1 rounded-md border ${
-                    chartView === "Table"
-                      ? "bg-gray-300 text-black"
-                      : "bg-white text-gray-500"
-                  }`}
-                  onClick={() => setChartView("Table")}
-                >
-                  Table
-                </button>
-              </div>
+    {/* export button on right side */}
+    <button className="bg-gray-200 border border-gray-400 text-sm px-4 py-1 rounded-md shadow cursor-point">
+      Export
+    </button>
+  </div>
 
-              <select
-                value={viewMode}
-                onChange={(e) => handleViewChange(e.target.value)}
-                className="border rounded-md px-2 py-1 text-sm"
-              >
-                <option value="Months">Months</option>
-                <option value="Weeks">Weeks</option>
-              </select>
-            </div>
+  {/* white card to put info inside */}
+  <div className="bg-white rounded-2xl shadow p-6 border space-y-6">
 
-            {/* Title */}
-            <h2 className="text-xl font-semibold">
-              Average Rental Duration By Item, {formattedRange}
-            </h2>
+    <div className="flex justify-between items-center">
+  <h2 className="text-xl font-semibold">
+    Average Rental Duration By Item, {formattedRange}
+  </h2>
+  <select
+    value={viewMode}
+    onChange={(e) => handleViewChange(e.target.value)}
+    className="border rounded-md px-2 py-1 text-sm"
+  >
+    <option value="Months">Months</option>
+    <option value="Weeks">Weeks</option>
+  </select>
+</div>
 
-            {/* Chart or Table */}
-            <div className="w-full h-[500px] flex">
-              {chartView === "Graph" ? (
-                <BarChart
-                  width={700}
-                  height={450}
-                  data={displayData}
-                  series={
-                    <BarSeries
-                      layout="horizontal"
-                      bar={<CustomBar />}
-                      barThickness={40}
-                      xAxis={<LinearXAxis axisLine={true} tickLine={true} />}
-                      yAxis={<LinearYAxis showGridLines={false} axisLine={true} tickLine={true} />}
-                    />
-                  }
+{/* the different elements rendered depending on the toggle buttons */}
+    <div className="mt-2">
+    {chartView === "Graph" ? (
+      <div className="w-full h-[500px] flex">
+        <BarChart
+          width={900}
+          height={500}
+          data={displayData}
+          series={
+            <BarSeries
+              layout="vertical"
+              bar={<CustomBar />}
+              barThickness={40}
+              xAxis={<LinearXAxis axisLine={true} tickLine={true} />}
+              yAxis={
+                <LinearYAxis
+                  showGridLines={false}
+                  axisLine={true}
+                  tickLine={true}
                 />
-              ) : (
-                <table className="w-full mt-4 text-left border border-gray-200">
-                  <thead className="bg-gray-100">
-                    <tr>
-                      <th className="py-2 px-4 border-b">Item</th>
-                      <th className="py-2 px-4 border-b">Duration ({viewMode})</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {displayData.map((item) => (
-                      <tr key={item.key}>
-                        <td className="py-2 px-4 border-b">{item.key}</td>
-                        <td className="py-2 px-4 border-b">{item.data}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
-          </div>
-        </main>
+              }
+            />
+          }
+        />
+      </div>
+    ) : (
+      <table className="w-full mt-4 text-left border border-gray-200">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="py-2 px-4 border-b">Item</th>
+            <th className="py-2 px-4 border-b">Duration ({viewMode})</th>
+          </tr>
+        </thead>
+        <tbody>
+          {displayData.map((item) => (
+            <tr key={item.key}>
+              <td className="py-2 px-4 border-b">{item.key}</td>
+              <td className="py-2 px-4 border-b">{item.data}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
+  </div>
+  </div>
+
+  {/* Graph or Table Below */}
+ 
+</main>
+
       </div>
     </div>
   );
