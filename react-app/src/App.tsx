@@ -4,6 +4,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import LogoutPage from "./pages/LogoutPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import NavigationBar from "./components/NavigationBar/NavigationBar";
+import Header from "./components/Header";
 import RequireAuth from "./auth/RequireAuth";
 import { AuthProvider } from "./auth/AuthProvider";
 
@@ -16,7 +17,8 @@ function App() {
             path="/"
             element={
               <RequireAuth>
-                <NavigationBar />
+                <Header />
+                {/* <NavigationBar  /> */}
               </RequireAuth>
             }
           />
