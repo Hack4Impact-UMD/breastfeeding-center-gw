@@ -4,6 +4,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import LogoutPage from "./pages/LogoutPage";
 import NavigationBar from "./components/NavigationBar/NavigationBar";
 import RequireAuth from "./auth/RequireAuth";
+import PaysimpleDashboard from "./pages/PaysimpleDashboard";
 import { AuthProvider } from "./auth/AuthProvider";
 
 function App() {
@@ -15,9 +16,7 @@ function App() {
           <Route
             path="/"
             element={
-              <RequireAuth>
-                <NavigationBar />
-              </RequireAuth>
+             <PaysimpleDashboard />
             }
           />
           <Route path="/login" element={<LoginPage />} />
