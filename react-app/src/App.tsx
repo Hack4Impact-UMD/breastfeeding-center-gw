@@ -2,12 +2,13 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import LogoutPage from "./pages/LogoutPage";
+import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import NavigationBar from "./components/NavigationBar/NavigationBar";
+import Header from "./components/Header";
 import RequireAuth from "./auth/RequireAuth";
 import { AuthProvider } from "./auth/AuthProvider";
 
 function App() {
-  // const navigate = useNavigate();
   return (
     <BrowserRouter>
       <AuthProvider>
@@ -16,12 +17,14 @@ function App() {
             path="/"
             element={
               <RequireAuth>
-                <NavigationBar />
+                <Header />
+                {/* <NavigationBar  /> */}
               </RequireAuth>
             }
           />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/logout" element={<LogoutPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
           <Route
             path="/*"
             element={
