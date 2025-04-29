@@ -32,6 +32,7 @@ function App() {
               </RequireAuth>
             }
           />
+          <Route path="/services/acuity" element={<AcuityDashboard />} />
           <Route
             path="/testfunctions"
             element={
