@@ -7,12 +7,21 @@ import management from "../../assets/management.svg";
 import service from "../../assets/services.svg";
 import { LuChevronsLeft } from "react-icons/lu";
 import { LuChevronsRight } from "react-icons/lu";
+
 import LogoutConfirmation from "./LogoutConfirmation";
 
-const NavigationBar = () => {
+interface NavigationBarProps {
+  navBarOpen: boolean;
+  setNavBarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const NavigationBar: React.FC<NavigationBarProps> = ({
+  navBarOpen,
+  setNavBarOpen,
+}) => {
   // tailwind class styling into consts
   const notActiveStyle =
-    "hover:bg-bcgw-yellow-light bg-white w-full h-full p-3 flex items-center";
+    "hover:bg-bcgw-yellow-light bg-[#F9F8F8] w-full h-full p-3 flex items-center";
   const activeStyle = "bg-bcgw-yellow-dark w-full h-full p-3 flex items-center";
   const activeIconStyle = "bg-bcgw-yellow-dark w-full p-4";
   const notActiveIconStyle = "p-4";
@@ -20,7 +29,6 @@ const NavigationBar = () => {
   const serviceMargin = "ml-12";
   const serviceStyle = "flex flex-row w-full h-[30px] cursor-pointer";
   const [openServices, setOpenServices] = useState(false);
-  const [navBarOpen, setNavBarOpen] = useState(true);
   const [openLogoutConfirmation, setOpenLogoutConfirmation] =
     useState<boolean>(false);
 
@@ -38,7 +46,7 @@ const NavigationBar = () => {
 
   return (
     <div
-      className={`flex flex-col justify-left h-screen fixed bg-white shadow-[4px_4px_4px_0px_rgba(0,_0,_0,_0.25)] transition-all duration-200 ease-in-out ${
+      className={`flex flex-col justify-left h-screen fixed bg-[#F9F8F8] shadow-[4px_4px_4px_0px_rgba(0,_0,_0,_0.25)] transition-all duration-200 ease-in-out ${
         navBarOpen ? "w-[250px]" : "w-[60px]"
       }`}>
       <div className="flex flex-col h-full ">

@@ -1,19 +1,20 @@
-import React, { useState } from 'react';
-import { FaEdit } from 'react-icons/fa';
-import { IoIosClose } from 'react-icons/io';
-import Modal from '../Modal';
+import { useState } from "react";
+import { FaEdit } from "react-icons/fa";
+import { IoIosClose } from "react-icons/io";
+import Modal from "../../components/Modal";
 
-const PasswordBox = () => {
+const PasswordPopup = () => {
   const [openCurrentModal, setOpenCurrentModal] = useState(false);
   const [openNewModal, setOpenNewModal] = useState(false);
 
-  const [currentPasswordInput, setCurrentPasswordInput] = useState('');
-  const [currentPassword, setCurrentPassword] = useState('abc');
+  const [currentPasswordInput, setCurrentPasswordInput] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("abc");
   const [showIncorrectPassword, setShowIncorrectPassword] = useState(false);
 
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmNewPassword, setConfirmNewPassword] = useState('');
-  const [showPasswordRequirementsError, setShowPasswordRequirementsError] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [showPasswordRequirementsError, setShowPasswordRequirementsError] =
+    useState(false);
   const [showMatchError, setShowMatchError] = useState(false);
 
   const validatePassword = (password: string) => {
@@ -23,7 +24,13 @@ const PasswordBox = () => {
     const digitCheck = /\d/.test(password);
     const specialCharCheck = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
-    return lengthCheck && lowercaseCheck && uppercaseCheck && digitCheck && specialCharCheck;
+    return (
+      lengthCheck &&
+      lowercaseCheck &&
+      uppercaseCheck &&
+      digitCheck &&
+      specialCharCheck
+    );
   };
 
   const handleNextFromCurrent = () => {
@@ -33,7 +40,7 @@ const PasswordBox = () => {
       setOpenNewModal(true);
     } else {
       setShowIncorrectPassword(true);
-      setCurrentPasswordInput('');
+      setCurrentPasswordInput("");
     }
   };
 
@@ -46,7 +53,7 @@ const PasswordBox = () => {
 
     if (isValid && isMatch) {
       setCurrentPassword(newPassword);
-      setCurrentPasswordInput('');
+      setCurrentPasswordInput("");
       setOpenNewModal(false);
     }
   };
@@ -60,7 +67,7 @@ const PasswordBox = () => {
           onClick={onClose}
         />
       </div>
-      <div className="w-full h-[1.5px] bg-black my-2"/>
+      <div className="w-full h-[1.5px] bg-black my-2" />
     </>
   );
 
@@ -68,33 +75,42 @@ const PasswordBox = () => {
     <div className="bg-white border border-gray-300 p-6 rounded-md shadow-sm">
       <h5 className="font-bold text-sm mb-4">PASSWORD</h5>
       <p className="text-xs text-gray-600 mb-4">
-        Heads up! You will be asked to log in to dashboard again before and after making any
-        changes to your email address or password to ensure a secure and complete update.
+        Heads up! You will be asked to log in to dashboard again before and
+        after making any changes to your email address or password to ensure a
+        secure and complete update.
       </p>
 
       <div className="flex justify-between items-center">
         <p className="font-bold text-sm w-40">Current Password</p>
         <p className="text-sm text-gray-800 flex-1">**********</p>
-        <FaEdit 
-          className="cursor-pointer text-gray-500" 
+        <FaEdit
+          className="cursor-pointer text-gray-500"
           onClick={() => setOpenCurrentModal(true)}
         />
       </div>
 
-      <Modal open={openCurrentModal} onClose={() => {
-        setOpenCurrentModal(false);
-        setCurrentPasswordInput('');
-        setShowIncorrectPassword(false);
-      }} height={220} width={600}>
+      <Modal
+        open={openCurrentModal}
+        onClose={() => {
+          setOpenCurrentModal(false);
+          setCurrentPasswordInput("");
+          setShowIncorrectPassword(false);
+        }}
+        height={220}
+        width={600}>
         <div className="flex flex-col h-full">
           <div>
-            <ModalHeader onClose={() => {
-              setOpenCurrentModal(false);
-              setCurrentPasswordInput('');
-              setShowIncorrectPassword(false);
-              }} />
+            <ModalHeader
+              onClose={() => {
+                setOpenCurrentModal(false);
+                setCurrentPasswordInput("");
+                setShowIncorrectPassword(false);
+              }}
+            />
             <div className="grid grid-cols-[190px_1fr] m-8 mb-2">
-              <label className="text-sm font-medium text-nowrap content-center">Enter Current Password:</label>
+              <label className="text-sm font-medium text-nowrap content-center">
+                Enter Current Password:
+              </label>
               <input
                 type="password"
                 value={currentPasswordInput}
@@ -112,11 +128,10 @@ const PasswordBox = () => {
             <button
               className={`px-4 py-2 rounded border-black ${
                 !currentPasswordInput
-                  ? 'bg-bcgw-gray-light text-black cursor-not-allowed'
-                  : 'bg-bcgw-yellow-dark text-black hover:bg-bcgw-yellow-light'
+                  ? "bg-bcgw-gray-light text-black cursor-not-allowed"
+                  : "bg-bcgw-yellow-dark text-black hover:bg-bcgw-yellow-light"
               }`}
-              onClick={handleNextFromCurrent}
-            >
+              onClick={handleNextFromCurrent}>
               Next
             </button>
           </div>
@@ -124,34 +139,42 @@ const PasswordBox = () => {
       </Modal>
 
       {/* New Password Modal */}
-      <Modal open={openNewModal} onClose={() => {
+      <Modal
+        open={openNewModal}
+        onClose={() => {
           setOpenNewModal(false);
-          setNewPassword('');
-          setConfirmNewPassword('');
-          setCurrentPasswordInput('');
+          setNewPassword("");
+          setConfirmNewPassword("");
+          setCurrentPasswordInput("");
           setShowPasswordRequirementsError(false);
           setShowMatchError(false);
-        }} height={450} width={600}>
+        }}
+        height={450}
+        width={600}>
         <div className="flex flex-col h-full">
           <div>
-            <ModalHeader onClose={() => {
-              setOpenNewModal(false);
-              setNewPassword('');
-              setConfirmNewPassword('');
-              setCurrentPasswordInput('');
-              setShowPasswordRequirementsError(false);
-              setShowMatchError(false);
-            }} />
+            <ModalHeader
+              onClose={() => {
+                setOpenNewModal(false);
+                setNewPassword("");
+                setConfirmNewPassword("");
+                setCurrentPasswordInput("");
+                setShowPasswordRequirementsError(false);
+                setShowMatchError(false);
+              }}
+            />
             {/* New Password */}
             <div className="grid grid-cols-[170px_1fr] m-8 mb-2">
-              <label className="text-sm font-medium text-nowrap content-center">Enter New Password:</label>
+              <label className="text-sm font-medium text-nowrap content-center">
+                Enter New Password:
+              </label>
               <input
                 type="password"
                 value={newPassword}
                 onChange={(e) => {
                   setNewPassword(e.target.value);
                   setShowPasswordRequirementsError(
-                    e.target.value !== '' && !validatePassword(e.target.value)
+                    e.target.value !== "" && !validatePassword(e.target.value)
                   );
                 }}
                 className="flex-1 border-[1.5px] border-black px-3 py-2"
@@ -170,13 +193,17 @@ const PasswordBox = () => {
               </div>
               <div className="h-[20px]"></div>
               {showPasswordRequirementsError && (
-                <p className="text-red-600 text-sm">Password does not meet requirements</p>
+                <p className="text-red-600 text-sm">
+                  Password does not meet requirements
+                </p>
               )}
             </div>
 
             {/* Confirm New Password */}
             <div className="grid grid-cols-[170px_1fr] mx-8">
-              <label className="block text-sm font-medium content-center">Confirm New Password:</label>
+              <label className="block text-sm font-medium content-center">
+                Confirm New Password:
+              </label>
               <input
                 type="password"
                 value={confirmNewPassword}
@@ -188,13 +215,14 @@ const PasswordBox = () => {
                 placeholder="Confirm password"
               />
               <div className="h-[20px]"></div>
-              {confirmNewPassword && (
-                newPassword === confirmNewPassword ? (
+              {confirmNewPassword &&
+                (newPassword === confirmNewPassword ? (
                   <p className="text-green-600 text-sm">Password matches</p>
                 ) : (
-                  <p className="text-red-600 text-sm">Password does not match</p>
-                )
-              )}
+                  <p className="text-red-600 text-sm">
+                    Password does not match
+                  </p>
+                ))}
             </div>
           </div>
 
@@ -206,8 +234,8 @@ const PasswordBox = () => {
                 !confirmNewPassword ||
                 newPassword !== confirmNewPassword ||
                 !validatePassword(newPassword)
-                  ? 'bg-bcgw-gray-light text-black cursor-not-allowed'
-                  : 'bg-bcgw-yellow-dark text-black hover:bg-bcgw-yellow-light'
+                  ? "bg-bcgw-gray-light text-black cursor-not-allowed"
+                  : "bg-bcgw-yellow-dark text-black hover:bg-bcgw-yellow-light"
               }`}
               onClick={handleNewPasswordSubmit}
               disabled={
@@ -215,8 +243,7 @@ const PasswordBox = () => {
                 !confirmNewPassword ||
                 newPassword !== confirmNewPassword ||
                 !validatePassword(newPassword)
-              }
-            >
+              }>
               Save
             </button>
           </div>
@@ -226,4 +253,4 @@ const PasswordBox = () => {
   );
 };
 
-export default PasswordBox;
+export default PasswordPopup;
