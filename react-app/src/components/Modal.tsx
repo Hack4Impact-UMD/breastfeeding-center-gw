@@ -3,7 +3,7 @@ interface modalPropsType {
   onClose: any;
   children: React.ReactNode;
   height: number;
-  width: number;
+  width?: number;
 }
 
 const Modal = ({
@@ -14,7 +14,6 @@ const Modal = ({
   width,
 }: modalPropsType): React.ReactElement => {
   const heightString = height + "px";
-  const widthString = width + "px";
   return (
     <div
       className="z-20"
@@ -29,8 +28,11 @@ const Modal = ({
           />
           <div className="fixed -translate-x-2/4 -translate-y-2/4 left-2/4 top-2/4">
             <div
-              className="w-[450px] bg-white z-10 rounded-lg shadow-xs"
-              style={{ height: heightString, width: widthString }}>
+              className="bg-white z-10 rounded-lg shadow-xs"
+              style={{
+                height: heightString,
+                width: width ? `${width}px` : "450px",
+              }}>
               {children}
             </div>
           </div>

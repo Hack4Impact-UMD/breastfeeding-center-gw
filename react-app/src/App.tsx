@@ -2,7 +2,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import LogoutPage from "./pages/LogoutPage";
+import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import NavigationBar from "./components/NavigationBar/NavigationBar";
+import Header from "./components/Header";
 import RequireAuth from "./auth/RequireAuth";
 import { AuthProvider } from "./auth/AuthProvider";
 import JanePage from "./pages/JanePage";
@@ -12,7 +14,6 @@ import ClientListPage from "./pages/ClientListPage";
 import ClientJourneyPage from "./pages/ClientJourneyPage";
 
 function App() {
-  // const navigate = useNavigate();
   return (
     <BrowserRouter>
       <AuthProvider>
@@ -21,9 +22,14 @@ function App() {
             path="/"
             element={
               <RequireAuth>
-                <NavigationBar navBarOpen={false} setNavBarOpen={function (value: SetStateAction<boolean>): void {
-                  throw new Error("Function not implemented.");
-                } } />
+                <NavigationBar
+                  navBarOpen={false}
+                  setNavBarOpen={function (
+                    value: SetStateAction<boolean>
+                  ): void {
+                    throw new Error("Function not implemented.");
+                  }}
+                />
               </RequireAuth>
             }
           />
@@ -32,8 +38,12 @@ function App() {
           <Route path="/services/jane" element={<JanePage />} />
           <Route path="/services/jane/data" element={<JaneData />} />
           <Route path="/services/clientlist" element={<ClientListPage />} />
-          <Route path="/services/clientjourney" element={<ClientJourneyPage />} />
+          <Route
+            path="/services/clientjourney"
+            element={<ClientJourneyPage />}
+          />
 
+          <Route path="/profile" element={<ProfilePage />} />
           <Route
             path="/*"
             element={

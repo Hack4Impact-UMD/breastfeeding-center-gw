@@ -3,6 +3,7 @@ import { useState } from "react";
 import primaryLogo from "../../assets/bcgw-logo.png";
 import home from "../../assets/home.svg";
 import logout from "../../assets/logout.svg";
+import clients from "../../assets/clients.svg";
 import management from "../../assets/management.svg";
 import service from "../../assets/services.svg";
 import { LuChevronsLeft } from "react-icons/lu";
@@ -18,10 +19,10 @@ interface NavigationBarProps {
 const NavigationBar: React.FC<NavigationBarProps> = ({
   navBarOpen,
   setNavBarOpen,
-}) => {  
+}) => {
   // tailwind class styling into consts
   const notActiveStyle =
-    "hover:bg-bcgw-yellow-light bg-white w-full h-full p-3 flex items-center";
+    "hover:bg-bcgw-yellow-light bg-[#F9F8F8] w-full h-full p-3 flex items-center";
   const activeStyle = "bg-bcgw-yellow-dark w-full h-full p-3 flex items-center";
   const activeIconStyle = "bg-bcgw-yellow-dark w-full p-4";
   const notActiveIconStyle = "p-4";
@@ -46,7 +47,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
 
   return (
     <div
-      className={`flex flex-col justify-left h-screen fixed bg-white shadow-[4px_4px_4px_0px_rgba(0,_0,_0,_0.25)] transition-all duration-200 ease-in-out ${
+      className={`flex flex-col justify-left h-screen fixed bg-[#F9F8F8] shadow-[4px_4px_4px_0px_rgba(0,_0,_0,_0.25)] transition-all duration-200 ease-in-out ${
         navBarOpen ? "w-[250px]" : "w-[60px]"
       }`}>
       <div className="flex flex-col h-full ">
@@ -148,35 +149,20 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                       <span className={serviceMargin}>PaySimple</span>
                     </NavLink>
                   </div>
-                  <div className={serviceStyle}>
-                    <NavLink
-                      to="/services/milkdepot"
-                      className={({ isActive }) =>
-                        isActive ? activeStyle : notActiveStyle
-                      }>
-                      <span className={serviceMargin}>Milk Depot</span>
-                    </NavLink>
-                  </div>
-                  <div className={serviceStyle}>
-                    <NavLink
-                      to="/services/mailchimp"
-                      className={({ isActive }) =>
-                        isActive ? activeStyle : notActiveStyle
-                      }>
-                      <span className={serviceMargin}>Mailchimp</span>
-                    </NavLink>
-                  </div>
-                  <div className={serviceStyle}>
-                    <NavLink
-                      to="/services/paypal"
-                      className={({ isActive }) =>
-                        isActive ? activeStyle : notActiveStyle
-                      }>
-                      <span className={serviceMargin}>Paypal</span>
-                    </NavLink>
-                  </div>
                 </div>
               )}
+
+              {/*CLIENT JOURNEY*/}
+              <div className="flex flex-row border-b border-bcgw-gray-light w-full cursor-pointer">
+                <NavLink
+                  to="/clients"
+                  className={({ isActive }) =>
+                    isActive ? activeStyle : notActiveStyle
+                  }>
+                  <img className="w-[30px] h-[30px]" src={clients} />
+                  <span className={categoryMargin}>Client Journey</span>
+                </NavLink>
+              </div>
 
               {/*USER MANAGEMENT*/}
               <div className="flex flex-row border-b border-bcgw-gray-light w-full cursor-pointer">
@@ -227,6 +213,14 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                   setOpenServices(true);
                 }}>
                 <img className="w-[30px] h-[30px]" src={service} />
+              </NavLink>
+
+              <NavLink
+                to="/clients"
+                className={({ isActive }) =>
+                  isActive ? activeIconStyle : notActiveIconStyle
+                }>
+                <img className="w-[30px] h-[30px]" src={clients} />
               </NavLink>
 
               <NavLink
