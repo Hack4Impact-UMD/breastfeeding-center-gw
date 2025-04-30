@@ -9,11 +9,12 @@ import RequireAuth from "./auth/RequireAuth";
 import { AuthProvider } from "./auth/AuthProvider";
 import JanePage from "./pages/JanePage";
 import JaneData from "./pages/JaneData";
-import { SetStateAction } from "react";
+import { useState } from "react";
 import ClientListPage from "./pages/ClientListPage";
 import ClientJourneyPage from "./pages/ClientJourneyPage";
 
 function App() {
+  const [navBarOpen, setNavBarOpen] = useState(false);
   return (
     <BrowserRouter>
       <AuthProvider>
@@ -22,14 +23,18 @@ function App() {
             path="/"
             element={
               <RequireAuth>
-                <NavigationBar
-                  navBarOpen={false}
-                  setNavBarOpen={function (
-                    value: SetStateAction<boolean>
-                  ): void {
-                    throw new Error("Function not implemented.");
-                  }}
-                />
+                <>
+                  <NavigationBar
+                    navBarOpen={navBarOpen}
+                    setNavBarOpen={setNavBarOpen}
+                  />
+                  <div
+                    className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
+                      navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
+                    }`}>
+                    <Header />
+                  </div>
+                </>
               </RequireAuth>
             }
           />
@@ -37,12 +42,8 @@ function App() {
           <Route path="/logout" element={<LogoutPage />} />
           <Route path="/services/jane" element={<JanePage />} />
           <Route path="/services/jane/data" element={<JaneData />} />
-          <Route path="/services/clientlist" element={<ClientListPage />} />
-          <Route
-            path="/services/clientjourney"
-            element={<ClientJourneyPage />}
-          />
-
+          <Route path="/clients" element={<ClientListPage />} />
+          <Route path="/clients/journey" element={<ClientJourneyPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route
             path="/*"
