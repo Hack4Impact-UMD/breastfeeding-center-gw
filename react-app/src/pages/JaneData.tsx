@@ -20,7 +20,6 @@ import {
   AcuityData,
 } from "../components/DataTable/Columns.tsx";
 import { DataTable } from "../components/DataTable/DataTable.tsx";
-import { ClientJourneyTable } from "@/components/DataTable/ClientJourneyTable.tsx";
 
 const JaneData = () => {
   //styles

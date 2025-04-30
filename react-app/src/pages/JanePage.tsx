@@ -4,7 +4,15 @@ import NavigationBar from "../components/NavigationBar/NavigationBar.tsx";
 import home from "../assets/management.svg";
 import React from "react";
 import { useRef } from "react";
-import { PieArcSeries, PieChart, FunnelChart } from "reaviz";
+import {
+  PieArcSeries,
+  PieChart,
+  FunnelChart,
+  FunnelAxis,
+  FunnelAxisLabel,
+  FunnelArc,
+} from "reaviz";
+import { FunnelSeries } from "reaviz";
 import { Jane } from "../types/JaneType.ts";
 import { getJaneTypes } from "../backend/JaneFunctions";
 import { addJaneSpreadsheet, getAllJaneData } from "../backend/FirestoreCalls";
@@ -12,6 +20,7 @@ import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import Loading from "../components/Loading.tsx";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
+import { Label } from "@radix-ui/react-select";
 
 const JanePage = () => {
   //nav bar
@@ -106,27 +115,27 @@ const JanePage = () => {
   const funnelData = [
     {
       data: 58,
-      key: "First week",
+      key: "1st week",
     },
     {
       data: 43,
-      key: "Second week",
+      key: "2nd week",
     },
     {
       data: 23,
-      key: "Third week",
+      key: "3rd week",
     },
     {
       data: 15,
-      key: "Fourth week",
+      key: "4th week",
     },
     {
       data: 8,
-      key: "Fifth week",
+      key: "5th week",
     },
     {
       data: 5,
-      key: "Sixth week",
+      key: "6th week",
     },
   ];
 
@@ -209,7 +218,7 @@ const JanePage = () => {
   };
 
   //chart colors
-  const chartColors = ["#ffae53", "#4fd2c6", "#66e201"];
+  const chartColors = ["#f4bb47", "#05182a", "#3A8D8E"];
 
   useEffect(() => {
     setLoading(true);
@@ -289,7 +298,7 @@ const JanePage = () => {
               </div>
               <div className={chartDiv}>
                 {/*chart title*/}
-                <span className="self-start font-semibold text-xl mb-2">
+                <span className="self-start font-semibold text-xl mb-7">
                   Visit Breakdown:
                   {dateRange.startDate && dateRange.endDate
                     ? formatDate(dateRange.startDate) +
@@ -359,7 +368,26 @@ const JanePage = () => {
                       formatDate(dateRange.endDate)
                     : " All Data"}
                 </span>
-                <FunnelChart height={290} data={funnelData} />
+                <FunnelChart
+                  height={290}
+                  data={funnelData}
+                  series={
+                    <FunnelSeries
+                      arc={<FunnelArc variant="layered" />}
+                      axis={
+                        <FunnelAxis
+                          label={
+                            <FunnelAxisLabel
+                              fontSize={10}
+                              position="bottom"
+                              fill="#000000"
+                            />
+                          }
+                        />
+                      }
+                    />
+                  }
+                />
               </div>
             </div>
           </div>
