@@ -299,12 +299,12 @@ const JanePage = () => {
               <div className={chartDiv}>
                 {/*chart title*/}
                 <span className="self-start font-semibold text-xl mb-7">
-                  Visit Breakdown:
+                  Visit Breakdown:{" "}
                   {dateRange.startDate && dateRange.endDate
                     ? formatDate(dateRange.startDate) +
                       " - " +
                       formatDate(dateRange.endDate)
-                    : " All Data"}
+                    : "All Data"}
                 </span>
                 {/*chart*/}
                 {chartData.length > 0 ? (
@@ -361,12 +361,12 @@ const JanePage = () => {
               </div>
               <div className={chartDiv}>
                 <span className="self-start font-semibold text-xl mb-2">
-                  Retention Rate:
+                  Retention Rate:{" "}
                   {dateRange.startDate && dateRange.endDate
                     ? formatDate(dateRange.startDate) +
                       " - " +
                       formatDate(dateRange.endDate)
-                    : " All Data"}
+                    : "All Data"}
                 </span>
                 <FunnelChart
                   height={290}
