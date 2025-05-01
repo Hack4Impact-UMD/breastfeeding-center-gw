@@ -1,16 +1,19 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import { SearchIcon } from "lucide-react";
-import { useEffect } from "react";
+import { FiTrash } from "react-icons/fi";
+import { useEffect, useState } from "react";
 import DeleteRowPopup from "./DeleteRowPopup";
 
 import {
   ColumnDef,
+  SortingState,
   flexRender,
   getCoreRowModel,
   useReactTable,
   getPaginationRowModel,
   getFilteredRowModel,
+  getSortedRowModel,
 } from "@tanstack/react-table";
 
 import {
@@ -29,7 +32,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState } from "react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -47,6 +49,7 @@ export function DataTable<TData, TValue>({
   const [globalFilter, setGlobalFilter] = useState("");
   const [rowSelection, setRowSelection] = useState({}); // record of indices that are selected
   const [rowsSelected, setRowsSelected] = useState<TData[]>([]);
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   //delete row popup
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -60,9 +63,11 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     onGlobalFilterChange: setGlobalFilter,
     onRowSelectionChange: setRowSelection,
-    state: { globalFilter, rowSelection },
+    onSortingChange: setSorting,
+    state: { globalFilter, rowSelection, sorting },
   });
 
   useEffect(() => {
@@ -79,45 +84,44 @@ export function DataTable<TData, TValue>({
 
   return (
     <>
-      <div className="flex items-center gap-5">
+      <div className="flex items-center gap-5 my-3">
         {tableType === "janeData" && (
           <button
             className={`${
               rowsSelected.length === 0
                 ? "bg-bcgw-gray-light cursor-not-allowed"
-                : "bg-bcgw-yellow-dark cursor-pointer"
-            } text-base border-1 border-black-500 py-1 font-bold px-7 rounded-[10px]`}
+                : "bg-bcgw-yellow-dark cursor-pointer hover:bg-bcgw-yellow-light"
+            } text-base border-1 border-black-500 py-1.5 font-bold px-6 rounded-[10px]`}
             disabled={rowsSelected.length === 0}
-            onClick={openModal}
-          >
-            Delete
+            onClick={openModal}>
+            <div className="flex items-center gap-2">
+              <FiTrash /> Delete
+            </div>
           </button>
         )}
         {(tableType === "clientList" || tableType === "janeData") && (
-          <div className="w-full max-w-sm items-center gap-1.5 py-5">
-            <div className="relative">
-              <Input
-                placeholder="Search"
-                value={table.getState().globalFilter ?? ""}
-                onChange={(event) => table.setGlobalFilter(event.target.value)}
-                className="w-full rounded-none bg-[#D4D4D4] pr-8 placeholder:text-black focus-visible:ring-1 focus-visible:border-transparent"
-              />
-              <div className="absolute right-2.5 top-2.5 h-4 w-4">
-                <SearchIcon className="h-4 w-4" />
-              </div>
-            </div>
+          <div className="flex items-center w-full max-w-sm border bg-bcgw-gray-light p-1.5">
+            <input
+              type="text"
+              className="flex-grow border-none outline-none bg-bcgw-gray-light"
+              value={table.getState().globalFilter ?? ""}
+              onChange={(event) => table.setGlobalFilter(event.target.value)}
+              placeholder="Search"
+            />
+            <span className="text-bcgw-gray-dark">
+              <SearchIcon className="h-4 w-4" />
+            </span>
           </div>
         )}
       </div>
-      <div className="border border-2">
+      <div className="border-2">
         <Table>
           <TableHeader
             className={`${
               tableType === "janeData" || tableType === "journey"
                 ? "bg-[#0C3D6B33]"
                 : "bg-[#B9C4CE]"
-            }`}
-          >
+            }`}>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -141,8 +145,7 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() ? "selected" : "unselected"}
-                  className="data-[state=selected]:bg-gray data-[state=unselected]:bg-white"
-                >
+                  className="data-[state=selected]:bg-gray data-[state=unselected]:bg-white">
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
@@ -157,8 +160,7 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                  className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
@@ -173,8 +175,7 @@ export function DataTable<TData, TValue>({
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
               table.setPageSize(Number(value));
-            }}
-          >
+            }}>
             <SelectTrigger className="h-8 w-[70px] bg-white cursor-pointer">
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
@@ -183,33 +184,30 @@ export function DataTable<TData, TValue>({
                 <SelectItem
                   key={pageSize}
                   value={`${pageSize}`}
-                  className="cursor-pointer"
-                >
+                  className="cursor-pointer">
                   {pageSize}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
           <button
-            className={`border border-black w-5 h-5 flex items-center justify-center pb-1 ${
+            className={`border border-black w-8 h-8 flex items-center justify-center pb-1 hover:bg-bcgw-gray-light ${
               table.getCanPreviousPage()
                 ? "cursor-pointer"
                 : "cursor-not-allowed opacity-50"
             }`}
             onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
+            disabled={!table.getCanPreviousPage()}>
             {"<"}
           </button>
           <button
-            className={`border border-black w-5 h-5 flex items-center justify-center pb-1 ${
+            className={`border border-black w-8 h-8 flex items-center justify-center pb-1 hover:bg-bcgw-gray-light ${
               table.getCanNextPage()
                 ? "cursor-pointer"
                 : "cursor-not-allowed opacity-50"
             }`}
             onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
+            disabled={!table.getCanNextPage()}>
             {">"}
           </button>
         </div>

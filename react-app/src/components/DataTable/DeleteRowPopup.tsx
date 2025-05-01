@@ -1,5 +1,5 @@
 import Modal from "../Modal";
-import { BiArrowBack } from "react-icons/bi";
+import { IoIosClose } from "react-icons/io";
 
 const DeleteRowPopup = ({
   openModal,
@@ -22,13 +22,17 @@ const DeleteRowPopup = ({
 
   const deleteRow = (
     <div>
-      <button onClick={onClose} className="cursor-pointer p-4">
-        <BiArrowBack className="w-10 h-8" />
+      <button
+        onClick={() => {
+          onClose();
+        }}
+        className="absolute top-4 right-4 text-bcgw-blue-dark hover:text-gray-600 z-10 cursor-pointer">
+        <IoIosClose size={50} />
       </button>
-      <div className="flex flex-col items-center justify-center px-15">
-        <p className="mt-3 mb-8 text-3xl font-semibold text-center font-Montserrat">
+      <div className="relative p-8 flex flex-col items-center justify-center text-center h-full">
+        <h2 className="mt-8 mb-4 font-semibold text-center font-Montserrat">
           Are you sure?
-        </p>
+        </h2>
 
         <p className={`leading-6 font-Inter text-lg text-center mb-6 mx-6`}>
           Are you sure you want to delete the following row(s)?
@@ -46,7 +50,7 @@ const DeleteRowPopup = ({
   );
 
   return (
-    <Modal open={openModal} onClose={onClose} height={350} width={550}>
+    <Modal open={openModal} onClose={onClose} height={300} width={450}>
       {deleteRow}
     </Modal>
   );

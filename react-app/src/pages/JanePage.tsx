@@ -33,7 +33,6 @@ const JanePage = () => {
   const centerItemsInDiv = "flex justify-between items-center";
   const chartDiv =
     "flex flex-col items-center justify-center bg-white h-[400px] border-2 border-black p-5 mt-2 rounded-lg";
-  const chartDivContainer = "min-w-[300px] max-w-[50%]";
 
   //file upload
   const [file, setFile] = useState<File | null>(null);
