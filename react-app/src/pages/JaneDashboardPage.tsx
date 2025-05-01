@@ -177,7 +177,7 @@ const JaneDashboardPage = () => {
           navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
         }`}>
         <Header />
-        <div className="flex flex-col p-8 pr-20 pl-14 min-h-screen">
+        <div className="flex flex-col p-8 pr-20 pl-20">
           {/*headings*/}
           <div className={centerItemsInDiv}>
             <div>

@@ -339,7 +339,7 @@ export default function AcuityDashboardPage() {
         }`}>
         <Header />
 
-        <div className="flex flex-col p-8 pr-20 pl-14 min-h-screen space-y-5">
+        <div className="flex flex-col p-8 pr-20 pl-20 space-y-5">
           <h1 className="text-3xl font-bold">ACUITY</h1>
 
           <div className={`${centerItemsInDiv} pt-4`}>
