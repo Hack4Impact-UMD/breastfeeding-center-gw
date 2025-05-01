@@ -13,35 +13,6 @@ import app, { functions } from "../config/firebase";
 import { httpsCallable } from "firebase/functions";
 
 /*
- * Creates a volunteer user
- */
-export function createVolunteerUser(
-  newEmail: string,
-  newFirstName: string,
-  newLastName: string,
-  code: string
-): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const createUserCloudFunction = httpsCallable(
-      functions,
-      "createVolunteerUser"
-    );
-    createUserCloudFunction({
-      email: newEmail,
-      firstName: newFirstName,
-      lastName: newLastName,
-      code: code,
-    })
-      .then(async () => {
-        resolve();
-      })
-      .catch((error: any) => {
-        reject(error);
-      });
-  });
-}
-
-/*
  * Creates a admin user
  */
 export function createAdminUser(
