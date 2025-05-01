@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import {
   LineChart,
   LineSeries,
@@ -11,11 +11,12 @@ import {
   GradientStop,
   RangeLines,
   GuideBar,
-  TooltipArea,
 } from "reaviz";
 import NavigationBar from "../components/NavigationBar/NavigationBar";
 import Header from "../components/Header";
 // import { getClientAppointments } from "../backend/AcuityCalls";
+import { toPng } from "html-to-image";
+import download from "downloadjs";
 
 export default function AcuityDashboardPage() {
   const [navBarOpen, setNavBarOpen] = useState<boolean>(true);
@@ -25,6 +26,9 @@ export default function AcuityDashboardPage() {
     useState<string>("graph");
   const [instructorPopularityDisplay, setInstructorPopularityDisplay] =
     useState<string>("graph");
+  const attendanceChartRef = useRef<HTMLDivElement>(null);
+  const classPopularityChartRef = useRef<HTMLDivElement>(null);
+  const instructorPopularityChartRef = useRef<HTMLDivElement>(null);
 
   // ── CLASS dropdown state & data ───────────────────────────────
   const [selectedClass, setSelectedClass] = useState("All Classes");
@@ -194,19 +198,19 @@ export default function AcuityDashboardPage() {
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer";
 
   // Fetch data on mount
-  useEffect(() => {
-    // getClientAppointments()
-    //   .then((res) => {
-    //     // your API lives under res.result
-    //     const byId = res.result ?? res;
-    //     const clients = Object.values(byId);
-    //     // flatten out the `classes` array on each client
-    //     const flat = clients.flatMap((c) => c.classes || []);
-    //     console.log("🔹 total bookings:", flat.length, flat[0]);
-    //     setAllClasses(flat);
-    //   })
-    //   .catch(console.error);
-  }, []);
+  // useEffect(() => {
+  // getClientAppointments()
+  //   .then((res) => {
+  //     // your API lives under res.result
+  //     const byId = res.result ?? res;
+  //     const clients = Object.values(byId);
+  //     // flatten out the `classes` array on each client
+  //     const flat = clients.flatMap((c) => c.classes || []);
+  //     console.log("🔹 total bookings:", flat.length, flat[0]);
+  //     setAllClasses(flat);
+  //   })
+  //   .catch(console.error);
+  // }, []);
 
   // 3) pivot into Reaviz series
   // const classOverTime = useMemo(() => {
@@ -243,6 +247,23 @@ export default function AcuityDashboardPage() {
       : allClassAttendanceData.filter((c) => c.key === selectedClass);
 
   const barData = filteredClassBars[0]?.data ?? [];
+
+  const handleExport = async (
+    ref: React.RefObject<HTMLDivElement | null>,
+    filename: string
+  ) => {
+    const element = ref.current;
+    if (!element) {
+      return;
+    }
+
+    try {
+      const dataUrl = await toPng(element);
+      download(dataUrl, `${filename}.png`);
+    } catch (error) {
+      console.error("Export failed:", error);
+    }
+  };
 
   // ── INSTRUCTOR dropdown state & data ─────────────────────────
   const [selectedInstructor, setSelectedInstructor] = useState("All Classes");
@@ -344,13 +365,17 @@ export default function AcuityDashboardPage() {
             </div>
             <button
               className={transparentGrayButtonStyle}
-              onClick={() => console.log("Exported")}>
+              onClick={() =>
+                handleExport(attendanceChartRef, "class_attendance")
+              }>
               Export
             </button>
           </div>
 
           {/* Attendance Bar Chart */}
-          <div className="bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black">
+          <div
+            className="bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
+            ref={attendanceChartRef}>
             <div className="flex justify-between items-center space-x-4">
               <h2 className="text-xl font-semibold">
                 Class Attendance By Trimester, <br /> 2/19/25 - 3/19/25
@@ -456,13 +481,17 @@ export default function AcuityDashboardPage() {
             </div>
             <button
               className={transparentGrayButtonStyle}
-              onClick={() => console.log("Exported")}>
+              onClick={() =>
+                handleExport(classPopularityChartRef, "class_popularity")
+              }>
               Export
             </button>
           </div>
 
           {/* Class Popularity Over Time */}
-          <div className="bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black">
+          <div
+            className="bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
+            ref={classPopularityChartRef}>
             <div className="flex justify-between items-center space-x-4">
               <h2 className="text-xl font-semibold">
                 Class Popularity Over Time, <br /> 2/19/25 - 3/19/25
@@ -514,13 +543,20 @@ export default function AcuityDashboardPage() {
             </div>
             <button
               className={transparentGrayButtonStyle}
-              onClick={() => console.log("Exported")}>
+              onClick={() =>
+                handleExport(
+                  instructorPopularityChartRef,
+                  "instructor_popularity"
+                )
+              }>
               Export
             </button>
           </div>
 
           {/* Instructor Popularity Over Time */}
-          <div className="bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black">
+          <div
+            className="bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
+            ref={instructorPopularityChartRef}>
             <div className="flex justify-between items-center space-x-4">
               <h2 className="text-xl font-semibold">
                 Instructor Popularity Over Time,
