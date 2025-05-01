@@ -16,6 +16,7 @@ import { getAllJaneData } from "../backend/FirestoreCalls";
 import Loading from "../components/Loading.tsx";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
+import { DateRangePicker, defaultPresets, defaultDateRange } from "@/components/DateRangePicker/DateRangePicker.tsx";
 
 const JanePage = () => {
   //nav bar
@@ -184,15 +185,11 @@ const JanePage = () => {
             </div>
             {/*date picker*/}
             <div className="w-60">
-              {/* <Datepicker
-                placeholder="Select Date Range"
-                showShortcuts={true}
-                asSingle={false}
-                value={dateRange}
-                onChange={handleDateRangeChange}
-                primaryColor={"yellow"}
-                displayFormat="MM/DD/YYYY"
-              /> */}
+              <DateRangePicker 
+              enableYearNavigation
+              defaultValue={defaultDateRange}
+              presets={defaultPresets}
+              className="w-60" />
             </div>
           </div>
 

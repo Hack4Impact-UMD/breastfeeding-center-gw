@@ -691,6 +691,8 @@ interface RangeProps extends PickerProps {
   onChange?: (dateRange: DateRange | undefined) => void
 }
 
+
+
 const RangeDatePicker = ({
   defaultValue,
   value,
@@ -1195,9 +1197,68 @@ const DateRangePicker = ({ presets, ...props }: RangeDatePickerProps) => {
 
 DateRangePicker.displayName = "DateRangePicker"
 
+const defaultPresets = [
+  {
+    label: "Today",
+    dateRange: {
+      from: new Date(),
+      to: new Date(),
+    },
+  },
+  {
+    label: "Last 7 days",
+    dateRange: {
+      from: new Date(new Date().setDate(new Date().getDate() - 7)),
+      to: new Date(),
+    },
+  },
+  {
+    label: "Last 30 days",
+    dateRange: {
+      from: new Date(new Date().setDate(new Date().getDate() - 30)),
+      to: new Date(),
+    },
+  },
+  {
+    label: "Last 3 months",
+    dateRange: {
+      from: new Date(new Date().setMonth(new Date().getMonth() - 3)),
+      to: new Date(),
+    },
+  },
+  {
+    label: "Last 6 months",
+    dateRange: {
+      from: new Date(new Date().setMonth(new Date().getMonth() - 6)),
+      to: new Date(),
+    },
+  },
+  {
+    label: "Month to date",
+    dateRange: {
+      from: new Date(new Date().setDate(1)),
+      to: new Date(),
+    },
+  },
+  {
+    label: "Year to date",
+    dateRange: {
+      from: new Date(new Date().setFullYear(new Date().getFullYear(), 0, 1)),
+      to: new Date(),
+    },
+  },
+]
+
+const defaultDateRange: DateRange = {
+  from: new Date(new Date().setDate(new Date().getDate() - 30)),
+  to: new Date(),
+} // defaultDateRange
+
 export {
   DatePicker,
   DateRangePicker,
+  defaultPresets,
+  defaultDateRange,
   type DatePreset,
   type DateRangePreset,
   type DateRange,
