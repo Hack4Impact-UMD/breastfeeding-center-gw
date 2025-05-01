@@ -6,7 +6,7 @@ import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import NavigationBar from "./components/NavigationBar/NavigationBar";
 import Header from "./components/Header";
 import RequireAuth from "./auth/RequireAuth";
-import PaysimpleDashboard from "./pages/PaysimpleDashboard";
+import PaysimpleDashboard from "./pages/PaysimpleDashboardPage";
 import { AuthProvider } from "./auth/AuthProvider";
 import { getBabyInfo, getClientAppointments } from "./backend/AcuityCalls";
 import AcuityDashboard from "./pages/AcuityDashboardPage";
@@ -64,6 +64,14 @@ function App() {
             element={
               <RequireAuth>
                 <AcuityDashboard />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/services/paysimple"
+            element={
+              <RequireAuth>
+                <PaysimpleDashboard />
               </RequireAuth>
             }
           />
