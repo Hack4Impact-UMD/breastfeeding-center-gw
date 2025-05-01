@@ -16,7 +16,7 @@ import { getAllJaneData } from "../backend/FirestoreCalls";
 import Loading from "../components/Loading.tsx";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
-import { DateRangePicker, defaultPresets, defaultDateRange } from "@/components/DateRangePicker/DateRangePicker.tsx";
+import { DateRangePicker, defaultPresets, defaultDateRange, DateRange } from "@/components/DateRangePicker/DateRangePicker.tsx";
 
 const JanePage = () => {
   //nav bar
@@ -98,20 +98,24 @@ const JanePage = () => {
   });
 
   //setting dates
-  // const handleDateRangeChange = (newRange: DateValueType) => {
-  //   if (newRange && newRange.startDate && newRange.endDate) {
-  //     setDateRange({
-  //       startDate: newRange.startDate,
-  //       endDate: newRange.endDate,
-  //     });
-  //     // filter function here
-  //   } else {
-  //     setDateRange({
-  //       startDate: null,
-  //       endDate: null,
-  //     });
-  //   }
-  // };
+  const handleDateRangeChange = (newRange: DateRange | undefined) => {
+    if (newRange) {
+      if (newRange.from && newRange.to) {
+        setDateRange({
+          startDate: newRange.from,
+          endDate: newRange.to,
+        });
+        // filterData();
+        console.log(newRange);
+
+      } else {
+        setDateRange({
+          startDate: null,
+          endDate: null,
+        });
+      }
+    }
+  };
 
   //convert dates to strings for display
   const formatDate = (date: Date) =>
@@ -188,6 +192,7 @@ const JanePage = () => {
               <DateRangePicker 
               enableYearNavigation
               defaultValue={defaultDateRange}
+              onChange={handleDateRangeChange}
               presets={defaultPresets}
               className="w-60" />
             </div>
@@ -352,3 +357,4 @@ const JanePage = () => {
 };
 
 export default JanePage;
+

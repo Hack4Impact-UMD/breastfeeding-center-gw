@@ -131,8 +131,8 @@ const Calendar = ({
         day_today: "font-semibold",
         day_selected: cx(
           "rounded-sm",
-          "aria-selected:bg-blue-500 aria-selected:text-white",
-          "dark:aria-selected:bg-blue-500 dark:aria-selected:text-white",
+          "aria-selected:bg-bcgw-yellow-dark aria-selected:text-white",
+          "dark:aria-selected:bg-bcgw-yellow-dark dark:aria-selected:text-white",
         ),
         day_disabled:
           "text-gray-300! dark:text-gray-700! line-through disabled:hover:bg-transparent",
@@ -296,7 +296,7 @@ const Calendar = ({
                   className={cx(
                     "absolute inset-x-1/2 bottom-1.5 h-0.5 w-4 -translate-x-1/2 rounded-[2px]",
                     {
-                      "bg-blue-500 dark:bg-blue-500": !selected,
+                      "bg-bcgw-yellow-dark dark:bg-bcgw-yellow-dark": !selected,
                       "bg-white! dark:bg-gray-950!": selected,
                       "bg-gray-400! dark:bg-gray-600!":
                         selected && range_middle,
