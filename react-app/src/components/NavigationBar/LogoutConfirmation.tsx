@@ -33,11 +33,11 @@ export default function LogoutConfirmation({
         onClick={() => {
           onClose();
         }}
-        className="absolute top-4 right-4 text-bcgw-blue-dark z-10 cursor-pointer">
+        className="absolute top-4 right-4 text-bcgw-blue-dark hover:text-gray-600 z-10 cursor-pointer">
         <IoIosClose size={50} />
       </button>
       <div className="relative p-8 flex flex-col items-center justify-center text-center h-full">
-        <h2 className="text-xl font-semibold flex-grow flex items-center justify-center">
+        <h2 className="font-semibold flex-grow flex items-center justify-center">
           Are you sure you want to log out?
         </h2>
         <div className="flex justify-center gap-6">
