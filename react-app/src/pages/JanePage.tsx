@@ -34,7 +34,6 @@ const JanePage = () => {
     "flex flex-col items-center justify-center bg-white h-[400px] border-2 border-black p-5 mt-2 rounded-lg";
 
   //file upload
-  const [file, setFile] = useState<File | null>(null);
   const [janeData, setJaneData] = useState<Jane[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [chartData, setChartData] = useState<{ key: string; data: number }[]>(

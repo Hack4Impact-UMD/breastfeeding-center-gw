@@ -11,7 +11,6 @@ import {
   paysimpleColumns,
   PaySimpleRentals,
 } from "@/components/DataTable/Columns.tsx";
-import { ClientJourneyTable } from "@/components/DataTable/ClientJourneyTable.tsx";
 import { DataTable } from "@/components/DataTable/DataTable.tsx";
 
 const ClientJourney = () => {

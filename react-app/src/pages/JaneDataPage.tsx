@@ -20,7 +20,9 @@ const JaneDataPage = () => {
   const centerItemsInDiv = "flex justify-between items-center";
 
   //file upload
+  //@ts-expect-error
   const [file, setFile] = useState<File | null>(null);
+  //@ts-expect-error
   const [janeUploadData, setJaneUploadData] = useState<Jane[]>([]);
   const [janeData, setJaneData] = useState<JaneID[]>([]);
   const [navBarOpen, setNavBarOpen] = useState(true);
@@ -66,14 +68,6 @@ const JaneDataPage = () => {
       });
     }
   };
-
-  //convert dates to strings for display
-  const formatDate = (date: Date) =>
-    date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "numeric",
-      day: "numeric",
-    });
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
