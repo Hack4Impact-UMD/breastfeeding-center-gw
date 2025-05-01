@@ -13,7 +13,6 @@ import {
 import { FunnelSeries } from "reaviz";
 import { Jane } from "../types/JaneType.ts";
 import { getAllJaneData } from "../backend/FirestoreCalls";
-import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import Loading from "../components/Loading.tsx";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
@@ -98,20 +97,20 @@ const JanePage = () => {
   });
 
   //setting dates
-  const handleDateRangeChange = (newRange: DateValueType) => {
-    if (newRange && newRange.startDate && newRange.endDate) {
-      setDateRange({
-        startDate: newRange.startDate,
-        endDate: newRange.endDate,
-      });
-      // filter function here
-    } else {
-      setDateRange({
-        startDate: null,
-        endDate: null,
-      });
-    }
-  };
+  // const handleDateRangeChange = (newRange: DateValueType) => {
+  //   if (newRange && newRange.startDate && newRange.endDate) {
+  //     setDateRange({
+  //       startDate: newRange.startDate,
+  //       endDate: newRange.endDate,
+  //     });
+  //     // filter function here
+  //   } else {
+  //     setDateRange({
+  //       startDate: null,
+  //       endDate: null,
+  //     });
+  //   }
+  // };
 
   //convert dates to strings for display
   const formatDate = (date: Date) =>
@@ -185,7 +184,7 @@ const JanePage = () => {
             </div>
             {/*date picker*/}
             <div className="w-60">
-              <Datepicker
+              {/* <Datepicker
                 placeholder="Select Date Range"
                 showShortcuts={true}
                 asSingle={false}
@@ -193,7 +192,7 @@ const JanePage = () => {
                 onChange={handleDateRangeChange}
                 primaryColor={"yellow"}
                 displayFormat="MM/DD/YYYY"
-              />
+              /> */}
             </div>
           </div>
 

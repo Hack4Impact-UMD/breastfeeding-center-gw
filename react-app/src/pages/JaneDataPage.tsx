@@ -9,7 +9,6 @@ import {
 } from "../backend/FirestoreCalls";
 import { getJaneTypes } from "../backend/JaneFunctions";
 import { DateTime } from "luxon";
-import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import { janeIDDataColumns } from "../components/DataTable/Columns.tsx";
 import { DataTable } from "../components/DataTable/DataTable.tsx";
 
@@ -123,7 +122,7 @@ const JaneDataPage = () => {
             </div>
             {/*date picker*/}
             <div className="w-60">
-              <Datepicker
+              {/* <Datepicker
                 placeholder="Select Date Range"
                 showShortcuts={true}
                 asSingle={false}
@@ -131,7 +130,7 @@ const JaneDataPage = () => {
                 onChange={handleDateRangeChange}
                 primaryColor={"yellow"}
                 displayFormat="MM/DD/YYYY"
-              />
+              /> */}
             </div>
           </div>
 
