@@ -52,21 +52,21 @@ const JaneDataPage = () => {
     endDate: null,
   });
 
-  //setting dates
-  const handleDateRangeChange = (newRange: DateValueType) => {
-    if (newRange && newRange.startDate && newRange.endDate) {
-      setDateRange({
-        startDate: newRange.startDate,
-        endDate: newRange.endDate,
-      });
-      // filter function here
-    } else {
-      setDateRange({
-        startDate: null,
-        endDate: null,
-      });
-    }
-  };
+  // //setting dates
+  // const handleDateRangeChange = (newRange: DateValueType) => {
+  //   if (newRange && newRange.startDate && newRange.endDate) {
+  //     setDateRange({
+  //       startDate: newRange.startDate,
+  //       endDate: newRange.endDate,
+  //     });
+  //     // filter function here
+  //   } else {
+  //     setDateRange({
+  //       startDate: null,
+  //       endDate: null,
+  //     });
+  //   }
+  // };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
