@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { BarChart, BarSeries, LinearXAxis, LinearYAxis, Bar } from "reaviz";
+import { BarChart, BarSeries, Bar } from "reaviz";
 import NavigationBar from "../components/NavigationBar/NavigationBar";
 import Header from "../components/Header";
 import { toPng } from "html-to-image";
