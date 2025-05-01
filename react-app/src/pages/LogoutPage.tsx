@@ -9,7 +9,7 @@ const LogoutPage = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-white">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-grey-200">
       <img
         className="h-50 w-80 object-contain m-0 p-0"
         src={Logo}

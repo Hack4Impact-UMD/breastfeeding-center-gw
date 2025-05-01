@@ -16,13 +16,16 @@ Welcome to the Breastfeeding Center of Greater Washington/Hack4Impact-UMD reposi
 
 This project aims to centralize data and analytics for the organization in order to streamline operations and aid in grant application processes.
 
+# Hosting
+We are currently using Firebase Hosting. You can view a dev deployment of the application at https://breastfeeding-center-gw.web.app/
+
 # Tech Stack
 **Frontend:**
 
 - Framework: [React](https://react.dev/)
 - Language: [Typescript](https://www.typescriptlang.org/docs/handbook/intro.html)
 - Styling: [Tailwind](https://tailwindcss.com/)
-- Libraries: ShadCN
+- Libraries: [Reaviz](reaviz.dev), [ShadCN](https://ui.shadcn.com/)
 - Build Tool: [Vite](https://vitejs.dev/)
 
 **Backend:**
