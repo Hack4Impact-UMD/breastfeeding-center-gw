@@ -11,7 +11,11 @@ import { getJaneTypes } from "../backend/JaneFunctions";
 import { DateTime } from "luxon";
 import { janeIDDataColumns } from "../components/DataTable/Columns.tsx";
 import { DataTable } from "../components/DataTable/DataTable.tsx";
-import { DateRangePicker, defaultDateRange, defaultPresets } from "@/components/DateRangePicker/DateRangePicker.tsx";
+import {
+  DateRangePicker,
+  defaultDateRange,
+  defaultPresets,
+} from "@/components/DateRangePicker/DateRangePicker.tsx";
 
 const JaneDataPage = () => {
   //styles
@@ -45,6 +49,7 @@ const JaneDataPage = () => {
   }, []);
 
   //date picker
+  //@ts-expect-error
   const [dateRange, setDateRange] = useState<{
     startDate: Date | null;
     endDate: Date | null;
@@ -123,11 +128,12 @@ const JaneDataPage = () => {
             </div>
             {/*date picker*/}
             <div className="w-60">
-              <DateRangePicker 
-              enableYearNavigation
-              defaultValue={defaultDateRange}
-              presets={defaultPresets}
-              className="w-60" />
+              <DateRangePicker
+                enableYearNavigation
+                defaultValue={defaultDateRange}
+                presets={defaultPresets}
+                className="w-60"
+              />
             </div>
           </div>
 

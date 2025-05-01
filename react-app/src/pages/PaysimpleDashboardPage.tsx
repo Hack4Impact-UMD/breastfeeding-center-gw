@@ -4,7 +4,11 @@ import NavigationBar from "../components/NavigationBar/NavigationBar";
 import Header from "../components/Header";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
-import { DateRangePicker, defaultPresets, defaultDateRange } from "@/components/DateRangePicker/DateRangePicker";
+import {
+  DateRangePicker,
+  defaultPresets,
+  defaultDateRange,
+} from "@/components/DateRangePicker/DateRangePicker";
 
 // record of colors to use for each rental item
 const colors: Record<string, string> = {
@@ -54,6 +58,7 @@ export default function PaysimpleDashboardPage() {
   // use state for toggles/buttons/changing of information
   const [viewMode, setViewMode] = useState("Months");
   const [rentalDisplay, setRentalDisplay] = useState("graph");
+  //@ts-expect-error
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   const rentalChartRef = useRef<HTMLDivElement>(null);
@@ -122,11 +127,12 @@ export default function PaysimpleDashboardPage() {
             </div>
             {/*date picker*/}
             <div className="w-60">
-              <DateRangePicker 
-              enableYearNavigation
-              defaultValue={defaultDateRange}
-              presets={defaultPresets}
-              className="w-60" />
+              <DateRangePicker
+                enableYearNavigation
+                defaultValue={defaultDateRange}
+                presets={defaultPresets}
+                className="w-60"
+              />
             </div>
           </div>
 
