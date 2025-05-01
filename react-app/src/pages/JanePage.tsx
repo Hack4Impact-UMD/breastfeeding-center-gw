@@ -105,7 +105,7 @@ const JanePage = () => {
           startDate: newRange.from,
           endDate: newRange.to,
         });
-        // filterData();
+        filterData();
         console.log(newRange);
 
       } else {
