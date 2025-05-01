@@ -13,10 +13,15 @@ import {
 import { FunnelSeries } from "reaviz";
 import { Jane } from "../types/JaneType.ts";
 import { getAllJaneData } from "../backend/FirestoreCalls.tsx";
-import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import Loading from "../components/Loading.tsx";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
+import {
+  DateRangePicker,
+  defaultPresets,
+  defaultDateRange,
+  DateRange,
+} from "@/components/DateRangePicker/DateRangePicker.tsx";
 
 const JaneDashboardPage = () => {
   //nav bar
@@ -98,18 +103,21 @@ const JaneDashboardPage = () => {
   });
 
   //setting dates
-  const handleDateRangeChange = (newRange: DateValueType) => {
-    if (newRange && newRange.startDate && newRange.endDate) {
-      setDateRange({
-        startDate: newRange.startDate,
-        endDate: newRange.endDate,
-      });
-      // filter function here
-    } else {
-      setDateRange({
-        startDate: null,
-        endDate: null,
-      });
+  const handleDateRangeChange = (newRange: DateRange | undefined) => {
+    if (newRange) {
+      if (newRange.from && newRange.to) {
+        setDateRange({
+          startDate: newRange.from,
+          endDate: newRange.to,
+        });
+        filterData();
+        // console.log(newRange);
+      } else {
+        setDateRange({
+          startDate: null,
+          endDate: null,
+        });
+      }
     }
   };
 
@@ -156,7 +164,7 @@ const JaneDashboardPage = () => {
     setLoading(true);
     getAllJaneData().then((janeData) => {
       setJaneData(janeData);
-      console.log("jane data loaded");
+      // console.log("jane data loaded");
       setLoading(false);
     });
   }, []);
@@ -175,7 +183,8 @@ const JaneDashboardPage = () => {
       <div
         className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
           navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-        }`}>
+        }`}
+      >
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-20">
           {/*headings*/}
@@ -183,14 +192,12 @@ const JaneDashboardPage = () => {
             <h1 className="font-bold">JANE</h1>
             {/*date picker*/}
             <div className="w-60">
-              <Datepicker
-                placeholder="Select Date Range"
-                showShortcuts={true}
-                asSingle={false}
-                value={dateRange}
+              <DateRangePicker
+                enableYearNavigation
+                defaultValue={defaultDateRange}
                 onChange={handleDateRangeChange}
-                primaryColor={"yellow"}
-                displayFormat="MM/DD/YYYY"
+                presets={defaultPresets}
+                className="w-60"
               />
             </div>
           </div>
@@ -215,7 +222,8 @@ const JaneDashboardPage = () => {
                         ? "bg-bcgw-gray-light"
                         : "bg-[#f5f5f5]"
                     }`}
-                    onClick={() => setVisitDisplay("graph")}>
+                    onClick={() => setVisitDisplay("graph")}
+                  >
                     Graph
                   </button>
                   <button
@@ -224,13 +232,15 @@ const JaneDashboardPage = () => {
                         ? "bg-bcgw-gray-light"
                         : "bg-[#f5f5f5]"
                     }`}
-                    onClick={() => setVisitDisplay("table")}>
+                    onClick={() => setVisitDisplay("table")}
+                  >
                     Table
                   </button>
                 </div>
                 <button
                   className={transparentGrayButtonStyle}
-                  onClick={() => handleExport(pieChartRef, "visit_breakdown")}>
+                  onClick={() => handleExport(pieChartRef, "visit_breakdown")}
+                >
                   Export
                 </button>
               </div>
@@ -248,7 +258,8 @@ const JaneDashboardPage = () => {
                 {chartData.length > 0 ? (
                   <div
                     className="chartContainer"
-                    style={{ width: "250px", height: "250px" }}>
+                    style={{ width: "250px", height: "250px" }}
+                  >
                     {loading ? (
                       <Loading />
                     ) : (
@@ -294,7 +305,8 @@ const JaneDashboardPage = () => {
                         ? "bg-bcgw-gray-light"
                         : "bg-[#f5f5f5]"
                     }`}
-                    onClick={() => setRetentionDisplay("graph")}>
+                    onClick={() => setRetentionDisplay("graph")}
+                  >
                     Graph
                   </button>
                   <button
@@ -303,15 +315,15 @@ const JaneDashboardPage = () => {
                         ? "bg-bcgw-gray-light"
                         : "bg-[#f5f5f5]"
                     }`}
-                    onClick={() => setRetentionDisplay("table")}>
+                    onClick={() => setRetentionDisplay("table")}
+                  >
                     Table
                   </button>
                 </div>
                 <button
                   className={transparentGrayButtonStyle}
-                  onClick={() =>
-                    handleExport(funnelChartRef, "retention_rate")
-                  }>
+                  onClick={() => handleExport(funnelChartRef, "retention_rate")}
+                >
                   Export
                 </button>
               </div>

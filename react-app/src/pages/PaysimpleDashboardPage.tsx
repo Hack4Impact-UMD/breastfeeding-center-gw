@@ -4,6 +4,11 @@ import NavigationBar from "../components/NavigationBar/NavigationBar";
 import Header from "../components/Header";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
+import {
+  DateRangePicker,
+  defaultPresets,
+  defaultDateRange,
+} from "@/components/DateRangePicker/DateRangePicker";
 
 // record of colors to use for each rental item
 const colors: Record<string, string> = {
@@ -53,6 +58,7 @@ export default function PaysimpleDashboardPage() {
   // use state for toggles/buttons/changing of information
   const [viewMode, setViewMode] = useState("Months");
   const [rentalDisplay, setRentalDisplay] = useState("graph");
+  //@ts-expect-error
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   const rentalChartRef = useRef<HTMLDivElement>(null);
@@ -115,23 +121,18 @@ export default function PaysimpleDashboardPage() {
 
         <div className="flex flex-col p-8 pr-20 pl-20 space-y-5">
           {/* Page Title */}
-          <div className="flex flex-row justify-between">
-            <h1 className="font-bold">PAYSIMPLE</h1>
-
-            {/* Top-right: Date Picker */}
-            <div className="flex justify-end">
-              <div className="flex items-center gap-2">
-                <label htmlFor="week-picker" className="text-sm font-medium">
-                  Select Date
-                </label>
-                <input
-                  id="week-picker"
-                  type="date"
-                  className="border rounded-md px-2 py-1 text-sm"
-                  value={selectedDate.toISOString().split("T")[0]}
-                  onChange={(e) => setSelectedDate(new Date(e.target.value))}
-                />
-              </div>
+          <div className={centerItemsInDiv}>
+            <div>
+              <h1 className="font-bold">Paysimple</h1>
+            </div>
+            {/*date picker*/}
+            <div className="w-60">
+              <DateRangePicker
+                enableYearNavigation
+                defaultValue={defaultDateRange}
+                presets={defaultPresets}
+                className="w-60"
+              />
             </div>
           </div>
 

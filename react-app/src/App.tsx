@@ -15,6 +15,9 @@ import JaneDataPage from "./pages/JaneDataPage";
 import { useState } from "react";
 import ClientListPage from "./pages/ClientListPage";
 import ClientJourneyPage from "./pages/ClientJourneyPage";
+// import "@tremor/react/dist/esm/tremor.css";
+
+
 
 function App() {
   const [navBarOpen, setNavBarOpen] = useState(false);
