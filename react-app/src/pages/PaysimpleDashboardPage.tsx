@@ -165,7 +165,9 @@ export default function PaysimpleDashboardPage() {
           </div>
 
           {/* white card to put info inside */}
-          <div className="bg-white rounded-2xl shadow p-6 border space-y-6">
+          <div
+            className="bg-white rounded-2xl shadow p-6 border space-y-6"
+            ref={rentalChartRef}>
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">
                 Average Rental Duration By Item, {formattedRange}
