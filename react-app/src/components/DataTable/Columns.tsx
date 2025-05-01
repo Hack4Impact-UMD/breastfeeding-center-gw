@@ -476,7 +476,7 @@ export const clientListColumns: ColumnDef<Client>[] = [
           variant="ghost"
           className="cursor-pointer"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          First Name
+          F. Name
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
       );
@@ -490,7 +490,7 @@ export const clientListColumns: ColumnDef<Client>[] = [
           variant="ghost"
           className="cursor-pointer"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Last Name
+          L. Name
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
       );
