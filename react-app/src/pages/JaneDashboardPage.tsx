@@ -180,9 +180,7 @@ const JaneDashboardPage = () => {
         <div className="flex flex-col p-8 pr-20 pl-20">
           {/*headings*/}
           <div className={centerItemsInDiv}>
-            <div>
-              <h1 className="font-bold">JANE</h1>
-            </div>
+            <h1 className="font-bold">JANE</h1>
             {/*date picker*/}
             <div className="w-60">
               <Datepicker
