@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@radix-ui/react-dropdown-menu": "^2.1.12",
+    "lucide-react": "^0.503.0",
+    "reaviz": "^16.0.4"
+  }
+}

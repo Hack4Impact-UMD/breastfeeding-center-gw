@@ -12,13 +12,18 @@ import {
 } from "reaviz";
 import { FunnelSeries } from "reaviz";
 import { Jane } from "../types/JaneType.ts";
-import { getAllJaneData } from "../backend/FirestoreCalls";
+import { getAllJaneData } from "../backend/FirestoreCalls.tsx";
 import Loading from "../components/Loading.tsx";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
-import { DateRangePicker, defaultPresets, defaultDateRange, DateRange } from "@/components/DateRangePicker/DateRangePicker.tsx";
+import {
+  DateRangePicker,
+  defaultPresets,
+  defaultDateRange,
+  DateRange,
+} from "@/components/DateRangePicker/DateRangePicker.tsx";
 
-const JanePage = () => {
+const JaneDashboardPage = () => {
   //nav bar
   const [navBarOpen, setNavBarOpen] = useState(true);
 
@@ -107,7 +112,6 @@ const JanePage = () => {
         });
         filterData();
         console.log(newRange);
-
       } else {
         setDateRange({
           startDate: null,
@@ -181,20 +185,19 @@ const JanePage = () => {
           navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
         }`}>
         <Header />
-        <div className="flex flex-col p-8 pr-20 pl-14 min-h-screen">
+        <div className="flex flex-col p-8 pr-20 pl-20">
           {/*headings*/}
           <div className={centerItemsInDiv}>
-            <div>
-              <h1 className="font-bold">JANE</h1>
-            </div>
+            <h1 className="font-bold">JANE</h1>
             {/*date picker*/}
             <div className="w-60">
-              <DateRangePicker 
-              enableYearNavigation
-              defaultValue={defaultDateRange}
-              onChange={handleDateRangeChange}
-              presets={defaultPresets}
-              className="w-60" />
+              <DateRangePicker
+                enableYearNavigation
+                defaultValue={defaultDateRange}
+                onChange={handleDateRangeChange}
+                presets={defaultPresets}
+                className="w-60"
+              />
             </div>
           </div>
 
@@ -356,5 +359,4 @@ const JanePage = () => {
   );
 };
 
-export default JanePage;
-
+export default JaneDashboardPage;
