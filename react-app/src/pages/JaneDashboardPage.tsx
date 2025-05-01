@@ -12,13 +12,13 @@ import {
 } from "reaviz";
 import { FunnelSeries } from "reaviz";
 import { Jane } from "../types/JaneType.ts";
-import { getAllJaneData } from "../backend/FirestoreCalls";
+import { getAllJaneData } from "../backend/FirestoreCalls.tsx";
 import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import Loading from "../components/Loading.tsx";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
 
-const JanePage = () => {
+const JaneDashboardPage = () => {
   //nav bar
   const [navBarOpen, setNavBarOpen] = useState(true);
 
@@ -355,4 +355,4 @@ const JanePage = () => {
   );
 };
 
-export default JanePage;
+export default JaneDashboardPage;

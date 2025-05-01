@@ -8,8 +8,8 @@ import Header from "./components/Header";
 import RequireAuth from "./auth/RequireAuth";
 import { AuthProvider } from "./auth/AuthProvider";
 import { getBabyInfo, getClientAppointments } from "./backend/AcuityCalls";
-import AcuityDashboard from "./pages/AcuityDashboard";
-import JanePage from "./pages/JanePage";
+import AcuityDashboard from "./pages/AcuityDashboardPage";
+import JaneDashboard from "./pages/JaneDashboardPage";
 import JaneDataPage from "./pages/JaneDataPage";
 import { useState } from "react";
 import ClientListPage from "./pages/ClientListPage";
@@ -46,7 +46,7 @@ function App() {
             path="/services/jane"
             element={
               <RequireAuth>
-                <JanePage />
+                <JaneDashboard />
               </RequireAuth>
             }
           />
