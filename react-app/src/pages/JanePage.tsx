@@ -251,6 +251,7 @@ const JanePage = () => {
               <h1 className="font-bold">JANE</h1>
             </div>
             {/*date picker*/}
+            <div className="datepicker-wrapper [&_.react-tailwindcss-datepicker]:!important">
             <div className="w-60">
               <Datepicker
                 placeholder="Select Date Range"
@@ -261,6 +262,8 @@ const JanePage = () => {
                 primaryColor={"yellow"}
                 displayFormat="MM/DD/YYYY"
               />
+            </div>
+              
             </div>
           </div>
           {/*upload section*/}
