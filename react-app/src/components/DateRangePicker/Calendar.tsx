@@ -1,15 +1,15 @@
 // Tremor Calendar [v1.0.0]
 
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   RiArrowLeftDoubleLine,
   RiArrowLeftSLine,
   RiArrowRightDoubleLine,
   RiArrowRightSLine,
-} from "@remixicon/react"
-import { addYears, format, isSameMonth } from "date-fns"
+} from "@remixicon/react";
+import { addYears, format, isSameMonth } from "date-fns";
 import {
   DayPicker,
   useDayPicker,
@@ -19,15 +19,15 @@ import {
   type DayPickerSingleProps,
   type DayProps,
   type Matcher,
-} from "react-day-picker"
+} from "react-day-picker";
 
-import { cx, focusRing } from "@/lib/utils"
+import { cx, focusRing } from "@/lib/utils";
 
 interface NavigationButtonProps
   extends React.HTMLAttributes<HTMLButtonElement> {
-  onClick: () => void
-  icon: React.ElementType
-  disabled?: boolean
+  onClick: () => void;
+  icon: React.ElementType;
+  disabled?: boolean;
 }
 
 const NavigationButton = React.forwardRef<
@@ -36,9 +36,9 @@ const NavigationButton = React.forwardRef<
 >(
   (
     { onClick, icon, disabled, ...props }: NavigationButtonProps,
-    forwardedRef,
+    forwardedRef
   ) => {
-    const Icon = icon
+    const Icon = icon;
     return (
       <button
         ref={forwardedRef}
@@ -58,38 +58,38 @@ const NavigationButton = React.forwardRef<
           "disabled:pointer-events-none",
           "disabled:border-gray-200 dark:disabled:border-gray-800",
           "disabled:text-gray-400 dark:disabled:text-gray-600",
-          focusRing,
+          focusRing
         )}
         onClick={onClick}
         {...props}
       >
         <Icon className="size-full shrink-0" />
       </button>
-    )
-  },
-)
+    );
+  }
+);
 
-NavigationButton.displayName = "NavigationButton"
+NavigationButton.displayName = "NavigationButton";
 
 type OmitKeys<T, K extends keyof T> = {
-  [P in keyof T as P extends K ? never : P]: T[P]
-}
+  [P in keyof T as P extends K ? never : P]: T[P];
+};
 
-type KeysToOmit = "showWeekNumber" | "captionLayout" | "mode"
+type KeysToOmit = "showWeekNumber" | "captionLayout" | "mode";
 
-type SingleProps = OmitKeys<DayPickerSingleProps, KeysToOmit>
-type RangeProps = OmitKeys<DayPickerRangeProps, KeysToOmit>
+type SingleProps = OmitKeys<DayPickerSingleProps, KeysToOmit>;
+type RangeProps = OmitKeys<DayPickerRangeProps, KeysToOmit>;
 
 type CalendarProps =
   | ({
-      mode: "single"
+      mode: "single";
     } & SingleProps)
   | ({
-      mode?: undefined
+      mode?: undefined;
     } & SingleProps)
   | ({
-      mode: "range"
-    } & RangeProps)
+      mode: "range";
+    } & RangeProps);
 
 const Calendar = ({
   mode = "single",
@@ -120,19 +120,19 @@ const Calendar = ({
         row: "w-full mt-0.5",
         cell: cx(
           "relative p-0 text-center focus-within:relative",
-          "text-gray-900 dark:text-gray-50",
+          "text-gray-900 dark:text-gray-50"
         ),
         day: cx(
           "size-9 rounded-sm text-sm focus:z-10",
           "text-gray-900 dark:text-gray-50",
           "hover:bg-gray-200 dark:hover:bg-gray-700",
-          focusRing,
+          focusRing
         ),
         day_today: "font-semibold",
         day_selected: cx(
           "rounded-sm",
           "aria-selected:bg-bcgw-yellow-dark aria-selected:text-gray-900",
-          "dark:aria-selected:bg-bcgw-yellow-dark dark:aria-selected:text-gray-900",
+          "dark:aria-selected:bg-bcgw-yellow-dark dark:aria-selected:text-gray-900"
         ),
         day_disabled:
           "text-gray-300! dark:text-gray-700! line-through disabled:hover:bg-transparent",
@@ -140,7 +140,7 @@ const Calendar = ({
         day_range_middle: cx(
           "rounded-none!",
           "aria-selected:bg-gray-100! aria-selected:text-gray-900!",
-          "dark:aria-selected:bg-gray-900! dark:aria-selected:text-gray-50!",
+          "dark:aria-selected:bg-gray-900! dark:aria-selected:text-gray-50!"
         ),
         day_range_start: "rounded-r-none rounded-l!",
         day_range_end: "rounded-l-none rounded-r!",
@@ -161,37 +161,37 @@ const Calendar = ({
             previousMonth,
             currentMonth,
             displayMonths,
-          } = useNavigation()
-          const { numberOfMonths, fromDate, toDate } = useDayPicker()
+          } = useNavigation();
+          const { numberOfMonths, fromDate, toDate } = useDayPicker();
 
           const displayIndex = displayMonths.findIndex((month) =>
-            isSameMonth(props.displayMonth, month),
-          )
-          const isFirst = displayIndex === 0
-          const isLast = displayIndex === displayMonths.length - 1
+            isSameMonth(props.displayMonth, month)
+          );
+          const isFirst = displayIndex === 0;
+          const isLast = displayIndex === displayMonths.length - 1;
 
-          const hideNextButton = numberOfMonths > 1 && (isFirst || !isLast)
-          const hidePreviousButton = numberOfMonths > 1 && (isLast || !isFirst)
+          const hideNextButton = numberOfMonths > 1 && (isFirst || !isLast);
+          const hidePreviousButton = numberOfMonths > 1 && (isLast || !isFirst);
 
           const goToPreviousYear = () => {
-            const targetMonth = addYears(currentMonth, -1)
+            const targetMonth = addYears(currentMonth, -1);
             if (
               previousMonth &&
               (!fromDate || targetMonth.getTime() >= fromDate.getTime())
             ) {
-              goToMonth(targetMonth)
+              goToMonth(targetMonth);
             }
-          }
+          };
 
           const goToNextYear = () => {
-            const targetMonth = addYears(currentMonth, 1)
+            const targetMonth = addYears(currentMonth, 1);
             if (
               nextMonth &&
               (!toDate || targetMonth.getTime() <= toDate.getTime())
             ) {
-              goToMonth(targetMonth)
+              goToMonth(targetMonth);
             }
-          }
+          };
 
           return (
             <div className="flex items-center justify-between">
@@ -252,17 +252,17 @@ const Calendar = ({
                 )}
               </div>
             </div>
-          )
+          );
         },
         Day: ({ date, displayMonth }: DayProps) => {
-          const buttonRef = React.useRef<HTMLButtonElement>(null)
+          const buttonRef = React.useRef<HTMLButtonElement>(null);
           const { activeModifiers, buttonProps, divProps, isButton, isHidden } =
-            useDayRender(date, displayMonth, buttonRef)
+            useDayRender(date, displayMonth, buttonRef);
 
-          const { selected, today, disabled, range_middle } = activeModifiers
+          const { selected, today, disabled, range_middle } = activeModifiers;
 
           if (isHidden) {
-            return <></>
+            return <></>;
           }
 
           if (!isButton) {
@@ -271,17 +271,17 @@ const Calendar = ({
                 {...divProps}
                 className={cx(
                   "flex items-center justify-center",
-                  divProps.className,
+                  divProps.className
                 )}
               />
-            )
+            );
           }
 
           const {
             children: buttonChildren,
             className: buttonClassName,
             ...buttonPropsRest
-          } = buttonProps
+          } = buttonProps;
 
           return (
             <button
@@ -302,20 +302,20 @@ const Calendar = ({
                         selected && range_middle,
                       "bg-gray-400 text-gray-400 dark:bg-gray-400 dark:text-gray-600":
                         disabled,
-                    },
+                    }
                   )}
                 />
               )}
             </button>
-          )
+          );
         },
       }}
       tremor-id="tremor-raw"
       {...(props as SingleProps & RangeProps)}
     />
-  )
-}
+  );
+};
 
-Calendar.displayName = "Calendar"
+Calendar.displayName = "Calendar";
 
-export { Calendar, type Matcher }
+export { Calendar, type Matcher };

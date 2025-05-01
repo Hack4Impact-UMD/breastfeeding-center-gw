@@ -111,7 +111,7 @@ const JaneDashboardPage = () => {
           endDate: newRange.to,
         });
         filterData();
-        console.log(newRange);
+        // console.log(newRange);
       } else {
         setDateRange({
           startDate: null,
@@ -164,7 +164,7 @@ const JaneDashboardPage = () => {
     setLoading(true);
     getAllJaneData().then((janeData) => {
       setJaneData(janeData);
-      console.log("jane data loaded");
+      // console.log("jane data loaded");
       setLoading(false);
     });
   }, []);
@@ -183,7 +183,8 @@ const JaneDashboardPage = () => {
       <div
         className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
           navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-        }`}>
+        }`}
+      >
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-20">
           {/*headings*/}
@@ -221,7 +222,8 @@ const JaneDashboardPage = () => {
                         ? "bg-bcgw-gray-light"
                         : "bg-[#f5f5f5]"
                     }`}
-                    onClick={() => setVisitDisplay("graph")}>
+                    onClick={() => setVisitDisplay("graph")}
+                  >
                     Graph
                   </button>
                   <button
@@ -230,13 +232,15 @@ const JaneDashboardPage = () => {
                         ? "bg-bcgw-gray-light"
                         : "bg-[#f5f5f5]"
                     }`}
-                    onClick={() => setVisitDisplay("table")}>
+                    onClick={() => setVisitDisplay("table")}
+                  >
                     Table
                   </button>
                 </div>
                 <button
                   className={transparentGrayButtonStyle}
-                  onClick={() => handleExport(pieChartRef, "visit_breakdown")}>
+                  onClick={() => handleExport(pieChartRef, "visit_breakdown")}
+                >
                   Export
                 </button>
               </div>
@@ -254,7 +258,8 @@ const JaneDashboardPage = () => {
                 {chartData.length > 0 ? (
                   <div
                     className="chartContainer"
-                    style={{ width: "250px", height: "250px" }}>
+                    style={{ width: "250px", height: "250px" }}
+                  >
                     {loading ? (
                       <Loading />
                     ) : (
@@ -300,7 +305,8 @@ const JaneDashboardPage = () => {
                         ? "bg-bcgw-gray-light"
                         : "bg-[#f5f5f5]"
                     }`}
-                    onClick={() => setRetentionDisplay("graph")}>
+                    onClick={() => setRetentionDisplay("graph")}
+                  >
                     Graph
                   </button>
                   <button
@@ -309,15 +315,15 @@ const JaneDashboardPage = () => {
                         ? "bg-bcgw-gray-light"
                         : "bg-[#f5f5f5]"
                     }`}
-                    onClick={() => setRetentionDisplay("table")}>
+                    onClick={() => setRetentionDisplay("table")}
+                  >
                     Table
                   </button>
                 </div>
                 <button
                   className={transparentGrayButtonStyle}
-                  onClick={() =>
-                    handleExport(funnelChartRef, "retention_rate")
-                  }>
+                  onClick={() => handleExport(funnelChartRef, "retention_rate")}
+                >
                   Export
                 </button>
               </div>
