@@ -151,11 +151,15 @@ export function DataTable<TData, TValue>({
                     }
                   }}
                   data-state={row.getIsSelected() ? "selected" : "unselected"}
-                  className={`data-[state=selected]:bg-gray data-[state=unselected]:bg-white ${
-                    tableType === "clientList" ? "cursor-pointer" : ""
-                  }`}>
+                  className={`group data-[state=selected]:bg-gray data-[state=unselected]:bg-white`}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      className={`${
+                        tableType === "clientList"
+                          ? "cursor-pointer group-hover:bg-gray-300 transition-colors"
+                          : ""
+                      }`}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
