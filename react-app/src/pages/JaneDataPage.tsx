@@ -1,22 +1,27 @@
 import { useEffect, useState } from "react";
 import Header from "../components/Header.tsx";
 import NavigationBar from "../components/NavigationBar/NavigationBar.tsx";
-import { JaneID } from "../types/JaneType.ts";
+import { Jane, JaneID } from "../types/JaneType.ts";
 import {
   addJaneSpreadsheet,
   getAllJaneData,
   deleteJaneByIds,
 } from "../backend/FirestoreCalls";
+import { getJaneTypes } from "../backend/JaneFunctions";
+import { DateTime } from "luxon";
 import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import { janeIDDataColumns } from "../components/DataTable/Columns.tsx";
 import { DataTable } from "../components/DataTable/DataTable.tsx";
 
-const JaneData = () => {
+const JaneDataPage = () => {
   //styles
+  const buttonStyle =
+    "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light text-lg border-1 border-black-500 py-2 px-8 rounded-full cursor-pointer";
   const centerItemsInDiv = "flex justify-between items-center";
 
   //file upload
   const [file, setFile] = useState<File | null>(null);
+  const [janeUploadData, setJaneUploadData] = useState<Jane[]>([]);
   const [janeData, setJaneData] = useState<JaneID[]>([]);
   const [navBarOpen, setNavBarOpen] = useState(true);
 
@@ -24,7 +29,11 @@ const JaneData = () => {
     const fetchJaneData = async () => {
       try {
         const data = await getAllJaneData();
-        setJaneData(data);
+        const formattedData = data.map((entry) => ({
+          ...entry,
+          date: DateTime.fromISO(entry.date).toFormat("f"),
+        }));
+        setJaneData(formattedData);
       } catch (error) {
         console.error("Failed to fetch Jane data:", error);
       }
@@ -66,6 +75,33 @@ const JaneData = () => {
       day: "numeric",
     });
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files ? e.target.files[0] : null;
+    if (selectedFile) {
+      setFile(selectedFile);
+      console.log("Selected file:", selectedFile.name);
+
+      //translate data into jane types and set local data
+      try {
+        const parsedJaneData = await getJaneTypes(e);
+        console.log("Extracted Jane data:", parsedJaneData);
+
+        //add data to firebase
+        try {
+          console.log(parsedJaneData);
+          await addJaneSpreadsheet(parsedJaneData);
+          console.log("Upload complete!");
+        } catch (error) {
+          console.error("Upload error:", error);
+        }
+
+        setJaneUploadData(parsedJaneData);
+      } catch (error) {
+        console.error("Error extracting Jane data:", error);
+      }
+    }
+  };
+
   const handleDelete = async (rows: JaneID[]) => {
     try {
       const ids = rows.map((entry) => entry.id);
@@ -105,6 +141,24 @@ const JaneData = () => {
             </div>
           </div>
 
+          {/*upload section*/}
+          <div className={`${centerItemsInDiv} basis-20xs mt-6 mb-4`}>
+            <div className={centerItemsInDiv}>
+              <button
+                className={`${buttonStyle} mr-5 text-nowrap`}
+                onClick={() => document.getElementById("file-input")?.click()}>
+                UPLOAD NEW SPREADSHEET
+              </button>
+              <input
+                id="file-input"
+                type="file"
+                accept=".xlsx, .csv"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+            </div>
+          </div>
+
           <DataTable
             columns={janeIDDataColumns}
             data={janeData}
@@ -117,4 +171,4 @@ const JaneData = () => {
   );
 };
 
-export default JaneData;
+export default JaneDataPage;

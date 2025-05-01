@@ -1,5 +1,5 @@
 "use client";
-import { Input } from "@/components/ui/input";
+import { useNavigate } from "react-router-dom";
 import { SearchIcon } from "lucide-react";
 import { FiTrash } from "react-icons/fi";
 import { useEffect, useState } from "react";
@@ -56,6 +56,7 @@ export function DataTable<TData, TValue>({
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+  const navigate = useNavigate();
 
   const table = useReactTable({
     data,
@@ -144,8 +145,15 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
+                  onClick={() => {
+                    if (tableType === "clientList") {
+                      navigate("/clients/journey");
+                    }
+                  }}
                   data-state={row.getIsSelected() ? "selected" : "unselected"}
-                  className="data-[state=selected]:bg-gray data-[state=unselected]:bg-white">
+                  className={`data-[state=selected]:bg-gray data-[state=unselected]:bg-white ${
+                    tableType === "clientList" ? "cursor-pointer" : ""
+                  }`}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(

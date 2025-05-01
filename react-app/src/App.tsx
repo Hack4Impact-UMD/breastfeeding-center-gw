@@ -8,7 +8,7 @@ import Header from "./components/Header";
 import RequireAuth from "./auth/RequireAuth";
 import { AuthProvider } from "./auth/AuthProvider";
 import JanePage from "./pages/JanePage";
-import JaneData from "./pages/JaneData";
+import JaneDataPage from "./pages/JaneDataPage";
 import { useState } from "react";
 import ClientListPage from "./pages/ClientListPage";
 import ClientJourneyPage from "./pages/ClientJourneyPage";
@@ -41,7 +41,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/logout" element={<LogoutPage />} />
           <Route path="/services/jane" element={<JanePage />} />
-          <Route path="/services/jane/data" element={<JaneData />} />
+          <Route path="/services/jane/data" element={<JaneDataPage />} />
           <Route path="/clients" element={<ClientListPage />} />
           <Route path="/clients/journey" element={<ClientJourneyPage />} />
           <Route path="/profile" element={<ProfilePage />} />

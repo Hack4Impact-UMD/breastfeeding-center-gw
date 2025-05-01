@@ -12,8 +12,7 @@ import {
 } from "reaviz";
 import { FunnelSeries } from "reaviz";
 import { Jane } from "../types/JaneType.ts";
-import { getJaneTypes } from "../backend/JaneFunctions";
-import { addJaneSpreadsheet, getAllJaneData } from "../backend/FirestoreCalls";
+import { getAllJaneData } from "../backend/FirestoreCalls";
 import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import Loading from "../components/Loading.tsx";
 import { toPng } from "html-to-image";
@@ -45,33 +44,6 @@ const JanePage = () => {
   const [retentionDisplay, setRetentionDisplay] = useState<string>("graph");
   const pieChartRef = useRef<HTMLDivElement>(null);
   const funnelChartRef = useRef<HTMLDivElement>(null);
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files ? e.target.files[0] : null;
-    if (selectedFile) {
-      setFile(selectedFile);
-      console.log("Selected file:", selectedFile.name);
-
-      //translate data into jane types and set local data
-      try {
-        const parsedJaneData = await getJaneTypes(e);
-        console.log("Extracted Jane data:", parsedJaneData);
-
-        //add data to firebase
-        try {
-          console.log(parsedJaneData);
-          //await addJaneSpreadsheet(parsedJaneData);
-          console.log("Upload complete!");
-        } catch (error) {
-          console.error("Upload error:", error);
-        }
-
-        setJaneData(parsedJaneData);
-      } catch (error) {
-        console.error("Error extracting Jane data:", error);
-      }
-    }
-  };
 
   const funnelData = [
     {
@@ -225,23 +197,8 @@ const JanePage = () => {
               />
             </div>
           </div>
-          {/*upload section*/}
-          {/* <div className={`${centerItemsInDiv} basis-20xs mt-6`}>
-            <div className={centerItemsInDiv}>
-              <button
-                className={`${buttonStyle} mr-5 text-nowrap`}
-                onClick={() => document.getElementById("file-input")?.click()}>
-                UPLOAD NEW SPREADSHEET
-              </button>
-              <input
-                id="file-input"
-                type="file"
-                accept=".xlsx, .csv"
-                onChange={handleFileChange}
-                className="hidden"
-              />
-            </div>
-          </div> */}
+
+          {/*view uploaded data*/}
           <div className={`${centerItemsInDiv} basis-20xs mt-6`}>
             <Link to="/services/jane/data">
               <button className={`${buttonStyle} mr-5 text-nowrap`}>
