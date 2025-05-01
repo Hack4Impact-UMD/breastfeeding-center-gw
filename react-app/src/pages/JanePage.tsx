@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { Link } from "react-router-dom";
 import Header from "../components/Header.tsx";
 import NavigationBar from "../components/NavigationBar/NavigationBar.tsx";
-import React from "react";
-import { useRef } from "react";
 import {
   PieArcSeries,
   PieChart,
@@ -19,7 +18,6 @@ import Datepicker, { DateValueType } from "react-tailwindcss-datepicker";
 import Loading from "../components/Loading.tsx";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
-import { Label } from "@radix-ui/react-select";
 
 const JanePage = () => {
   //nav bar
@@ -27,14 +25,14 @@ const JanePage = () => {
 
   //styles
   const buttonStyle =
-    "bg-bcgw-yellow-dark text-lg border-1 border-black-500 py-2 px-8 rounded-full cursor-pointer";
-  const transparentYellowButtonStyle =
-    "bg-transparent text-bcgw-yellow-dark border-2 border-bcgw-yellow-dark py-1 px-2 rounded-full cursor-pointer";
+    "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light text-lg border-1 border-black-500 py-2 px-8 rounded-full cursor-pointer";
   const transparentGrayButtonStyle =
-    "bg-transparent text-gray border-2 border-gray py-1 px-6 rounded-full cursor-pointer";
+    "bg-transparent hover:bg-bcgw-gray-light text-gray border-2 border-gray py-1 px-6 rounded-full cursor-pointer";
+  const graphTableButtonStyle =
+    "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer";
   const centerItemsInDiv = "flex justify-between items-center";
   const chartDiv =
-    "flex flex-col items-center justify-center bg-white border-2 border-black p-5 mt-2 rounded-lg";
+    "flex flex-col items-center justify-center bg-white h-[400px] border-2 border-black p-5 mt-2 rounded-lg";
   const chartDivContainer = "min-w-[300px] max-w-[50%]";
 
   //file upload
@@ -44,6 +42,8 @@ const JanePage = () => {
   const [chartData, setChartData] = useState<{ key: string; data: number }[]>(
     []
   );
+  const [visitDisplay, setVisitDisplay] = useState<string>("graph");
+  const [retentionDisplay, setRetentionDisplay] = useState<string>("graph");
   const pieChartRef = useRef<HTMLDivElement>(null);
   const funnelChartRef = useRef<HTMLDivElement>(null);
 
@@ -73,43 +73,6 @@ const JanePage = () => {
       }
     }
   };
-
-  // const sampleJaneData: Jane[] = [
-  //   {
-  //     apptId: "108681",
-  //     firstName: "Menaka",
-  //     lastName: "Kalaskar",
-  //     email: "email@gmail.com",
-  //     visitType: "HOMEVISIT",
-  //     treatment: "Lactation Appt, NW DC",
-  //     insurance: "DC",
-  //     date: "2025-01-01T16:00:00.000Z",
-  //     babyDob: "2026-01-01",
-  //   },
-  //   {
-  //     apptId: "109461",
-  //     firstName: "Mateo",
-  //     lastName: "Meca Rivera",
-  //     email: "email@gmail.com",
-  //     visitType: "OFFICE",
-  //     treatment: "Postpartum Lactation Appointment",
-  //     insurance: "MD",
-  //     date: "2025-01-08T05:00:00.000Z",
-  //     babyDob: "2026-01-01",
-  //   },
-  //   {
-  //     apptId: "107850",
-  //     babyDob: "01/01/2026",
-  //     date: "2025-01-01T18:00:00.000Z",
-  //     email: "email@gmail.com",
-  //     firstName: "Pilar",
-  //     insurance:
-  //       '[{:name=>"BCBS/Carefirst", :number=>"NIW596M84436", :invoice_state=>"unpaid", :claim_state=>"unsubmitted", :claim_id=>8810}]',
-  //     lastName: "Whitaker",
-  //     treatment: "Prenatal Prep for Lactation",
-  //     visitType: "TELEHEALTH",
-  //   },
-  // ];
 
   const funnelData = [
     {
@@ -264,7 +227,7 @@ const JanePage = () => {
             </div>
           </div>
           {/*upload section*/}
-          <div className={`${centerItemsInDiv} basis-20xs mt-6`}>
+          {/* <div className={`${centerItemsInDiv} basis-20xs mt-6`}>
             <div className={centerItemsInDiv}>
               <button
                 className={`${buttonStyle} mr-5 text-nowrap`}
@@ -279,20 +242,46 @@ const JanePage = () => {
                 className="hidden"
               />
             </div>
+          </div> */}
+          <div className={`${centerItemsInDiv} basis-20xs mt-6`}>
+            <Link to="/services/jane/data">
+              <button className={`${buttonStyle} mr-5 text-nowrap`}>
+                VIEW UPLOADED DATA
+              </button>
+            </Link>
           </div>
 
           {/*graphs*/}
           <div className="flex flex-wrap gap-8 pt-3">
             <div className="flex-1 min-w-[300px] max-w-[40%]">
               <div className={`${centerItemsInDiv} pt-4`}>
-                <button>Graph/Table</button>
+                <div className="flex flex-row">
+                  <button
+                    className={`${graphTableButtonStyle} ${
+                      visitDisplay == "graph"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#f5f5f5]"
+                    }`}
+                    onClick={() => setVisitDisplay("graph")}>
+                    Graph
+                  </button>
+                  <button
+                    className={`${graphTableButtonStyle} ${
+                      visitDisplay == "table"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#f5f5f5]"
+                    }`}
+                    onClick={() => setVisitDisplay("table")}>
+                    Table
+                  </button>
+                </div>
                 <button
                   className={transparentGrayButtonStyle}
                   onClick={() => handleExport(pieChartRef, "visit_breakdown")}>
                   Export
                 </button>
               </div>
-              <div className={chartDiv}>
+              <div className={chartDiv} ref={pieChartRef}>
                 {/*chart title*/}
                 <span className="self-start font-semibold text-xl mb-7">
                   Visit Breakdown:{" "}
@@ -306,7 +295,6 @@ const JanePage = () => {
                 {chartData.length > 0 ? (
                   <div
                     className="chartContainer"
-                    ref={pieChartRef}
                     style={{ width: "250px", height: "250px" }}>
                     {loading ? (
                       <Loading />
@@ -346,14 +334,35 @@ const JanePage = () => {
             {/*funnel chart*/}
             <div className="flex-1 min-w-[300px] max-w-[60%]">
               <div className={`${centerItemsInDiv} pt-4`}>
-                <button>Graph/Table</button>
+                <div className="flex flex-row">
+                  <button
+                    className={`${graphTableButtonStyle} ${
+                      retentionDisplay == "graph"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#f5f5f5]"
+                    }`}
+                    onClick={() => setRetentionDisplay("graph")}>
+                    Graph
+                  </button>
+                  <button
+                    className={`${graphTableButtonStyle} ${
+                      retentionDisplay == "table"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#f5f5f5]"
+                    }`}
+                    onClick={() => setRetentionDisplay("table")}>
+                    Table
+                  </button>
+                </div>
                 <button
                   className={transparentGrayButtonStyle}
-                  onClick={() => handleExport(pieChartRef, "visit_breakdown")}>
+                  onClick={() =>
+                    handleExport(funnelChartRef, "retention_rate")
+                  }>
                   Export
                 </button>
               </div>
-              <div className={chartDiv}>
+              <div className={chartDiv} ref={funnelChartRef}>
                 <span className="self-start font-semibold text-xl mb-2">
                   Retention Rate:{" "}
                   {dateRange.startDate && dateRange.endDate
