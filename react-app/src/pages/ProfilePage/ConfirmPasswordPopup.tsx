@@ -9,15 +9,14 @@ const ConfirmPasswordPopup = ({
   onClose,
   editType,
   email,
-  phone,
 }: {
   open: boolean;
   onClose: any;
   editType: string;
   email: string;
-  phone: string;
 }) => {
   const [currentPasswordInput, setCurrentPasswordInput] = useState("");
+  //@ts-expect-error
   const [currentPassword, setCurrentPassword] = useState("abc");
   const [showIncorrectPassword, setShowIncorrectPassword] = useState(false);
   const [openEmailModal, setOpenEmailModal] = useState(false);
@@ -119,7 +118,6 @@ const ConfirmPasswordPopup = ({
         open={openEmailModal}
         onClose={setOpenEmailModal}
         initialEmail={email}
-        phone={phone}
       />
       <ChangePasswordPopup
         open={openPasswordModal}

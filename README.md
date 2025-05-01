@@ -22,7 +22,7 @@ This project aims to centralize data and analytics for the organization in order
 - Framework: [React](https://react.dev/)
 - Language: [Typescript](https://www.typescriptlang.org/docs/handbook/intro.html)
 - Styling: [Tailwind](https://tailwindcss.com/)
-- Libraries: [Tremor](https://tremor.so/docs/visualizations/area-chart)
+- Libraries: ShadCN
 - Build Tool: [Vite](https://vitejs.dev/)
 
 **Backend:**

@@ -7,12 +7,15 @@ import NavigationBar from "../../components/NavigationBar/NavigationBar";
 
 const ProfilePage = () => {
   const [navBarOpen, setNavBarOpen] = useState(true);
+  //@ts-expect-error
   const [initials, setInitials] = useState("VT");
+  //@ts-expect-error
   const [name, setName] = useState("Volunteer Tester");
+  //@ts-expect-error
   const [email, setEmail] = useState("kim@gmail.com");
+  //@ts-expect-error
   const [phone, setPhone] = useState("585-105-6915");
   const [editType, setEditType] = useState("Email"); // email or password
-  const [openEmailModal, setOpenEmailModal] = useState(false);
   const [openConfirmPasswordModal, setOpenConfirmPasswordModal] =
     useState(false);
 
@@ -95,7 +98,6 @@ const ProfilePage = () => {
                 onClose={setOpenConfirmPasswordModal}
                 editType={editType}
                 email={email}
-                phone={phone}
               />
             </div>
           </div>

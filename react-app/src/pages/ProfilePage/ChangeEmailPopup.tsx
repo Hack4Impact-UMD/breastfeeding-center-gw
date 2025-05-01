@@ -6,21 +6,20 @@ const ChangeEmailPopup = ({
   open,
   onClose,
   initialEmail,
-  phone,
 }: {
   open: boolean;
   onClose: any;
   initialEmail: string;
-  phone: string;
 }) => {
-  //   const [openNewModal, setOpenNewModal] = useState(false);
+  //@ts-expect-error
   const [email, setEmail] = useState(initialEmail); // display value
   const [newEmail, setNewEmail] = useState(""); // value while changing email & used for checks
   const [confirmNewEmail, setConfirmNewEmail] = useState("");
+  //@ts-expect-error
   const [showEmailMatchError, setShowEmailMatchError] = useState(false);
   const [showEmailInvalidError, setShowEmailInvalidError] = useState(false);
 
-  const validateEmail = (email) => {
+  const validateEmail = (email: any) => {
     const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return re.test(email);
   };
