@@ -7,6 +7,7 @@ interface RawClassInfo {
   title: string | null;
 }
 
+//@ts-expect-erroring
 interface ClientRawAppointments {
   [id: number]: {
     firstName: string;
@@ -80,6 +81,7 @@ Different formats:
     getBabyInfo()
       .then((babyInfo: any) => {
         console.log("Baby Info retrieved successfully.");
+        //@ts-expect-erroring
         babyInfo.data.forEach((user) => {
           console.log(user);
           userMap[user.id] = {
@@ -151,6 +153,8 @@ Different formats:
       });
   });
 }
+
+//@ts-expect-erroring
 const CLASS_NAME_TO_CATEGORY: Record<string, string> = {
   // Childbirth
   "Childbirth Express (2-Day and 1-WKND)": "Childbirth",
