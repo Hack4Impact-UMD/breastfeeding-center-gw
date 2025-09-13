@@ -1,5 +1,4 @@
 import {
-  getAuth,
   updatePassword,
   reauthenticateWithCredential,
   EmailAuthProvider,
@@ -9,7 +8,7 @@ import {
   type AuthError,
   type User,
 } from "firebase/auth";
-import app, { functions } from "../config/firebase";
+import { auth, functions } from "../config/firebase";
 import { httpsCallable } from "firebase/functions";
 
 /*
@@ -21,7 +20,6 @@ export function createAdminUser(
   newLastName: string
 ): Promise<void> {
   return new Promise((resolve, reject) => {
-    const auth = getAuth(app);
     const createUserCloudFunction = httpsCallable(functions, "createAdminUser");
     createUserCloudFunction({
       email: newEmail,
@@ -48,7 +46,6 @@ export function authenticateUserEmailAndPassword(
   password: string
 ): Promise<User> {
   return new Promise((resolve, reject) => {
-    const auth = getAuth(app);
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential: any) => {
         resolve(userCredential.user);
@@ -91,7 +88,6 @@ export async function updateUserPassword(
   oldPassword: string
 ): Promise<string> {
   return await new Promise((resolve, reject) => {
-    const auth = getAuth(app);
     const user = auth.currentUser;
 
     if (user != null) {
@@ -130,7 +126,6 @@ export async function updateUserPassword(
 
 export function sendResetEmail(email: string): Promise<void> {
   return new Promise((resolve, reject) => {
-    const auth = getAuth(app);
     sendPasswordResetEmail(auth, email)
       .then(() => {
         resolve();
@@ -160,7 +155,6 @@ export function deleteUser(auth_id: string): Promise<void> {
 
 export function logOut(): Promise<void> {
   return new Promise((resolve, reject) => {
-    const auth = getAuth(app);
     signOut(auth)
       .then(() => {
         resolve();
