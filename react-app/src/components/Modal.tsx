@@ -31,7 +31,7 @@ const Modal = ({
               className="bg-white z-10 rounded-lg shadow-xs"
               style={{
                 height: heightString,
-                width: width ? `${width}px` : "450px",
+                width: `${width}px`
               }}>
               {children}
             </div>
