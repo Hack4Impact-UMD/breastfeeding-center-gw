@@ -5,15 +5,15 @@ import {
   type IdTokenResult,
 } from "firebase/auth";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import app from "../config/firebase";
+import app, { auth } from "../config/firebase";
 
 interface Props {
   children: React.JSX.Element;
 }
 
 interface AuthContextType {
-  user: User;
-  token: IdTokenResult;
+  user: User | null;
+  token: IdTokenResult | null;
   loading: boolean;
 }
 
@@ -23,29 +23,39 @@ const AuthContext = createContext<AuthContextType>(null!);
 // Updates the AuthContext and re-renders children when the user changes.
 // See onIdTokenChanged for what events trigger a change.
 export const AuthProvider = ({ children }: Props): React.ReactElement => {
-  const [user, setUser] = useState<User | any>(null!);
-  const [token, setToken] = useState<IdTokenResult>(null!);
-  // The loading state is used by RequireAuth/RequireAdminAuth
-  const [loading, setLoading] = useState<boolean>(true);
+  const [authState, setAuthState] = useState<AuthContextType>({
+    loading: true,
+    token: null,
+    user: null
+  })
 
   useEffect(() => {
-    const auth = getAuth(app);
-    onIdTokenChanged(auth, (newUser) => {
-      setUser(newUser);
+    return onIdTokenChanged(auth, async (newUser) => {
       if (newUser != null) {
-        newUser
-          .getIdTokenResult()
-          .then((newToken) => {
-            setToken(newToken);
-          })
-          .catch(() => {});
+        const token = await newUser.getIdTokenResult()
+          .catch((err) => {
+            console.error("Failed to get ID token!");
+            console.error(err);
+            return null;
+          });
+
+        setAuthState({
+          user: newUser,
+          token,
+          loading: false
+        })
+      } else {
+        setAuthState({
+          user: null,
+          token: null,
+          loading: false
+        })
       }
-      setLoading(false);
     });
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, token, loading }}>
+    <AuthContext.Provider value={authState}>
       {children}
     </AuthContext.Provider>
   );
