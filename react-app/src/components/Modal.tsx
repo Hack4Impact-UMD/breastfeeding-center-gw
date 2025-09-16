@@ -11,7 +11,7 @@ const Modal = ({
   onClose,
   children,
   height,
-  width = 400,
+  width = 450,
 }: modalPropsType): React.ReactElement => {
   const heightString = height + "px";
   return (
@@ -31,7 +31,7 @@ const Modal = ({
               className="bg-white z-10 rounded-lg shadow-xs"
               style={{
                 height: heightString,
-                width: `${width}px`
+                width: `${width}px`,
               }}>
               {children}
             </div>
@@ -43,6 +43,5 @@ const Modal = ({
     </div>
   );
 };
-
 
 export default Modal;
