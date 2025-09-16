@@ -3,8 +3,9 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 // import { getAnalytics } from "firebase/analytics";
-//@ts-expect-erroring
-import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
+// import {connectFunctionsEmulator} from "firebase/functions";
+import { getFunctions } from "firebase/functions";
+import { getAuth } from "firebase/auth";
 
 // TODO: Add SDKs for Firebase products that you want to use
 
@@ -30,5 +31,6 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 export const functions = getFunctions(app, "us-east4");
+export const auth = getAuth(app);
 //connectFunctionsEmulator(functions, "127.0.0.1", 5001);
 export default app;

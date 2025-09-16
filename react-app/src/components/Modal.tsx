@@ -1,6 +1,6 @@
 interface modalPropsType {
   open: boolean;
-  onClose: any;
+  onClose: () => void;
   children: React.ReactNode;
   height: number;
   width?: number;
@@ -11,7 +11,7 @@ const Modal = ({
   onClose,
   children,
   height,
-  width,
+  width = 450,
 }: modalPropsType): React.ReactElement => {
   const heightString = height + "px";
   return (
@@ -31,7 +31,7 @@ const Modal = ({
               className="bg-white z-10 rounded-lg shadow-xs"
               style={{
                 height: heightString,
-                width: width ? `${width}px` : "450px",
+                width: `${width}px`,
               }}>
               {children}
             </div>
@@ -42,10 +42,6 @@ const Modal = ({
       )}
     </div>
   );
-};
-
-Modal.defaultProps = {
-  width: 400,
 };
 
 export default Modal;
