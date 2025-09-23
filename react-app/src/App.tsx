@@ -11,7 +11,7 @@ import { AuthProvider } from "./auth/AuthProvider";
 import { getBabyInfo, getClientAppointments } from "./backend/AcuityCalls";
 import AcuityDashboard from "./pages/AcuityDashboardPage";
 import JaneDashboard from "./pages/JaneDashboardPage";
-import JaneDataPage from "./pages/JaneDataPage";
+import JaneDataPage from "./pages/JaneDataPage/JaneDataPage";
 import { useState } from "react";
 import ClientListPage from "./pages/ClientListPage";
 import ClientJourneyPage from "./pages/ClientJourneyPage";

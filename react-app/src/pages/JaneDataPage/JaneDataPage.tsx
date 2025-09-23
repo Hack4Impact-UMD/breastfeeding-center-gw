@@ -1,21 +1,21 @@
 import { useEffect, useState } from "react";
-import Header from "../components/Header.tsx";
-import NavigationBar from "../components/NavigationBar/NavigationBar.tsx";
-import { Jane, JaneID } from "../types/JaneType.ts";
+import Header from "../../components/Header.tsx";
+import NavigationBar from "../../components/NavigationBar/NavigationBar.tsx";
+import { Jane, JaneID } from "../../types/JaneType.ts";
 import {
   addJaneSpreadsheet,
   getAllJaneData,
   deleteJaneByIds,
-} from "../backend/FirestoreCalls";
-import { getJaneTypes } from "../backend/JaneFunctions";
+} from "../../backend/FirestoreCalls";
+import { getJaneTypes } from "../../backend/JaneFunctions";
 import { DateTime } from "luxon";
-import { janeIDDataColumns } from "../components/DataTable/Columns.tsx";
-import { DataTable } from "../components/DataTable/DataTable.tsx";
+import { janeIDDataColumns } from "../../components/DataTable/Columns.tsx";
+import { DataTable } from "../../components/DataTable/DataTable.tsx";
 import {
   DateRangePicker,
   defaultDateRange,
   defaultPresets,
-} from "@/components/DateRangePicker/DateRangePicker.tsx";
+} from "../../components/DateRangePicker/DateRangePicker.tsx";
 
 const JaneDataPage = () => {
   //styles
