@@ -16,7 +16,7 @@ import {
   defaultDateRange,
   defaultPresets,
 } from "../../components/DateRangePicker/DateRangePicker.tsx";
-import FileUploadPopup from "./FileUploadPopup"; // NEW import
+import FileUploadPopup from "./FileUploadPopup"; 
 
 const JaneDataPage = () => {
   //styles
@@ -100,11 +100,10 @@ const JaneDataPage = () => {
     }
   };
 
-  // NEW: called when popup hits "Upload Data"
+  // change later
   const handleUploadSubmit = (apptFile: File | null, clientFile: File | null) => {
     console.log("Appointment file:", apptFile);
     console.log("Client file:", clientFile);
-    // For now just logs. Later: hook into addJaneSpreadsheet like handleFileChange.
   };
 
   return (
@@ -152,7 +151,6 @@ const JaneDataPage = () => {
         </div>
       </div>
 
-      {/* NEW Popup */}
       <FileUploadPopup
         isOpen={showUploadPopup}
         onClose={() => setShowUploadPopup(false)}

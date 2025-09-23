@@ -21,7 +21,6 @@ const FileUploadPopup = ({ isOpen, onClose, onSubmit }: FileUploadPopupProps) =>
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // simple extension check
     const valid = file.name.endsWith(".xlsx") || file.name.endsWith(".csv");
     if (!valid) {
       setErrorType("invalidType");
@@ -34,7 +33,6 @@ const FileUploadPopup = ({ isOpen, onClose, onSubmit }: FileUploadPopupProps) =>
   };
 
   const handleSubmit = () => {
-    // Example: simulate missing clients case
     if (apptFile && !clientFile) {
       setErrorType("missingClients");
       return;
@@ -48,18 +46,16 @@ const FileUploadPopup = ({ isOpen, onClose, onSubmit }: FileUploadPopupProps) =>
   return (
     <Modal open={isOpen} onClose={onClose} height={400}>
       <div className="p-6 w-[400px]">
-        {/* Header */}
+        
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-bold">Jane File Upload</h2>
           <button onClick={onClose}>&times;</button>
         </div>
 
-        {/* Upload buttons */}
         <p className="text-sm text-red-600 mb-2">
           * Upload appointments is required
         </p>
         <div className="flex justify-around items-center mb-4">
-          {/* Appointments */}
           <div className="flex flex-col items-center">
             <label
               htmlFor="appt-upload"
@@ -78,7 +74,6 @@ const FileUploadPopup = ({ isOpen, onClose, onSubmit }: FileUploadPopupProps) =>
             />
           </div>
 
-          {/* Clients */}
           <div className="flex flex-col items-center">
             <label
               htmlFor="client-upload"
@@ -116,7 +111,6 @@ const FileUploadPopup = ({ isOpen, onClose, onSubmit }: FileUploadPopupProps) =>
           </p>
         )}
 
-        {/* Submit button */}
         <div className="flex justify-center mt-6">
           <button
             className={`px-6 py-2 rounded ${
