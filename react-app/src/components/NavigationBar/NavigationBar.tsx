@@ -152,7 +152,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                 </div>
               )}
 
-              {/*CLIENT JOURNEY*/}
+              {/*CLIENT LIST*/}
               <div className="flex flex-row border-b border-bcgw-gray-light w-full cursor-pointer">
                 <NavLink
                   to="/clients"
@@ -160,7 +160,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                     isActive ? activeStyle : notActiveStyle
                   }>
                   <img className="w-[30px] h-[30px]" src={clients} />
-                  <span className={categoryMargin}>Client Journey</span>
+                  <span className={categoryMargin}>Client List</span>
                 </NavLink>
               </div>
 
@@ -181,7 +181,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
             <div className="flex-grow"></div>
             <div className="sticky bottom-0 py-4 border-t border-bcgw-gray-light">
               <button
-                className="flex justify-left items-center text-bcgw-blue-dark pl-3 gap-3 underline cursor-pointer "
+                className="flex justify-left items-center text-bcgw-blue-dark pl-3 gap-3 cursor-pointer hover:underline"
                 onClick={() => {
                   handleLogOut();
                 }}>
