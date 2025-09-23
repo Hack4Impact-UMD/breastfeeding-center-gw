@@ -16,6 +16,8 @@ import {
   defaultDateRange,
   defaultPresets,
 } from "@/components/DateRangePicker/DateRangePicker.tsx";
+import { useQuery } from "@tanstack/react-query";
+import Loading from "../components/Loading.tsx";
 
 const JaneDataPage = () => {
   //styles
@@ -31,22 +33,37 @@ const JaneDataPage = () => {
   const [janeData, setJaneData] = useState<JaneID[]>([]);
   const [navBarOpen, setNavBarOpen] = useState(true);
 
-  useEffect(() => {
-    const fetchJaneData = async () => {
-      try {
+  const fetchJaneData = () => {
+    return useQuery<JaneID[]>({
+      queryKey: ["janeData"],
+      queryFn: async () => {
         const data = await getAllJaneData();
-        const formattedData = data.map((entry) => ({
+        return data.map((entry) => ({
           ...entry,
           date: DateTime.fromISO(entry.date).toFormat("f"),
         }));
-        setJaneData(formattedData);
-      } catch (error) {
-        console.error("Failed to fetch Jane data:", error);
-      }
-    };
+      },
+    });
+  };
 
-    fetchJaneData();
-  }, []);
+  const { data: janeConsultations, isPending, isError } = fetchJaneData();
+
+  // useEffect(() => {
+  //   const fetchJaneData = async () => {
+  //     try {
+  //       const data = await getAllJaneData();
+  //       const formattedData = data.map((entry) => ({
+  //         ...entry,
+  //         date: DateTime.fromISO(entry.date).toFormat("f"),
+  //       }));
+  //       setJaneData(formattedData);
+  //     } catch (error) {
+  //       console.error("Failed to fetch Jane data:", error);
+  //     }
+  //   };
+
+  //   fetchJaneData();
+  // }, []);
 
   //date picker
   //@ts-expect-error
@@ -118,7 +135,8 @@ const JaneDataPage = () => {
       <div
         className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
           navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-        }`}>
+        }`}
+      >
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-20">
           {/*headings*/}
@@ -142,7 +160,8 @@ const JaneDataPage = () => {
             <div className={centerItemsInDiv}>
               <button
                 className={`${buttonStyle} mr-5 text-nowrap`}
-                onClick={() => document.getElementById("file-input")?.click()}>
+                onClick={() => document.getElementById("file-input")?.click()}
+              >
                 UPLOAD NEW SPREADSHEET
               </button>
               <input
@@ -155,12 +174,20 @@ const JaneDataPage = () => {
             </div>
           </div>
 
-          <DataTable
-            columns={janeIDDataColumns}
-            data={janeData}
-            handleDelete={handleDelete}
-            tableType="janeData"
-          />
+          {isPending ? (
+            <div className="flex justify-center items-center">
+              <Loading />
+            </div>
+          ) : (
+            !isError && (
+              <DataTable
+                columns={janeIDDataColumns}
+                data={janeConsultations}
+                handleDelete={handleDelete}
+                tableType="janeData"
+              />
+            )
+          )}
         </div>
       </div>
     </>
