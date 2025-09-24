@@ -15,12 +15,12 @@ import JaneDataPage from "./pages/JaneDataPage";
 import { useState } from "react";
 import ClientListPage from "./pages/ClientListPage";
 import ClientJourneyPage from "./pages/ClientJourneyPage";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "./config/query";
 // import "@tremor/react/dist/esm/tremor.css";
 
 function App() {
   const [navBarOpen, setNavBarOpen] = useState(false);
-  const queryClient = new QueryClient();
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>

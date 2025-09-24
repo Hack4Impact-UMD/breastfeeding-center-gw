@@ -75,7 +75,8 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           VISIT
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -89,7 +90,8 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           ID
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -103,7 +105,8 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           EMAIL
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -117,7 +120,8 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           F. NAME
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -131,7 +135,8 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           L. NAME
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -145,7 +150,8 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           DOB
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -159,7 +165,8 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           VISIT TYPE
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -173,7 +180,8 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           INSURANCE
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -193,7 +201,8 @@ export const acuityColumns: ColumnDef<AcuityData>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Class
           <LuArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -207,7 +216,8 @@ export const acuityColumns: ColumnDef<AcuityData>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Instructor
           <LuArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -221,7 +231,8 @@ export const acuityColumns: ColumnDef<AcuityData>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Date
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -238,7 +249,8 @@ export const janeConsultsColumns: ColumnDef<JaneConsults>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Clinician
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -252,7 +264,8 @@ export const janeConsultsColumns: ColumnDef<JaneConsults>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Date
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -266,7 +279,8 @@ export const janeConsultsColumns: ColumnDef<JaneConsults>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Service
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -280,7 +294,8 @@ export const janeConsultsColumns: ColumnDef<JaneConsults>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Visit Type
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -294,7 +309,8 @@ export const janeConsultsColumns: ColumnDef<JaneConsults>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Insurance
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -311,7 +327,8 @@ export const paysimpleColumns: ColumnDef<PaySimpleRentals>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Item
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -325,7 +342,8 @@ export const paysimpleColumns: ColumnDef<PaySimpleRentals>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Total Cost
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -348,7 +366,8 @@ export const paysimpleColumns: ColumnDef<PaySimpleRentals>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Rate
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -362,7 +381,8 @@ export const paysimpleColumns: ColumnDef<PaySimpleRentals>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Start Date
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -376,7 +396,8 @@ export const paysimpleColumns: ColumnDef<PaySimpleRentals>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           End Date
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -390,7 +411,8 @@ export const paysimpleColumns: ColumnDef<PaySimpleRentals>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Rental Length
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -407,7 +429,8 @@ export const oneTimePurchaseColumns: ColumnDef<OneTimePurchase>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Item
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -421,7 +444,8 @@ export const oneTimePurchaseColumns: ColumnDef<OneTimePurchase>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Cost
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -444,7 +468,8 @@ export const oneTimePurchaseColumns: ColumnDef<OneTimePurchase>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Date
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -458,7 +483,8 @@ export const oneTimePurchaseColumns: ColumnDef<OneTimePurchase>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Platform
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -475,7 +501,8 @@ export const clientListColumns: ColumnDef<Client>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           F. Name
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -489,7 +516,8 @@ export const clientListColumns: ColumnDef<Client>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           L. Name
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -503,7 +531,8 @@ export const clientListColumns: ColumnDef<Client>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Email
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -517,7 +546,8 @@ export const clientListColumns: ColumnDef<Client>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Acuity Classes
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -531,7 +561,8 @@ export const clientListColumns: ColumnDef<Client>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           JANE Consults
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -545,7 +576,8 @@ export const clientListColumns: ColumnDef<Client>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Rentals
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -559,7 +591,8 @@ export const clientListColumns: ColumnDef<Client>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Purchases
           <LuArrowUpDown className="h-4 w-4" />
         </Button>

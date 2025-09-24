@@ -1,14 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Header from "../components/Header.tsx";
 import NavigationBar from "../components/NavigationBar/NavigationBar.tsx";
 import { Jane, JaneID } from "../types/JaneType.ts";
-import {
-  addJaneSpreadsheet,
-  getAllJaneData,
-  deleteJaneByIds,
-} from "../backend/FirestoreCalls";
+import { addJaneSpreadsheet } from "../backend/FirestoreCalls";
 import { getJaneTypes } from "../backend/JaneFunctions";
-import { DateTime } from "luxon";
 import { janeIDDataColumns } from "../components/DataTable/Columns.tsx";
 import { DataTable } from "../components/DataTable/DataTable.tsx";
 import {
@@ -16,8 +11,9 @@ import {
   defaultDateRange,
   defaultPresets,
 } from "@/components/DateRangePicker/DateRangePicker.tsx";
-import { useQuery } from "@tanstack/react-query";
 import Loading from "../components/Loading.tsx";
+import { useJaneData } from "@/hooks/queries/useJaneData.ts";
+import { useDeleteJaneRecord } from "@/hooks/mutations/useDeleteJaneRecord.ts";
 
 const JaneDataPage = () => {
   //styles
@@ -30,23 +26,37 @@ const JaneDataPage = () => {
   const [file, setFile] = useState<File | null>(null);
   //@ts-expect-error
   const [janeUploadData, setJaneUploadData] = useState<Jane[]>([]);
-  const [janeData, setJaneData] = useState<JaneID[]>([]);
+  // const [janeData, setJaneData] = useState<JaneID[]>([]);
   const [navBarOpen, setNavBarOpen] = useState(true);
 
-  const fetchJaneData = () => {
-    return useQuery<JaneID[]>({
-      queryKey: ["janeData"],
-      queryFn: async () => {
-        const data = await getAllJaneData();
-        return data.map((entry) => ({
-          ...entry,
-          date: DateTime.fromISO(entry.date).toFormat("f"),
-        }));
-      },
-    });
-  };
+  // const useJaneData = () => {
+  //   return useQuery<JaneID[]>({
+  //     queryKey: ["janeData"],
+  //     queryFn: async () => {
+  //       const data = await getAllJaneData();
+  //       return data.map((entry) => ({
+  //         ...entry,
+  //         date: DateTime.fromISO(entry.date).toFormat("f"),
+  //       }));
+  //     },
+  //   });
+  // };
 
-  const { data: janeConsultations, isPending, isError } = fetchJaneData();
+  // const useDeleteJaneRecord = () => {
+  //   return useMutation({
+  //     mutationFn: async (rows: JaneID[]) => {
+  //       const ids = rows.map((entry) => entry.id);
+  //       await deleteJaneByIds(ids);
+  //     },
+  //     onSuccess: () => {
+  //       const queryClient = useQueryClient();
+  //       queryClient.invalidateQueries({ queryKey: ["janeData"] });
+  //     },
+  //   });
+  // };
+
+  const { data: janeConsultations, isPending, isError } = useJaneData();
+  const deleteJaneRecord = useDeleteJaneRecord();
 
   // useEffect(() => {
   //   const fetchJaneData = async () => {
@@ -118,15 +128,19 @@ const JaneDataPage = () => {
     }
   };
 
-  const handleDelete = async (rows: JaneID[]) => {
-    try {
-      const ids = rows.map((entry) => entry.id);
-      await deleteJaneByIds(ids);
-      const updatedData = await getAllJaneData();
-      setJaneData(updatedData);
-    } catch (error) {
-      console.error("Failed to delete Jane entry:", error);
-    }
+  // const handleDelete = async (rows: JaneID[]) => {
+  //   try {
+  //     const ids = rows.map((entry) => entry.id);
+  //     await deleteJaneByIds(ids);
+  //     const updatedData = await getAllJaneData();
+  //     setJaneData(updatedData);
+  //   } catch (error) {
+  //     console.error("Failed to delete Jane entry:", error);
+  //   }
+  // };
+
+  const handleDelete = (rows: JaneID[]) => {
+    deleteJaneRecord.mutate(rows);
   };
 
   return (
