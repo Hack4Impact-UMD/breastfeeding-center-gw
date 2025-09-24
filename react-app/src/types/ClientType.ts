@@ -6,8 +6,8 @@ export interface Client {
   email: string;
   phone?: string;
   insurance?: string;
-  jane_id: string; // Jane patient_number
-  paysimple_id?: string; // Paysimple customer id
+  janeId: string; // Jane patient_number
+  paysimpleId?: string; // Paysimple customer id
   baby: Baby[];
 }
 
