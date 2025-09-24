@@ -1,6 +1,6 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { Jane, VistType, JaneID } from "@/types/JaneType";
+import { Jane, VisitType, JaneID } from "@/types/JaneType";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { LuArrowUpDown } from "react-icons/lu";
@@ -15,7 +15,7 @@ export type JaneConsults = {
   clinician: string;
   date: string;
   service: string;
-  visitType: VistType;
+  visitType: VisitType;
   insurance: string;
 };
 
