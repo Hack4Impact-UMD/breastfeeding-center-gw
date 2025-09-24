@@ -7,7 +7,7 @@ export interface Jane {
   firstName: string;
   lastName: string;
   email: string;
-  visitType: VistType;
+  visitType: VisitType;
   treatment: string;
   insurance: string;
   date: string; //ISO
@@ -15,14 +15,14 @@ export interface Jane {
 }
 
 export interface JaneAppt {
-  patientId: string; // patient_number
   apptId: string; // appt_id
-  start_at: string; // ISO
-  end_at: string; // ISO
-  visitType: VistType;
-  service: string;
-  staffMember: string;
+  patientId: string; // patient_number
+  startAt: string; // start_at ISO
+  endAt: string; // end_at ISO
+  visitType: VisitType; // treament_name
+  service: string; // treament_name
+  clinician: string; // staff_member
   firstVisit: boolean;
 }
 
-export type VistType = "HOMEVISIT" | "OFFICE" | "TELEHEALTH";
+export type VisitType = "HOMEVISIT" | "OFFICE" | "TELEHEALTH";
