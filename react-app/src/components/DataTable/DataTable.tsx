@@ -123,13 +123,13 @@ export function DataTable<TData, TValue>({
               tableType === "janeData" || tableType === "journey"
                 ? "bg-[#0C3D6B33]"
                 : "bg-[#B9C4CE]"
-            }`}
+            } text-red`}
           >
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="align-left p-0">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
