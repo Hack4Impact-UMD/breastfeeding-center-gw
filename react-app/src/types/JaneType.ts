@@ -19,8 +19,8 @@ export interface JaneAppt {
   patientId: string; // patient_number
   startAt: string; // start_at ISO
   endAt: string; // end_at ISO
-  visitType: VisitType; // treament_name
-  service: string; // treament_name
+  visitType: VisitType; // treatment_name
+  service: string; // treatment_name
   clinician: string; // staff_member
   firstVisit: boolean;
 }
