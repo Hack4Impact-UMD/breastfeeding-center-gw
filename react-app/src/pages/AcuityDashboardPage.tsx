@@ -17,7 +17,13 @@ import Header from "../components/Header";
 // import { getClientAppointments } from "../backend/AcuityCalls";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
-import { DateRangePicker, defaultPresets, defaultDateRange } from "@/components/DateRangePicker/DateRangePicker";
+import {
+  DateRangePicker,
+  defaultPresets,
+  defaultDateRange,
+} from "@/components/DateRangePicker/DateRangePicker";
+import { DataTable } from "@/components/DataTable/DataTable";
+import { ColumnDef } from "@tanstack/react-table";
 
 export default function AcuityDashboardPage() {
   const [navBarOpen, setNavBarOpen] = useState<boolean>(true);
@@ -191,6 +197,188 @@ export default function AcuityDashboardPage() {
     },
   ];
 
+  // sample data for class attendance by trimester
+  type TrimesterAttendance = {
+    class: string;
+    category: string;
+    first: number;
+    second: number;
+    third: number;
+    fourth: number;
+    fifth: number;
+    total: number;
+  };
+
+  const trimesterColumns: ColumnDef<TrimesterAttendance>[] = [
+    {
+      accessorKey: "class",
+      header: () => <span className="font-bold text-[#1264B1]">CLASS</span>,
+      cell: ({ row }) => (
+        <span className="font-bold text-[#1264B1]">
+          {row.getValue("class")}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "category",
+      header: () => <span className="font-bold">CATEGORY</span>,
+    },
+    {
+      accessorKey: "first",
+      header: () => <span className="font-bold">1ST</span>,
+    },
+    {
+      accessorKey: "second",
+      header: () => <span className="font-bold">2ND</span>,
+    },
+    {
+      accessorKey: "third",
+      header: () => <span className="font-bold">3RD</span>,
+    },
+    {
+      accessorKey: "fourth",
+      header: () => <span className="font-bold">4TH</span>,
+    },
+    {
+      accessorKey: "fifth",
+      header: () => <span className="font-bold">5TH</span>,
+    },
+    {
+      accessorKey: "total",
+      header: () => <span className="font-bold">TOTAL</span>,
+    },
+  ];
+
+  const trimesterData: TrimesterAttendance[] = [
+    {
+      class: "Prenatal R...",
+      category: "Postpartum",
+      first: 11,
+      second: 17,
+      third: 7,
+      fourth: 2,
+      fifth: 17,
+      total: 10,
+    },
+    {
+      class: "Baby Care",
+      category: "Prenatal",
+      first: 7,
+      second: 3,
+      third: 3,
+      fourth: 3,
+      fifth: 3,
+      total: 3,
+    },
+    {
+      class: "Postpartum...",
+      category: "Postpartum",
+      first: 12,
+      second: 5,
+      third: 11,
+      fourth: 3,
+      fifth: 3,
+      total: 9,
+    },
+    {
+      class: "Bottles & O...",
+      category: "Postpartum",
+      first: 4,
+      second: 7,
+      third: 21,
+      fourth: 8,
+      fifth: 1,
+      total: 3,
+    },
+    {
+      class: "Starting S...",
+      category: "Postpartum",
+      first: 17,
+      second: 11,
+      third: 5,
+      fourth: 0,
+      fifth: 2,
+      total: 1,
+    },
+  ];
+
+  // sample data for class attendance by instructor popularity
+  type InstructorAttendance = {
+    class: string;
+    category: string;
+    total_attendance: number;
+    instructor1_attendance: number;
+    instructor2_attendance: number;
+  };
+
+  // data for table
+  const instructorColumns: ColumnDef<InstructorAttendance>[] = [
+    {
+      accessorKey: "class",
+      header: () => <span className="font-bold text-[#1264B1]">CLASS</span>,
+      cell: ({ row }) => (
+        <span className="font-bold text-[#1264B1]">
+          {row.getValue("class")}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "category",
+      header: () => <span className="font-bold">CATEGORY</span>,
+    },
+    {
+      accessorKey: "total_attendance",
+      header: () => <span className="font-bold">TOTAL ATTENDANCE</span>,
+    },
+    {
+      accessorKey: "instructor1_attendance",
+      header: () => <span className="font-bold">KAELY HARROD</span>,
+    },
+    {
+      accessorKey: "instructor2_attendance",
+      header: () => <span className="font-bold">INSTRUCTOR 2</span>,
+    },
+  ];
+
+  const instructorData: InstructorAttendance[] = [
+    {
+      class: "Prenatal R...",
+      category: "Postpartum",
+      total_attendance: 30,
+      instructor1_attendance: 11,
+      instructor2_attendance: 11,
+    },
+    {
+      class: "Baby Care",
+      category: "Prenatal",
+      total_attendance: 15,
+      instructor1_attendance: 7,
+      instructor2_attendance: 7,
+    },
+    {
+      class: "Postpartum...",
+      category: "Postpartum",
+      total_attendance: 32,
+      instructor1_attendance: 17,
+      instructor2_attendance: 10,
+    },
+    {
+      class: "Bottle & O...",
+      category: "Postpartum",
+      total_attendance: 22,
+      instructor1_attendance: 1,
+      instructor2_attendance: 19,
+    },
+
+    {
+      class: "Starting S...",
+      category: "Postpartum",
+      total_attendance: 32,
+      instructor1_attendance: 13,
+      instructor2_attendance: 15,
+    },
+  ];
+
   // Styles
   const centerItemsInDiv = "flex justify-between items-center";
   const transparentGrayButtonStyle =
@@ -341,17 +529,18 @@ export default function AcuityDashboardPage() {
       >
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-20 space-y-5">
-        <div className={centerItemsInDiv}>
+          <div className={centerItemsInDiv}>
             <div>
               <h1 className="font-bold">ACUITY</h1>
             </div>
             {/*date picker*/}
             <div className="w-60">
-              <DateRangePicker 
-              enableYearNavigation
-              defaultValue={defaultDateRange}
-              presets={defaultPresets}
-              className="w-60" />
+              <DateRangePicker
+                enableYearNavigation
+                defaultValue={defaultDateRange}
+                presets={defaultPresets}
+                className="w-60"
+              />
             </div>
           </div>
           <div className={`${centerItemsInDiv} pt-4`}>
@@ -389,90 +578,107 @@ export default function AcuityDashboardPage() {
 
           {/* Attendance Bar Chart */}
           <div
-            className="bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
+            className={
+              attendanceDisplay === "graph"
+                ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
+                : ""
+            }
             ref={attendanceChartRef}
           >
             <div className="flex justify-between items-center space-x-4">
               <h2 className="text-xl font-semibold">
-                Class Attendance By Trimester, <br /> 2/19/25 - 3/19/25
+                Class Attendance By Trimester,{" "}
+                {attendanceDisplay === "graph" ? <br /> : <></>}2/19/25 -
+                3/19/25
               </h2>
-
-              {/* Class dropdown */}
-              <div className="flex items-center space-x-2">
-                <label className="text-sm font-medium"></label>
-                <select
-                  className="border rounded-md px-2 py-1 text-sm"
-                  value={selectedClass}
-                  onChange={(e) => setSelectedClass(e.target.value)}
-                >
-                  <option>All Classes</option>
-                  {allClassData.map((c) => (
-                    <option key={c.key}>{c.key}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="w-full h-96">
-              {selectedClass === "All Classes" ? (
-                /* stacked chart for all classes: */
-                <StackedBarChart
-                  height={350}
-                  data={trimesterAttendanceData}
-                  series={
-                    <StackedBarSeries
-                      bar={
-                        <Bar
-                          width={100}
-                          rx={0}
-                          ry={0}
-                          gradient={
-                            <Gradient
-                              stops={[
-                                <GradientStop
-                                  offset="5%"
-                                  stopOpacity={1.0}
-                                  key="start"
-                                />,
-                                <GradientStop
-                                  offset="90%"
-                                  stopOpacity={1.0}
-                                  key="end"
-                                />,
-                              ]}
-                            />
-                          }
-                          rangeLines={
-                            <RangeLines position="top" strokeWidth={3} />
-                          }
-                          guide={<GuideBar />}
-                        />
-                      }
-                      colorScheme={[
-                        "#FCD484",
-                        "#FFAA00",
-                        "#5DB9FF",
-                        "#1661A9",
-                        "#05182A",
-                      ]}
-                    />
-                  }
-                />
+              {attendanceDisplay === "graph" ? (
+                // Class dropdown
+                <div className="flex items-center space-x-2">
+                  <label className="text-sm font-medium"></label>
+                  <select
+                    className="border rounded-md px-2 py-1 text-sm"
+                    value={selectedClass}
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                  >
+                    <option>All Classes</option>
+                    {allClassData.map((c) => (
+                      <option key={c.key}>{c.key}</option>
+                    ))}
+                  </select>
+                </div>
               ) : (
-                /* single-series bar chart for one class: */
-                <BarChart
-                  height={350}
-                  data={barData}
-                  series={
-                    <BarSeries
-                      padding={0.1}
-                      colorScheme={"#F4BB47"}
-                      bar={<Bar rx={0} ry={0} style={{ fill: "#F4BB47" }} />}
-                    />
-                  }
-                />
+                <></>
               )}
             </div>
+
+            {attendanceDisplay === "graph" ? (
+              <div className="w-full h-96">
+                {selectedClass === "All Classes" ? (
+                  /* stacked chart for all classes: */
+                  <StackedBarChart
+                    height={350}
+                    data={trimesterAttendanceData}
+                    series={
+                      <StackedBarSeries
+                        bar={
+                          <Bar
+                            width={100}
+                            rx={0}
+                            ry={0}
+                            gradient={
+                              <Gradient
+                                stops={[
+                                  <GradientStop
+                                    offset="5%"
+                                    stopOpacity={1.0}
+                                    key="start"
+                                  />,
+                                  <GradientStop
+                                    offset="90%"
+                                    stopOpacity={1.0}
+                                    key="end"
+                                  />,
+                                ]}
+                              />
+                            }
+                            rangeLines={
+                              <RangeLines position="top" strokeWidth={3} />
+                            }
+                            guide={<GuideBar />}
+                          />
+                        }
+                        colorScheme={[
+                          "#FCD484",
+                          "#FFAA00",
+                          "#5DB9FF",
+                          "#1661A9",
+                          "#05182A",
+                        ]}
+                      />
+                    }
+                  />
+                ) : (
+                  /* single-series bar chart for one class: */
+                  <BarChart
+                    height={350}
+                    data={barData}
+                    series={
+                      <BarSeries
+                        padding={0.1}
+                        colorScheme={"#F4BB47"}
+                        bar={<Bar rx={0} ry={0} style={{ fill: "#F4BB47" }} />}
+                      />
+                    }
+                  />
+                )}
+              </div>
+            ) : (
+              <DataTable
+                columns={trimesterColumns}
+                data={trimesterData}
+                tableType="journey"
+              />
+            )}
           </div>
 
           <div className={`${centerItemsInDiv} pt-8`}>
@@ -510,36 +716,67 @@ export default function AcuityDashboardPage() {
 
           {/* Class Popularity Over Time */}
           <div
-            className="bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
+            className={
+              classPopularityDisplay === "graph"
+                ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
+                : ""
+            }
             ref={classPopularityChartRef}
           >
             <div className="flex justify-between items-center space-x-4">
               <h2 className="text-xl font-semibold">
-                Class Popularity Over Time, <br /> 2/19/25 - 3/19/25
+                Class Popularity Over Time,{" "}
+                {classPopularityDisplay === "graph" ? <br /> : <></>} 2/19/25 -
+                3/19/25
               </h2>
 
-              {/* Class dropdown */}
-              <div className="flex items-center space-x-2">
-                <label className="text-sm font-medium"></label>
-                <select
-                  className="border rounded-md px-2 py-1 text-sm"
-                  value={selectedClass}
-                  onChange={(e) => setSelectedClass(e.target.value)}
-                >
-                  <option>All Classes</option>
-                  {allClassData.map((c) => (
-                    <option key={c.key}>{c.key}</option>
-                  ))}
-                </select>
+              {classPopularityDisplay === "graph" ? (
+                // Class dropdown
+                <div className="flex items-center space-x-2">
+                  <label className="text-sm font-medium"></label>
+                  <select
+                    className="border rounded-md px-2 py-1 text-sm"
+                    value={selectedClass}
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                  >
+                    <option>All Classes</option>
+                    {allClassData.map((c) => (
+                      <option key={c.key}>{c.key}</option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  <label className="text-sm font-medium"></label>
+                  <select
+                    className="border rounded-md px-2 py-1 text-sm"
+                    value={selectedClass}
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                  >
+                    <option>All Classes</option>
+                    {allClassData.map((c) => (
+                      <option key={c.key}>{c.key}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
+            {classPopularityDisplay === "graph" ? (
+              <div className="w-full h-96">
+                <LineChart
+                  height={300}
+                  data={filteredClassData}
+                  series={<LineSeries type="grouped" />}
+                />
               </div>
-            </div>
-            <div className="w-full h-96">
-              <LineChart
-                height={300}
-                data={filteredClassData}
-                series={<LineSeries type="grouped" />}
+            ) : (
+              <DataTable
+                columns={instructorColumns} // this should be changed to class popularity data
+                // but seems like there is no difference based on figma
+                data={instructorData}
+                tableType="journey"
               />
-            </div>
+            )}
           </div>
 
           <div className={`${centerItemsInDiv} pt-8`}>
@@ -580,13 +817,18 @@ export default function AcuityDashboardPage() {
 
           {/* Instructor Popularity Over Time */}
           <div
-            className="bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
+            className={
+              instructorPopularityDisplay === "graph"
+                ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
+                : ""
+            }
             ref={instructorPopularityChartRef}
           >
             <div className="flex justify-between items-center space-x-4">
               <h2 className="text-xl font-semibold">
                 Instructor Popularity Over Time,
-                <br /> 2/19/25 - 3/19/25
+                {instructorPopularityDisplay === "graph" ? <br /> : <></>}{" "}
+                2/19/25 - 3/19/25
               </h2>
 
               {/* Instructor dropdown */}
@@ -604,13 +846,21 @@ export default function AcuityDashboardPage() {
                 </select>
               </div>
             </div>
-            <div className="w-full h-96">
-              <LineChart
-                height={300}
-                data={filteredInstructorData}
-                series={<LineSeries type="grouped" />}
+            {instructorPopularityDisplay === "graph" ? (
+              <div className="w-full h-96">
+                <LineChart
+                  height={300}
+                  data={filteredInstructorData}
+                  series={<LineSeries type="grouped" />}
+                />
+              </div>
+            ) : (
+              <DataTable
+                columns={instructorColumns}
+                data={instructorData}
+                tableType="journey"
               />
-            </div>
+            )}
           </div>
         </div>
       </div>

@@ -9,6 +9,8 @@ import {
   defaultPresets,
   defaultDateRange,
 } from "@/components/DateRangePicker/DateRangePicker";
+import { DataTable } from "@/components/DataTable/DataTable";
+import { ColumnDef } from "@tanstack/react-table";
 
 // record of colors to use for each rental item
 const colors: Record<string, string> = {
@@ -86,11 +88,38 @@ export default function PaysimpleDashboardPage() {
     data: item.data * 4,
   }));
 
-  const displayData = viewMode === "Months" ? dataMonths : dataWeeks;
-
-  const handleViewChange = (value: string) => {
-    setViewMode(value);
+  // sample data
+  type Rental = {
+    item: string;
+    durationMonths: number;
   };
+
+  // data for table
+  const columns: ColumnDef<Rental>[] = [
+    {
+      accessorKey: "item",
+      header: () => <span className="font-bold">Item</span>,
+    },
+    {
+      accessorKey: "durationMonths",
+      header: () => (
+        <span className="font-bold">Average Rental Duration (Months)</span>
+      ),
+    },
+  ];
+
+  const mockData: Rental[] = [
+    { item: "Medela Symphony", durationMonths: 2 },
+    { item: "Ameda Platinum", durationMonths: 3 },
+    { item: "Spectra S3", durationMonths: 4 },
+    { item: "Medela Babyweigh Scale", durationMonths: 3 },
+    { item: "Medela Babychecker Scale", durationMonths: 3 },
+    { item: "Spectra S3", durationMonths: 6 },
+    { item: "Ameda Platinum", durationMonths: 1 },
+  ];
+
+  // may need to remove this along with viewMode but this is used for bar graphs
+  const displayData = viewMode === "Months" ? dataMonths : dataWeeks;
 
   const handleExport = async (
     ref: React.RefObject<HTMLDivElement | null>,
@@ -116,7 +145,8 @@ export default function PaysimpleDashboardPage() {
       <div
         className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
           navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-        }`}>
+        }`}
+      >
         <Header />
 
         <div className="flex flex-col p-8 pr-20 pl-20 space-y-5">
@@ -145,7 +175,8 @@ export default function PaysimpleDashboardPage() {
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
                 }`}
-                onClick={() => setRentalDisplay("graph")}>
+                onClick={() => setRentalDisplay("graph")}
+              >
                 Graph
               </button>
               <button
@@ -154,36 +185,36 @@ export default function PaysimpleDashboardPage() {
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
                 }`}
-                onClick={() => setRentalDisplay("table")}>
+                onClick={() => setRentalDisplay("table")}
+              >
                 Table
               </button>
             </div>
             <button
               className={transparentGrayButtonStyle}
-              onClick={() => handleExport(rentalChartRef, "rental_duration")}>
+              onClick={() => handleExport(rentalChartRef, "rental_duration")}
+            >
               Export
             </button>
           </div>
 
           {/* white card to put info inside */}
           <div
-            className="bg-white rounded-2xl shadow p-6 border space-y-6"
-            ref={rentalChartRef}>
+            className={
+              rentalDisplay === "graph"
+                ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
+                : ""
+            }
+            ref={rentalChartRef}
+          >
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">
                 Average Rental Duration By Item, {formattedRange}
               </h2>
-              <select
-                value={viewMode}
-                onChange={(e) => handleViewChange(e.target.value)}
-                className="border rounded-md px-2 py-1 text-sm">
-                <option value="Months">Months</option>
-                <option value="Weeks">Weeks</option>
-              </select>
             </div>
 
             {/* the different elements rendered depending on the toggle buttons */}
-            <div className="mt-2">
+            <div className="mt-1">
               {rentalDisplay === "graph" ? (
                 <div className="w-full h-[500px] flex">
                   <BarChart
@@ -193,6 +224,13 @@ export default function PaysimpleDashboardPage() {
                   />
                 </div>
               ) : (
+                <DataTable
+                  columns={columns}
+                  data={mockData}
+                  tableType="journey"
+                />
+              )}
+              {/*
                 <table className="w-full mt-4 text-left border border-gray-200">
                   <thead className="bg-gray-100">
                     <tr>
@@ -211,7 +249,7 @@ export default function PaysimpleDashboardPage() {
                     ))}
                   </tbody>
                 </table>
-              )}
+                */}
             </div>
           </div>
 
