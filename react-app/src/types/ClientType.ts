@@ -1,12 +1,11 @@
 export interface Client {
-  id: string;
+  janeId: string; // Jane patient_number, same as document id
   firstName: string;
   middleName?: string;
   lastName: string;
   email: string;
   phone?: string;
   insurance?: string;
-  janeId: string; // Jane patient_number
   paysimpleId?: string; // Paysimple customer id
   baby: Baby[];
 }
