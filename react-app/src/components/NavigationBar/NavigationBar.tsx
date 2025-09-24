@@ -246,7 +246,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
       {openLogoutConfirmation && createPortal(
         <LogoutConfirmation
           open={openLogoutConfirmation}
-          onClose={setOpenLogoutConfirmation}
+          onClose={() => setOpenLogoutConfirmation(false)}
         />,
         document.body
       )}
