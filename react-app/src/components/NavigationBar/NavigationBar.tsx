@@ -1,5 +1,6 @@
 import { NavLink } from "react-router";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import primaryLogo from "../../assets/bcgw-logo.png";
 import home from "../../assets/home.svg";
 import logout from "../../assets/logout.svg";
@@ -242,10 +243,13 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
           </div>
         )}
       </div>
-      <LogoutConfirmation
-        open={openLogoutConfirmation}
-        onClose={setOpenLogoutConfirmation}
-      />
+      {openLogoutConfirmation && createPortal(
+        <LogoutConfirmation
+          open={openLogoutConfirmation}
+          onClose={setOpenLogoutConfirmation}
+        />,
+        document.body
+      )}
     </div>
   );
 };
