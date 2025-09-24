@@ -37,7 +37,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Consolidated tooltip styling (restrict to actual tooltip elements) */
 div[class*="tooltip"],
 div[class*="Tooltip"],
 div[role="tooltip"],
