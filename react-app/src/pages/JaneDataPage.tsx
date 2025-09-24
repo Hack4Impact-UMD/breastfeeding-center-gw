@@ -20,86 +20,16 @@ const JaneDataPage = () => {
   const buttonStyle =
     "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light text-lg border-1 border-black-500 py-2 px-8 rounded-full cursor-pointer";
   const centerItemsInDiv = "flex justify-between items-center";
-
   //file upload
   //@ts-expect-error
   const [file, setFile] = useState<File | null>(null);
+
   //@ts-expect-error
   const [janeUploadData, setJaneUploadData] = useState<Jane[]>([]);
-  // const [janeData, setJaneData] = useState<JaneID[]>([]);
+
   const [navBarOpen, setNavBarOpen] = useState(true);
-
-  // const useJaneData = () => {
-  //   return useQuery<JaneID[]>({
-  //     queryKey: ["janeData"],
-  //     queryFn: async () => {
-  //       const data = await getAllJaneData();
-  //       return data.map((entry) => ({
-  //         ...entry,
-  //         date: DateTime.fromISO(entry.date).toFormat("f"),
-  //       }));
-  //     },
-  //   });
-  // };
-
-  // const useDeleteJaneRecord = () => {
-  //   return useMutation({
-  //     mutationFn: async (rows: JaneID[]) => {
-  //       const ids = rows.map((entry) => entry.id);
-  //       await deleteJaneByIds(ids);
-  //     },
-  //     onSuccess: () => {
-  //       const queryClient = useQueryClient();
-  //       queryClient.invalidateQueries({ queryKey: ["janeData"] });
-  //     },
-  //   });
-  // };
-
   const { data: janeConsultations, isPending, isError } = useJaneData();
   const deleteJaneRecord = useDeleteJaneRecord();
-
-  // useEffect(() => {
-  //   const fetchJaneData = async () => {
-  //     try {
-  //       const data = await getAllJaneData();
-  //       const formattedData = data.map((entry) => ({
-  //         ...entry,
-  //         date: DateTime.fromISO(entry.date).toFormat("f"),
-  //       }));
-  //       setJaneData(formattedData);
-  //     } catch (error) {
-  //       console.error("Failed to fetch Jane data:", error);
-  //     }
-  //   };
-
-  //   fetchJaneData();
-  // }, []);
-
-  //date picker
-  //@ts-expect-error
-  const [dateRange, setDateRange] = useState<{
-    startDate: Date | null;
-    endDate: Date | null;
-  }>({
-    startDate: null,
-    endDate: null,
-  });
-
-  // //setting dates
-  // const handleDateRangeChange = (newRange: DateValueType) => {
-  //   if (newRange && newRange.startDate && newRange.endDate) {
-  //     setDateRange({
-  //       startDate: newRange.startDate,
-  //       endDate: newRange.endDate,
-  //     });
-  //     // filter function here
-  //   } else {
-  //     setDateRange({
-  //       startDate: null,
-  //       endDate: null,
-  //     });
-  //   }
-  // };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
@@ -127,17 +57,6 @@ const JaneDataPage = () => {
       }
     }
   };
-
-  // const handleDelete = async (rows: JaneID[]) => {
-  //   try {
-  //     const ids = rows.map((entry) => entry.id);
-  //     await deleteJaneByIds(ids);
-  //     const updatedData = await getAllJaneData();
-  //     setJaneData(updatedData);
-  //   } catch (error) {
-  //     console.error("Failed to delete Jane entry:", error);
-  //   }
-  // };
 
   const handleDelete = (rows: JaneID[]) => {
     deleteJaneRecord.mutate(rows);

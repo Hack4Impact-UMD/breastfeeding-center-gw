@@ -4,6 +4,9 @@ import { Jane, VistType, JaneID } from "@/types/JaneType";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { LuArrowUpDown } from "react-icons/lu";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
+
+
 
 export type AcuityData = {
   class: string;
@@ -56,7 +59,7 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
-        className="cursor-pointer rounded-none"
+        className="cursor-pointer rounded-none pl-0 ml-2"
       />
     ),
     cell: ({ row }) => (
@@ -78,7 +81,13 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           VISIT
-          <LuArrowUpDown className="h-4 w-4" />
+          {column.getIsSorted() === false ? (
+            <ArrowUpDown className="h-4 w-4 ml-2" />
+          ) : column.getIsSorted() === "desc" ? (
+            <ArrowUp className="h-4 w-4 ml-2" />
+          ) : (
+            <ArrowDown className="h-4 w-4 ml-2" />
+          )}
         </Button>
       );
     },
@@ -93,7 +102,13 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           ID
-          <LuArrowUpDown className="h-4 w-4" />
+          {column.getIsSorted() === false ? (
+            <ArrowUpDown className="h-4 w-4 ml-2" />
+          ) : column.getIsSorted() === "desc" ? (
+            <ArrowUp className="h-4 w-4 ml-2" />
+          ) : (
+            <ArrowDown className="h-4 w-4 ml-2" />
+          )}
         </Button>
       );
     },
@@ -108,7 +123,13 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           EMAIL
-          <LuArrowUpDown className="h-4 w-4" />
+          {column.getIsSorted() === false ? (
+            <ArrowUpDown className="h-4 w-4 ml-2" />
+          ) : column.getIsSorted() === "desc" ? (
+            <ArrowUp className="h-4 w-4 ml-2" />
+          ) : (
+            <ArrowDown className="h-4 w-4 ml-2" />
+          )}
         </Button>
       );
     },
@@ -123,7 +144,13 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           F. NAME
-          <LuArrowUpDown className="h-4 w-4" />
+          {column.getIsSorted() === false ? (
+            <ArrowUpDown className="h-4 w-4 ml-2" />
+          ) : column.getIsSorted() === "desc" ? (
+            <ArrowUp className="h-4 w-4 ml-2" />
+          ) : (
+            <ArrowDown className="h-4 w-4 ml-2" />
+          )}
         </Button>
       );
     },
@@ -138,7 +165,13 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           L. NAME
-          <LuArrowUpDown className="h-4 w-4" />
+          {column.getIsSorted() === false ? (
+            <ArrowUpDown className="h-4 w-4 ml-2" />
+          ) : column.getIsSorted() === "desc" ? (
+            <ArrowUp className="h-4 w-4 ml-2" />
+          ) : (
+            <ArrowDown className="h-4 w-4 ml-2" />
+          )}
         </Button>
       );
     },
@@ -153,7 +186,13 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           DOB
-          <LuArrowUpDown className="h-4 w-4" />
+          {column.getIsSorted() === false ? (
+            <ArrowUpDown className="h-4 w-4 ml-2" />
+          ) : column.getIsSorted() === "desc" ? (
+            <ArrowUp className="h-4 w-4 ml-2" />
+          ) : (
+            <ArrowDown className="h-4 w-4 ml-2" />
+          )}
         </Button>
       );
     },
@@ -168,7 +207,13 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           VISIT TYPE
-          <LuArrowUpDown className="h-4 w-4" />
+          {column.getIsSorted() === false ? (
+            <ArrowUpDown className="h-4 w-4 ml-2" />
+          ) : column.getIsSorted() === "desc" ? (
+            <ArrowUp className="h-4 w-4 ml-2" />
+          ) : (
+            <ArrowDown className="h-4 w-4 ml-2" />
+          )}
         </Button>
       );
     },
@@ -183,7 +228,13 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           INSURANCE
-          <LuArrowUpDown className="h-4 w-4" />
+          {column.getIsSorted() === false ? (
+            <ArrowUpDown className="h-4 w-4 ml-2" />
+          ) : column.getIsSorted() === "desc" ? (
+            <ArrowUp className="h-4 w-4 ml-2" />
+          ) : (
+            <ArrowDown className="h-4 w-4 ml-2" />
+          )}
         </Button>
       );
     },
