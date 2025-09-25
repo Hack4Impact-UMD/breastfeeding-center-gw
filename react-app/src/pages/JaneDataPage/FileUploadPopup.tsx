@@ -10,14 +10,9 @@ import clientUploadIcon from "../../assets/clientUpload.svg";
 type FileUploadPopupProps = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (apptFile: File | null, clientFile: File | null) => void;
 };
 
-const FileUploadPopup = ({
-  isOpen,
-  onClose,
-  onSubmit,
-}: FileUploadPopupProps) => {
+const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
   const resetState = () => {
     setApptFile(null);
     setClientFile(null);
@@ -42,8 +37,8 @@ const FileUploadPopup = ({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const valid = file.name.endsWith(".xlsx") || file.name.endsWith(".csv");
-    if (!valid) {
+    const invalidType = false; // TODO: implement check for correct files
+    if (invalidType) {
       setErrorType("invalidType");
       return;
     }
@@ -54,12 +49,22 @@ const FileUploadPopup = ({
   };
 
   const handleSubmit = () => {
-    if (apptFile && !clientFile) {
+    const missingClients = false; // TODO: implement check for missing clients
+    if (missingClients) {
       setErrorType("missingClients");
       return;
     }
-    onSubmit(apptFile, clientFile);
-    onClose();
+    handleUploadSubmit(apptFile, clientFile);
+    handleClose();
+  };
+
+  const handleUploadSubmit = (
+    apptFile: File | null,
+    clientFile: File | null
+  ) => {
+    // TODO: Handle file upload logic
+    console.log("Appointment file:", apptFile);
+    console.log("Client file:", clientFile);
   };
 
   const uploadButtonEnabled = !!apptFile && errorType === "none";
@@ -91,7 +96,7 @@ const FileUploadPopup = ({
               <img
                 src={apptUploadIcon}
                 alt="Upload Appts"
-                className="w-15 h-15 ml-3"
+                className="w-14 h-14 ml-3"
               />
               <span className="mt-2 text-sm font-medium">
                 <span className="text-red-600">* </span>
@@ -123,7 +128,7 @@ const FileUploadPopup = ({
               <img
                 src={clientUploadIcon}
                 alt="Upload Clients"
-                className="w-17 h-17"
+                className="w-16 h-16"
               />
               <span className="mt-2 text-sm font-medium underline underline-offset-2 decoration-1">
                 UPLOAD CLIENTS

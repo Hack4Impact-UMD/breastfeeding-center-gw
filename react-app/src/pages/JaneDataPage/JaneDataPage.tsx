@@ -16,7 +16,7 @@ import {
   defaultDateRange,
   defaultPresets,
 } from "../../components/DateRangePicker/DateRangePicker.tsx";
-import FileUploadPopup from "./FileUploadPopup"; 
+import FileUploadPopup from "./FileUploadPopup";
 
 const JaneDataPage = () => {
   //styles
@@ -62,33 +62,6 @@ const JaneDataPage = () => {
     endDate: null,
   });
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files ? e.target.files[0] : null;
-    if (selectedFile) {
-      setFile(selectedFile);
-      console.log("Selected file:", selectedFile.name);
-
-      //translate data into jane types and set local data
-      try {
-        const parsedJaneData = await getJaneTypes(e);
-        console.log("Extracted Jane data:", parsedJaneData);
-
-        //add data to firebase
-        try {
-          console.log(parsedJaneData);
-          await addJaneSpreadsheet(parsedJaneData);
-          console.log("Upload complete!");
-        } catch (error) {
-          console.error("Upload error:", error);
-        }
-
-        setJaneUploadData(parsedJaneData);
-      } catch (error) {
-        console.error("Error extracting Jane data:", error);
-      }
-    }
-  };
-
   const handleDelete = async (rows: JaneID[]) => {
     try {
       const ids = rows.map((entry) => entry.id);
@@ -98,12 +71,6 @@ const JaneDataPage = () => {
     } catch (error) {
       console.error("Failed to delete Jane entry:", error);
     }
-  };
-
-  // change later
-  const handleUploadSubmit = (apptFile: File | null, clientFile: File | null) => {
-    console.log("Appointment file:", apptFile);
-    console.log("Client file:", clientFile);
   };
 
   return (
@@ -154,7 +121,6 @@ const JaneDataPage = () => {
       <FileUploadPopup
         isOpen={showUploadPopup}
         onClose={() => setShowUploadPopup(false)}
-        onSubmit={handleUploadSubmit}
       />
     </>
   );
