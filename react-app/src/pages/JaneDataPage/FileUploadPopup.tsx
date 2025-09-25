@@ -1,4 +1,3 @@
-// src/pages/JaneDataPage/FileUploadPopup.tsx
 import { useState } from "react";
 import Modal from "../../components/Modal";
 import { FiCheckCircle } from "react-icons/fi";
