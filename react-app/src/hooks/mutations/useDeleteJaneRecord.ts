@@ -13,10 +13,17 @@ export function useDeleteJaneRecord() {
     onMutate: async (rows) => {
       await queryClient.cancelQueries({ queryKey: ["janeData"] });
 
+      const prevData = queryClient.getQueryData<JaneID[]>(["janeData"])
+
       // optimistic update
       queryClient.setQueryData<JaneID[]>(["janeData"], old => old?.filter(d => !rows.map(x => x.id).includes(d.id)) ?? [])
+
+      return { prevData }
     },
-    onError: (err) => {
+    onError: (err, _, ctx) => {
+      if (ctx?.prevData) {
+        queryClient.setQueryData(["janeData"], ctx.prevData)
+      }
       console.error("failed to delete jane records:");
       console.error(err);
     },
