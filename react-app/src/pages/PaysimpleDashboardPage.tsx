@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { BarChart, BarSeries, Bar } from "reaviz";
+import { BarChart, BarSeries, Bar, BarProps } from "reaviz";
 import NavigationBar from "../components/NavigationBar/NavigationBar";
 import Header from "../components/Header";
 import { toPng } from "html-to-image";
@@ -20,14 +20,14 @@ const colors: Record<string, string> = {
 };
 
 // custom bar component
-function CustomBar(props: any) {
-  console.log("CustomBar:", props.data?.key, colors[props.data?.key]);
+function CustomBar(props: Partial<BarProps>) {
+  console.log("CustomBar:", props.data?.key, colors[props.data!.key as string]);
   const label = props.data?.key;
   return (
     <Bar
       {...props}
       style={{
-        fill: colors[label] || "#000000",
+        fill: colors[label! as string] || "#000000",
       }}
     />
   );
@@ -114,9 +114,8 @@ export default function PaysimpleDashboardPage() {
       <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
 
       <div
-        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
-          navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-        }`}>
+        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
+          }`}>
         <Header />
 
         <div className="flex flex-col p-8 pr-20 pl-20 space-y-5">
@@ -140,20 +139,18 @@ export default function PaysimpleDashboardPage() {
           <div className={`${centerItemsInDiv} pt-4`}>
             <div className="flex flex-row">
               <button
-                className={`${graphTableButtonStyle} ${
-                  rentalDisplay == "graph"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
-                }`}
+                className={`${graphTableButtonStyle} ${rentalDisplay == "graph"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
+                  }`}
                 onClick={() => setRentalDisplay("graph")}>
                 Graph
               </button>
               <button
-                className={`${graphTableButtonStyle} ${
-                  rentalDisplay == "table"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
-                }`}
+                className={`${graphTableButtonStyle} ${rentalDisplay == "table"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
+                  }`}
                 onClick={() => setRentalDisplay("table")}>
                 Table
               </button>

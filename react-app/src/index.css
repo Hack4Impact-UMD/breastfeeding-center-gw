@@ -36,3 +36,41 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+div[class*="tooltip"],
+div[class*="Tooltip"],
+div[role="tooltip"],
+.tooltip,
+.tooltip-content,
+.tooltip-inner,
+[data-tooltip],
+.reaviz-tooltip,
+.reaviz-tooltip-content,
+.reaviz-chart-tooltip,
+.reaviz-bar-tooltip,
+.reaviz-line-tooltip,
+.reaviz-stacked-tooltip {
+  background-color: white;
+  color: black;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+svg g[class*="tooltip"] text,
+svg .tooltip text {
+  fill: black;
+}
+
+svg g[class*="tooltip"] foreignObject,
+svg g[class*="tooltip"] foreignObject div {
+  background-color: white;
+  color: black;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+

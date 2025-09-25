@@ -1,5 +1,6 @@
 import { NavLink } from "react-router";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import primaryLogo from "../../assets/bcgw-logo.png";
 import home from "../../assets/home.svg";
 import logout from "../../assets/logout.svg";
@@ -47,9 +48,8 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
 
   return (
     <div
-      className={`flex flex-col justify-left h-screen fixed bg-[#F9F8F8] shadow-[4px_4px_4px_0px_rgba(0,_0,_0,_0.25)] transition-all duration-200 ease-in-out ${
-        navBarOpen ? "w-[250px]" : "w-[60px]"
-      }`}>
+      className={`flex flex-col justify-left h-screen fixed bg-[#F9F8F8] shadow-[4px_4px_4px_0px_rgba(0,_0,_0,_0.25)] transition-all duration-200 ease-in-out ${navBarOpen ? "w-[250px]" : "w-[60px]"
+        }`}>
       <div className="flex flex-col h-full ">
         <div className="flex flex-row justify-between items-center pr-3 pt-1">
           <button onClick={toggleNavBar} className="flex ml-auto">
@@ -242,10 +242,13 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
           </div>
         )}
       </div>
-      <LogoutConfirmation
-        open={openLogoutConfirmation}
-        onClose={setOpenLogoutConfirmation}
-      />
+      {openLogoutConfirmation && createPortal(
+        <LogoutConfirmation
+          open={openLogoutConfirmation}
+          onClose={() => setOpenLogoutConfirmation(false)}
+        />,
+        document.body
+      )}
     </div>
   );
 };
