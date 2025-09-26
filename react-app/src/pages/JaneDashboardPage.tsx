@@ -325,8 +325,7 @@ const JaneDashboardPage = () => {
       <div
         className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
           navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-        }`}
-      >
+        }`}>
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-20">
           {/*headings*/}
@@ -359,15 +358,13 @@ const JaneDashboardPage = () => {
               visitDisplay === "table" || retentionDisplay === "table"
                 ? ""
                 : "flex flex-wrap gap-8 pt-3"
-            }
-          >
+            }>
             <div
               className={
                 visitDisplay === "graph"
                   ? "flex-1 min-w-[300px] max-w-[40%]"
                   : ""
-              }
-            >
+              }>
               <div className={`${centerItemsInDiv} pt-4`}>
                 <div className="flex flex-row">
                   <button
@@ -376,8 +373,7 @@ const JaneDashboardPage = () => {
                         ? "bg-bcgw-gray-light"
                         : "bg-[#f5f5f5]"
                     }`}
-                    onClick={() => setVisitDisplay("graph")}
-                  >
+                    onClick={() => setVisitDisplay("graph")}>
                     Graph
                   </button>
                   <button
@@ -386,15 +382,13 @@ const JaneDashboardPage = () => {
                         ? "bg-bcgw-gray-light"
                         : "bg-[#f5f5f5]"
                     }`}
-                    onClick={() => setVisitDisplay("table")}
-                  >
+                    onClick={() => setVisitDisplay("table")}>
                     Table
                   </button>
                 </div>
                 <button
                   className={transparentGrayButtonStyle}
-                  onClick={() => handleExport(pieChartRef, "visit_breakdown")}
-                >
+                  onClick={() => handleExport(pieChartRef, "visit_breakdown")}>
                   Export
                 </button>
               </div>
@@ -413,8 +407,7 @@ const JaneDashboardPage = () => {
                   {chartData.length > 0 ? (
                     <div
                       className="chartContainer"
-                      style={{ width: "250px", height: "250px" }}
-                    >
+                      style={{ width: "250px", height: "250px" }}>
                       {loading ? (
                         <Loading />
                       ) : (
@@ -462,7 +455,7 @@ const JaneDashboardPage = () => {
                   <DataTable
                     columns={visitBreakdownColumns}
                     data={visitBreakdownData}
-                    tableType="journey"
+                    tableType="default"
                   />
                 </div>
               )}
@@ -473,8 +466,7 @@ const JaneDashboardPage = () => {
                 retentionDisplay === "graph"
                   ? "flex-1 min-w-[300px] max-w-[60%]"
                   : ""
-              }
-            >
+              }>
               <div className={`${centerItemsInDiv} pt-4`}>
                 <div className="flex flex-row">
                   <button
@@ -483,8 +475,7 @@ const JaneDashboardPage = () => {
                         ? "bg-bcgw-gray-light"
                         : "bg-[#f5f5f5]"
                     }`}
-                    onClick={() => setRetentionDisplay("graph")}
-                  >
+                    onClick={() => setRetentionDisplay("graph")}>
                     Graph
                   </button>
                   <button
@@ -493,22 +484,21 @@ const JaneDashboardPage = () => {
                         ? "bg-bcgw-gray-light"
                         : "bg-[#f5f5f5]"
                     }`}
-                    onClick={() => setRetentionDisplay("table")}
-                  >
+                    onClick={() => setRetentionDisplay("table")}>
                     Table
                   </button>
                 </div>
                 <button
                   className={transparentGrayButtonStyle}
-                  onClick={() => handleExport(funnelChartRef, "retention_rate")}
-                >
+                  onClick={() =>
+                    handleExport(funnelChartRef, "retention_rate")
+                  }>
                   Export
                 </button>
               </div>
               <div
                 className={retentionDisplay === "graph" ? chartDiv : ""}
-                ref={funnelChartRef}
-              >
+                ref={funnelChartRef}>
                 <span className="self-start font-semibold text-xl mb-2">
                   Retention Rate:{" "}
                   {dateRange.startDate && dateRange.endDate
@@ -542,7 +532,7 @@ const JaneDashboardPage = () => {
                   <DataTable
                     columns={retentionRateColumns}
                     data={retentionData}
-                    tableType="journey"
+                    tableType="default"
                   />
                 )}
               </div>

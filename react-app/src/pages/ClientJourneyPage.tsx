@@ -133,7 +133,7 @@ const ClientJourney = () => {
               <DataTable
                 columns={acuityColumns}
                 data={sampleAcuityData}
-                tableType="journey"
+                tableType="default"
               />
             </div>
 
@@ -142,7 +142,7 @@ const ClientJourney = () => {
               <DataTable
                 columns={janeConsultsColumns}
                 data={sampleJaneConsults}
-                tableType="journey"
+                tableType="default"
               />
             </div>
 
@@ -151,7 +151,7 @@ const ClientJourney = () => {
               <DataTable
                 columns={paysimpleColumns}
                 data={samplePaysimple}
-                tableType="journey"
+                tableType="default"
               />
             </div>
 
@@ -160,7 +160,7 @@ const ClientJourney = () => {
               <DataTable
                 columns={oneTimePurchaseColumns}
                 data={sampleOTPs}
-                tableType="journey"
+                tableType="default"
               />
             </div>
           </div>

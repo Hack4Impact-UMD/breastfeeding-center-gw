@@ -9,15 +9,13 @@ import RequireAuth from "./auth/RequireAuth";
 import PaysimpleDashboard from "./pages/PaysimpleDashboardPage";
 import { AuthProvider } from "./auth/AuthProvider";
 import { getBabyInfo, getClientAppointments } from "./backend/AcuityCalls";
-import AcuityDashboard from "./pages/AcuityDashboardPage";
+import AcuityDashboard from "./pages/AcuityDashboardPage/AcuityDashboardPage";
 import JaneDashboard from "./pages/JaneDashboardPage";
 import JaneDataPage from "./pages/JaneDataPage";
 import { useState } from "react";
 import ClientListPage from "./pages/ClientListPage";
 import ClientJourneyPage from "./pages/ClientJourneyPage";
 // import "@tremor/react/dist/esm/tremor.css";
-
-
 
 function App() {
   const [navBarOpen, setNavBarOpen] = useState(false);

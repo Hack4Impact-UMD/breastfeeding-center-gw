@@ -119,7 +119,7 @@ export function DataTable<TData, TValue>({
         <Table>
           <TableHeader
             className={`${
-              tableType === "janeData" || tableType === "journey"
+              tableType === "janeData" || tableType === "default"
                 ? "bg-[#0C3D6B33]"
                 : "bg-[#B9C4CE]"
             }`}>

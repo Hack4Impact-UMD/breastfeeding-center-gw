@@ -58,7 +58,6 @@ function formatDate(date: Date) {
 export default function PaysimpleDashboardPage() {
   const [navBarOpen, setNavBarOpen] = useState(true);
   // use state for toggles/buttons/changing of information
-  const [viewMode, setViewMode] = useState("Months");
   const [rentalDisplay, setRentalDisplay] = useState("graph");
   //@ts-expect-error
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -82,12 +81,6 @@ export default function PaysimpleDashboardPage() {
     { key: "Medela BabyCheck Scale", data: 13 },
   ];
 
-  // weeks data is different, multiply each month's data by 4
-  const dataWeeks = dataMonths.map((item) => ({
-    key: item.key,
-    data: item.data * 4,
-  }));
-
   // sample data
   type Rental = {
     item: string;
@@ -99,6 +92,9 @@ export default function PaysimpleDashboardPage() {
     {
       accessorKey: "item",
       header: () => <span className="font-bold">Item</span>,
+      cell: ({ row }) => (
+        <span className="font-bold">{row.getValue("item")}</span>
+      ),
     },
     {
       accessorKey: "durationMonths",
@@ -114,12 +110,7 @@ export default function PaysimpleDashboardPage() {
     { item: "Spectra S3", durationMonths: 4 },
     { item: "Medela Babyweigh Scale", durationMonths: 3 },
     { item: "Medela Babychecker Scale", durationMonths: 3 },
-    { item: "Spectra S3", durationMonths: 6 },
-    { item: "Ameda Platinum", durationMonths: 1 },
   ];
-
-  // may need to remove this along with viewMode but this is used for bar graphs
-  const displayData = viewMode === "Months" ? dataMonths : dataWeeks;
 
   const handleExport = async (
     ref: React.RefObject<HTMLDivElement | null>,
@@ -145,8 +136,7 @@ export default function PaysimpleDashboardPage() {
       <div
         className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
           navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-        }`}
-      >
+        }`}>
         <Header />
 
         <div className="flex flex-col p-8 pr-20 pl-20 space-y-5">
@@ -175,8 +165,7 @@ export default function PaysimpleDashboardPage() {
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
                 }`}
-                onClick={() => setRentalDisplay("graph")}
-              >
+                onClick={() => setRentalDisplay("graph")}>
                 Graph
               </button>
               <button
@@ -185,28 +174,25 @@ export default function PaysimpleDashboardPage() {
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
                 }`}
-                onClick={() => setRentalDisplay("table")}
-              >
+                onClick={() => setRentalDisplay("table")}>
                 Table
               </button>
             </div>
             <button
               className={transparentGrayButtonStyle}
-              onClick={() => handleExport(rentalChartRef, "rental_duration")}
-            >
+              onClick={() => handleExport(rentalChartRef, "rental_duration")}>
               Export
             </button>
           </div>
 
-          {/* white card to put info inside */}
+          {/* white card to put graph inside */}
           <div
             className={
               rentalDisplay === "graph"
                 ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
                 : ""
             }
-            ref={rentalChartRef}
-          >
+            ref={rentalChartRef}>
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-semibold">
                 Average Rental Duration By Item, {formattedRange}
@@ -219,7 +205,7 @@ export default function PaysimpleDashboardPage() {
                 <div className="w-full h-[500px] flex">
                   <BarChart
                     height={500}
-                    data={displayData}
+                    data={dataMonths}
                     series={<BarSeries layout="vertical" bar={<CustomBar />} />}
                   />
                 </div>
@@ -227,33 +213,11 @@ export default function PaysimpleDashboardPage() {
                 <DataTable
                   columns={columns}
                   data={mockData}
-                  tableType="journey"
+                  tableType="default"
                 />
               )}
-              {/*
-                <table className="w-full mt-4 text-left border border-gray-200">
-                  <thead className="bg-gray-100">
-                    <tr>
-                      <th className="py-2 px-4 border-b">Item</th>
-                      <th className="py-2 px-4 border-b">
-                        Duration ({viewMode})
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {displayData.map((item) => (
-                      <tr key={item.key}>
-                        <td className="py-2 px-4 border-b">{item.key}</td>
-                        <td className="py-2 px-4 border-b">{item.data}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                */}
             </div>
           </div>
-
-          {/* Graph or Table Below */}
         </div>
       </div>
     </>
