@@ -11,6 +11,7 @@ export interface Client {
 }
 
 export interface Baby {
+  id: string; // jane patient_number for the baby
   firstName: string;
   middleName?: string;
   lastName: string;
