@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Header from "../components/Header.tsx";
-import NavigationBar from "../components/NavigationBar/NavigationBar.tsx";
-import { Client, clientListColumns } from "@/components/DataTable/Columns.tsx";
+import Header from "../../components/Header.tsx";
+import NavigationBar from "../../components/NavigationBar/NavigationBar.tsx";
+import { Client, clientListColumns } from "./ClientListTableColumns.tsx";
 import { DataTable } from "@/components/DataTable/DataTable.tsx";
 
 const ClientList = () => {

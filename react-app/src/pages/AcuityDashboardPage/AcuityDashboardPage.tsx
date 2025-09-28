@@ -495,11 +495,11 @@ export default function AcuityDashboardPage() {
             }
             ref={attendanceChartRef}>
             <div className="flex justify-between items-center space-x-4">
-              <h2 className="text-xl font-semibold">
+              <div className="text-2xl font-semibold">
                 Class Attendance By Trimester,{" "}
                 {attendanceDisplay === "graph" ? <br /> : <></>}2/19/25 -
                 3/19/25
-              </h2>
+              </div>
               {attendanceDisplay === "graph" ? (
                 // Class dropdown
                 <div className="flex items-center space-x-2">
@@ -628,11 +628,11 @@ export default function AcuityDashboardPage() {
             }
             ref={classPopularityChartRef}>
             <div className="flex justify-between items-center space-x-4">
-              <h2 className="text-xl font-semibold">
+              <div className="text-2xl font-semibold">
                 Class Popularity Over Time,{" "}
                 {classPopularityDisplay === "graph" ? <br /> : <></>} 2/19/25 -
                 3/19/25
-              </h2>
+              </div>
 
               {classPopularityDisplay === "graph" ? (
                 // Class dropdown
@@ -723,11 +723,11 @@ export default function AcuityDashboardPage() {
             }
             ref={instructorPopularityChartRef}>
             <div className="flex justify-between items-center space-x-4">
-              <h2 className="text-xl font-semibold">
+              <div className="text-2xl font-semibold">
                 Instructor Popularity Over Time,
                 {instructorPopularityDisplay === "graph" ? <br /> : <></>}{" "}
                 2/19/25 - 3/19/25
-              </h2>
+              </div>
 
               {/* Instructor dropdown */}
               <div className="flex items-center space-x-2">

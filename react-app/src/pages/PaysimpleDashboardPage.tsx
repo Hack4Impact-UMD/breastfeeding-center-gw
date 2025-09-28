@@ -194,9 +194,9 @@ export default function PaysimpleDashboardPage() {
             }
             ref={rentalChartRef}>
             <div className="flex justify-between items-center">
-              <h2 className="text-xl font-semibold">
+              <div className="text-2xl font-semibold">
                 Average Rental Duration By Item, {formattedRange}
-              </h2>
+              </div>
             </div>
 
             {/* the different elements rendered depending on the toggle buttons */}

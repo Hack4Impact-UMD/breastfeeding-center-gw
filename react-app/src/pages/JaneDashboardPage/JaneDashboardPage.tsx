@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import Header from "../components/Header.tsx";
-import NavigationBar from "../components/NavigationBar/NavigationBar.tsx";
+import Header from "../../components/Header.tsx";
+import NavigationBar from "../../components/NavigationBar/NavigationBar.tsx";
 import {
   PieArcSeries,
   PieChart,
@@ -11,9 +11,9 @@ import {
   FunnelArc,
 } from "reaviz";
 import { FunnelSeries } from "reaviz";
-import { Jane } from "../types/JaneType.ts";
-import { getAllJaneData } from "../backend/FirestoreCalls.tsx";
-import Loading from "../components/Loading.tsx";
+import { Jane } from "../../types/JaneType.ts";
+import { getAllJaneData } from "../../backend/FirestoreCalls.tsx";
+import Loading from "../../components/Loading.tsx";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
 import {
@@ -22,8 +22,13 @@ import {
   defaultDateRange,
   DateRange,
 } from "@/components/DateRangePicker/DateRangePicker.tsx";
+import {
+  VisitBreakdown,
+  visitBreakdownColumns,
+  RetentionRate,
+  retentionRateColumns,
+} from "./JaneTableColumns";
 import { DataTable } from "@/components/DataTable/DataTable";
-import { ColumnDef } from "@tanstack/react-table";
 
 const JaneDashboardPage = () => {
   //nav bar
@@ -38,7 +43,7 @@ const JaneDashboardPage = () => {
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer";
   const centerItemsInDiv = "flex justify-between items-center";
   const chartDiv =
-    "flex flex-col items-center justify-center bg-white h-[400px] border-2 border-black p-5 mt-2 rounded-lg";
+    "flex flex-col items-center justify-center bg-white h-[400px] border-2 border-black p-5 rounded-lg";
 
   //file upload
   const [janeData, setJaneData] = useState<Jane[]>([]);
@@ -162,39 +167,6 @@ const JaneDashboardPage = () => {
   //chart colors
   const chartColors = ["#f4bb47", "#05182a", "#3A8D8E"];
 
-  // sample data for visit breakdown
-  type VisitBreakdown = {
-    visitType: string;
-    percent: number;
-    count: number;
-  };
-
-  const visitBreakdownColumns: ColumnDef<VisitBreakdown>[] = [
-    {
-      accessorKey: "visitType",
-      header: () => <span className="font-bold">Visit Type</span>,
-      cell: ({ row }) => (
-        <span className="font-bold">{row.getValue("visitType")}</span>
-      ),
-    },
-    {
-      accessorKey: "percent",
-      header: () => <span className="font-bold">PERCENT</span>,
-      cell: ({ row }) => {
-        const value = row.getValue<number>("percent");
-        return `${value}%`;
-      },
-    },
-    {
-      accessorKey: "count",
-      header: () => <span className="font-bold">COUNT</span>,
-      cell: ({ row }) => {
-        const value = row.getValue<number>("count");
-        return value.toLocaleString();
-      },
-    },
-  ];
-
   const visitBreakdownData: VisitBreakdown[] = [
     {
       visitType: "Home Visit",
@@ -215,45 +187,6 @@ const JaneDashboardPage = () => {
       visitType: "Total",
       percent: 100,
       count: 900000,
-    },
-  ];
-
-  // sample data for retention rate table
-  type RetentionRate = {
-    visit: string;
-    numberVisited: number;
-    percent: number;
-    loss: number;
-    clientsLost: string;
-  };
-
-  const retentionRateColumns: ColumnDef<RetentionRate>[] = [
-    {
-      accessorKey: "visit",
-      header: () => <span className="font-bold">Visits</span>,
-      cell: ({ row }) => (
-        <span className="font-bold">{row.getValue("visit")}</span>
-      ),
-    },
-    {
-      accessorKey: "numberVisited",
-      header: () => <span className="font-bold">Number Visited</span>,
-    },
-    {
-      accessorKey: "percent",
-      header: () => <span className="font-bold">PERCENT</span>,
-      cell: ({ row }) => {
-        const value = row.getValue<number>("percent");
-        return `${value}%`;
-      },
-    },
-    {
-      accessorKey: "loss",
-      header: () => <span className="font-bold">Loss</span>,
-    },
-    {
-      accessorKey: "clientsLost",
-      header: () => <span className="font-bold">Clients Lost</span>,
     },
   ];
 
@@ -365,7 +298,7 @@ const JaneDashboardPage = () => {
                   ? "flex-1 min-w-[300px] max-w-[40%]"
                   : ""
               }>
-              <div className={`${centerItemsInDiv} pt-4`}>
+              <div className={`${centerItemsInDiv} pt-4 mb-6`}>
                 <div className="flex flex-row">
                   <button
                     className={`${graphTableButtonStyle} ${
@@ -395,7 +328,7 @@ const JaneDashboardPage = () => {
               {visitDisplay === "graph" ? (
                 <div className={chartDiv} ref={pieChartRef}>
                   {/*chart title*/}
-                  <span className="self-start font-semibold text-xl mb-7">
+                  <span className="self-start font-semibold text-2xl mb-7">
                     Visit Breakdown:{" "}
                     {dateRange.startDate && dateRange.endDate
                       ? formatDate(dateRange.startDate) +
@@ -444,7 +377,7 @@ const JaneDashboardPage = () => {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <span className="font-semibold text-xl">
+                  <span className="font-semibold text-2xl">
                     Visit Breakdown:{" "}
                     {dateRange.startDate && dateRange.endDate
                       ? formatDate(dateRange.startDate) +
@@ -467,7 +400,7 @@ const JaneDashboardPage = () => {
                   ? "flex-1 min-w-[300px] max-w-[60%]"
                   : ""
               }>
-              <div className={`${centerItemsInDiv} pt-4`}>
+              <div className={`${centerItemsInDiv} pt-4 mb-6`}>
                 <div className="flex flex-row">
                   <button
                     className={`${graphTableButtonStyle} ${
@@ -499,7 +432,7 @@ const JaneDashboardPage = () => {
               <div
                 className={retentionDisplay === "graph" ? chartDiv : ""}
                 ref={funnelChartRef}>
-                <span className="self-start font-semibold text-xl mb-2">
+                <span className="self-start font-semibold text-2xl mb-2">
                   Retention Rate:{" "}
                   {dateRange.startDate && dateRange.endDate
                     ? formatDate(dateRange.startDate) +
