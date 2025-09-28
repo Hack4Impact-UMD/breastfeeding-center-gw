@@ -15,7 +15,7 @@ import JaneDataPage from "./pages/JaneDataPage/JaneDataPage";
 import { useState } from "react";
 import ClientListPage from "./pages/ClientListPage";
 import ClientJourneyPage from "./pages/ClientJourneyPage";
-import "react-tooltip/dist/react-tooltip.css";
+// import "react-tooltip/dist/react-tooltip.css";
 // import "@tremor/react/dist/esm/tremor.css";
 
 function App() {
@@ -34,9 +34,8 @@ function App() {
                     setNavBarOpen={setNavBarOpen}
                   />
                   <div
-                    className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
-                      navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-                    }`}>
+                    className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
+                      }`}>
                     <Header />
                   </div>
                 </>

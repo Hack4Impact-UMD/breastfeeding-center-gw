@@ -1,5 +1,4 @@
-import { functions } from "../config/firebase";
-import { httpsCallable } from "firebase/functions";
+import { axiosClient } from "@/lib/utils";
 
 interface RawClassInfo {
   date: Date;
@@ -29,30 +28,25 @@ Write functions to retrieve the following information
  * Get all appointments
  */
 
-export function getAppointments(): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const getAppointments = httpsCallable(functions, "getAppointments");
-    getAppointments()
-      .then((appointments: any) => {
-        console.log("Appointments retrieved successfully.");
-        console.log(appointments.data);
-        resolve(appointments.data);
-      })
-      .catch((error: any) => {
-        reject(error);
-      });
-  });
+export async function getAppointments() {
+  const axios = await axiosClient();
+  const res = await axios.get("/acuity/appointments");
+  console.log("Appointments retrieved successfully.");
+  console.log(res.data);
+  return res.data;
 }
 
-export function getBabyInfo(): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const getBabyInfo = httpsCallable(functions, "getBabyInfo");
-    const babyDueDate = /(?:Baby \(or babies\)|Baby's) Due Date:\s*(.+)/;
-    const babyBirthDate =
-      /Baby \(or babies\) Date of Birth \(write n\/a if still pregnant\):\s*(.+)/;
-    const babyBirthOrDueDate = /Baby's DOB \(or Due Date\):\s*(.+)/; // For the question: Baby's DOB (or Due Date):
-    const babyBirthLocation = /Where will you \(or did you\) birth\?:\s*(.+)/; // This is consistent across formats
-    /*
+export async function getBabyInfo() {
+  const axios = await axiosClient();
+  const res = await axios.get("/acuity/babyinfo");
+  const babyInfo = res.data;
+
+  const babyDueDate = /(?:Baby \(or babies\)|Baby's) Due Date:\s*(.+)/;
+  const babyBirthDate =
+    /Baby \(or babies\) Date of Birth \(write n\/a if still pregnant\):\s*(.+)/;
+  const babyBirthOrDueDate = /Baby's DOB \(or Due Date\):\s*(.+)/; // For the question: Baby's DOB (or Due Date):
+  const babyBirthLocation = /Where will you \(or did you\) birth\?:\s*(.+)/; // This is consistent across formats
+  /*
 Different formats:
 >        'Baby (or babies) Due Date: 8/27/2025\n' +
 >        '\n' +
@@ -68,90 +62,84 @@ Different formats:
 >        '\n' +
 >        "Baby's Due Date: August 29, 2025\n" +
 */
-    const userMap: {
-      [id: number]: {
-        firstName: string;
-        lastName: string;
-        email: string;
-        babyDueDate: Date | null;
-        babyBirthDate: Date | null;
-        birthLocation: string | null;
-      };
-    } = {};
-    getBabyInfo()
-      .then((babyInfo: any) => {
-        console.log("Baby Info retrieved successfully.");
-        //@ts-expect-erroring
-        babyInfo.data.forEach((user) => {
-          console.log(user);
-          userMap[user.id] = {
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            babyDueDate: null,
-            babyBirthDate: null,
-            birthLocation: null,
-          };
-          // Finding baby due / birth date
-          const matchDate = user.formsText.match(babyDueDate);
-          if (matchDate) {
-            // Assume that the entered date is convertable to date object
-            const dateStr = matchDate[1].trim();
-            const dateObj = new Date(dateStr);
+  const userMap: {
+    [id: number]: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      babyDueDate: Date | null;
+      babyBirthDate: Date | null;
+      birthLocation: string | null;
+    };
+  } = {};
 
-            // Check if date object is valid
-            if (!isNaN(dateObj.getTime())) {
-              userMap[user.id].babyDueDate = dateObj;
-            }
+  console.log("Baby Info retrieved successfully.");
+  //@ts-expect-erroring
+  babyInfo.forEach((user) => {
+    console.log(user);
+    userMap[user.id] = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      babyDueDate: null,
+      babyBirthDate: null,
+      birthLocation: null,
+    };
+    // Finding baby due / birth date
+    const matchDate = user.formsText.match(babyDueDate);
+    if (matchDate) {
+      // Assume that the entered date is convertable to date object
+      const dateStr = matchDate[1].trim();
+      const dateObj = new Date(dateStr);
+
+      // Check if date object is valid
+      if (!isNaN(dateObj.getTime())) {
+        userMap[user.id].babyDueDate = dateObj;
+      }
+    } else {
+      // Try another possible question format
+      const matchDueOrBirth = user.formsText.match(babyBirthOrDueDate);
+      if (matchDueOrBirth) {
+        // Assume that the entered date is convertable to date object
+        const dateDueOrBirth = matchDueOrBirth[1].trim();
+        const dateObjDueOrBirth = new Date(dateDueOrBirth);
+
+        // Check if date object is valid
+        if (!isNaN(dateObjDueOrBirth.getTime())) {
+          // Seeing if this date is due or birth date (future or past)
+          const today = new Date();
+
+          if (dateObjDueOrBirth > today) {
+            // If the date is in the future then it is the baby due date
+            userMap[user.id].babyDueDate = dateObjDueOrBirth;
           } else {
-            // Try another possible question format
-            const matchDueOrBirth = user.formsText.match(babyBirthOrDueDate);
-            if (matchDueOrBirth) {
-              // Assume that the entered date is convertable to date object
-              const dateDueOrBirth = matchDueOrBirth[1].trim();
-              const dateObjDueOrBirth = new Date(dateDueOrBirth);
-
-              // Check if date object is valid
-              if (!isNaN(dateObjDueOrBirth.getTime())) {
-                // Seeing if this date is due or birth date (future or past)
-                const today = new Date();
-
-                if (dateObjDueOrBirth > today) {
-                  // If the date is in the future then it is the baby due date
-                  userMap[user.id].babyDueDate = dateObjDueOrBirth;
-                } else {
-                  // Else the date is birth date since it is in the past
-                  userMap[user.id].babyBirthDate = dateObjDueOrBirth;
-                }
-              }
-            }
+            // Else the date is birth date since it is in the past
+            userMap[user.id].babyBirthDate = dateObjDueOrBirth;
           }
+        }
+      }
+    }
 
-          // Finding possible date of birth
-          const matchBirthDate = user.formsText.match(babyBirthDate);
-          if (matchBirthDate) {
-            const dateBirth = matchBirthDate[1].trim();
-            const dateObjBirth = new Date(dateBirth);
+    // Finding possible date of birth
+    const matchBirthDate = user.formsText.match(babyBirthDate);
+    if (matchBirthDate) {
+      const dateBirth = matchBirthDate[1].trim();
+      const dateObjBirth = new Date(dateBirth);
 
-            // Checking if this is a valid date because possible answers include n/a
-            if (!isNaN(dateObjBirth.getTime())) {
-              userMap[user.id].babyBirthDate = dateObjBirth;
-            }
-          }
+      // Checking if this is a valid date because possible answers include n/a
+      if (!isNaN(dateObjBirth.getTime())) {
+        userMap[user.id].babyBirthDate = dateObjBirth;
+      }
+    }
 
-          // Finding baby birth location
-          const matchLocation = user.formsText.match(babyBirthLocation);
-          if (matchLocation) {
-            userMap[user.id].birthLocation = matchLocation[1].trim();
-          }
-        });
-        console.log(userMap);
-        resolve(babyInfo.data);
-      })
-      .catch((error: any) => {
-        reject(error);
-      });
+    // Finding baby birth location
+    const matchLocation = user.formsText.match(babyBirthLocation);
+    if (matchLocation) {
+      userMap[user.id].birthLocation = matchLocation[1].trim();
+    }
   });
+  console.log(userMap);
+  return babyInfo;
 }
 
 //@ts-expect-erroring
@@ -210,63 +198,59 @@ interface ClientAppointments {
   classes: ClassEntry[];
 }
 
-export function getClientAppointments(): Promise<
+export async function getClientAppointments(): Promise<
   Record<number, ClientAppointments>
 > {
-  return new Promise((resolve, reject) => {
-    const fn = httpsCallable(functions, "getAppointments");
-    fn()
-      .then((res: any) => {
-        const clientMap: Record<number, ClientAppointments> = {};
-        const CLASS_CATS = new Set([
-          "Childbirth Classes",
-          "Postpartum Classes",
-          "Prenatal Classes",
-          "Infant Massage",
-          "Parent Groups",
-        ]);
+  const axios = await axiosClient();
+  const res = await axios.get("/acuity/clientappointments");
 
-        res.data.forEach((appt: any) => {
-          const {
-            id,
-            firstName,
-            lastName,
-            email,
-            calendar,
-            type,
-            category,
-            datetime,
-            canceled,
-          } = appt;
+  const clientMap: Record<number, ClientAppointments> = {};
+  const CLASS_CATS = new Set([
+    "Childbirth Classes",
+    "Postpartum Classes",
+    "Prenatal Classes",
+    "Infant Massage",
+    "Parent Groups",
+  ]);
 
-          // only initialize the classes array
-          if (!clientMap[id]) {
-            clientMap[id] = {
-              firstName,
-              lastName,
-              email,
-              classes: [],
-            };
-          }
+  res.data.forEach((appt: any) => {
+    const {
+      id,
+      firstName,
+      lastName,
+      email,
+      calendar,
+      type,
+      category,
+      datetime,
+      canceled,
+    } = appt;
 
-          // if it's a class, push it; otherwise ignore
-          if (category && CLASS_CATS.has(category)) {
-            clientMap[id].classes.push({
-              date: new Date(datetime),
-              instructor: calendar || null,
-              title: type || null,
-              classType: category,
-              didAttend: !canceled,
-            });
-          }
-        });
+    // only initialize the classes array
+    if (!clientMap[id]) {
+      clientMap[id] = {
+        firstName,
+        lastName,
+        email,
+        classes: [],
+      };
+    }
 
-        console.log(
-          "Clients with only classes (and the date, instructor, class name, and class type):",
-          clientMap
-        );
-        resolve(clientMap);
-      })
-      .catch(reject);
+    // if it's a class, push it; otherwise ignore
+    if (category && CLASS_CATS.has(category)) {
+      clientMap[id].classes.push({
+        date: new Date(datetime),
+        instructor: calendar || null,
+        title: type || null,
+        classType: category,
+        didAttend: !canceled,
+      });
+    }
   });
+
+  console.log(
+    "Clients with only classes (and the date, instructor, class name, and class type):",
+    clientMap
+  );
+  return clientMap;
 }

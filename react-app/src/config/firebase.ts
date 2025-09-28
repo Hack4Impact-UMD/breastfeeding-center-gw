@@ -40,6 +40,8 @@ export const auth = getAuth(app);
 
 //NOTE: if the app is run in development mode (locally), it will attempt to connect to the emulators automatically
 if (import.meta.env.DEV) {
+  console.info("Running in DEVELOPMENT mode!");
+  console.info("Attempting to connect to Firebase emulators...")
   connectFunctionsEmulator(functions, "127.0.0.1", 5001);
 }
 

@@ -63,7 +63,7 @@ router.post("/create/admin", [isAuthenticated, hasRoles(["ADMIN"])], async (req:
  * Deletes the user
  * parameter: firebase_id - the user's firebase auth id
  */
-router.delete("/user/:firebase_id/delete", [isAuthenticated, hasRoles(["ADMIN"])], async (req: Request, res: Response) => {
+router.delete("/user/:firebase_id", [isAuthenticated, hasRoles(["ADMIN"])], async (req: Request, res: Response) => {
   try {
     const userId = req.params.firebase_id;
 
