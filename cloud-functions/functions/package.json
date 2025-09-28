@@ -2,27 +2,41 @@
   "name": "functions",
   "description": "Cloud Functions for Firebase",
   "scripts": {
-    "lint": "eslint .",
-    "serve": "firebase emulators:start --only functions",
-    "shell": "firebase functions:shell",
+    "lint": "eslint --ext .js,.ts ./src/",
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "serve": "npm run build && firebase emulators:start --only functions",
+    "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
-    "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "deploy": "npm run build && firebase deploy --only functions",
+    "logs": "firebase functions:log",
+    "format": "npx prettier . --write",
+    "format:check": "npx prettier . --check"
   },
   "engines": {
     "node": "22"
   },
-  "main": "index.js",
+  "main": "lib/index.js",
   "dependencies": {
-    "acuityscheduling": "^0.1.9",
+    "axios": "^1.12.2",
     "dotenv": "^16.5.0",
+    "express": "^5.1.0",
     "firebase-admin": "^12.6.0",
-    "firebase-functions": "^6.0.1"
+    "firebase-functions": "^6.4.0"
   },
   "devDependencies": {
-    "eslint": "^8.15.0",
+    "@eslint/compat": "^1.4.0",
+    "@eslint/eslintrc": "^3.3.0",
+    "@eslint/js": "^9.29.0",
+    "@typescript-eslint/eslint-plugin": "^8.44.1",
+    "eslint": "^9.29.0",
     "eslint-config-google": "^0.14.0",
-    "firebase-functions-test": "^3.1.0"
+    "eslint-plugin-import": "^2.31.0",
+    "firebase-functions-test": "^3.1.0",
+    "globals": "^16.0.0",
+    "prettier": "3.6.2",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.44.1"
   },
   "private": true
 }
