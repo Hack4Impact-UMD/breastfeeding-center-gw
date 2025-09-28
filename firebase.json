@@ -1,0 +1,68 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "functions": [
+    {
+      "source": "cloud-functions/functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"RESOURCE_DIR\" run ci",
+        "npm --prefix \"RESOURCE_DIR\" run lint",
+        "npm --prefix \"RESOURCE_DIR\" run build"
+      ]
+    }
+  ],
+  "hosting": {
+    "public": "react-app/dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "predeploy": [
+      "npm --prefix \"RESOURCE_DIR\" run ci",
+      "npm --prefix \"RESOURCE_DIR\" run lint",
+      "npm --prefix \"RESOURCE_DIR\" run build"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html",
+        "headers": [
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          },
+          {
+            "key": "X-Frame-Options",
+            "value": "DENY"
+          }
+        ]
+      }
+    ]
+  },
+  "emulators": {
+    "functions": {
+      "port": 5001
+    },
+    "firestore": {
+      "port": 8080
+    },
+    "ui": {
+      "enabled": true
+    },
+    "singleProjectMode": true,
+    "auth": {
+      "port": 9099
+    }
+  }
+}
