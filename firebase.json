@@ -28,7 +28,7 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "predeploy": "cd react-app && npm run build",
+    "predeploy": "cd react-app && npm ci && npm run build",
     "rewrites": [
       {
         "source": "**",
