@@ -8,31 +8,31 @@ const creds = {
 const acuityClient = axios.create({
   baseURL: "https://acuityscheduling.com/api/v1",
   headers: {
-    Authorization: `Basic ${creds.userId}:${creds.apiKey}`
-  }
-})
+    Authorization: `Basic ${creds.userId}:${creds.apiKey}`,
+  },
+});
 
 //TODO: types and processing for this, for now we just fetch and return
 export async function getAcuityAppointments(max: number = 10) {
-  const res = await acuityClient.get(`/appointments?max=${max}`)
-  const data = res.data
-  return data
+  const res = await acuityClient.get(`/appointments?max=${max}`);
+  const data = res.data;
+  return data;
 }
 
 //TODO: i don't think this is correct, but i'm just copying it over from the old version for now
 export async function getBabyInfo(max: number = 10) {
-  const res = await acuityClient.get(`/appointments?max=${max}`)
-  const data = res.data
-  return data
+  const res = await acuityClient.get(`/appointments?max=${max}`);
+  const data = res.data;
+  return data;
 }
 
 type AcuityAppt = {
-  date: Date,
-  instructor?: string,
-  title?: string,
-  classType: string,
-  didAttend: boolean,
-}
+  date: Date;
+  instructor?: string;
+  title?: string;
+  classType: string;
+  didAttend: boolean;
+};
 
 const CLASS_CATEGORIES = [
   "Childbirth Classes",
@@ -43,8 +43,8 @@ const CLASS_CATEGORIES = [
 ];
 
 export async function getClientAppointments(max: number = 100) {
-  const res = await acuityClient.get(`/appointments?max=${max}`)
-  const raw = res.data
+  const res = await acuityClient.get(`/appointments?max=${max}`);
+  const raw = res.data;
 
   const clientMap: Record<string, { appointments: AcuityAppt[] }> = {};
 
@@ -64,8 +64,7 @@ export async function getClientAppointments(max: number = 100) {
       classType: appt.category,
       didAttend: !appt.canceled,
     });
-  })
+  });
 
-  return clientMap
+  return clientMap;
 }
-

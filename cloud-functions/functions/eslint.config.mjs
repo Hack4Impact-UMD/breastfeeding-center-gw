@@ -13,40 +13,46 @@ const __dirname = path.dirname(__filename);
 const compat = new FlatCompat({
   baseDirectory: __dirname,
   recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all
+  allConfig: js.configs.all,
 });
 
-export default [{
-  ignores: ["lib/**/*", "generated/**/*"],
-}, ...fixupConfigRules(compat.extends(
-  "eslint:recommended",
-  "plugin:import/errors",
-  "plugin:import/warnings",
-  "plugin:import/typescript",
-  "plugin:@typescript-eslint/recommended",
-)), {
-  plugins: {
-    "@typescript-eslint": fixupPluginRules(typescriptEslint),
-    import: fixupPluginRules(_import),
+export default [
+  {
+    ignores: ["lib/**/*", "generated/**/*"],
   },
-
-  languageOptions: {
-    globals: {
-      ...globals.node,
+  ...fixupConfigRules(
+    compat.extends(
+      "eslint:recommended",
+      "plugin:import/errors",
+      "plugin:import/warnings",
+      "plugin:import/typescript",
+      "plugin:@typescript-eslint/recommended",
+    ),
+  ),
+  {
+    plugins: {
+      "@typescript-eslint": fixupPluginRules(typescriptEslint),
+      import: fixupPluginRules(_import),
     },
 
-    parser: tsParser,
-    ecmaVersion: 5,
-    sourceType: "module",
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
 
-    parserOptions: {
-      project: ["tsconfig.json", "tsconfig.dev.json"],
+      parser: tsParser,
+      ecmaVersion: 5,
+      sourceType: "module",
+
+      parserOptions: {
+        project: ["tsconfig.json", "tsconfig.dev.json"],
+      },
+    },
+
+    rules: {
+      quotes: ["error", "double"],
+      "import/no-unresolved": 0,
+      "object-curly-spacing": 0,
     },
   },
-
-  rules: {
-    quotes: ["error", "double"],
-    "import/no-unresolved": 0,
-    "object-curly-spacing": 0,
-  },
-}];
+];

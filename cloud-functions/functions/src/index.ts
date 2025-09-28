@@ -5,9 +5,9 @@ admin.initializeApp();
 import dotenv from "dotenv";
 import app from "./app";
 
-dotenv.config()
+dotenv.config();
 
-exports.api = onRequest({ region: "us-east4" }, app)
+exports.api = onRequest({ region: "us-east4" }, app);
 
 //TODO: this package is really old, doesn't have type definitions, and introduces some vulnerabilities.
 //It's best to switch to just making http requestions to the acuity api directly instead of using this.
@@ -25,7 +25,6 @@ exports.api = onRequest({ region: "us-east4" }, app)
 //   "Infant Massage",
 //   "Parent Groups",
 // ];
-
 
 //TODO: convert these to our own calls, the acuity package is bad
 // /**
