@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Header from "../components/Header.tsx";
-import NavigationBar from "../components/NavigationBar/NavigationBar.tsx";
+import Header from "../../components/Header.tsx";
+import NavigationBar from "../../components/NavigationBar/NavigationBar.tsx";
 import {
   acuityColumns,
   AcuityData,
@@ -10,8 +10,8 @@ import {
   oneTimePurchaseColumns,
   paysimpleColumns,
   PaySimpleRentals,
-} from "@/components/DataTable/Columns.tsx";
-import { DataTable } from "@/components/DataTable/DataTable.tsx";
+} from "./ClientJourneyTableColumns.tsx";
+import { DataTable } from "../../components/DataTable/DataTable.tsx";
 
 const ClientJourney = () => {
   //nav bar
@@ -133,7 +133,7 @@ const ClientJourney = () => {
               <DataTable
                 columns={acuityColumns}
                 data={sampleAcuityData}
-                tableType="journey"
+                tableType="default"
               />
             </div>
 
@@ -142,7 +142,7 @@ const ClientJourney = () => {
               <DataTable
                 columns={janeConsultsColumns}
                 data={sampleJaneConsults}
-                tableType="journey"
+                tableType="default"
               />
             </div>
 
@@ -151,7 +151,7 @@ const ClientJourney = () => {
               <DataTable
                 columns={paysimpleColumns}
                 data={samplePaysimple}
-                tableType="journey"
+                tableType="default"
               />
             </div>
 
@@ -160,7 +160,7 @@ const ClientJourney = () => {
               <DataTable
                 columns={oneTimePurchaseColumns}
                 data={sampleOTPs}
-                tableType="journey"
+                tableType="default"
               />
             </div>
           </div>
