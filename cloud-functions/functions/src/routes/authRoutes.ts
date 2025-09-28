@@ -1,9 +1,9 @@
 import { Request, Response, Router } from "express";
 import { hasRoles, isAuthenticated } from "../middleware/authMiddleware";
-import * as admin from "firebase-admin"
 import crypto from "crypto"
-import { User } from "../types/userTypes";
+import { Role, User } from "../types/userTypes";
 import { logger } from "firebase-functions";
+import { auth, db } from "../services/firebase";
 
 const router = Router()
 
@@ -18,9 +18,6 @@ const router = Router()
 router.post("/create/admin", [isAuthenticated, hasRoles(["ADMIN"])], async (req: Request, res: Response) => {
   try {
     const data = req.body
-
-    const auth = admin.auth();
-    const db = admin.firestore()
 
     const pass = crypto.randomBytes(32).toString("hex");
     const userRecord = await auth.createUser({
@@ -66,12 +63,9 @@ router.post("/create/admin", [isAuthenticated, hasRoles(["ADMIN"])], async (req:
  * Deletes the user
  * parameter: firebase_id - the user's firebase auth id
  */
-router.delete("/delete/:firebase_id", [isAuthenticated, hasRoles(["ADMIN"])], async (req: Request, res: Response) => {
+router.delete("/user/:firebase_id/delete", [isAuthenticated, hasRoles(["ADMIN"])], async (req: Request, res: Response) => {
   try {
     const userId = req.params.firebase_id;
-
-    const auth = admin.auth();
-    const db = admin.firestore();
 
     await auth.deleteUser(userId)
 
@@ -93,3 +87,79 @@ router.delete("/delete/:firebase_id", [isAuthenticated, hasRoles(["ADMIN"])], as
     return res.status(500).send(err);
   }
 })
+
+/**
+ * Updates the current user's email
+ * Arguments: email - the user's current email
+ *            newEmail - the user's new email
+ */
+router.post("/me/email", [isAuthenticated], async (req: Request, res: Response) => {
+  try {
+    const {
+      email,
+      newEmail
+    } = req.body as { email: string, newEmail: string }
+
+    if (!email || !newEmail || req.token?.email !== email) return res.status(400).send("Invalid request!");
+
+    await auth.updateUser(req.token.uid, {
+      email: newEmail,
+    })
+
+    const querySnapshot = await db
+      .collection("Users")
+      .where("auth_id", "==", req.token.uid)
+      .get()
+
+    if (querySnapshot.docs.length == 0) {
+      return res.status(404).send("Failed to find user");
+    } else {
+      await Promise.all(querySnapshot.docs.map(async (doc) => {
+        await doc.ref.update({ email: newEmail })
+      }));
+      return res.status(200).send("Success");
+    }
+  } catch (err) {
+    logger.error("Update email error!")
+    logger.error(err)
+    return res.status(500).send(err);
+  }
+})
+
+/*
+ * Changes a user's role in both authorization and the database.
+ * Takes an object as a parameter that should contain a firebase_id field and a role field.
+ * This function can only be called by a user with admin status
+ * Arguments: firebase_id - the id of the user
+ *            role: the user's new role; string, (Options: "ADMIN", "TEACHER")
+ */
+router.post("/user/:firebase_id/role", [isAuthenticated, hasRoles(["ADMIN"])], async (req: Request, res: Response) => {
+  try {
+    const authId = req.params.firebase_id;
+    const { role } = req.body as { role: Role }
+
+    if (!role) return res.status(400).send("Missing role!");
+
+    await auth
+      .setCustomUserClaims(authId, { role: role })
+    const querySnapshot = await db
+      .collection("Users")
+      .where("auth_id", "==", authId)
+      .get()
+    if (querySnapshot.docs.length == 0) {
+      return res.status(404).send("User not found!");
+    } else {
+      await Promise.all(querySnapshot.docs.map(async (doc) => {
+        await doc.ref.update({ type: role });
+      }));
+      return res.status(200).send();
+    }
+  } catch (err) {
+    logger.error("Update role error!")
+    logger.error(err)
+    return res.status(500).send(err);
+  }
+})
+
+
+export default router;

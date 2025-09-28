@@ -10,35 +10,25 @@ import {
 } from "firebase/auth";
 import { auth, functions } from "../config/firebase";
 import { httpsCallable } from "firebase/functions";
+import { axiosClient } from "@/lib/utils";
 
 /*
  * Creates a admin user
  */
-export function createAdminUser(
+export async function createAdminUser(
   newEmail: string,
   newFirstName: string,
   newLastName: string
 ): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const createUserCloudFunction = httpsCallable(functions, "createAdminUser");
-    createUserCloudFunction({
-      email: newEmail,
-      firstName: newFirstName,
-      lastName: newLastName,
-    })
-      .then(async () => {
-        await sendPasswordResetEmail(auth, newEmail)
-          .then(() => {
-            resolve();
-          })
-          .catch((error: any) => {
-            reject(error);
-          });
-      })
-      .catch((error: any) => {
-        reject(error);
-      });
-  });
+  const axios = await axiosClient()
+
+  await axios.post("/auth/create/admin", {
+    email: newEmail,
+    firstName: newFirstName,
+    lastName: newLastName,
+  })
+
+  await sendPasswordResetEmail(auth, newEmail)
 }
 
 export function authenticateUserEmailAndPassword(
@@ -47,7 +37,7 @@ export function authenticateUserEmailAndPassword(
 ): Promise<User> {
   return new Promise((resolve, reject) => {
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential: any) => {
+      .then((userCredential) => {
         resolve(userCredential.user);
       })
       .catch((error: AuthError) => {
@@ -67,10 +57,10 @@ export function updateUserEmail(
     );
 
     updateUserEmailCloudFunction({ email: oldEmail, newEmail: currentEmail })
-      .then(async (res: any) => {
-        resolve(res);
+      .then(async () => {
+        resolve();
       })
-      .catch((error: any) => {
+      .catch((error) => {
         console.log(error);
         reject(error);
       });
@@ -98,7 +88,7 @@ export async function updateUserPassword(
             .then(() => {
               resolve("Successfully updated password");
             })
-            .catch((error: any) => {
+            .catch((error) => {
               const code = (error as AuthError).code;
               if (code === "auth/weak-password") {
                 reject("New password should be at least 6 characters");
@@ -107,7 +97,7 @@ export async function updateUserPassword(
               }
             });
         })
-        .catch((error: any) => {
+        .catch((error) => {
           const code = (error as AuthError).code;
           if (code === "auth/wrong-password") {
             reject("Your original password is incorrect.");
@@ -130,7 +120,7 @@ export function sendResetEmail(email: string): Promise<void> {
       .then(() => {
         resolve();
       })
-      .catch((error: any) => {
+      .catch((error) => {
         reject(error);
       });
   });
@@ -139,18 +129,9 @@ export function sendResetEmail(email: string): Promise<void> {
 /*
  * Deletes a user given their auth id
  */
-export function deleteUser(auth_id: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const deleteUserCloudFunction = httpsCallable(functions, "deleteUser");
-
-    deleteUserCloudFunction({ firebase_id: auth_id })
-      .then(() => {
-        resolve();
-      })
-      .catch((error: any) => {
-        reject(error);
-      });
-  });
+export async function deleteUser(auth_id: string): Promise<void> {
+  const axios = await axiosClient()
+  await axios.delete(`/auth/user/${auth_id}`)
 }
 
 export function logOut(): Promise<void> {
@@ -159,7 +140,7 @@ export function logOut(): Promise<void> {
       .then(() => {
         resolve();
       })
-      .catch((error: any) => {
+      .catch((error) => {
         reject(error);
       });
   });

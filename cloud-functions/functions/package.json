@@ -17,22 +17,23 @@
   "main": "lib/index.js",
   "dependencies": {
     "acuityscheduling": "^0.1.9",
+    "axios": "^1.12.2",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "firebase-admin": "^12.6.0",
-    "firebase-functions": "^6.0.1"
+    "firebase-functions": "^6.4.0"
   },
   "devDependencies": {
     "@eslint/compat": "^1.4.0",
+    "@eslint/eslintrc": "^3.3.0",
+    "@eslint/js": "^9.29.0",
     "@typescript-eslint/eslint-plugin": "^8.44.1",
     "eslint": "^8.15.0",
     "eslint-config-google": "^0.14.0",
-    "firebase-functions-test": "^3.1.0",
-    "typescript": "^5.9.2",
-    "@eslint/eslintrc": "^3.3.0",
-    "@eslint/js": "^9.29.0",
     "eslint-plugin-import": "^2.31.0",
+    "firebase-functions-test": "^3.1.0",
     "globals": "^16.0.0",
+    "typescript": "^5.9.2",
     "typescript-eslint": "^8.34.0"
   },
   "private": true
