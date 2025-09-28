@@ -1,11 +1,12 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import { onRequest } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 admin.initializeApp();
 
-import dotenv from "dotenv";
 import app from "./app";
 
-dotenv.config();
 
 exports.api = onRequest({ region: "us-east4" }, app);
 

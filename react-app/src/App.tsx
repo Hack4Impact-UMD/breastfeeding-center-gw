@@ -15,7 +15,7 @@ import JaneDataPage from "./pages/JaneDataPage/JaneDataPage";
 import { useState } from "react";
 import ClientListPage from "./pages/ClientListPage";
 import ClientJourneyPage from "./pages/ClientJourneyPage";
-// import "react-tooltip/dist/react-tooltip.css";
+import "react-tooltip/dist/react-tooltip.css";
 // import "@tremor/react/dist/esm/tremor.css";
 
 function App() {

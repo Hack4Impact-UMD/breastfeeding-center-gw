@@ -44,9 +44,13 @@ export const hasErrorInput = [
   "ring-red-200 dark:ring-red-700/30",
 ]
 
-export const axiosClient = async () => axios.create({
-  baseURL: API_URL,
-  headers: {
-    Authorization: `Bearer ${(await auth.currentUser?.getIdToken())}`
-  }
-})
+export const axiosClient = async () => {
+  if (!auth.currentUser) throw new Error("Not authenticated!")
+
+  axios.create({
+    baseURL: API_URL,
+    headers: {
+      Authorization: `Bearer ${(await auth.currentUser?.getIdToken())}`
+    }
+  })
+}

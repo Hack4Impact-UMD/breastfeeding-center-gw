@@ -20,11 +20,15 @@ router.post(
   [isAuthenticated, hasRoles(["ADMIN"])],
   async (req: Request, res: Response) => {
     try {
-      const data = req.body;
+      const { email, firstName, lastName } = req.body;
+
+      if (!email?.trim() || !firstName?.trim() || !lastName?.trim()) {
+        return res.status(400).send("Missing required fields");
+      }
 
       const pass = crypto.randomBytes(32).toString("hex");
       const userRecord = await auth.createUser({
-        email: data.email,
+        email: email,
         password: pass,
       });
 
@@ -34,9 +38,9 @@ router.post(
 
       const collectionObject: User = {
         auth_id: userRecord.uid,
-        email: data.email,
-        firstName: data.firstName,
-        lastName: data.lastName,
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
         type: "ADMIN",
       };
 

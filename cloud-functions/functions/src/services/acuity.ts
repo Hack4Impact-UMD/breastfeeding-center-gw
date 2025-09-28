@@ -8,7 +8,7 @@ const creds = {
 const acuityClient = axios.create({
   baseURL: "https://acuityscheduling.com/api/v1",
   headers: {
-    Authorization: `Basic ${creds.userId}:${creds.apiKey}`,
+    Authorization: `Basic ${Buffer.from(`${creds.userId}:${creds.apiKey}`).toString("base64")}`,
   },
 });
 

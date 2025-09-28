@@ -22,7 +22,7 @@ export async function isAuthenticated(
       "No Firebase ID token was passed as a Bearer token in the Authorization header.",
       "Make sure you authorize your request by providing the following HTTP header:",
       "Authorization: Bearer <Firebase ID Token>",
-      'or by passing a "__session" cookie.',
+      "or by passing a \"__session\" cookie.",
     );
     res.status(403).send("Unauthorized");
     return;
@@ -33,11 +33,11 @@ export async function isAuthenticated(
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer ")
   ) {
-    logger.log('Found "Authorization" header');
+    logger.log("Found \"Authorization\" header");
     // Read the ID Token from the Authorization header.
     idToken = req.headers.authorization.split("Bearer ")[1];
   } else if (req.cookies) {
-    logger.log('Found "__session" cookie');
+    logger.log("Found \"__session\" cookie");
     // Read the ID Token from cookie.
     idToken = req.cookies.__session;
   } else {
@@ -48,7 +48,7 @@ export async function isAuthenticated(
 
   try {
     const decodedIdToken = await admin.auth().verifyIdToken(idToken);
-    logger.log("ID Token correctly decoded", decodedIdToken);
+    logger.log("ID Token correctly decoded", { uid: decodedIdToken.uid });
 
     if (!decodedIdToken.email_verified) {
       logger.warn(
