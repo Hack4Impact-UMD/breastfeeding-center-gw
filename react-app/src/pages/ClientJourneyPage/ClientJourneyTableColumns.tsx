@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { VistType } from "@/types/JaneType";
+import { VisitType } from "@/types/JaneType";
 import { Button } from "@/components/ui/button";
 import { LuArrowUpDown } from "react-icons/lu";
 
@@ -13,7 +13,7 @@ export type JaneConsults = {
   clinician: string;
   date: string;
   service: string;
-  visitType: VistType;
+  visitType: VisitType;
   insurance: string;
 };
 

@@ -8,7 +8,7 @@ export default function LogoutConfirmation({
   onClose,
 }: {
   open: boolean;
-  onClose: any;
+  onClose: () => void;
 }) {
   const navigate = useNavigate();
 

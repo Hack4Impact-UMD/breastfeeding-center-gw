@@ -3,8 +3,10 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
+  pronouns?: string;
+  phone?: string;
   type: Role;
 }
 
 // Should correspond with firestore & cloud functions
-export type Role = "VIEWER" | "EDITOR" | "ADMIN";
+export type Role = "VOLUNTEER" | "ADMIN" | "DIRECTOR";
