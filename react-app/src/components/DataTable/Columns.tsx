@@ -4,7 +4,7 @@ import { Jane, VistType, JaneID } from "@/types/JaneType";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { LuArrowUpDown } from "react-icons/lu";
-import ColumnSortIcon from "../DataTable/ColumnSortIcon";
+import ColumnSortButton from "../DataTable/ColumnSortIcon";
 
 
 export type AcuityData = {
@@ -74,14 +74,9 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "date",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <ColumnSortButton column={column} sortedState={column.getIsSorted()}>
           VISIT
-        <ColumnSortIcon sortedState={column.getIsSorted()}/>
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -89,14 +84,7 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "apptId",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          ID
-          <ColumnSortIcon sortedState={column.getIsSorted()}/>
-        </Button>
+        <ColumnSortButton column={column} sortedState={column.getIsSorted()}>ID</ColumnSortButton>
       );
     },
   },
@@ -104,14 +92,9 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "email",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <ColumnSortButton column={column} sortedState={column.getIsSorted()}>
           EMAIL
-          <ColumnSortIcon sortedState={column.getIsSorted()}/>
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -119,14 +102,9 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "firstName",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <ColumnSortButton column={column} sortedState={column.getIsSorted()}>
           F. NAME
-          <ColumnSortIcon sortedState={column.getIsSorted()}/>
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -134,14 +112,9 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "lastName",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <ColumnSortButton column={column} sortedState={column.getIsSorted()}>
           L. NAME
-          <ColumnSortIcon sortedState={column.getIsSorted()}/>
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -149,14 +122,9 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "babyDob",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <ColumnSortButton column={column} sortedState={column.getIsSorted()}>
           DOB
-          <ColumnSortIcon sortedState={column.getIsSorted()}/>
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -164,14 +132,9 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "visitType",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <ColumnSortButton column={column} sortedState={column.getIsSorted()}>
           VISIT TYPE
-          <ColumnSortIcon sortedState={column.getIsSorted()}/>
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -179,14 +142,9 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "insurance",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <ColumnSortButton column={column} sortedState={column.getIsSorted()}>
           INSURANCE
-          <ColumnSortIcon sortedState={column.getIsSorted()}/>
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
