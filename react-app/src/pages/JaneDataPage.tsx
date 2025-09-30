@@ -29,7 +29,7 @@ const JaneDataPage = () => {
 
   const [navBarOpen, setNavBarOpen] = useState(true);
   const { data: janeConsultations, isPending, isError } = useJaneData();
-  const deleteJaneRecord = useDeleteJaneRecord();
+  const deleteJaneRecordMutation = useDeleteJaneRecord();
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
@@ -59,16 +59,15 @@ const JaneDataPage = () => {
   };
 
   const handleDelete = (rows: JaneID[]) => {
-    deleteJaneRecord.mutate(rows);
+    deleteJaneRecordMutation.mutate(rows);
   };
 
   return (
     <>
       <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
       <div
-        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
-          navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-        }`}
+        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
+          }`}
       >
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-20">
