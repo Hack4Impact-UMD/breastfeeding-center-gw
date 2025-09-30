@@ -3,17 +3,17 @@ import React from "react";
 
 type ProfileIconProps = {
   initials?: string;
-  size?: number; // pixels
+  size?: number; 
 };
 
 const ProfileIcon: React.FC<ProfileIconProps> = ({
   initials = "",
-  size = 112, // default larger
+  size = 112, 
 }) => {
   const style: React.CSSProperties = {
     width: size,
     height: size,
-    borderWidth: 3, // black border
+    borderWidth: 3, 
   };
 
   return (

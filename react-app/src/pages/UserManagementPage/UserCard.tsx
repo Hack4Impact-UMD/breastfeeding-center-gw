@@ -24,13 +24,12 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
 
   return (
     <div className="grid grid-cols-[auto_1fr_auto] items-center py-9 px-6 border-b border-black gap-8">
-      {/* avatar */}
+
       <ProfileIcon initials={initials} size={112} />
 
       {/* name + contact info */}
       <div>
         <div className="flex items-center">
-          {/* fixed width forces alignment across all cards */}
           <a className="text-2xl text-blue w-65">
             {user.lastName}, {user.firstName}
           </a>
@@ -45,7 +44,6 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
         </div>
       </div>
 
-      {/* aligned actions */}
       <div className="flex gap-4 justify-end">
         <ActionButton>Change Access</ActionButton>
         <ActionButton>Remove Access</ActionButton>

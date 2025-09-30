@@ -35,19 +35,17 @@ const UserManagementPage: React.FC = () => {
         <Header />
 
         <div className="flex flex-col p-8 pr-20 pl-20">
-          {/* Filters area */}
           <UserFilters
             search={search}
             setSearch={setSearch}
             roleFilter={roleFilter}
             setRoleFilter={setRoleFilter}
             onAddUserClick={() => {
-              /* no modal for now — placeholder for handler */
+              /* no modal for now  */
               console.log("Add user clicked");
             }}
           />
 
-          {/* column headers (Name / Actions) */}
           <div className="flex justify-between items-center mt-4 pb-3 border-b border-gray-300">
             <div className="text-sm font-semibold">Name</div>
             <div className="text-sm font-semibold">Actions</div>

@@ -1,6 +1,6 @@
 // src/pages/UserManagementPage/UserFilters.tsx
 import React from "react";
-import addUserIcon from "../../assets/addUser.png"; // adjust path if needed
+import addUserIcon from "../../assets/addUser.png"; 
 
 interface Props {
   search: string;
@@ -20,7 +20,6 @@ const UserFilters: React.FC<Props> = ({
   return (
     <div className="py-6 border-b border-gray-300">
       <div className="flex justify-between items-start">
-        {/* Left: filters */}
         <div className="flex gap-10 items-start">
           <div className="flex flex-col">
             <label className="text font-semibold text-black mb-2 uppercase">
@@ -51,7 +50,6 @@ const UserFilters: React.FC<Props> = ({
           </div>
         </div>
 
-        {/* Right: Add User button */}
         <div>
           <button
             type="button"
