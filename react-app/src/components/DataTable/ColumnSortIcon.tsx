@@ -17,6 +17,6 @@ const ColumnSortIcon = ({ sortedState } : ColumnSortIconProps) => {
         )}
         </div>
     );
-}
+} 
 
 export default ColumnSortIcon;
