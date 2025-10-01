@@ -42,7 +42,7 @@ Authentication, Database, and Hosting: [Firebase](https://firebase.google.com/)
 
 ```mermaid
     flowchart TD
-        mc[(Mailchimp)] --> back
+        mc[(Jane)] --> back
         ac[(Acuity)] --> back
         ps[(Paysimple)] --> back
         sq[(Square)] --> back
@@ -65,10 +65,8 @@ Authentication, Database, and Hosting: [Firebase](https://firebase.google.com/)
 
 For inquiries about the project, contact
 
-| Name        | Email                  |
+| Name        | Contact                  |
 | ----------- | ---------------------- |
 | Sophie Tsai | sophietsai31@gmail.com |
+| Ramy Kaddouri | [slack](https://app.slack.com/client/T6VL1BSEA) |
 | Prakhar Gupta | pg12@terpmail.umd.edu|
-
-
-

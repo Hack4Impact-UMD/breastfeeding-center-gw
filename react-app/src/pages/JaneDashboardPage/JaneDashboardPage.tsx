@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import Header from "../components/Header.tsx";
-import NavigationBar from "../components/NavigationBar/NavigationBar.tsx";
+import Header from "../../components/Header.tsx";
+import NavigationBar from "../../components/NavigationBar/NavigationBar.tsx";
 import {
   PieArcSeries,
   PieChart,
@@ -11,9 +11,9 @@ import {
   FunnelArc,
 } from "reaviz";
 import { FunnelSeries } from "reaviz";
-import { Jane } from "../types/JaneType.ts";
-import { getAllJaneData } from "../backend/FirestoreCalls.tsx";
-import Loading from "../components/Loading.tsx";
+import { Jane } from "../../types/JaneType.ts";
+import { getAllJaneData } from "../../backend/FirestoreCalls.tsx";
+import Loading from "../../components/Loading.tsx";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
 import {
@@ -22,6 +22,13 @@ import {
   defaultDateRange,
   DateRange,
 } from "@/components/DateRangePicker/DateRangePicker.tsx";
+import {
+  VisitBreakdown,
+  visitBreakdownColumns,
+  RetentionRate,
+  retentionRateColumns,
+} from "./JaneTableColumns";
+import { DataTable } from "@/components/DataTable/DataTable";
 
 const JaneDashboardPage = () => {
   //nav bar
@@ -36,7 +43,7 @@ const JaneDashboardPage = () => {
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer";
   const centerItemsInDiv = "flex justify-between items-center";
   const chartDiv =
-    "flex flex-col items-center justify-center bg-white h-[400px] border-2 border-black p-5 mt-2 rounded-lg";
+    "flex flex-col items-center justify-center bg-white h-[400px] border-2 border-black p-5 rounded-lg";
 
   //file upload
   const [janeData, setJaneData] = useState<Jane[]>([]);
@@ -160,6 +167,74 @@ const JaneDashboardPage = () => {
   //chart colors
   const chartColors = ["#f4bb47", "#05182a", "#3A8D8E"];
 
+  const visitBreakdownData: VisitBreakdown[] = [
+    {
+      visitType: "Home Visit",
+      percent: 16.6,
+      count: 150000,
+    },
+    {
+      visitType: "In Office",
+      percent: 16.6,
+      count: 150000,
+    },
+    {
+      visitType: "Telehealth",
+      percent: 66.6,
+      count: 600000,
+    },
+    {
+      visitType: "Total",
+      percent: 100,
+      count: 900000,
+    },
+  ];
+
+  const retentionData: RetentionRate[] = [
+    {
+      visit: "1 Visit",
+      numberVisited: 12,
+      percent: 16.6,
+      loss: 1,
+      clientsLost: "Jane Doe",
+    },
+    {
+      visit: "2 Visit",
+      numberVisited: 11,
+      percent: 16.6,
+      loss: 1,
+      clientsLost: "Jane Doe",
+    },
+    {
+      visit: "3 Visit",
+      numberVisited: 12,
+      percent: 16.6,
+      loss: 1,
+      clientsLost: "Jane Doe",
+    },
+    {
+      visit: "4 Visit",
+      numberVisited: 12,
+      percent: 16.6,
+      loss: 1,
+      clientsLost: "Jane Doe",
+    },
+    {
+      visit: "5 Visit",
+      numberVisited: 12,
+      percent: 16.6,
+      loss: 1,
+      clientsLost: "Jane Doe",
+    },
+    {
+      visit: "6+ Visit",
+      numberVisited: 12,
+      percent: 16.6,
+      loss: 1,
+      clientsLost: "Jane Doe",
+    },
+  ];
+
   useEffect(() => {
     setLoading(true);
     getAllJaneData().then((janeData) => {
@@ -183,8 +258,7 @@ const JaneDashboardPage = () => {
       <div
         className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
           navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-        }`}
-      >
+        }`}>
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-20">
           {/*headings*/}
@@ -212,9 +286,19 @@ const JaneDashboardPage = () => {
           </div>
 
           {/*graphs*/}
-          <div className="flex flex-wrap gap-8 pt-3">
-            <div className="flex-1 min-w-[300px] max-w-[40%]">
-              <div className={`${centerItemsInDiv} pt-4`}>
+          <div
+            className={
+              visitDisplay === "table" || retentionDisplay === "table"
+                ? ""
+                : "flex flex-wrap gap-8 pt-3"
+            }>
+            <div
+              className={
+                visitDisplay === "graph"
+                  ? "flex-1 min-w-[300px] max-w-[40%]"
+                  : ""
+              }>
+              <div className={`${centerItemsInDiv} pt-4 mb-6`}>
                 <div className="flex flex-row">
                   <button
                     className={`${graphTableButtonStyle} ${
@@ -222,8 +306,7 @@ const JaneDashboardPage = () => {
                         ? "bg-bcgw-gray-light"
                         : "bg-[#f5f5f5]"
                     }`}
-                    onClick={() => setVisitDisplay("graph")}
-                  >
+                    onClick={() => setVisitDisplay("graph")}>
                     Graph
                   </button>
                   <button
@@ -232,72 +315,92 @@ const JaneDashboardPage = () => {
                         ? "bg-bcgw-gray-light"
                         : "bg-[#f5f5f5]"
                     }`}
-                    onClick={() => setVisitDisplay("table")}
-                  >
+                    onClick={() => setVisitDisplay("table")}>
                     Table
                   </button>
                 </div>
                 <button
                   className={transparentGrayButtonStyle}
-                  onClick={() => handleExport(pieChartRef, "visit_breakdown")}
-                >
+                  onClick={() => handleExport(pieChartRef, "visit_breakdown")}>
                   Export
                 </button>
               </div>
-              <div className={chartDiv} ref={pieChartRef}>
-                {/*chart title*/}
-                <span className="self-start font-semibold text-xl mb-7">
-                  Visit Breakdown:{" "}
-                  {dateRange.startDate && dateRange.endDate
-                    ? formatDate(dateRange.startDate) +
-                      " - " +
-                      formatDate(dateRange.endDate)
-                    : "All Data"}
-                </span>
-                {/*chart*/}
-                {chartData.length > 0 ? (
-                  <div
-                    className="chartContainer"
-                    style={{ width: "250px", height: "250px" }}
-                  >
-                    {loading ? (
-                      <Loading />
-                    ) : (
-                      <PieChart
-                        data={chartData}
-                        series={
-                          <PieArcSeries
-                            doughnut={true}
-                            colorScheme={chartColors}
-                            label={null}
-                          />
-                        }
-                      />
-                    )}
-                  </div>
-                ) : (
-                  <div>No data available for selected date range</div>
-                )}
-                {/*legend*/}
-                <div className="mt-4 flex flex-wrap justify-center gap-4">
-                  {chartData.map((item, index) => (
-                    <div key={item.key} className="flex items-center gap-2">
-                      <div
-                        className="w-10 h-4"
-                        style={{
-                          backgroundColor:
-                            chartColors[index % chartColors.length],
-                        }}
-                      />
-                      <span>{item.key}</span>
+              {visitDisplay === "graph" ? (
+                <div className={chartDiv} ref={pieChartRef}>
+                  {/*chart title*/}
+                  <span className="self-start font-semibold text-2xl mb-7">
+                    Visit Breakdown:{" "}
+                    {dateRange.startDate && dateRange.endDate
+                      ? formatDate(dateRange.startDate) +
+                        " - " +
+                        formatDate(dateRange.endDate)
+                      : "All Data"}
+                  </span>
+                  {/*chart*/}
+                  {chartData.length > 0 ? (
+                    <div
+                      className="chartContainer"
+                      style={{ width: "250px", height: "250px" }}>
+                      {loading ? (
+                        <Loading />
+                      ) : (
+                        <PieChart
+                          data={chartData}
+                          series={
+                            <PieArcSeries
+                              doughnut={true}
+                              colorScheme={chartColors}
+                              label={null}
+                            />
+                          }
+                        />
+                      )}
                     </div>
-                  ))}
+                  ) : (
+                    <div>No data available for selected date range</div>
+                  )}
+                  {/*legend*/}
+                  <div className="mt-4 flex flex-wrap justify-center gap-4">
+                    {chartData.map((item, index) => (
+                      <div key={item.key} className="flex items-center gap-2">
+                        <div
+                          className="w-10 h-4"
+                          style={{
+                            backgroundColor:
+                              chartColors[index % chartColors.length],
+                          }}
+                        />
+                        <span>{item.key}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="space-y-2">
+                  <span className="font-semibold text-2xl">
+                    Visit Breakdown:{" "}
+                    {dateRange.startDate && dateRange.endDate
+                      ? formatDate(dateRange.startDate) +
+                        " - " +
+                        formatDate(dateRange.endDate)
+                      : "All Data"}
+                  </span>
+                  <DataTable
+                    columns={visitBreakdownColumns}
+                    data={visitBreakdownData}
+                    tableType="default"
+                  />
+                </div>
+              )}
             </div>
             {/*funnel chart*/}
-            <div className="flex-1 min-w-[300px] max-w-[60%]">
-              <div className={`${centerItemsInDiv} pt-4`}>
+            <div
+              className={
+                retentionDisplay === "graph"
+                  ? "flex-1 min-w-[300px] max-w-[60%]"
+                  : ""
+              }>
+              <div className={`${centerItemsInDiv} pt-4 mb-6`}>
                 <div className="flex flex-row">
                   <button
                     className={`${graphTableButtonStyle} ${
@@ -305,8 +408,7 @@ const JaneDashboardPage = () => {
                         ? "bg-bcgw-gray-light"
                         : "bg-[#f5f5f5]"
                     }`}
-                    onClick={() => setRetentionDisplay("graph")}
-                  >
+                    onClick={() => setRetentionDisplay("graph")}>
                     Graph
                   </button>
                   <button
@@ -315,20 +417,22 @@ const JaneDashboardPage = () => {
                         ? "bg-bcgw-gray-light"
                         : "bg-[#f5f5f5]"
                     }`}
-                    onClick={() => setRetentionDisplay("table")}
-                  >
+                    onClick={() => setRetentionDisplay("table")}>
                     Table
                   </button>
                 </div>
                 <button
                   className={transparentGrayButtonStyle}
-                  onClick={() => handleExport(funnelChartRef, "retention_rate")}
-                >
+                  onClick={() =>
+                    handleExport(funnelChartRef, "retention_rate")
+                  }>
                   Export
                 </button>
               </div>
-              <div className={chartDiv} ref={funnelChartRef}>
-                <span className="self-start font-semibold text-xl mb-2">
+              <div
+                className={retentionDisplay === "graph" ? chartDiv : ""}
+                ref={funnelChartRef}>
+                <span className="self-start font-semibold text-2xl mb-2">
                   Retention Rate:{" "}
                   {dateRange.startDate && dateRange.endDate
                     ? formatDate(dateRange.startDate) +
@@ -336,26 +440,34 @@ const JaneDashboardPage = () => {
                       formatDate(dateRange.endDate)
                     : "All Data"}
                 </span>
-                <FunnelChart
-                  height={290}
-                  data={funnelData}
-                  series={
-                    <FunnelSeries
-                      arc={<FunnelArc variant="layered" />}
-                      axis={
-                        <FunnelAxis
-                          label={
-                            <FunnelAxisLabel
-                              fontSize={10}
-                              position="bottom"
-                              fill="#000000"
-                            />
-                          }
-                        />
-                      }
-                    />
-                  }
-                />
+                {retentionDisplay === "graph" ? (
+                  <FunnelChart
+                    height={290}
+                    data={funnelData}
+                    series={
+                      <FunnelSeries
+                        arc={<FunnelArc variant="layered" />}
+                        axis={
+                          <FunnelAxis
+                            label={
+                              <FunnelAxisLabel
+                                fontSize={10}
+                                position="bottom"
+                                fill="#000000"
+                              />
+                            }
+                          />
+                        }
+                      />
+                    }
+                  />
+                ) : (
+                  <DataTable
+                    columns={retentionRateColumns}
+                    data={retentionData}
+                    tableType="default"
+                  />
+                )}
               </div>
             </div>
           </div>

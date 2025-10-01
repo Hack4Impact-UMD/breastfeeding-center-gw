@@ -1,10 +1,9 @@
-"use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { Jane, VistType, JaneID } from "@/types/JaneType";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Jane, JaneID, VisitType } from "@/types/JaneType";
 import { Button } from "@/components/ui/button";
 import { LuArrowUpDown } from "react-icons/lu";
-import ColumnSortButton from "../DataTable/ColumnSortIcon";
+import ColumnSortButton from "@/components/DataTable/ColumnSortIcon";
+import { Checkbox } from "@/components/ui/checkbox";
 
 
 export type AcuityData = {
@@ -17,7 +16,7 @@ export type JaneConsults = {
   clinician: string;
   date: string;
   service: string;
-  visitType: VistType;
+  visitType: VisitType;
   insurance: string;
 };
 
@@ -63,7 +62,7 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     ),
     cell: ({ row }) => (
       <Checkbox
-        checked={row.getIsSelected()}
+
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
         className="cursor-pointer rounded-none"
@@ -74,7 +73,7 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "date",
     header: ({ column }) => {
       return (
-        <ColumnSortButton column={column} sortedState={column.getIsSorted()}>
+        <ColumnSortButton column={column}>
           VISIT
         </ColumnSortButton>
       );
@@ -84,7 +83,7 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "apptId",
     header: ({ column }) => {
       return (
-        <ColumnSortButton column={column} sortedState={column.getIsSorted()}>ID</ColumnSortButton>
+        <ColumnSortButton column={column}>ID</ColumnSortButton>
       );
     },
   },
@@ -92,7 +91,7 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "email",
     header: ({ column }) => {
       return (
-        <ColumnSortButton column={column} sortedState={column.getIsSorted()}>
+        <ColumnSortButton column={column} >
           EMAIL
         </ColumnSortButton>
       );
@@ -102,7 +101,7 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "firstName",
     header: ({ column }) => {
       return (
-        <ColumnSortButton column={column} sortedState={column.getIsSorted()}>
+        <ColumnSortButton column={column} >
           F. NAME
         </ColumnSortButton>
       );
@@ -112,7 +111,7 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "lastName",
     header: ({ column }) => {
       return (
-        <ColumnSortButton column={column} sortedState={column.getIsSorted()}>
+        <ColumnSortButton column={column} >
           L. NAME
         </ColumnSortButton>
       );
@@ -122,7 +121,7 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "babyDob",
     header: ({ column }) => {
       return (
-        <ColumnSortButton column={column} sortedState={column.getIsSorted()}>
+        <ColumnSortButton column={column} >
           DOB
         </ColumnSortButton>
       );
@@ -132,7 +131,7 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "visitType",
     header: ({ column }) => {
       return (
-        <ColumnSortButton column={column} sortedState={column.getIsSorted()}>
+        <ColumnSortButton column={column} >
           VISIT TYPE
         </ColumnSortButton>
       );
@@ -142,7 +141,7 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "insurance",
     header: ({ column }) => {
       return (
-        <ColumnSortButton column={column} sortedState={column.getIsSorted()}>
+        <ColumnSortButton column={column} >
           INSURANCE
         </ColumnSortButton>
       );
@@ -150,7 +149,7 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
   },
 ];
 
-export const janeIDDataColumns: ColumnDef<JaneID>[] =
+export const janeIDDataColumns: ColumnDef<Jane>[] =
   janeDataColumns as ColumnDef<JaneID>[];
 
 export const acuityColumns: ColumnDef<AcuityData>[] = [

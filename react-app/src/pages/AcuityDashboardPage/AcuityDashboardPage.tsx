@@ -12,12 +12,23 @@ import {
   RangeLines,
   GuideBar,
 } from "reaviz";
-import NavigationBar from "../components/NavigationBar/NavigationBar";
-import Header from "../components/Header";
+import NavigationBar from "../../components/NavigationBar/NavigationBar";
+import Header from "../../components/Header";
 // import { getClientAppointments } from "../backend/AcuityCalls";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
-import { DateRangePicker, defaultPresets, defaultDateRange } from "@/components/DateRangePicker/DateRangePicker";
+import {
+  DateRangePicker,
+  defaultPresets,
+  defaultDateRange,
+} from "@/components/DateRangePicker/DateRangePicker";
+import { DataTable } from "@/components/DataTable/DataTable";
+import {
+  TrimesterAttendance,
+  trimesterColumns,
+  InstructorAttendance,
+  instructorColumns,
+} from "./AcuityTableColumns";
 
 export default function AcuityDashboardPage() {
   const [navBarOpen, setNavBarOpen] = useState<boolean>(true);
@@ -191,6 +202,97 @@ export default function AcuityDashboardPage() {
     },
   ];
 
+  const trimesterData: TrimesterAttendance[] = [
+    {
+      class: "Prenatal R...",
+      category: "Postpartum",
+      first: 11,
+      second: 17,
+      third: 7,
+      fourth: 2,
+      fifth: 17,
+      total: 10,
+    },
+    {
+      class: "Baby Care",
+      category: "Prenatal",
+      first: 7,
+      second: 3,
+      third: 3,
+      fourth: 3,
+      fifth: 3,
+      total: 3,
+    },
+    {
+      class: "Postpartum...",
+      category: "Postpartum",
+      first: 12,
+      second: 5,
+      third: 11,
+      fourth: 3,
+      fifth: 3,
+      total: 9,
+    },
+    {
+      class: "Bottles & O...",
+      category: "Postpartum",
+      first: 4,
+      second: 7,
+      third: 21,
+      fourth: 8,
+      fifth: 1,
+      total: 3,
+    },
+    {
+      class: "Starting S...",
+      category: "Postpartum",
+      first: 17,
+      second: 11,
+      third: 5,
+      fourth: 0,
+      fifth: 2,
+      total: 1,
+    },
+  ];
+
+  const instructorData: InstructorAttendance[] = [
+    {
+      class: "Prenatal R...",
+      category: "Postpartum",
+      total_attendance: 30,
+      instructor1_attendance: 11,
+      instructor2_attendance: 11,
+    },
+    {
+      class: "Baby Care",
+      category: "Prenatal",
+      total_attendance: 15,
+      instructor1_attendance: 7,
+      instructor2_attendance: 7,
+    },
+    {
+      class: "Postpartum...",
+      category: "Postpartum",
+      total_attendance: 32,
+      instructor1_attendance: 17,
+      instructor2_attendance: 10,
+    },
+    {
+      class: "Bottle & O...",
+      category: "Postpartum",
+      total_attendance: 22,
+      instructor1_attendance: 1,
+      instructor2_attendance: 19,
+    },
+    {
+      class: "Starting S...",
+      category: "Postpartum",
+      total_attendance: 32,
+      instructor1_attendance: 13,
+      instructor2_attendance: 15,
+    },
+  ];
+
   // Styles
   const centerItemsInDiv = "flex justify-between items-center";
   const transparentGrayButtonStyle =
@@ -337,21 +439,21 @@ export default function AcuityDashboardPage() {
       <div
         className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
           navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-        }`}
-      >
+        }`}>
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-20 space-y-5">
-        <div className={centerItemsInDiv}>
+          <div className={centerItemsInDiv}>
             <div>
               <h1 className="font-bold">ACUITY</h1>
             </div>
             {/*date picker*/}
             <div className="w-60">
-              <DateRangePicker 
-              enableYearNavigation
-              defaultValue={defaultDateRange}
-              presets={defaultPresets}
-              className="w-60" />
+              <DateRangePicker
+                enableYearNavigation
+                defaultValue={defaultDateRange}
+                presets={defaultPresets}
+                className="w-60"
+              />
             </div>
           </div>
           <div className={`${centerItemsInDiv} pt-4`}>
@@ -362,8 +464,7 @@ export default function AcuityDashboardPage() {
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
                 }`}
-                onClick={() => setAttendanceDisplay("graph")}
-              >
+                onClick={() => setAttendanceDisplay("graph")}>
                 Graph
               </button>
               <button
@@ -372,8 +473,7 @@ export default function AcuityDashboardPage() {
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
                 }`}
-                onClick={() => setAttendanceDisplay("table")}
-              >
+                onClick={() => setAttendanceDisplay("table")}>
                 Table
               </button>
             </div>
@@ -381,98 +481,112 @@ export default function AcuityDashboardPage() {
               className={transparentGrayButtonStyle}
               onClick={() =>
                 handleExport(attendanceChartRef, "class_attendance")
-              }
-            >
+              }>
               Export
             </button>
           </div>
 
           {/* Attendance Bar Chart */}
           <div
-            className="bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
-            ref={attendanceChartRef}
-          >
+            className={
+              attendanceDisplay === "graph"
+                ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
+                : ""
+            }
+            ref={attendanceChartRef}>
             <div className="flex justify-between items-center space-x-4">
-              <h2 className="text-xl font-semibold">
-                Class Attendance By Trimester, <br /> 2/19/25 - 3/19/25
-              </h2>
-
-              {/* Class dropdown */}
-              <div className="flex items-center space-x-2">
-                <label className="text-sm font-medium"></label>
-                <select
-                  className="border rounded-md px-2 py-1 text-sm"
-                  value={selectedClass}
-                  onChange={(e) => setSelectedClass(e.target.value)}
-                >
-                  <option>All Classes</option>
-                  {allClassData.map((c) => (
-                    <option key={c.key}>{c.key}</option>
-                  ))}
-                </select>
+              <div className="text-2xl font-semibold">
+                Class Attendance By Trimester,{" "}
+                {attendanceDisplay === "graph" ? <br /> : <></>}2/19/25 -
+                3/19/25
               </div>
-            </div>
-
-            <div className="w-full h-96">
-              {selectedClass === "All Classes" ? (
-                /* stacked chart for all classes: */
-                <StackedBarChart
-                  height={350}
-                  data={trimesterAttendanceData}
-                  series={
-                    <StackedBarSeries
-                      bar={
-                        <Bar
-                          width={100}
-                          rx={0}
-                          ry={0}
-                          gradient={
-                            <Gradient
-                              stops={[
-                                <GradientStop
-                                  offset="5%"
-                                  stopOpacity={1.0}
-                                  key="start"
-                                />,
-                                <GradientStop
-                                  offset="90%"
-                                  stopOpacity={1.0}
-                                  key="end"
-                                />,
-                              ]}
-                            />
-                          }
-                          rangeLines={
-                            <RangeLines position="top" strokeWidth={3} />
-                          }
-                          guide={<GuideBar />}
-                        />
-                      }
-                      colorScheme={[
-                        "#FCD484",
-                        "#FFAA00",
-                        "#5DB9FF",
-                        "#1661A9",
-                        "#05182A",
-                      ]}
-                    />
-                  }
-                />
+              {attendanceDisplay === "graph" ? (
+                // Class dropdown
+                <div className="flex items-center space-x-2">
+                  <label className="text-sm font-medium"></label>
+                  <select
+                    className="border rounded-md px-2 py-1 text-sm"
+                    value={selectedClass}
+                    onChange={(e) => setSelectedClass(e.target.value)}>
+                    <option>All Classes</option>
+                    {allClassData.map((c) => (
+                      <option key={c.key}>{c.key}</option>
+                    ))}
+                  </select>
+                </div>
               ) : (
-                /* single-series bar chart for one class: */
-                <BarChart
-                  height={350}
-                  data={barData}
-                  series={
-                    <BarSeries
-                      padding={0.1}
-                      colorScheme={"#F4BB47"}
-                      bar={<Bar rx={0} ry={0} style={{ fill: "#F4BB47" }} />}
-                    />
-                  }
-                />
+                <></>
               )}
             </div>
+
+            {attendanceDisplay === "graph" ? (
+              <div className="w-full h-96">
+                {selectedClass === "All Classes" ? (
+                  /* stacked chart for all classes: */
+                  <StackedBarChart
+                    height={350}
+                    data={trimesterAttendanceData}
+                    series={
+                      <StackedBarSeries
+                        bar={
+                          <Bar
+                            width={100}
+                            rx={0}
+                            ry={0}
+                            gradient={
+                              <Gradient
+                                stops={[
+                                  <GradientStop
+                                    offset="5%"
+                                    stopOpacity={1.0}
+                                    key="start"
+                                  />,
+                                  <GradientStop
+                                    offset="90%"
+                                    stopOpacity={1.0}
+                                    key="end"
+                                  />,
+                                ]}
+                              />
+                            }
+                            rangeLines={
+                              <RangeLines position="top" strokeWidth={3} />
+                            }
+                            guide={<GuideBar />}
+                          />
+                        }
+                        colorScheme={[
+                          "#FCD484",
+                          "#FFAA00",
+                          "#5DB9FF",
+                          "#1661A9",
+                          "#05182A",
+                        ]}
+                      />
+                    }
+                  />
+                ) : (
+                  /* single-series bar chart for one class: */
+                  <BarChart
+                    height={350}
+                    data={barData}
+                    series={
+                      <BarSeries
+                        padding={0.1}
+                        colorScheme={"#F4BB47"}
+                        bar={<Bar rx={0} ry={0} style={{ fill: "#F4BB47" }} />}
+                      />
+                    }
+                  />
+                )}
+              </div>
+            ) : (
+              <DataTable
+                columns={trimesterColumns}
+                data={trimesterData}
+                tableType="default"
+              />
+            )}
           </div>
 
           <div className={`${centerItemsInDiv} pt-8`}>
@@ -483,8 +597,7 @@ export default function AcuityDashboardPage() {
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
                 }`}
-                onClick={() => setClassPopularityDisplay("graph")}
-              >
+                onClick={() => setClassPopularityDisplay("graph")}>
                 Graph
               </button>
               <button
@@ -493,8 +606,7 @@ export default function AcuityDashboardPage() {
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
                 }`}
-                onClick={() => setClassPopularityDisplay("table")}
-              >
+                onClick={() => setClassPopularityDisplay("table")}>
                 Table
               </button>
             </div>
@@ -502,44 +614,71 @@ export default function AcuityDashboardPage() {
               className={transparentGrayButtonStyle}
               onClick={() =>
                 handleExport(classPopularityChartRef, "class_popularity")
-              }
-            >
+              }>
               Export
             </button>
           </div>
 
           {/* Class Popularity Over Time */}
           <div
-            className="bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
-            ref={classPopularityChartRef}
-          >
+            className={
+              classPopularityDisplay === "graph"
+                ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
+                : ""
+            }
+            ref={classPopularityChartRef}>
             <div className="flex justify-between items-center space-x-4">
-              <h2 className="text-xl font-semibold">
-                Class Popularity Over Time, <br /> 2/19/25 - 3/19/25
-              </h2>
-
-              {/* Class dropdown */}
-              <div className="flex items-center space-x-2">
-                <label className="text-sm font-medium"></label>
-                <select
-                  className="border rounded-md px-2 py-1 text-sm"
-                  value={selectedClass}
-                  onChange={(e) => setSelectedClass(e.target.value)}
-                >
-                  <option>All Classes</option>
-                  {allClassData.map((c) => (
-                    <option key={c.key}>{c.key}</option>
-                  ))}
-                </select>
+              <div className="text-2xl font-semibold">
+                Class Popularity Over Time,{" "}
+                {classPopularityDisplay === "graph" ? <br /> : <></>} 2/19/25 -
+                3/19/25
               </div>
+
+              {classPopularityDisplay === "graph" ? (
+                // Class dropdown
+                <div className="flex items-center space-x-2">
+                  <label className="text-sm font-medium"></label>
+                  <select
+                    className="border rounded-md px-2 py-1 text-sm"
+                    value={selectedClass}
+                    onChange={(e) => setSelectedClass(e.target.value)}>
+                    <option>All Classes</option>
+                    {allClassData.map((c) => (
+                      <option key={c.key}>{c.key}</option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  <label className="text-sm font-medium"></label>
+                  <select
+                    className="border rounded-md px-2 py-1 text-sm"
+                    value={selectedClass}
+                    onChange={(e) => setSelectedClass(e.target.value)}>
+                    <option>All Classes</option>
+                    {allClassData.map((c) => (
+                      <option key={c.key}>{c.key}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
-            <div className="w-full h-96">
-              <LineChart
-                height={300}
-                data={filteredClassData}
-                series={<LineSeries type="grouped" />}
+            {classPopularityDisplay === "graph" ? (
+              <div className="w-full h-96">
+                <LineChart
+                  height={300}
+                  data={filteredClassData}
+                  series={<LineSeries type="grouped" />}
+                />
+              </div>
+            ) : (
+              <DataTable
+                columns={instructorColumns} // this should be changed to class popularity data
+                // but seems like there is no difference based on figma
+                data={instructorData}
+                tableType="default"
               />
-            </div>
+            )}
           </div>
 
           <div className={`${centerItemsInDiv} pt-8`}>
@@ -550,8 +689,7 @@ export default function AcuityDashboardPage() {
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
                 }`}
-                onClick={() => setInstructorPopularityDisplay("graph")}
-              >
+                onClick={() => setInstructorPopularityDisplay("graph")}>
                 Graph
               </button>
               <button
@@ -560,8 +698,7 @@ export default function AcuityDashboardPage() {
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
                 }`}
-                onClick={() => setInstructorPopularityDisplay("table")}
-              >
+                onClick={() => setInstructorPopularityDisplay("table")}>
                 Table
               </button>
             </div>
@@ -572,22 +709,25 @@ export default function AcuityDashboardPage() {
                   instructorPopularityChartRef,
                   "instructor_popularity"
                 )
-              }
-            >
+              }>
               Export
             </button>
           </div>
 
           {/* Instructor Popularity Over Time */}
           <div
-            className="bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
-            ref={instructorPopularityChartRef}
-          >
+            className={
+              instructorPopularityDisplay === "graph"
+                ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
+                : ""
+            }
+            ref={instructorPopularityChartRef}>
             <div className="flex justify-between items-center space-x-4">
-              <h2 className="text-xl font-semibold">
+              <div className="text-2xl font-semibold">
                 Instructor Popularity Over Time,
-                <br /> 2/19/25 - 3/19/25
-              </h2>
+                {instructorPopularityDisplay === "graph" ? <br /> : <></>}{" "}
+                2/19/25 - 3/19/25
+              </div>
 
               {/* Instructor dropdown */}
               <div className="flex items-center space-x-2">
@@ -595,8 +735,7 @@ export default function AcuityDashboardPage() {
                 <select
                   className="border rounded-md px-2 py-1 text-sm"
                   value={selectedInstructor}
-                  onChange={(e) => setSelectedInstructor(e.target.value)}
-                >
+                  onChange={(e) => setSelectedInstructor(e.target.value)}>
                   <option>All Classes</option>
                   {allInstructorData.map((ins) => (
                     <option key={ins.key}>{ins.key}</option>
@@ -604,13 +743,21 @@ export default function AcuityDashboardPage() {
                 </select>
               </div>
             </div>
-            <div className="w-full h-96">
-              <LineChart
-                height={300}
-                data={filteredInstructorData}
-                series={<LineSeries type="grouped" />}
+            {instructorPopularityDisplay === "graph" ? (
+              <div className="w-full h-96">
+                <LineChart
+                  height={300}
+                  data={filteredInstructorData}
+                  series={<LineSeries type="grouped" />}
+                />
+              </div>
+            ) : (
+              <DataTable
+                columns={instructorColumns}
+                data={instructorData}
+                tableType="default"
               />
-            </div>
+            )}
           </div>
         </div>
       </div>

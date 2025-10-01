@@ -9,14 +9,15 @@ import RequireAuth from "./auth/RequireAuth";
 import PaysimpleDashboard from "./pages/PaysimpleDashboardPage";
 import { AuthProvider } from "./auth/AuthProvider";
 import { getBabyInfo, getClientAppointments } from "./backend/AcuityCalls";
-import AcuityDashboard from "./pages/AcuityDashboardPage";
-import JaneDashboard from "./pages/JaneDashboardPage";
-import JaneDataPage from "./pages/JaneDataPage";
+import AcuityDashboard from "./pages/AcuityDashboardPage/AcuityDashboardPage";
+import JaneDashboard from "./pages/JaneDashboardPage/JaneDashboardPage";
 import { useState } from "react";
-import ClientListPage from "./pages/ClientListPage";
-import ClientJourneyPage from "./pages/ClientJourneyPage";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./config/query";
+import ClientListPage from "./pages/ClientListPage/ClientListPage";
+import ClientJourneyPage from "./pages/ClientJourneyPage/ClientJourneyPage";
+import "react-tooltip/dist/react-tooltip.css";
+import JaneDataPage from "./pages/JaneDataPage/JaneDataPage";
 // import "@tremor/react/dist/esm/tremor.css";
 
 function App() {
@@ -36,9 +37,8 @@ function App() {
                       setNavBarOpen={setNavBarOpen}
                     />
                     <div
-                      className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
-                        navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-                      }`}
+                      className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
+                        }`}
                     >
                       <Header />
                     </div>
@@ -112,7 +112,6 @@ function App() {
                 </RequireAuth>
               }
             />
-
             <Route
               path="/testfunctions"
               element={

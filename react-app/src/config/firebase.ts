@@ -4,8 +4,13 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 // import { getAnalytics } from "firebase/analytics";
 // import {connectFunctionsEmulator} from "firebase/functions";
-import { getFunctions } from "firebase/functions";
+import { connectFunctionsEmulator, getFunctions } from "firebase/functions";
 import { getAuth } from "firebase/auth";
+
+export const API_URL =
+  import.meta.env.DEV
+    ? "http://127.0.0.1:5001/breastfeeding-center-gw/us-east4/api"
+    : "<PROD_URL_HERE>"; //TODO: replace with prod url
 
 // TODO: Add SDKs for Firebase products that you want to use
 
@@ -32,5 +37,12 @@ export const db = getFirestore(app);
 export const storage = getStorage(app);
 export const functions = getFunctions(app, "us-east4");
 export const auth = getAuth(app);
-//connectFunctionsEmulator(functions, "127.0.0.1", 5001);
+
+//NOTE: if the app is run in development mode (locally), it will attempt to connect to the emulators automatically
+if (import.meta.env.DEV) {
+  console.info("Running in DEVELOPMENT mode!");
+  console.info("Attempting to connect to Firebase emulators...")
+  connectFunctionsEmulator(functions, "127.0.0.1", 5001);
+}
+
 export default app;

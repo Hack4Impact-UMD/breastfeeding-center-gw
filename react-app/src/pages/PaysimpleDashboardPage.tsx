@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { BarChart, BarSeries, Bar } from "reaviz";
+import { BarChart, BarSeries, Bar, BarProps } from "reaviz";
 import NavigationBar from "../components/NavigationBar/NavigationBar";
 import Header from "../components/Header";
 import { toPng } from "html-to-image";
@@ -9,6 +9,8 @@ import {
   defaultPresets,
   defaultDateRange,
 } from "@/components/DateRangePicker/DateRangePicker";
+import { DataTable } from "@/components/DataTable/DataTable";
+import { ColumnDef } from "@tanstack/react-table";
 
 // record of colors to use for each rental item
 const colors: Record<string, string> = {
@@ -20,14 +22,14 @@ const colors: Record<string, string> = {
 };
 
 // custom bar component
-function CustomBar(props: any) {
-  console.log("CustomBar:", props.data?.key, colors[props.data?.key]);
+function CustomBar(props: Partial<BarProps>) {
+  console.log("CustomBar:", props.data?.key, colors[props.data!.key as string]);
   const label = props.data?.key;
   return (
     <Bar
       {...props}
       style={{
-        fill: colors[label] || "#000000",
+        fill: colors[label! as string] || "#000000",
       }}
     />
   );
@@ -56,7 +58,6 @@ function formatDate(date: Date) {
 export default function PaysimpleDashboardPage() {
   const [navBarOpen, setNavBarOpen] = useState(true);
   // use state for toggles/buttons/changing of information
-  const [viewMode, setViewMode] = useState("Months");
   const [rentalDisplay, setRentalDisplay] = useState("graph");
   //@ts-expect-error
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -80,17 +81,36 @@ export default function PaysimpleDashboardPage() {
     { key: "Medela BabyCheck Scale", data: 13 },
   ];
 
-  // weeks data is different, multiply each month's data by 4
-  const dataWeeks = dataMonths.map((item) => ({
-    key: item.key,
-    data: item.data * 4,
-  }));
-
-  const displayData = viewMode === "Months" ? dataMonths : dataWeeks;
-
-  const handleViewChange = (value: string) => {
-    setViewMode(value);
+  // sample data
+  type Rental = {
+    item: string;
+    durationMonths: number;
   };
+
+  // data for table
+  const columns: ColumnDef<Rental>[] = [
+    {
+      accessorKey: "item",
+      header: () => <span className="font-bold">Item</span>,
+      cell: ({ row }) => (
+        <span className="font-bold">{row.getValue("item")}</span>
+      ),
+    },
+    {
+      accessorKey: "durationMonths",
+      header: () => (
+        <span className="font-bold">Average Rental Duration (Months)</span>
+      ),
+    },
+  ];
+
+  const mockData: Rental[] = [
+    { item: "Medela Symphony", durationMonths: 2 },
+    { item: "Ameda Platinum", durationMonths: 3 },
+    { item: "Spectra S3", durationMonths: 4 },
+    { item: "Medela Babyweigh Scale", durationMonths: 3 },
+    { item: "Medela Babychecker Scale", durationMonths: 3 },
+  ];
 
   const handleExport = async (
     ref: React.RefObject<HTMLDivElement | null>,
@@ -114,9 +134,8 @@ export default function PaysimpleDashboardPage() {
       <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
 
       <div
-        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
-          navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-        }`}>
+        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
+          }`}>
         <Header />
 
         <div className="flex flex-col p-8 pr-20 pl-20 space-y-5">
@@ -140,20 +159,18 @@ export default function PaysimpleDashboardPage() {
           <div className={`${centerItemsInDiv} pt-4`}>
             <div className="flex flex-row">
               <button
-                className={`${graphTableButtonStyle} ${
-                  rentalDisplay == "graph"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
-                }`}
+                className={`${graphTableButtonStyle} ${rentalDisplay == "graph"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
+                  }`}
                 onClick={() => setRentalDisplay("graph")}>
                 Graph
               </button>
               <button
-                className={`${graphTableButtonStyle} ${
-                  rentalDisplay == "table"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
-                }`}
+                className={`${graphTableButtonStyle} ${rentalDisplay == "table"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
+                  }`}
                 onClick={() => setRentalDisplay("table")}>
                 Table
               </button>
@@ -165,57 +182,39 @@ export default function PaysimpleDashboardPage() {
             </button>
           </div>
 
-          {/* white card to put info inside */}
+          {/* white card to put graph inside */}
           <div
-            className="bg-white rounded-2xl shadow p-6 border space-y-6"
+            className={
+              rentalDisplay === "graph"
+                ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
+                : ""
+            }
             ref={rentalChartRef}>
             <div className="flex justify-between items-center">
-              <h2 className="text-xl font-semibold">
+              <div className="text-2xl font-semibold">
                 Average Rental Duration By Item, {formattedRange}
-              </h2>
-              <select
-                value={viewMode}
-                onChange={(e) => handleViewChange(e.target.value)}
-                className="border rounded-md px-2 py-1 text-sm">
-                <option value="Months">Months</option>
-                <option value="Weeks">Weeks</option>
-              </select>
+              </div>
             </div>
 
             {/* the different elements rendered depending on the toggle buttons */}
-            <div className="mt-2">
+            <div className="mt-1">
               {rentalDisplay === "graph" ? (
                 <div className="w-full h-[500px] flex">
                   <BarChart
                     height={500}
-                    data={displayData}
+                    data={dataMonths}
                     series={<BarSeries layout="vertical" bar={<CustomBar />} />}
                   />
                 </div>
               ) : (
-                <table className="w-full mt-4 text-left border border-gray-200">
-                  <thead className="bg-gray-100">
-                    <tr>
-                      <th className="py-2 px-4 border-b">Item</th>
-                      <th className="py-2 px-4 border-b">
-                        Duration ({viewMode})
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {displayData.map((item) => (
-                      <tr key={item.key}>
-                        <td className="py-2 px-4 border-b">{item.key}</td>
-                        <td className="py-2 px-4 border-b">{item.data}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <DataTable
+                  columns={columns}
+                  data={mockData}
+                  tableType="default"
+                />
               )}
             </div>
           </div>
-
-          {/* Graph or Table Below */}
         </div>
       </div>
     </>

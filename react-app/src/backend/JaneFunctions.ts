@@ -1,5 +1,5 @@
 import * as XLSX from "xlsx";
-import {Jane, VistType} from "../types/JaneType";
+import { Jane, VisitType } from "../types/JaneType";
 
 export async function getJaneTypes(
   e: React.ChangeEvent<HTMLInputElement>
@@ -40,7 +40,7 @@ export async function getJaneTypes(
         if (columnName === "date") {
           const value = (jane as any)[columnName];
           console.log(value, typeof value)
-        
+
           if (typeof value === "number") {
             // Convert Excel serial number to JS Date
             const date = new Date(Math.round((value - 25569) * 86400 * 1000));
@@ -59,7 +59,7 @@ export async function getJaneTypes(
       const fullServiceType = (row[columnIndexes[3]] || "").replace(/:/g, "").trim();
       const serviceLowercase = fullServiceType.toLowerCase();
 
-      let visitType: VistType = "OFFICE"; // default
+      let visitType: VisitType = "OFFICE"; // default
       let treatment = "";
 
       if (serviceLowercase.includes("telehealth short")) {
@@ -79,7 +79,7 @@ export async function getJaneTypes(
       jane.visitType = visitType;
       jane.treatment = treatment;
       delete (jane as any).treatment_name;
-      
+
       jane.email = "email@gmail.com"; // hardcoded
       jane.babyDob = "01/01/2026";    // hardcoded
 
