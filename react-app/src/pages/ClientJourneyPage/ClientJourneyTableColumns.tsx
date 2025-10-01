@@ -149,7 +149,7 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
   },
 ];
 
-export const janeIDDataColumns: ColumnDef<Jane>[] =
+export const janeIDDataColumns: ColumnDef<JaneID>[] =
   janeDataColumns as ColumnDef<JaneID>[];
 
 export const acuityColumns: ColumnDef<AcuityData>[] = [

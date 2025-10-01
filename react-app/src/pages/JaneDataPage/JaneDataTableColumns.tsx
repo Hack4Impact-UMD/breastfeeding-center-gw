@@ -1,8 +1,6 @@
 import { Jane, JaneID } from "@/types/JaneType";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
-import { LuArrowUpDown } from "react-icons/lu";
 import ColumnSortButton from "@/components/DataTable/ColumnSortIcon";
 
 export const janeDataColumns: ColumnDef<Jane>[] = [
