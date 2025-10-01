@@ -27,7 +27,7 @@ const JaneDataPage = () => {
   const [showUploadPopup, setShowUploadPopup] = useState(false);
 
   const [navBarOpen, setNavBarOpen] = useState(true);
-  const { data: janeConsultations, isPending, isError } = useJaneData();
+  const { data: janeConsultations, isPending, error } = useJaneData();
   const deleteJaneRecordMutation = useDeleteJaneRecord();
 
   // const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,14 +102,19 @@ const JaneDataPage = () => {
                 <Loading />
               </div>
             ) : (
-              !isError && (
-                <DataTable
-                  columns={janeIDDataColumns}
-                  data={janeConsultations}
-                  handleDelete={handleDelete}
-                  tableType="janeData"
-                />
+              error ? (
+                <div className="flex justify-center items-center p-8">
+                  <p className="text-red-600">Failed to load Jane data: {error.message}</p>
+                </div>
               )
+                : (
+                  <DataTable
+                    columns={janeIDDataColumns}
+                    data={janeConsultations}
+                    handleDelete={handleDelete}
+                    tableType="janeData"
+                  />
+                )
             )
           }
           <FileUploadPopup

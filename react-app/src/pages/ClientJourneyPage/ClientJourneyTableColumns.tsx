@@ -1,9 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Jane, JaneID, VisitType } from "@/types/JaneType";
+import { VisitType } from "@/types/JaneType";
 import { Button } from "@/components/ui/button";
 import { LuArrowUpDown } from "react-icons/lu";
-import ColumnSortButton from "@/components/DataTable/ColumnSortIcon";
-import { Checkbox } from "@/components/ui/checkbox";
 
 
 export type AcuityData = {
@@ -45,112 +43,6 @@ export type Client = {
   rentals: number;
   purchases: number;
 };
-
-export const janeDataColumns: ColumnDef<Jane>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-        className="cursor-pointer rounded-none pl-0 ml-2"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-        className="cursor-pointer rounded-none"
-      />
-    ),
-  },
-  {
-    accessorKey: "date",
-    header: ({ column }) => {
-      return (
-        <ColumnSortButton column={column}>
-          VISIT
-        </ColumnSortButton>
-      );
-    },
-  },
-  {
-    accessorKey: "apptId",
-    header: ({ column }) => {
-      return (
-        <ColumnSortButton column={column}>ID</ColumnSortButton>
-      );
-    },
-  },
-  {
-    accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <ColumnSortButton column={column} >
-          EMAIL
-        </ColumnSortButton>
-      );
-    },
-  },
-  {
-    accessorKey: "firstName",
-    header: ({ column }) => {
-      return (
-        <ColumnSortButton column={column} >
-          F. NAME
-        </ColumnSortButton>
-      );
-    },
-  },
-  {
-    accessorKey: "lastName",
-    header: ({ column }) => {
-      return (
-        <ColumnSortButton column={column} >
-          L. NAME
-        </ColumnSortButton>
-      );
-    },
-  },
-  {
-    accessorKey: "babyDob",
-    header: ({ column }) => {
-      return (
-        <ColumnSortButton column={column} >
-          DOB
-        </ColumnSortButton>
-      );
-    },
-  },
-  {
-    accessorKey: "visitType",
-    header: ({ column }) => {
-      return (
-        <ColumnSortButton column={column} >
-          VISIT TYPE
-        </ColumnSortButton>
-      );
-    },
-  },
-  {
-    accessorKey: "insurance",
-    header: ({ column }) => {
-      return (
-        <ColumnSortButton column={column} >
-          INSURANCE
-        </ColumnSortButton>
-      );
-    },
-  },
-];
-
-export const janeIDDataColumns: ColumnDef<JaneID>[] =
-  janeDataColumns as ColumnDef<JaneID>[];
 
 export const acuityColumns: ColumnDef<AcuityData>[] = [
   {
