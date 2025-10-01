@@ -3,14 +3,13 @@ import Header from "../../components/Header.tsx";
 import NavigationBar from "../../components/NavigationBar/NavigationBar.tsx";
 import { Jane, JaneID } from "../../types/JaneType.ts";
 import {
-  addJaneSpreadsheet,
   getAllJaneData,
   deleteJaneByIds,
 } from "../../backend/FirestoreCalls";
-import { getJaneTypes } from "../../backend/JaneFunctions";
 import { DateTime } from "luxon";
 import { janeIDDataColumns } from "./JaneDataTableColumns.tsx";
 import { DataTable } from "../../components/DataTable/DataTable.tsx";
+import FileUploadPopup from "./FileUploadPopup.tsx";
 import {
   DateRangePicker,
   defaultDateRange,
@@ -30,6 +29,7 @@ const JaneDataPage = () => {
   const [janeUploadData, setJaneUploadData] = useState<Jane[]>([]);
   const [janeData, setJaneData] = useState<JaneID[]>([]);
   const [navBarOpen, setNavBarOpen] = useState(true);
+  const [showUploadPopup, setShowUploadPopup] = useState(false);
 
   useEffect(() => {
     const fetchJaneData = async () => {
@@ -74,33 +74,6 @@ const JaneDataPage = () => {
   //   }
   // };
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files ? e.target.files[0] : null;
-    if (selectedFile) {
-      setFile(selectedFile);
-      console.log("Selected file:", selectedFile.name);
-
-      //translate data into jane types and set local data
-      try {
-        const parsedJaneData = await getJaneTypes(e);
-        console.log("Extracted Jane data:", parsedJaneData);
-
-        //add data to firebase
-        try {
-          console.log(parsedJaneData);
-          await addJaneSpreadsheet(parsedJaneData);
-          console.log("Upload complete!");
-        } catch (error) {
-          console.error("Upload error:", error);
-        }
-
-        setJaneUploadData(parsedJaneData);
-      } catch (error) {
-        console.error("Error extracting Jane data:", error);
-      }
-    }
-  };
-
   const handleDelete = async (rows: JaneID[]) => {
     try {
       const ids = rows.map((entry) => entry.id);
@@ -142,16 +115,9 @@ const JaneDataPage = () => {
             <div className={centerItemsInDiv}>
               <button
                 className={`${buttonStyle} mr-5 text-nowrap`}
-                onClick={() => document.getElementById("file-input")?.click()}>
-                UPLOAD NEW SPREADSHEET
+                onClick={() => setShowUploadPopup(true)}>
+                UPLOAD NEW SPREADSHEETS
               </button>
-              <input
-                id="file-input"
-                type="file"
-                accept=".xlsx, .csv"
-                onChange={handleFileChange}
-                className="hidden"
-              />
             </div>
           </div>
 
@@ -161,6 +127,11 @@ const JaneDataPage = () => {
             handleDelete={handleDelete}
             tableType="janeData"
           />
+
+          <FileUploadPopup
+        isOpen={showUploadPopup}
+        onClose={() => setShowUploadPopup(false)}
+      />
         </div>
       </div>
     </>
