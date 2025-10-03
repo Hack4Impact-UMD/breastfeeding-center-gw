@@ -1,5 +1,5 @@
 // src/pages/UserManagementPage/UserManagementPage.tsx
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
 import Header from "../../components/Header";
 import UserFilters from "./UserFilters";
@@ -19,13 +19,13 @@ const UserManagementPage: React.FC = () => {
     { firstName: "William", lastName: "Williams", email: "example@gmail.com", phone: "XXX-XXX-XXXX", role: "Admin" },
   ]);
 
-  const filteredUsers = users.filter((u) => {
+  const filteredUsers = useMemo(() => users.filter((u) => {
     const fullName = `${u.lastName}, ${u.firstName}`.toLowerCase();
     return (
       fullName.includes(search.toLowerCase()) &&
       (roleFilter === "All" || u.role === roleFilter)
     );
-  });
+  }), [users, roleFilter, search]);
 
   return (
     <>
