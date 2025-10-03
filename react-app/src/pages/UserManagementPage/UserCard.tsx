@@ -123,10 +123,10 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
 
             {/* Real dropdown, defaults to current card role */}
             <div className="px-8 flex flex-col items-center">
-              <div className="w-full">
+              <div className="w-[140px]">
                 {isDirector ? (
                   <div className="relative">
-                    <div className="w-full border border-gray-300 rounded-full h-12 pl-4 pr-12 text-sm font-semibold tracking-wide shadow-sm bg-gray-50 text-gray-700 flex items-center">
+                    <div className="w-full border border-gray-300 rounded-full h-12 px-4 text-sm font-semibold tracking-wide shadow-sm bg-gray-50 text-gray-700 flex items-center justify-center">
                       DIRECTOR
                     </div>
                   </div>
@@ -157,7 +157,7 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
                     {isDropdownOpen && (
                       <ul
                         role="listbox"
-                        className="absolute left-0 right-0 mt-2 z-20 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden"
+                        className="absolute left-0 mt-2 z-20 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden min-w-full"
                       >
                         {(["Admin", "Volunteer"] as const).map((role) => (
                           <li
@@ -185,13 +185,13 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
             {/* Actions */}
             <div className="px-8 pb-8 pt-4 flex justify-center gap-3">
               <button
-                className="h-10 px-5 rounded border border-gray-300 text-sm font-semibold hover:bg-gray-50 cursor-pointer"
+                className="h-10 px-5 rounded border-2 border-black text-sm font-semibold hover:bg-gray-50 cursor-pointer"
                 onClick={() => setIsChangeAccessOpen(false)}
               >
                 CANCEL
               </button>
               <button
-                className="h-10 px-5 rounded text-sm font-semibold text-black cursor-pointer"
+                className="h-10 px-5 rounded border-2 border-black text-sm font-semibold text-black cursor-pointer hover:opacity-90 transition-opacity"
                 style={{ backgroundColor: "#F5BB47" }}
                 onClick={() => {
                   // no-op for now
@@ -237,13 +237,13 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
           </div>
           <div className="px-8 pb-6 pt-6 flex justify-center gap-3">
             <button
-              className="h-10 px-5 rounded border border-gray-300 text-sm font-semibold hover:bg-gray-50 cursor-pointer"
+              className="h-10 px-5 rounded border-2 border-black text-sm font-semibold hover:bg-gray-50 cursor-pointer"
               onClick={() => setIsRemoveConfirmOpen(false)}
             >
               CANCEL
             </button>
             <button
-              className="h-10 px-5 rounded text-sm font-semibold text-black cursor-pointer"
+              className="h-10 px-5 rounded border-2 border-black text-sm font-semibold text-black cursor-pointer hover:opacity-90 transition-opacity"
               style={{ backgroundColor: "#F5BB47" }}
               onClick={() => {
                 // no-op for now
