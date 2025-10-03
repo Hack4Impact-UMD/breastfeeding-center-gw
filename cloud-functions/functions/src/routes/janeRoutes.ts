@@ -1,25 +1,13 @@
-import { Router } from "express";
+import { Request, Router, Response } from "express";
+import { upload } from "../middleware/filesMiddleware";
 
 const router = Router();
-const multer = require("multer");
-const storage = multer.memoryStorage(); // the files are small enough that we can store them in memory
-const upload = multer({ storage: storage });
 
-router.post("/upload", upload.array("csvFiles", 2), async (req, res) => {
-  const files = req.files as Express.Multer.File[];
-  if (!files || files.length == 0) {
-    return res.status(400).send("Missing files");
-  }
+router.post("/upload", [upload], async (req: Request, res: Response) => {
+  console.log(req.files)
 
-  if (files.length == 2) {
-    const clientsCsvString = files[1].buffer.toString();
-    console.log(clientsCsvString);
-    // implement function in utils/janeUploadClients.ts to parse clientsCSVString
-    // if function cannot parse then throw error
-    // const clientsData = janeUploadClients(clientsCsvString)
-  }
-  const apptsCsvString = files[0].buffer.toString();
-  console.log(apptsCsvString);
+  if (req.files)
+    console.log(req.files["appointments"][0].buffer.toString())
   // implement function in utils/janeUploadAppts.ts to parse apptsCsvString
   // if function cannot parse then throw error
   // const apptsData = janeUploadAppts(apptsCsvString)
