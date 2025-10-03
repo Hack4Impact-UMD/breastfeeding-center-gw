@@ -1,13 +1,21 @@
 import { Request, Router, Response } from "express";
 import { upload } from "../middleware/filesMiddleware";
+import { logger } from "firebase-functions";
 
 const router = Router();
 
 router.post("/upload", [upload], async (req: Request, res: Response) => {
-  console.log(req.files)
+  // NOTE: req.files is an object with keys being the fieldName (appointments/clients)
+  // and the values being a list of uploaded files for that field. Examples for reading
+  // the text content of those fiels is below. We can assume each field name has only one
+  // file for our purposes. Also note, req.files is populated by the `upload` middleware
+  // used on this route.
+  logger.info(req.files)
 
-  if (req.files)
-    console.log(req.files["appointments"][0].buffer.toString())
+  if (!req.files) return res.status(400).send("Missing files!");
+
+  logger.info(req.files["appointments"][0].buffer.toString())
+  logger.info(req.files["clients"][0].buffer.toString())
   // implement function in utils/janeUploadAppts.ts to parse apptsCsvString
   // if function cannot parse then throw error
   // const apptsData = janeUploadAppts(apptsCsvString)
