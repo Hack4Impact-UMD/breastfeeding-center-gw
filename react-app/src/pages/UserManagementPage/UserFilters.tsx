@@ -1,6 +1,7 @@
 // src/pages/UserManagementPage/UserFilters.tsx
 import React from "react";
-import addUserIcon from "../../assets/addUser.png"; 
+import addUserIcon from "../../assets/addUser.png";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   search: string;
@@ -51,14 +52,14 @@ const UserFilters: React.FC<Props> = ({
         </div>
 
         <div>
-          <button
+          <Button
             type="button"
             onClick={onAddUserClick}
-            className="flex items-center gap-2 border border-gray-300 rounded px-3 py-1.5 text-sm font-medium bg-white hover:bg-bcgw-yellow-dark transition-colors"
+            className="flex items-center gap-2 border border-gray-300 rounded px-3 py-1.5 text-sm font-medium bg-white hover:bg-bcgw-yellow-dark transition-colors cursor-pointer"
           >
             <img src={addUserIcon} alt="Add user" className="w-4 h-4" />
             <span>Add User</span>
-          </button>
+          </Button>
         </div>
       </div>
     </div>

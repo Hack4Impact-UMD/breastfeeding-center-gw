@@ -31,15 +31,14 @@ const UserManagementPage: React.FC = () => {
     <>
       <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
       <div
-        className={`transition-all duration-200 ease-in-out bg-gray-100 min-h-screen overflow-x-hidden flex flex-col ${
-          navBarOpen ? "ml-[250px]" : "ml-[60px]"
-        }`}
+        className={`transition-all duration-200 ease-in-out bg-gray-100 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]"
+          }`}
       >
         <Header />
 
-<         div className="flex flex-col px-16 py-10"> 
+        <div className="flex flex-col px-16 py-10">
 
-         <UserFilters
+          <UserFilters
             search={search}
             setSearch={setSearch}
             roleFilter={roleFilter}
@@ -72,7 +71,7 @@ const UserManagementPage: React.FC = () => {
               ]);
               setShowAddModal(false);
             }}
-        />
+          />
         </div>
       </div>
     </>
