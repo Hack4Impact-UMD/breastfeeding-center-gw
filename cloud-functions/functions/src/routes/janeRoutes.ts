@@ -1,5 +1,9 @@
 import { Request, Router, Response } from "express";
 import { upload } from "../middleware/filesMiddleware";
+// import { logger } from "firebase-functions";
+import csv from "csvtojson";
+// import { JaneAppt, VisitType } from "../../../../react-app/src/types/JaneType";
+import { parseAppointmentRow } from "../utils/janeUploadAppts";
 import { logger } from "firebase-functions";
 
 const router = Router();
@@ -10,12 +14,81 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
   // the text content of those fiels is below. We can assume each field name has only one
   // file for our purposes. Also note, req.files is populated by the `upload` middleware
   // used on this route.
-  logger.info(req.files)
+  logger.info(req.files);
 
   if (!req.files) return res.status(400).send("Missing files!");
 
-  logger.info(req.files["appointments"][0].buffer.toString())
-  logger.info(req.files["clients"][0].buffer.toString())
+  const parts = req.files["appointments"][0].name.split(".");
+  let extension = parts.length > 1 ? parts.pop()!.toLowerCase() : "";
+  if (extension === "csv") {
+    console.log("csv");
+  }
+
+  // logger.info(req.files["appointments"][0].buffer.toString());
+  const jsonArray = await csv().fromString(
+    req.files["appointments"][0].buffer.toString(),
+  );
+  const requiredHeaders = [
+    "id",
+    "patient_number",
+    "start_at",
+    "end_at",
+    "treatment_name",
+    "staff_member_name",
+    "first_visit",
+  ];
+  const headers = Object.keys(jsonArray[0]);
+  const missing = headers.filter((h: string) => requiredHeaders.includes(h));
+  if (missing.length !== 7) {
+    console.log(missing);
+    return res.status(400).send("Missing headers");
+  }
+  // console.log(jsonArray);
+
+  let x = parseAppointmentRow(jsonArray[0]);
+  logger.info("parsed x:", x);
+
+  // const janeAppts: JaneAppt[] = jsonArray.map((appt) => {
+  //   console.log("mapping");
+  //   const janeAppt = {} as JaneAppt;
+  //   janeAppt.apptId = appt.id.trim();
+  //   janeAppt.patientId = appt.patient_number.trim();
+  //   janeAppt.clinician = appt.staff_member_name.trim();
+  //   janeAppt.firstVisit = appt.first_visit.trim() === "true";
+
+  //   // dates
+  //   janeAppt.startAt = new Date(appt.start_at.trim()).toISOString();
+  //   janeAppt.endAt = new Date(appt.end_at.trim()).toISOString();
+
+  //   // parse visit type
+  //   const fullServiceType = appt.treatment_name.replace(/:/g, "").trim();
+  //   const serviceLowercase = fullServiceType.toLowerCase();
+  //   // get service from the visit type
+  //   let visitType: VisitType = "OFFICE"; // default
+  //   let service = "";
+
+  //   if (serviceLowercase.includes("telehealth short")) {
+  //     visitType = "TELEHEALTH";
+  //     service = fullServiceType.substring(17).trim();
+  //   } else if (serviceLowercase.includes("telehealth")) {
+  //     visitType = "TELEHEALTH";
+  //     service = fullServiceType.substring(11).trim();
+  //   } else if (serviceLowercase.includes("dc office")) {
+  //     visitType = "OFFICE";
+  //     service = fullServiceType.substring(10).trim();
+  //   } else if (serviceLowercase.includes("home visit")) {
+  //     visitType = "HOMEVISIT";
+  //     service = fullServiceType.substring(11).trim();
+  //   }
+
+  //   janeAppt.visitType = visitType;
+  //   janeAppt.service = service;
+
+  //   return janeAppt;
+  // });
+  // console.log("first jane appt is", janeAppts[0]);
+
+  // logger.info(req.files["clients"][0].buffer.toString())
   // implement function in utils/janeUploadAppts.ts to parse apptsCsvString
   // if function cannot parse then throw error
   // const apptsData = janeUploadAppts(apptsCsvString)
