@@ -1,12 +1,20 @@
-// import * as XLSX from "xlsx";
+import * as XLSX from "xlsx";
 import csv from "csvtojson";
-import { JaneAppt, VisitType } from "../../../../react-app/src/types/JaneType";
+import { JaneAppt, VisitType } from "../types/janeType";
 
 export async function parseAppointmentSheet(
-  fileAsString: string,
-  isCsv: boolean,
+  fileName: string,
+  fileAsBuffer: Buffer<ArrayBufferLike>,
 ) {
-  const jsonArray = await csv().fromString(fileAsString);
+  const parts = fileName.split(".");
+  let isCsv = false;
+
+  let extension = parts.length > 1 ? parts.pop()!.toLowerCase() : "";
+  if (extension === "csv") {
+    isCsv = true;
+  } else if (extension !== "xlsx") {
+    return "error not csv/xlsx";
+  }
 
   const requiredHeaders = [
     "id",
@@ -17,14 +25,56 @@ export async function parseAppointmentSheet(
     "staff_member_name",
     "first_visit",
   ];
-  const headers = Object.keys(jsonArray[0]);
-  const missing = headers.filter((h: string) => requiredHeaders.includes(h));
-  if (missing.length !== 7) {
-    console.log(missing);
-    return "Missing headers";
-  }
-  console.log(jsonArray);
 
+  let jsonArray = [];
+
+  if (isCsv) {
+    const fileAsString = fileAsBuffer.toString();
+    jsonArray = await csv().fromString(fileAsString);
+    const headers = Object.keys(jsonArray[0]);
+    const missing = headers.filter((h: string) => requiredHeaders.includes(h));
+    if (missing.length !== 7) {
+      console.log(missing);
+      return "Missing headers";
+    }
+  } else {
+    const workbook = XLSX.read(fileAsBuffer);
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const xlsxDataArray = XLSX.utils.sheet_to_json(worksheet, {
+      header: 1,
+      raw: true,
+    });
+
+    const headers: string[] = xlsxDataArray[0] as string[];
+    const columnIndices = requiredHeaders.map((col) => headers.indexOf(col));
+    if (columnIndices.includes(-1)) {
+      return "Missing headers";
+    }
+
+    // convert the array of string arrays into array of json objects
+    jsonArray = (xlsxDataArray.slice(1) as any[]).map((data: string[]) => {
+      const jsonObj = {};
+      requiredHeaders.forEach((columnName, idx) => {
+        // add key pair value for relevant columns
+        (jsonObj as any)[columnName] = data[columnIndices[idx]];
+
+        // need to convert date at all???
+        // if (columnName === "start_at" || columnName === "end_at") {
+        //   // remove the timezone so that ISO string will be consistent later on?
+        //   const value = (jsonObj as any)[columnName];
+        //   if (value.includes("-0400")) {
+        //     (jsonObj as any)[columnName] = data[columnIndices[idx]].slice(
+        //       0,
+        //       -6,
+        //     );
+        //   }
+        // }
+      });
+      return jsonObj;
+    });
+  }
+
+  console.log(jsonArray);
   return jsonArray;
 }
 
