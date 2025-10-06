@@ -18,6 +18,8 @@ import ClientListPage from "./pages/ClientListPage/ClientListPage";
 import ClientJourneyPage from "./pages/ClientJourneyPage/ClientJourneyPage";
 import "react-tooltip/dist/react-tooltip.css";
 import JaneDataPage from "./pages/JaneDataPage/JaneDataPage";
+import NewUserPage from "./pages/NewUserPage/NewUserPage";
+import RegisterSuccessPage from "./pages/NewUserPage/RegisterSuccessPage";
 // import "@tremor/react/dist/esm/tremor.css";
 
 function App() {
@@ -103,6 +105,10 @@ function App() {
                   <ProfilePage />
                 </RequireAuth>
               }
+            />
+            <Route
+              path="/register-success"
+              element={<RegisterSuccessPage />}
             />
             <Route
               path="/*"
