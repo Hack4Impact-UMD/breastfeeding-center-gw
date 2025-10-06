@@ -1,6 +1,6 @@
 import * as XLSX from "xlsx";
 import csv from "csvtojson";
-import { JaneAppt, VisitType } from "../types/janeType";
+import { JaneAppt, VisitType } from "../types/JaneType";
 
 export async function parseAppointmentSheet(
   fileName: string,

@@ -7,6 +7,10 @@ import { upload } from "../middleware/filesMiddleware";
 // } from "../utils/janeUploadAppts";
 import { logger } from "firebase-functions";
 import { parseAppointmentSheet } from "../utils/janeUploadAppts";
+import { JaneAppt } from "../types/JaneType";
+import { Client, Baby } from "../types/clientType";
+import { db } from "../services/firebase";
+
 // import { parseDateXlsx } from "../utils/janeUploadAppts";
 // import { Jane, VisitType } from "../types/janeType";
 
@@ -15,13 +19,12 @@ const router = Router();
 router.post("/upload", [upload], async (req: Request, res: Response) => {
   // NOTE: req.files is an object with keys being the fieldName (appointments/clients)
   // and the values being a list of uploaded files for that field. Examples for reading
-  // the text content of those fiels is below. We can assume each field name has only one
+  // the text content of those fields is below. We can assume each field name has only one
   // file for our purposes. Also note, req.files is populated by the `upload` middleware
   // used on this route.
   logger.info(req.files);
 
   if (!req.files) return res.status(400).send("Missing files!");
-
   const appointments_sheet = await parseAppointmentSheet(
     req.files["appointments"][0].name,
     req.files["appointments"][0].buffer,
@@ -32,96 +35,177 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
   }
 
   // logger.info(req.files["clients"][0].buffer.toString())
-  // implement function in utils/janeUploadAppts.ts to parse apptsCsvString
+  // implement function in utils/janeUploadAppts.ts to parse clientSheet
   // if function cannot parse then throw error
-  // const apptsData = janeUploadAppts(apptsCsvString)
+  // const clients_sheet = await parseClientSheet(
+  //   req.files["clients"][0].name, req.files["clients"][0].buffer,);
+  // if (clients_sheet === "Missing headers") {
+  //  res.status(400).send("Missing headers");
+  // }
 
   // perform matching process and uploading to firebase
   // ----------------------------------------------------------------------------------------------------------
 
-  /*
-    // this map will let us group together appointments for related clients and babies 
-    // key: (start_time, staff_member)
-    // value: list of appointments
-    appointments_map = {}
+  const appointments_map = new Map<[string, string], JaneAppt[]>();
 
-    // iterate over all appointments sheet rows and populate the map
-    for each row in appointments_sheet {
-      // extract the data necessary for a JaneAppt object from the row
-      jane_appt = parse_appt_row(row) 
-
-      // add the appointment to the map based on its start time and staff member
-      appointments_map[(jane_appt.startAt, jane_appt.clinician)].add(jane_appt) 
+  appointments_sheet.forEach((jane_appt: JaneAppt) => {
+    const appt_group = appointments_map.get([
+      jane_appt.startAt,
+      jane_appt.clinician,
+    ]);
+    if (appt_group) {
+      appt_group.push(jane_appt);
+    } else {
+      appointments_map.set(
+        [jane_appt.startAt, jane_appt.clinician],
+        [jane_appt],
+      );
     }
+  });
 
-    // now we have map that groups together appointments for parents and their babies 
-    // but, we still need to match them together to conform to our types
+  const missing_clients: string[] = [];
 
-    missing_clients = [] // we will need to keep a list of client names missing from both the firebase and clients sheet
-    // iterate over each key, value pair (entry) in the map: ((start_time, staff_member), list of appointments)
-    for each (key, appointments) in appointments_map {
+  // implement all functions below
+  function is_baby_appt(appt: JaneAppt): boolean {
+    // check if appt.patientId is in babyList (response from janeUploadClients parsing)
+    // return babyList.some(obj => obj.id === appt.patientId)
+    return true;
+  }
 
-      parent = null // Client type
-      babies = [] // list of Baby type
-      parentAppt = null // JaneAppt type, the parent's appointment
+  async function appt_in_firebase(appt: JaneAppt): Promise<boolean> {
+    // check if appt in firebase JaneAppt collection
+    const querySnapshot = await db
+      .collection("JaneAppt")
+      .where("apptId", "==", appt.apptId)
+      .get();
 
-      parentApptExistsInFirebase = false // do we already have the parent appointment in firebase?
+    if (querySnapshot.docs.length == 0) {
+      logger.info(
+        `No matching appointment in JaneAppt collection for appointment: ${appt.apptId}`,
+      );
+      return false;
+    }
+    return true;
+  }
 
-      // iterate over the appointments
-      for each appt in appointments  {
-        // check if this is a baby appointment 
-        if (is_baby_appt(appt)) {
-          // reference the client list to get the baby information necessary to create a Baby object
-          baby = get_baby_info_using_client_sheet(appt.patientId) // Baby type
+  async function client_in_firebase(patientId: string): Promise<boolean> {
+    // check patientid in firebase client collection
+    const querySnapshot = await db
+      .collection("Client")
+      .where("id", "==", patientId)
+      .get();
 
-          // add the baby to the list of babies
-          babies.add(baby)
-        } else { // otherwise this is a parent appointment
+    if (querySnapshot.docs.length == 0) {
+      logger.info(
+        `No matching appointment in Client collection for client ID: ${patientId}`,
+      );
+      return false;
+    }
+    return true;
+  }
 
-          // check if the parent appt is in firebase
-          if(appt_in_firebase(appt)) {
-            // if it is, set parentApptExistsInFirebase to true and break out of this loop
-            parentApptExistsInFirebase = true;
-            break;
-          }
+  async function get_client_from_firebase(patientId: string): Promise<Client> {
+    const querySnapshot = await db
+      .collection("Client")
+      .where("id", "==", patientId)
+      .get();
 
-          // get the client info, either from firebase or the clients sheet if the client is not in the db yet
-          if (client_in_firebase(appt.patientId)) {
-            // get the existing client object from firebase for this patient
-            parent = get_client_from_firebase(appt.patientId)
-          } else if (client_in_clients_sheet(appt.patientId)) {
-            // reference the client list to get the client information necessary to create a Client object
-            parent = get_client_info_using_client_sheet(appt.patientId) 
-          } else {
-            // if the client is not in firebase or the clients sheet, we cannot add this appointment
-            // get the patient's first and last name and add them to the missing clients list
-            missing_clients.add(patient_first_and_last_name)
-            continue // skip this appointment
-          }
+    // querySnapshot is guaranteed to not be empty
+    const doc = querySnapshot.docs[0];
+    const data = doc.data();
 
-          // set the parent appointment to this one
-          parentAppt = appt
+    const client: Client = {
+      id: data.id,
+      firstName: data.firstName,
+      ...(data.middleName && { middleName: data.middleName }),
+      lastName: data.lastName,
+      email: data.email,
+      ...(data.phone && { phone: data.phone }),
+      ...(data.insurance && { insurance: data.insurance }),
+      ...(data.paysimpleId && { paysimpleId: data.paysimpleId }),
+      baby: data.baby,
+    };
+
+    return client;
+  }
+
+  function client_in_clients_sheet(patientId: string): boolean {
+    // return clientSheet.some(obj => obj.id === appt.patientId)
+    return true;
+  }
+
+  for (const [[start_time, staff_member], appointments] of appointments_map) {
+    let parent = null; // Client type
+    const babies: Baby[] = []; // list of baby type
+    let parentAppt = null; // JaneAppt type, the parent's appointment
+
+    let parentApptExistsInFirebase = false; // do we already have the parent appointment in firebase?
+
+    for (const appt of appointments) {
+      // the appt is for baby
+      if (is_baby_appt(appt)) {
+        // const baby = babyList.find(obj => obj.id === appt.patientId); // find matching baby
+        // babies.push(baby)
+      } else {
+        // the appt is for client
+        if (await appt_in_firebase(appt)) {
+          parentApptExistsInFirebase = true;
+          break;
         }
-      }
 
-      // if we've already processed this appt in the database, then we can skip adding the client and appt
-      if(parentApptExistsInFirebase) { 
-        continue;
-      }
+        // get the client info, either from firebase or the clients sheet if the client is not in the db yet
+        if (await client_in_firebase(appt.patientId)) {
+          parent = get_client_from_firebase(appt.patientId);
+        } else if (client_in_clients_sheet(appt.patientId)) {
+          // reference the client list to get the client information necessary to create a Client object
+          // parent = get_client_info_using_client_sheet(appt.patientId);
+          // parent = clientSheet.find(obj => obj.id === appt.patientId); // find matching client
+        } else {
+          // if the client is not in firebase or the clients sheet, we cannot add this appointment
+          // get the patient's first and last name and add them to the missing clients list
 
-      // add to the parent object's babies array using the babies matched with their appointment.
-      // NOTE: only add the new babies if they do not already exist in the parent's baby array (check based on their ids)
-      parent.baby.add_if_not_exists(babies)
-      add_to_clients_collection(parent)
-      add_to_appts_collection(parentAppt)
+          // TO-DO
+          // missing_clients.push(`${appt.firstname} ${appt.lastname}`);
+          continue; // skip this appointment
+        }
+        parentAppt = appt;
+      }
+    }
+    if (parentApptExistsInFirebase) {
+      continue;
     }
 
-    // if there are missing clients, return an error response with their names. 
-    // their names will be displayed in the tooltip for users so they can reupload those clients.
-    if (missing_clients.length > 0) {
-      return error_response(missing_clients) 
-    }
-  */
+    // add to the parent object's babies array using the babies matched with their appointment.
+    // NOTE: only add the new babies if they do not already exist in the parent's baby array (check based on their ids)
+    const parentResolved = await parent;
+
+    // merging parent existing baby list and new baby
+    // this implementation may be inefficient
+    babies.forEach((baby) => {
+      if (
+        !parentResolved?.baby.some(
+          (existingBaby) => existingBaby.id === baby.id,
+        )
+      ) {
+        parentResolved?.baby.push(baby);
+      }
+    });
+    parentResolved?.baby;
+
+    // TO-D
+    //add_to_clients_collection(parent);
+    // add_to_appts_collection(parentAppt);
+  }
+
+  // if there are missing clients, return an error response with their names.
+  // their names will be displayed in the tooltip for users so they can reupload those clients.
+  if (missing_clients.length > 0) {
+    logger.error(["Missing clients!", missing_clients]);
+    return res.status(400).json({
+      error: "Missing clients!",
+      details: missing_clients,
+    });
+  }
 
   return res.status(200).send();
 });
