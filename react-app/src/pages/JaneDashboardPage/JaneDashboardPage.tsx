@@ -26,9 +26,12 @@ import {
   VisitBreakdown,
   visitBreakdownColumns,
   RetentionRate,
-  retentionRateColumns,
+  makeRetentionRateColumns,
 } from "./JaneTableColumns";
 import { DataTable } from "@/components/DataTable/DataTable";
+import { ColumnDef } from "@tanstack/react-table";
+
+
 
 const JaneDashboardPage = () => {
   //nav bar
@@ -40,7 +43,7 @@ const JaneDashboardPage = () => {
   const transparentGrayButtonStyle =
     "bg-transparent hover:bg-bcgw-gray-light text-gray border-2 border-gray py-1 px-6 rounded-full cursor-pointer";
   const graphTableButtonStyle =
-    "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer";
+    "py-1 px-4 text-center shadow-sm bg-[#CED8E1] hover:shadow-md text-black cursor-pointer";
   const centerItemsInDiv = "flex justify-between items-center";
   const chartDiv =
     "flex flex-col items-center justify-center bg-white h-[400px] border-2 border-black p-5 rounded-lg";
@@ -53,6 +56,7 @@ const JaneDashboardPage = () => {
   );
   const [visitDisplay, setVisitDisplay] = useState<string>("graph");
   const [retentionDisplay, setRetentionDisplay] = useState<string>("graph");
+  const [openRow, setOpenRow] = useState<RetentionRate | null>(null);
   const pieChartRef = useRef<HTMLDivElement>(null);
   const funnelChartRef = useRef<HTMLDivElement>(null);
 
@@ -80,6 +84,21 @@ const JaneDashboardPage = () => {
     {
       data: 5,
       key: "6th week",
+    },
+  ];
+  type LostClient = { first: string; last: string; email: string };
+  const lostClientColumns: ColumnDef<LostClient>[] = [
+    {
+      accessorKey: "first", header: "First Name",
+      cell: ({ row }) => <span className="hover:underline cursor-pointer">{row.getValue("first")}</span>
+    },
+    {
+      accessorKey: "last", header: "Last Name",
+      cell: ({ row }) => <span className="hover:underline cursor-pointer">{row.getValue("last")}</span>
+    },
+    {
+      accessorKey: "email", header: "Email",
+      cell: ({ row }) => <span className="hover:underline cursor-pointer">{row.getValue("email")}</span>
     },
   ];
 
@@ -189,51 +208,73 @@ const JaneDashboardPage = () => {
       count: 900000,
     },
   ];
-
   const retentionData: RetentionRate[] = [
     {
       visit: "1 Visit",
       numberVisited: 12,
       percent: 16.6,
-      loss: 1,
-      clientsLost: "Jane Doe",
+      loss: 0,
+      clientsLostNames: "",
+      clients: [],
     },
     {
-      visit: "2 Visit",
-      numberVisited: 11,
-      percent: 16.6,
-      loss: 1,
-      clientsLost: "Jane Doe",
+      visit: "2 Visits",
+      numberVisited: 14,
+      percent: 4.23,
+      loss: 5,
+      clientsLostNames: "Jane Doe, Jane Doe, Jane Doe, Jane Doe, Jane Doe",
+      clients: [
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+      ],
     },
     {
-      visit: "3 Visit",
-      numberVisited: 12,
+      visit: "3 Visits",
+      numberVisited: 10,
       percent: 16.6,
-      loss: 1,
-      clientsLost: "Jane Doe",
+      loss: 2,
+      clientsLostNames: "Jane Doe, Jane Doe",
+      clients: [
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+      ],
     },
     {
-      visit: "4 Visit",
-      numberVisited: 12,
+      visit: "4 Visits",
+      numberVisited: 9,
       percent: 16.6,
       loss: 1,
-      clientsLost: "Jane Doe",
+      clientsLostNames: "Jane Doe",
+      clients: [{ first: "Jane", last: "Doe", email: "jdoe@gmail.com" }],
     },
     {
-      visit: "5 Visit",
-      numberVisited: 12,
-      percent: 16.6,
-      loss: 1,
-      clientsLost: "Jane Doe",
+      visit: "5 Visits",
+      numberVisited: 8,
+      percent: 28.88,
+      loss: 9,
+      clientsLostNames: "Jane Doe, Jane Doe, Jane Doe, Jane Doe, Jane Doe",
+      clients: [
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+      ],
     },
     {
-      visit: "6+ Visit",
-      numberVisited: 12,
+      visit: "6+ Visits",
+      numberVisited: 7,
       percent: 16.6,
       loss: 1,
-      clientsLost: "Jane Doe",
+      clientsLostNames: "Jane Doe",
+      clients: [{ first: "Jane", last: "Doe", email: "jdoe@gmail.com" }],
     },
   ];
+
+
 
   useEffect(() => {
     setLoading(true);
@@ -256,9 +297,8 @@ const JaneDashboardPage = () => {
     <>
       <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
       <div
-        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
-          navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-        }`}>
+        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
+          }`}>
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-20">
           {/*headings*/}
@@ -286,35 +326,23 @@ const JaneDashboardPage = () => {
           </div>
 
           {/*graphs*/}
-          <div
-            className={
-              visitDisplay === "table" || retentionDisplay === "table"
-                ? ""
-                : "flex flex-wrap gap-8 pt-3"
-            }>
-            <div
-              className={
-                visitDisplay === "graph"
-                  ? "flex-1 min-w-[300px] max-w-[40%]"
-                  : ""
-              }>
+          <div className="flex flex-wrap gap-8 pt-3">
+            <div className="flex-1 min-w-[300px] max-w-[60%]">
               <div className={`${centerItemsInDiv} pt-4 mb-6`}>
                 <div className="flex flex-row">
                   <button
-                    className={`${graphTableButtonStyle} ${
-                      visitDisplay == "graph"
-                        ? "bg-bcgw-gray-light"
-                        : "bg-[#f5f5f5]"
-                    }`}
+                    className={`${graphTableButtonStyle} ${visitDisplay == "graph"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#CED8E1]"
+                      }`}
                     onClick={() => setVisitDisplay("graph")}>
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${
-                      visitDisplay == "table"
-                        ? "bg-bcgw-gray-light"
-                        : "bg-[#f5f5f5]"
-                    }`}
+                    className={`${graphTableButtonStyle} ${visitDisplay == "table"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#CED8E1]"
+                      }`}
                     onClick={() => setVisitDisplay("table")}>
                     Table
                   </button>
@@ -332,8 +360,8 @@ const JaneDashboardPage = () => {
                     Visit Breakdown:{" "}
                     {dateRange.startDate && dateRange.endDate
                       ? formatDate(dateRange.startDate) +
-                        " - " +
-                        formatDate(dateRange.endDate)
+                      " - " +
+                      formatDate(dateRange.endDate)
                       : "All Data"}
                   </span>
                   {/*chart*/}
@@ -381,8 +409,8 @@ const JaneDashboardPage = () => {
                     Visit Breakdown:{" "}
                     {dateRange.startDate && dateRange.endDate
                       ? formatDate(dateRange.startDate) +
-                        " - " +
-                        formatDate(dateRange.endDate)
+                      " - " +
+                      formatDate(dateRange.endDate)
                       : "All Data"}
                   </span>
                   <DataTable
@@ -403,20 +431,18 @@ const JaneDashboardPage = () => {
               <div className={`${centerItemsInDiv} pt-4 mb-6`}>
                 <div className="flex flex-row">
                   <button
-                    className={`${graphTableButtonStyle} ${
-                      retentionDisplay == "graph"
-                        ? "bg-bcgw-gray-light"
-                        : "bg-[#f5f5f5]"
-                    }`}
+                    className={`${graphTableButtonStyle} ${retentionDisplay == "graph"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#CED8E1]"
+                      }`}
                     onClick={() => setRetentionDisplay("graph")}>
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${
-                      retentionDisplay == "table"
-                        ? "bg-bcgw-gray-light"
-                        : "bg-[#f5f5f5]"
-                    }`}
+                    className={`${graphTableButtonStyle} ${retentionDisplay == "table"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#CED8E1]"
+                      }`}
                     onClick={() => setRetentionDisplay("table")}>
                     Table
                   </button>
@@ -436,8 +462,8 @@ const JaneDashboardPage = () => {
                   Retention Rate:{" "}
                   {dateRange.startDate && dateRange.endDate
                     ? formatDate(dateRange.startDate) +
-                      " - " +
-                      formatDate(dateRange.endDate)
+                    " - " +
+                    formatDate(dateRange.endDate)
                     : "All Data"}
                 </span>
                 {retentionDisplay === "graph" ? (
@@ -462,11 +488,89 @@ const JaneDashboardPage = () => {
                     }
                   />
                 ) : (
-                  <DataTable
-                    columns={retentionRateColumns}
-                    data={retentionData}
-                    tableType="default"
-                  />
+                  <>
+                    <div className="[&_td]:py-3 [&_th]:py-">
+                      <DataTable
+                        columns={makeRetentionRateColumns((row) => setOpenRow(row))}
+                        data={retentionData}
+                        tableType="default"
+                      />
+                    </div>
+
+                    {openRow && (
+                      <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                        <div className="bg-white w-[min(900px,95vw)] max-h-[80vh] rounded-lg border-2 border-black overflow-auto">
+                          {/* Header (edge-to-edge) */}
+                          <div className="-m-4">
+                            <div className="flex items-center justify-between p-4">
+                              <h2 className="ml-4 mt-2 text-2xl font-semibold">
+                                Clients Lost After {openRow.visit}
+                              </h2>
+                              <button
+                                aria-label="Close"
+                                onClick={() => setOpenRow(null)}
+                                className="mt-3 mr-3 text-2xl leading-none"
+                              >
+                                ×
+                              </button>
+                            </div>
+                            {/* Full-width black line */}
+                            <div className="mb-3 w-full border-t-2 border-black" />
+                          </div>
+
+                          {/* Content area (padded) */}
+                          <div className="p-4">
+                            {/* Export button row */}
+                            <div className="flex justify-end mb-0">
+                              <button className=" px-4 py-1 border-2 border-black rounded-full hover:bg-gray-100">
+                                Export
+                              </button>
+                            </div>
+
+                            {/* Table + footer */}
+                            <div className="mt-0 flex flex-col">
+                              <DataTable
+                                tableType="default"
+                                columns={lostClientColumns}
+                                data={(openRow?.clients ?? []) as any}
+                              />
+
+                              {/* Pagination footer (visual, to match mock) */}
+                              <div className="flex justify-end items-center gap-2 mt-2 pr-1">
+                                <span className="text-sm text-gray-800">Showing 1 -</span>
+
+                                {/* custom pill w/ arrows */}
+                                <div className="inline-flex items-center h-8 px-3 border-2 border-black rounded-full">
+                                  <span className="text-sm">{openRow?.clients?.length ?? 0}</span>
+                                  <div className="flex flex-col ml-2 select-none">
+                                    <span className="text-[10px] leading-none pointer-events-none">▲</span>
+                                    <span className="text-[10px] leading-none -mt-[2px] pointer-events-none">▼</span>
+                                  </div>
+                                </div>
+
+                                <span className="text-sm text-gray-800">
+                                  of {openRow?.clients?.length ?? 0}
+                                </span>
+
+                                <button className="w-6 h-6 border border-black text-xs leading-none pb-[2px] cursor-not-allowed opacity-50" disabled>
+                                  {"<"}
+                                </button>
+                                <button className="w-6 h-6 border border-black text-xs leading-none pb-[2px] cursor-not-allowed opacity-50" disabled>
+                                  {">"}
+                                </button>
+                              </div>
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+
+
+
+                  </>
+
                 )}
               </div>
             </div>
