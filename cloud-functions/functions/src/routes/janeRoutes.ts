@@ -25,14 +25,26 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
   logger.info(req.files);
 
   if (!req.files) return res.status(400).send("Missing files!");
-  const appointments_sheet = await parseAppointmentSheet(
+  const appointmentParseResults = await parseAppointmentSheet(
     req.files["appointments"][0].name,
     req.files["appointments"][0].buffer,
   );
 
-  if (appointments_sheet === "Missing headers") {
-    res.status(400).send("Missing headers");
+  if (appointmentParseResults === "Missing headers") {
+    return res.status(400).send("Missing headers");
   }
+
+  const { appointments: appointments_sheet, patientNames } = appointmentParseResults
+
+  const clientParseResults = await parseClientSheet(
+    req.files["clients"][0].name,
+    req.files["clients"][0].buffer,
+  );
+
+  if (clientParseResults === "Missing headers") {
+    return res.status(400).send("Missing headers");
+  }
+  const { clients: clients_sheet, babies: babyList } = clientParseResults
 
   // logger.info(req.files["clients"][0].buffer.toString())
   // implement function in utils/janeUploadAppts.ts to parse clientSheet
@@ -67,9 +79,7 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
 
   // implement all functions below
   function is_baby_appt(appt: JaneAppt): boolean {
-    // check if appt.patientId is in babyList (response from janeUploadClients parsing)
-    // return babyList.some(obj => obj.id === appt.patientId)
-    return true;
+    return babyList.some(baby => baby.id === appt.patientId)
   }
 
   async function appt_in_firebase(appt: JaneAppt): Promise<boolean> {
@@ -130,8 +140,7 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
   }
 
   function client_in_clients_sheet(patientId: string): boolean {
-    // return clientSheet.some(obj => obj.id === appt.patientId)
-    return true;
+    return clients_sheet.some(client => client["id"] === patientId)
   }
 
   for (const [[start_time, staff_member], appointments] of appointments_map) {
@@ -144,8 +153,10 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
     for (const appt of appointments) {
       // the appt is for baby
       if (is_baby_appt(appt)) {
-        // const baby = babyList.find(obj => obj.id === appt.patientId); // find matching baby
-        // babies.push(baby)
+        const baby = babyList.find(baby => baby.id === appt.patientId); // find matching baby
+        if (baby) {
+          babies.push(baby)
+        }
       } else {
         // the appt is for client
         if (await appt_in_firebase(appt)) {
@@ -157,15 +168,20 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
         if (await client_in_firebase(appt.patientId)) {
           parent = get_client_from_firebase(appt.patientId);
         } else if (client_in_clients_sheet(appt.patientId)) {
+          // TO-DO
           // reference the client list to get the client information necessary to create a Client object
+          const client = clients_sheet.find(client => client.id == appt.patientId)
           // parent = get_client_info_using_client_sheet(appt.patientId);
-          // parent = clientSheet.find(obj => obj.id === appt.patientId); // find matching client
+          // parent = clients_sheet.find(obj => obj.id === appt.patientId); // find matching client
+          continue;
         } else {
+          const patientName = patientNames[appt.patientId]
           // if the client is not in firebase or the clients sheet, we cannot add this appointment
           // get the patient's first and last name and add them to the missing clients list
 
-          // TO-DO
-          // missing_clients.push(`${appt.firstname} ${appt.lastname}`);
+          if (patientName) {
+            missing_clients.push(`${patientName["firstName"]} ${patientName["lastName"]}`);
+          }
           continue; // skip this appointment
         }
         parentAppt = appt;
@@ -192,7 +208,7 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
     });
     parentResolved?.baby;
 
-    // TO-D
+    // TO-DO
     //add_to_clients_collection(parent);
     // add_to_appts_collection(parentAppt);
   }
