@@ -226,21 +226,10 @@ const JaneDashboardPage = () => {
           </div>
 
           {/* IMPORTANT: when either table switches to "table" view we remove the side-by-side flex so they stack */}
-          <div
-            className={
-              visitDisplay === "table" || retentionDisplay === "table"
-                ? ""
-                : "flex flex-wrap gap-8 pt-3"
-            }
-          >
+          <div className="flex flex-wrap gap-8 pt-3">
             {/* Visit Breakdown */}
-            <div
-              className={
-                visitDisplay === "graph"
-                  ? "flex-1 min-w-[300px] max-w-[40%]"
-                  : ""
-              }
-            >
+            <div className="flex-[0_0_48%] max-w-[50%] min-w-[560px]">
+
               <div className={`${centerItemsInDiv} pt-4 mb-6`}>
                 <div className="flex flex-row">
                   <button
@@ -313,7 +302,8 @@ const JaneDashboardPage = () => {
             </div>
 
             {/* Retention Rate */}
-            <div className={retentionDisplay === "graph" ? "flex-1 min-w-[300px] max-w-[60%]" : ""}>
+            <div className="flex-[0_0_48%] max-w-[50%] min-w-[560px]">
+
               <div className={`${centerItemsInDiv} pt-4 mb-6`}>
                 <div className="flex flex-row">
                   <button
