@@ -508,7 +508,7 @@ export default function AcuityDashboardPage() {
             }
             ref={attendanceChartRef}>
             <div className="flex justify-between items-center space-x-4">
-              <div className="text-2xl font-semibold">
+              <div className="mb-5 text-2xl font-semibold">
                 Class Attendance By Trimester,{" "}
                 {attendanceDisplay === "graph" ? <br /> : <></>}2/19/25 -
                 3/19/25
@@ -594,13 +594,33 @@ export default function AcuityDashboardPage() {
                 )}
               </div>
             ) : (
-              <DataTable
-                columns={trimesterColumns}
-                data={trimesterData}
-                tableType="default"
-              />
+              <section className="border-[2px] border-[#000000] rounded-none overflow-hidden">
+                {/* blue strip with Class Type dropdown */}
+                <div className="flex items-center justify-end bg-[#CED8E1] px-3 py-2 border-b-0">
+                  <select
+                    className="h-9 rounded-md border bg-white px-3 text-sm"
+                    value={selectedClass}
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                  >
+                    <option>All Classes</option>
+                    {allClassData.map((c) => (
+                      <option key={c.key}>{c.key}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* styled DataTable */}
+                <div className="bcgw-acuity-table">
+                  <DataTable
+                    columns={trimesterColumns}
+                    data={trimesterData}
+                    tableType="default"
+                  />
+                </div>
+              </section>
             )}
           </div>
+
 
           <div className={`${centerItemsInDiv} pt-8`}>
             <div className="flex flex-row">
@@ -639,33 +659,20 @@ export default function AcuityDashboardPage() {
             }
             ref={classPopularityChartRef}>
             <div className="flex justify-between items-center space-x-4">
-              <div className="text-2xl font-semibold">
+              <div className="mb-5 text-2xl font-semibold">
                 Class Popularity Over Time,{" "}
                 {classPopularityDisplay === "graph" ? <br /> : <></>} 2/19/25 -
                 3/19/25
               </div>
 
-              {classPopularityDisplay === "graph" ? (
-                // Class dropdown
+              {classPopularityDisplay === "graph" && (
                 <div className="flex items-center space-x-2">
                   <label className="text-sm font-medium"></label>
                   <select
                     className="border rounded-md px-2 py-1 text-sm"
                     value={selectedClass}
-                    onChange={(e) => setSelectedClass(e.target.value)}>
-                    <option>All Classes</option>
-                    {allClassData.map((c) => (
-                      <option key={c.key}>{c.key}</option>
-                    ))}
-                  </select>
-                </div>
-              ) : (
-                <div className="flex items-center space-x-2">
-                  <label className="text-sm font-medium"></label>
-                  <select
-                    className="border rounded-md px-2 py-1 text-sm"
-                    value={selectedClass}
-                    onChange={(e) => setSelectedClass(e.target.value)}>
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                  >
                     <option>All Classes</option>
                     {allClassData.map((c) => (
                       <option key={c.key}>{c.key}</option>
@@ -673,6 +680,7 @@ export default function AcuityDashboardPage() {
                   </select>
                 </div>
               )}
+
             </div>
             {classPopularityDisplay === "graph" ? (
               <div className="w-full h-96">
@@ -683,12 +691,30 @@ export default function AcuityDashboardPage() {
                 />
               </div>
             ) : (
-              <DataTable
-                columns={instructorColumns} // this should be changed to class popularity data
-                // but seems like there is no difference based on figma
-                data={instructorData}
-                tableType="default"
-              />
+              <section className="border-[2px] border-[#000000] rounded-none overflow-hidden">
+                {/* blue strip with Class Type dropdown */}
+                <div className="flex items-center justify-end bg-[#CED8E1] px-3 py-2 border-b-0">
+                  <select
+                    className="h-9 rounded-md border bg-white px-3 text-sm"
+                    value={selectedClass}
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                  >
+                    <option>All Classes</option>
+                    {allClassData.map((c) => (
+                      <option key={c.key}>{c.key}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* styled DataTable (using current placeholder columns/data) */}
+                <div className="bcgw-acuity-table">
+                  <DataTable
+                    columns={instructorColumns}   /* keep until you have class-popularity columns */
+                    data={instructorData}
+                    tableType="default"
+                  />
+                </div>
+              </section>
             )}
           </div>
 
@@ -796,7 +822,8 @@ export default function AcuityDashboardPage() {
         </div>
       </div>
       <style>{`
-  /* kill any wrapper border/padding the DataTable adds */
+
+
   .bcgw-acuity-table > div {
     border: 0 !important;
     margin: 0 !important;
@@ -827,6 +854,16 @@ export default function AcuityDashboardPage() {
     padding-bottom: 10px !important;
   }
 
+  .bcgw-acuity-table thead th:first-child,
+  .bcgw-acuity-table tbody td:first-child {
+    padding-left: 16px;  /* adjust to taste */
+  }
+
+  .bcgw-acuity-table thead th:last-child,
+  .bcgw-acuity-table tbody td:last-child {
+    padding-right: 16px;
+  }
+
   /* uniform row color */
   .bcgw-acuity-table tbody tr { background: #FFFFFF; }
 
@@ -835,9 +872,6 @@ export default function AcuityDashboardPage() {
     border-top: 1px solid #000000;
   }
 `}</style>
-
-
-
     </>
   );
 }
