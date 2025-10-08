@@ -31,31 +31,35 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
   );
 
   if (typeof appointmentParseResults == "string") {
-    return res.status(400).send(appointmentParseResults);
+    throw new Error(appointmentParseResults);
   }
 
   const { appointments: appointments_sheet, patientNames } =
     appointmentParseResults;
 
-  const clientParseResults = await parseClientSheet(
-    req.files["clients"][0].name,
-    req.files["clients"][0].buffer,
-  );
+  let clientFileExists = false;
+  let clients_sheet!: Client[];
+  let babyList!: Baby[];
 
-  if (typeof clientParseResults == "string") {
-    return res.status(400).send(appointmentParseResults);
+  if (req.files?.["clients"]?.[0]) {
+    clientFileExists = true;
   }
 
-  const { clients: clients_sheet, babies: babyList } = clientParseResults;
+  if (clientFileExists) {
+    const clientParseResults = await parseClientSheet(
+      req.files["clients"][0].name,
+      req.files["clients"][0].buffer,
+    );
+    if (typeof clientParseResults == "string") {
+      throw new Error(clientParseResults);
+    }
 
-  // logger.info(req.files["clients"][0].buffer.toString())
-  // implement function in utils/janeUploadAppts.ts to parse clientSheet
-  // if function cannot parse then throw error
-  // const clients_sheet = await parseClientSheet(
-  //   req.files["clients"][0].name, req.files["clients"][0].buffer,);
-  // if (clients_sheet === "Missing headers") {
-  //  res.status(400).send("Missing headers");
-  // }
+    if (clientParseResults === "Missing headers") {
+      return res.status(400).send("Missing headers");
+    }
+    clients_sheet = clientParseResults[0];
+    babyList = clientParseResults[1];
+  }
 
   const appointments_map = new Map<[string, string], JaneAppt[]>();
 
@@ -177,9 +181,10 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
         // get the client info, either from firebase or the clients sheet if the client is not in the db yet
         if (await client_in_firebase(appt.patientId)) {
           parent = await get_client_from_firebase(appt.patientId);
-        } else if (client_in_clients_sheet(appt.patientId)) {
-          // TO-DO
-          // reference the client list to get the client information necessary to create a Client object
+        } else if (
+          clientFileExists &&
+          client_in_clients_sheet(appt.patientId)
+        ) {
           const client = clients_sheet.find(
             (client: { id: string }) => client.id == appt.patientId,
           );
