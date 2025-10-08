@@ -7,6 +7,7 @@ import { upload } from "../middleware/filesMiddleware";
 // } from "../utils/janeUploadAppts";
 import { logger } from "firebase-functions";
 import { parseAppointmentSheet } from "../utils/janeUploadAppts";
+import { parseClientSheet } from "../utils/janeUploadClients";
 import { JaneAppt } from "../types/JaneType";
 import { Client, Baby } from "../types/ClientType";
 import { db } from "../services/firebase";
@@ -54,11 +55,8 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
       throw new Error(clientParseResults);
     }
 
-    if (clientParseResults === "Missing headers") {
-      return res.status(400).send("Missing headers");
-    }
-    clients_sheet = clientParseResults[0];
-    babyList = clientParseResults[1];
+    clients_sheet = clientParseResults.clientList;
+    babyList = clientParseResults.babyList;
   }
 
   const appointments_map = new Map<[string, string], JaneAppt[]>();

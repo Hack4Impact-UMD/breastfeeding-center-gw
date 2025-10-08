@@ -11,7 +11,7 @@ export async function parseAppointmentSheet(
   const parts = fileName.split(".");
   let isCsv = false;
 
-  let extension = parts.length > 1 ? parts.pop()!.toLowerCase() : "";
+  const extension = parts.length > 1 ? parts.pop()!.toLowerCase() : "";
   if (extension === "csv") {
     isCsv = true;
   } else if (extension !== "xlsx") {
@@ -82,23 +82,25 @@ export async function parseAppointmentSheet(
   type PatientInfo = {
     firstName: string;
     lastName: string;
-  }
+  };
 
-  // initializing the objects to return 
+  // initializing the objects to return
   const patientNames: { [id: string]: PatientInfo } = {};
   const appointments: JaneAppt[] = [];
 
   // looping through each element in jsonArray to turn into JaneAppt obj
   for (const rawAppt of jsonArray) {
     // parsing rawAppt data in jsonArray and adding it to appointments list
-    const appt = parseAppointment(rawAppt)
-    appointments.push(appt)
+    const appt = parseAppointment(rawAppt);
+    appointments.push(appt);
 
     // parsing rawAppt data in jsonArray and adding it to patientNames list
-    patientNames[rawAppt.patient_number] = { firstName: rawAppt.patient_first_name, lastName: rawAppt.patient_last_name }
+    patientNames[rawAppt.patient_number] = {
+      firstName: rawAppt.patient_first_name,
+      lastName: rawAppt.patient_last_name,
+    };
   }
 
-  
   return { appointments, patientNames };
 }
 
@@ -139,9 +141,6 @@ function parseAppointment(appt: any) {
 
   return janeAppt;
 }
-
-
-
 
 // export async function getJaneTypes(
 //   e: React.ChangeEvent<HTMLInputElement>,

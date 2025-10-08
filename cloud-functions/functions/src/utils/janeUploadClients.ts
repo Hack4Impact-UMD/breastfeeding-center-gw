@@ -8,7 +8,7 @@ export async function parseClientSheet(
   const parts = fileName.split(".");
   let isCsv = false;
 
-  let extension = parts.length > 1 ? parts.pop()!.toLowerCase() : "";
+  const extension = parts.length > 1 ? parts.pop()!.toLowerCase() : "";
   if (extension === "csv") {
     isCsv = true;
   } else if (extension !== "xlsx") {
@@ -41,6 +41,7 @@ export async function parseClientSheet(
   } else {
     // xlsx here
     // watch out for dob being string or number maybe
+    return "Missing headers";
   }
 
   // parse raw json data into client type
@@ -56,7 +57,7 @@ export async function parseClientSheet(
     }
   });
 
-  return [clientList, babyList];
+  return { clientList, babyList };
 }
 
 function parseClient(clientRawData: any) {
