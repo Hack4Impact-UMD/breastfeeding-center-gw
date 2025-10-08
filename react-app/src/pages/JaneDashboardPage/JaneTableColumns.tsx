@@ -1,6 +1,23 @@
 import { ColumnDef } from "@tanstack/react-table";
 
-// visit breakdown
+/**
+ * Header with static sort icon (⇅)
+ * This version does NOT change on sorting.
+ */
+const headerButton = (title: string, column: any) => {
+  return (
+    <button
+      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      className="flex items-center gap-2 px-3 py-2 w-full text-left hover:opacity-90"
+      aria-label={`Sort by ${title}`}
+      type="button"
+    >
+      <span className="font-bold">{title}</span>
+      <span className="text-sm">⇅</span>
+    </button>
+  );
+};
+
 export type VisitBreakdown = {
   visitType: string;
   percent: number;
@@ -10,14 +27,14 @@ export type VisitBreakdown = {
 export const visitBreakdownColumns: ColumnDef<VisitBreakdown>[] = [
   {
     accessorKey: "visitType",
-    header: () => <span className="font-bold">Visit Type</span>,
+    header: ({ column }) => headerButton("Visit Type", column),
     cell: ({ row }) => (
       <span className="font-bold">{row.getValue("visitType")}</span>
     ),
   },
   {
     accessorKey: "percent",
-    header: () => <span className="font-bold">PERCENT</span>,
+    header: ({ column }) => headerButton("Percentage", column),
     cell: ({ row }) => {
       const value = row.getValue<number>("percent");
       return `${value}%`;
@@ -25,7 +42,7 @@ export const visitBreakdownColumns: ColumnDef<VisitBreakdown>[] = [
   },
   {
     accessorKey: "count",
-    header: () => <span className="font-bold">COUNT</span>,
+    header: ({ column }) => headerButton("Count", column),
     cell: ({ row }) => {
       const value = row.getValue<number>("count");
       return value.toLocaleString();
@@ -33,7 +50,6 @@ export const visitBreakdownColumns: ColumnDef<VisitBreakdown>[] = [
   },
 ];
 
-// retention rate table
 export type RetentionRate = {
   visit: string;
   numberVisited: number;
@@ -45,18 +61,19 @@ export type RetentionRate = {
 export const retentionRateColumns: ColumnDef<RetentionRate>[] = [
   {
     accessorKey: "visit",
-    header: () => <span className="font-bold">Visits</span>,
+    header: ({ column }) => headerButton("Visits", column),
     cell: ({ row }) => (
       <span className="font-bold">{row.getValue("visit")}</span>
     ),
   },
   {
     accessorKey: "numberVisited",
-    header: () => <span className="font-bold">Number Visited</span>,
+    header: ({ column }) => headerButton("Number Visited", column),
+    cell: ({ row }) => row.getValue<number>("numberVisited"),
   },
   {
     accessorKey: "percent",
-    header: () => <span className="font-bold">PERCENT</span>,
+    header: ({ column }) => headerButton("Percent", column),
     cell: ({ row }) => {
       const value = row.getValue<number>("percent");
       return `${value}%`;
@@ -64,10 +81,12 @@ export const retentionRateColumns: ColumnDef<RetentionRate>[] = [
   },
   {
     accessorKey: "loss",
-    header: () => <span className="font-bold">Loss</span>,
+    header: ({ column }) => headerButton("Loss", column),
+    cell: ({ row }) => row.getValue<number>("loss"),
   },
   {
     accessorKey: "clientsLost",
-    header: () => <span className="font-bold">Clients Lost</span>,
+    header: ({ column }) => headerButton("Clients Lost", column),
+    cell: ({ row }) => row.getValue<string>("clientsLost"),
   },
 ];
