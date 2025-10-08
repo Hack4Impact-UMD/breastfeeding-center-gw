@@ -31,7 +31,7 @@ import {
 import { DataTable } from "@/components/DataTable/DataTable";
 
 const JaneDashboardPage = () => {
- 
+
   const [navBarOpen, setNavBarOpen] = useState(true);
 
   const buttonStyle =
@@ -170,7 +170,7 @@ const JaneDashboardPage = () => {
   }, [janeData, dateRange]);
 
   const retentionHeaderExtras = (
-    <div className="flex items-center justify-start gap-3">
+    <div className="w-full flex items-center justify-end gap-3">
       <select
         value={clientsFilter}
         onChange={(e) => setClientsFilter(e.target.value)}
@@ -193,13 +193,13 @@ const JaneDashboardPage = () => {
     </div>
   );
 
+
   return (
     <>
       <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
       <div
-        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
-          navBarOpen ? "ml-[250px]" : "ml-[60px]"
-        }`}
+        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]"
+          }`}
       >
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-20">
@@ -244,17 +244,15 @@ const JaneDashboardPage = () => {
               <div className={`${centerItemsInDiv} pt-4 mb-6`}>
                 <div className="flex flex-row">
                   <button
-                    className={`${graphTableButtonStyle} ${
-                      visitDisplay == "graph" ? "bg-bcgw-gray-light" : "bg-[#f5f5f5]"
-                    }`}
+                    className={`${graphTableButtonStyle} ${visitDisplay == "graph" ? "bg-bcgw-gray-light" : "bg-[#f5f5f5]"
+                      }`}
                     onClick={() => setVisitDisplay("graph")}
                   >
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${
-                      visitDisplay == "table" ? "bg-bcgw-gray-light" : "bg-[#f5f5f5]"
-                    }`}
+                    className={`${graphTableButtonStyle} ${visitDisplay == "table" ? "bg-bcgw-gray-light" : "bg-[#f5f5f5]"
+                      }`}
                     onClick={() => setVisitDisplay("table")}
                   >
                     Table

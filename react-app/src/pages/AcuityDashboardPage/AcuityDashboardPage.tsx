@@ -850,13 +850,14 @@ export default function AcuityDashboardPage() {
   /* compact cells */
   .bcgw-acuity-table thead th,
   .bcgw-acuity-table tbody td {
+        padding-left:
     padding-top: 10px !important;
     padding-bottom: 10px !important;
   }
 
   .bcgw-acuity-table thead th:first-child,
   .bcgw-acuity-table tbody td:first-child {
-    padding-left: 16px;  /* adjust to taste */
+    padding-left: 20px; 
   }
 
   .bcgw-acuity-table thead th:last-child,
@@ -867,7 +868,7 @@ export default function AcuityDashboardPage() {
   /* uniform row color */
   .bcgw-acuity-table tbody tr { background: #FFFFFF; }
 
-  /* black separators BETWEEN rows (keeps lines) */
+  /* black separators betwen rows */
   .bcgw-acuity-table tbody tr + tr td {
     border-top: 1px solid #000000;
   }
