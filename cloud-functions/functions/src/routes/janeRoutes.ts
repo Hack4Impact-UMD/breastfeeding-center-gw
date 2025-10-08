@@ -114,6 +114,21 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
     return true;
   }
 
+  async function add_to_clients_collection(parent: Client) {
+    await db
+    .collection("Client")
+    .doc(parent.id)
+    .set(parent)
+  }
+
+  async function add_to_appts_collection(appt: JaneAppt) {
+    await db 
+      .collection("JaneAppt")
+      .doc(appt.apptId)
+      .set(appt)
+  }
+
+
   async function get_client_from_firebase(patientId: string): Promise<Client> {
     const querySnapshot = await db
       .collection("Client")
@@ -166,19 +181,16 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
 
         // get the client info, either from firebase or the clients sheet if the client is not in the db yet
         if (await client_in_firebase(appt.patientId)) {
-          parent = get_client_from_firebase(appt.patientId);
+          parent = await get_client_from_firebase(appt.patientId);
         } else if (client_in_clients_sheet(appt.patientId)) {
           // TO-DO
           // reference the client list to get the client information necessary to create a Client object
           const client = clients_sheet.find(client => client.id == appt.patientId)
-          // parent = get_client_info_using_client_sheet(appt.patientId);
-          // parent = clients_sheet.find(obj => obj.id === appt.patientId); // find matching client
-          continue;
+          parent = client
         } else {
           const patientName = patientNames[appt.patientId]
           // if the client is not in firebase or the clients sheet, we cannot add this appointment
           // get the patient's first and last name and add them to the missing clients list
-
           if (patientName) {
             missing_clients.push(`${patientName["firstName"]} ${patientName["lastName"]}`);
           }
@@ -207,10 +219,13 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
       }
     });
     parentResolved?.baby;
-
-    // TO-DO
-    //add_to_clients_collection(parent);
-    // add_to_appts_collection(parentAppt);
+    
+    if (parent) {
+      await add_to_clients_collection(parent);
+    }
+    if (parentAppt) {
+      await add_to_appts_collection(parentAppt);
+    }
   }
 
   // if there are missing clients, return an error response with their names.
