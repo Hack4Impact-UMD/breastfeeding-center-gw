@@ -157,7 +157,7 @@ export default function NewUserPage() {
             disabled
           />
         </div>
-        <div className="relative w-[108%]">
+        <div className="relative w-[114%]">
           <label className="block font-medium mb-1">
             Password <span className="text-red-500">*</span>
           </label>
@@ -179,7 +179,23 @@ export default function NewUserPage() {
             >
               {showPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
             </button>
+            <button
+              type="button"
+              className="text-2xl text-gray-500 flex-shrink-0 cursor-pointer hover:text-gray-700"
+              onClick={() => setShowPasswordInfo(v => !v)}
+              tabIndex={-1}
+              aria-label="Password requirements"
+            >
+              <AiOutlineInfoCircle />
+            </button>
           </div>
+          {showPasswordInfo && (
+            <ul className="mt-2 ml-1 text-xs bg-gray-50 border rounded p-2 shadow">
+              {PASSWORD_REQUIREMENTS.map(req => (
+                <li key={req} className="text-gray-700">• {req}</li>
+              ))}
+            </ul>
+          )}
         </div>
         <div className="relative w-[108%]">
           <label className="block font-medium mb-1">
