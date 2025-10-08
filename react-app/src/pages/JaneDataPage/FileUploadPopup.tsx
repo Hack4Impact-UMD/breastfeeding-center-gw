@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Modal from "../../components/Modal";
 import { FiCheckCircle } from "react-icons/fi";
 import { IoIosClose } from "react-icons/io";
@@ -15,6 +15,8 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
   const resetState = () => {
     setApptFile(null);
     setClientFile(null);
+    setApptFileName("");
+    setClientFileName("");
     setErrorType("none");
   };
 
@@ -25,13 +27,20 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
 
   const [apptFile, setApptFile] = useState<File | null>(null);
   const [clientFile, setClientFile] = useState<File | null>(null);
+
+  const [apptFileName, setApptFileName] = useState<string>();
+  const [clientFileName, setClientFileName] = useState<string>();
+
+  const apptFileInputRef = useRef<HTMLInputElement>(null);
+  const clientFileInputRef = useRef<HTMLInputElement>(null);
+
   const [errorType, setErrorType] = useState<
     "none" | "invalidType" | "missingClients"
   >("none");
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    type: "appt" | "client"
+    type: "appt" | "client",
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -41,12 +50,34 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
       setErrorType("invalidType");
       return;
     }
+    const fileName = file?.name;
 
     setErrorType("none");
-    if (type === "appt") setApptFile(file);
-    if (type === "client") setClientFile(file);
+    if (type === "appt") {
+      setApptFile(file);
+      setApptFileName(fileName);
+    }
+    if (type === "client") {
+      setClientFile(file);
+      setClientFileName(fileName);
+    }
   };
 
+  const handleApptFile = () => {
+    setApptFile(null);
+    setApptFileName("");
+    if (apptFileInputRef.current) {
+      apptFileInputRef.current.value = "";
+    }
+  };
+
+  const handleClientFile = () => {
+    setClientFile(null);
+    setClientFileName("");
+    if (clientFileInputRef.current) {
+      clientFileInputRef.current.value = "";
+    }
+  };
   const handleSubmit = () => {
     const missingClients = false; // TODO: implement check for missing clients
     if (missingClients) {
@@ -59,7 +90,7 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
 
   const handleUploadSubmit = (
     apptFile: File | null,
-    clientFile: File | null
+    clientFile: File | null,
   ) => {
     // TODO: Handle file upload logic
     console.log("Appointment file:", apptFile);
@@ -77,7 +108,8 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
             onClick={() => {
               handleClose();
             }}
-            className="absolute top-0.25 right-0.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer">
+            className="absolute top-0.25 right-0.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
+          >
             <IoIosClose size={40} />
           </button>
         </div>
@@ -87,11 +119,12 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
           <span className="text-red-600">*</span> Appointment sheet is required
         </p>
 
-        <div className="flex flex-row justify-evenly place-items-center mt-4 mb-4">
+        <div className="flex flex-row justify-evenly place-items-center mt-6 mb-2">
           <div className="flex flex-col items-center">
             <label
               htmlFor="appt-upload"
-              className="cursor-pointer flex flex-col items-center">
+              className="cursor-pointer flex flex-col items-center"
+            >
               <img
                 src={apptUploadIcon}
                 alt="Upload Appts"
@@ -114,23 +147,42 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
             <input
               id="appt-upload"
               type="file"
+              ref={apptFileInputRef}
               accept=".xlsx,.csv"
               className="hidden"
               onChange={(e) => handleFileChange(e, "appt")}
             />
+            <div className={apptFileName ? "block" : "invisible"}>
+              <div className="flex text-sm font-bold items-center mt-1">
+                <p className="truncate text-[#1264B1] max-w-[7rem]">
+                  {apptFileName}
+                </p>
+                <button
+                  onClick={() => {
+                    handleApptFile();
+                  }}
+                  className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
+                >
+                  <IoIosClose size={20} />
+                </button>
+              </div>
+            </div>
           </div>
 
           <div className="flex flex-col items-center mb-2">
             <label
               htmlFor="client-upload"
-              className="cursor-pointer flex flex-col items-center">
+              className="cursor-pointer flex flex-col items-center"
+            >
               <img
                 src={clientUploadIcon}
                 alt="Upload Clients"
                 className="w-16 h-16"
               />
-              <span className="mt-2 text-sm font-medium underline underline-offset-2 decoration-1">
-                UPLOAD CLIENTS
+              <span className="mt-2 text-sm font-medium">
+                <span className="underline underline-offset-2 decoration-1">
+                  UPLOAD CLIENTS
+                </span>
                 {clientFile && (
                   <FiCheckCircle
                     className="inline-block align-middle ml-1"
@@ -143,10 +195,26 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
             <input
               id="client-upload"
               type="file"
+              ref={clientFileInputRef}
               accept=".xlsx,.csv"
               className="hidden"
               onChange={(e) => handleFileChange(e, "client")}
             />
+            <div className={clientFileName ? "block" : "invisible"}>
+              <div className="flex text-sm font-bold items-center mt-1">
+                <p className="truncate text-[#1264B1] max-w-[7rem]">
+                  {clientFileName}
+                </p>
+                <button
+                  onClick={() => {
+                    handleClientFile();
+                  }}
+                  className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
+                >
+                  <IoIosClose size={20} />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -163,7 +231,8 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
               system. Please upload client sheet with new clients.{" "}
               <span
                 data-tooltip-id="missingClientsTip"
-                className="underline cursor-pointer">
+                className="underline cursor-pointer"
+              >
                 View missing clients
               </span>
             </p>
@@ -189,7 +258,8 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
                 : "bg-gray-300 cursor-not-allowed"
             }`}
             disabled={!uploadButtonEnabled}
-            onClick={handleSubmit}>
+            onClick={handleSubmit}
+          >
             UPLOAD DATA
           </button>
         </div>
