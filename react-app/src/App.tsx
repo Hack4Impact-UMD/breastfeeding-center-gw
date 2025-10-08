@@ -49,8 +49,6 @@ function App() {
               }
             />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<NewUserPage />} />
-            <Route path="/register-success" element={<RegisterSuccessPage />} />
             <Route path="/logout" element={<LogoutPage />} />
             <Route
               path="/services/jane"
