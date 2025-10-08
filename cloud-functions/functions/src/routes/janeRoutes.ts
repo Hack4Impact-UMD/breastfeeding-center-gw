@@ -30,8 +30,8 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
     req.files["appointments"][0].buffer,
   );
 
-  if (appointmentParseResults === "Missing headers") {
-    return res.status(400).send("Missing headers");
+  if (typeof appointmentParseResults == 'string') {
+    return res.status(400).send(appointmentParseResults)
   }
 
   const { appointments: appointments_sheet, patientNames } = appointmentParseResults
@@ -41,9 +41,10 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
     req.files["clients"][0].buffer,
   );
 
-  if (clientParseResults === "Missing headers") {
-    return res.status(400).send("Missing headers");
+  if (typeof clientParseResults == 'string') {
+    return res.status(400).send(appointmentParseResults)
   }
+
   const { clients: clients_sheet, babies: babyList } = clientParseResults
 
   // logger.info(req.files["clients"][0].buffer.toString())
@@ -79,7 +80,7 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
 
   // implement all functions below
   function is_baby_appt(appt: JaneAppt): boolean {
-    return babyList.some(baby => baby.id === appt.patientId)
+    return babyList.some((baby: {id : string}) => baby.id === appt.patientId)
   }
 
   async function appt_in_firebase(appt: JaneAppt): Promise<boolean> {
@@ -155,7 +156,7 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
   }
 
   function client_in_clients_sheet(patientId: string): boolean {
-    return clients_sheet.some(client => client["id"] === patientId)
+    return clients_sheet.some((client: {id : string}) => client.id === patientId)
   }
 
   for (const [[start_time, staff_member], appointments] of appointments_map) {
@@ -168,7 +169,7 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
     for (const appt of appointments) {
       // the appt is for baby
       if (is_baby_appt(appt)) {
-        const baby = babyList.find(baby => baby.id === appt.patientId); // find matching baby
+        const baby = babyList.find((baby: {id : string}) => baby.id === appt.patientId); // find matching baby
         if (baby) {
           babies.push(baby)
         }
@@ -185,7 +186,7 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
         } else if (client_in_clients_sheet(appt.patientId)) {
           // TO-DO
           // reference the client list to get the client information necessary to create a Client object
-          const client = clients_sheet.find(client => client.id == appt.patientId)
+          const client = clients_sheet.find((client: {id : string}) => client.id == appt.patientId)
           parent = client
         } else {
           const patientName = patientNames[appt.patientId]
@@ -212,7 +213,7 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
     babies.forEach((baby) => {
       if (
         !parentResolved?.baby.some(
-          (existingBaby) => existingBaby.id === baby.id,
+          (existingBaby: {id : string}) => existingBaby.id === baby.id,
         )
       ) {
         parentResolved?.baby.push(baby);
