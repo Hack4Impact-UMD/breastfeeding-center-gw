@@ -70,18 +70,21 @@ export default function NewUserPage() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    
+    // Check for validation errors and show appropriate message
     if (!validatePhone(phone)) {
-      setError("Phone number must be 10 digits.");
+      setError("One or more fields is invalid. Please re-enter phone or email fields to create an account.");
       return;
     }
     if (!validatePassword(password)) {
-      setError("Password does not meet requirements.");
+      setError("One or more fields is invalid. Please re-enter phone or email fields to create an account.");
       return;
     }
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError("One or more fields is invalid. Please re-enter phone or email fields to create an account.");
       return;
     }
+    
     setError("");
     navigate("/register-success");
   }
@@ -89,7 +92,7 @@ export default function NewUserPage() {
   return (
     <div className="flex flex-col items-center min-h-screen justify-center bg-white">
       <img src="/bcgw-logo.png" alt="logo" className="w-16 mb-4" />
-      <h1 className="text-3xl font-semibold mb-6 text-center">Welcome new user!</h1>
+      <h1 className="font-semibold mb-6 text-center" style={{ fontSize: '28px' }}>Welcome new user!</h1>
       <form
         className="w-full max-w-lg flex flex-col gap-4"
         onSubmit={handleSubmit}
@@ -154,13 +157,13 @@ export default function NewUserPage() {
             disabled
           />
         </div>
-        <div className="relative">
+        <div className="relative w-[108%]">
           <label className="block font-medium mb-1">
             Password <span className="text-red-500">*</span>
           </label>
-          <div className="relative flex items-center">
+          <div className="flex items-center gap-2">
             <input
-              className={`w-full border rounded px-3 py-2 pr-10 ${password && !isPasswordValid ? "border-red-500" : ""}`}
+              className={`flex-1 border rounded px-3 py-2 ${password && !isPasswordValid ? "border-red-500" : ""}`}
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={e => setPassword(e.target.value)}
@@ -169,38 +172,22 @@ export default function NewUserPage() {
             />
             <button
               type="button"
-              className="absolute right-8 top-1/2 -translate-y-1/2 text-xl text-gray-500"
+              className="text-2xl text-gray-500 flex-shrink-0 cursor-pointer hover:text-gray-700"
               onClick={() => setShowPassword(v => !v)}
               tabIndex={-1}
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
-              {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
-            </button>
-            <button
-              type="button"
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-xl text-gray-500"
-              onClick={() => setShowPasswordInfo(v => !v)}
-              tabIndex={-1}
-              aria-label="Password requirements"
-            >
-              <AiOutlineInfoCircle />
+              {showPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
             </button>
           </div>
-          {showPasswordInfo && (
-            <ul className="mt-2 ml-1 text-xs bg-gray-50 border rounded p-2 shadow">
-              {PASSWORD_REQUIREMENTS.map(req => (
-                <li key={req} className="text-gray-700">• {req}</li>
-              ))}
-            </ul>
-          )}
         </div>
-        <div className="relative">
+        <div className="relative w-[108%]">
           <label className="block font-medium mb-1">
             Confirm Password <span className="text-red-500">*</span>
           </label>
-          <div className="relative flex items-center">
+          <div className="flex items-center gap-2">
             <input
-              className={`w-full border rounded px-3 py-2 pr-10 ${confirmPassword && !doPasswordsMatch ? "border-red-500" : ""}`}
+              className={`flex-1 border rounded px-3 py-2 ${confirmPassword && !doPasswordsMatch ? "border-red-500" : ""}`}
               type={showConfirmPassword ? "text" : "password"}
               value={confirmPassword}
               onChange={e => setConfirmPassword(e.target.value)}
@@ -209,28 +196,30 @@ export default function NewUserPage() {
             />
             <button
               type="button"
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-xl text-gray-500"
+              className="text-2xl text-gray-500 flex-shrink-0 cursor-pointer hover:text-gray-700"
               onClick={() => setShowConfirmPassword(v => !v)}
               tabIndex={-1}
               aria-label={showConfirmPassword ? "Hide password" : "Show password"}
             >
-              {showConfirmPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+              {showConfirmPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
             </button>
           </div>
         </div>
-        <button
-          type="submit"
-          className={`mt-4 w-full py-2 rounded text-white font-semibold transition ${
-            canSubmit
-              ? "bg-yellow-500 hover:bg-yellow-600 cursor-pointer"
-              : "bg-gray-300 cursor-not-allowed"
-          }`}
-          disabled={!canSubmit}
-        >
-          Create Account
-        </button>
+        <div className="flex justify-center mt-4">
+          <button
+            type="submit"
+            className={`px-8 py-2 rounded-full text-white font-semibold transition ${
+              allFieldsFilled
+                ? "bg-yellow-500 hover:bg-yellow-600 cursor-pointer"
+                : "bg-gray-300 cursor-not-allowed"
+            }`}
+            disabled={!allFieldsFilled}
+          >
+            Create Account
+          </button>
+        </div>
         {error && (
-          <div className="text-red-500 text-center text-sm mt-2">
+          <div className="text-red-500 text-center text-sm mt-4">
             {error}
           </div>
         )}
