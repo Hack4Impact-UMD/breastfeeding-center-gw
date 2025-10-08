@@ -1,6 +1,8 @@
 import * as XLSX from "xlsx";
 import csv from "csvtojson";
 import { JaneAppt, VisitType } from "../types/JaneType";
+import { json } from "stream/consumers";
+import { app } from "firebase-admin";
 
 export async function parseAppointmentSheet(
   fileName: string,
@@ -19,6 +21,8 @@ export async function parseAppointmentSheet(
   const requiredHeaders = [
     "id",
     "patient_number",
+    "patient_first_name",
+    "patient_last_name",
     "start_at",
     "end_at",
     "treatment_name",
@@ -33,7 +37,7 @@ export async function parseAppointmentSheet(
     jsonArray = await csv().fromString(fileAsString);
     const headers = Object.keys(jsonArray[0]);
     const missing = headers.filter((h: string) => requiredHeaders.includes(h));
-    if (missing.length !== 7) {
+    if (missing.length !== 9) {
       console.log(missing);
       return "Missing headers";
     }
@@ -73,12 +77,32 @@ export async function parseAppointmentSheet(
       return jsonObj;
     });
   }
-
   console.log(jsonArray);
-  return jsonArray;
+
+  type PatientInfo = {
+    firstName: string;
+    lastName: string;
+  }
+
+  // initializing the objects to return 
+  const patientNames: { [id: string]: PatientInfo } = {};
+  const appointments: JaneAppt[] = [];
+
+  // looping through each element in jsonArray to turn into JaneAppt obj
+  for (const rawAppt of jsonArray) {
+    // parsing rawAppt data in jsonArray and adding it to appointments list
+    const appt = parseAppointment(rawAppt)
+    appointments.push(appt)
+
+    // parsing rawAppt data in jsonArray and adding it to patientNames list
+    patientNames[rawAppt.patient_number] = { firstName: rawAppt.patient_first_name, lastName: rawAppt.patient_last_name }
+  }
+
+  
+  return { appointments, patientNames };
 }
 
-export function parseAppointmentRow(appt: any) {
+function parseAppointment(appt: any) {
   const janeAppt = {} as JaneAppt;
   janeAppt.apptId = appt.id.trim();
   janeAppt.patientId = appt.patient_number.trim();
@@ -115,6 +139,10 @@ export function parseAppointmentRow(appt: any) {
 
   return janeAppt;
 }
+
+
+
+
 // export async function getJaneTypes(
 //   e: React.ChangeEvent<HTMLInputElement>,
 // ): Promise<Jane[]> {
