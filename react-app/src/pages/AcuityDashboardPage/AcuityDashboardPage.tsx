@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import {
   LineChart,
   LineSeries,
@@ -370,6 +370,22 @@ export default function AcuityDashboardPage() {
 
   // ── INSTRUCTOR dropdown state & data ─────────────────────────
   const [selectedInstructor, setSelectedInstructor] = useState("All Classes");
+
+  const typeToCategory: Record<string, string> = {
+    "Postpartum Classes": "Postpartum",
+    "Prenatal Classes": "Prenatal",
+    "Infant Massage": "Infant Massage",
+    "Parent Groups": "Parent Groups",
+    "Childbirth Classes": "Childbirth",
+  };
+
+  const instructorTableRows = useMemo(() => {
+    if (selectedInstructor === "All Classes") return instructorData;
+    const cat = typeToCategory[selectedInstructor] ?? selectedInstructor;
+    return instructorData.filter((r) => r.category === cat);
+  }, [selectedInstructor, instructorData]);
+
+
   const allInstructorData = [
     {
       key: "Postpartum Classes",
@@ -437,9 +453,8 @@ export default function AcuityDashboardPage() {
 
       {/* Main Content */}
       <div
-        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
-          navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-        }`}>
+        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
+          }`}>
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-20 space-y-5">
           <div className={centerItemsInDiv}>
@@ -459,20 +474,18 @@ export default function AcuityDashboardPage() {
           <div className={`${centerItemsInDiv} pt-4`}>
             <div className="flex flex-row">
               <button
-                className={`${graphTableButtonStyle} ${
-                  attendanceDisplay == "graph"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
-                }`}
+                className={`${graphTableButtonStyle} ${attendanceDisplay == "graph"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
+                  }`}
                 onClick={() => setAttendanceDisplay("graph")}>
                 Graph
               </button>
               <button
-                className={`${graphTableButtonStyle} ${
-                  attendanceDisplay == "table"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
-                }`}
+                className={`${graphTableButtonStyle} ${attendanceDisplay == "table"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
+                  }`}
                 onClick={() => setAttendanceDisplay("table")}>
                 Table
               </button>
@@ -592,20 +605,18 @@ export default function AcuityDashboardPage() {
           <div className={`${centerItemsInDiv} pt-8`}>
             <div className="flex flex-row">
               <button
-                className={`${graphTableButtonStyle} ${
-                  classPopularityDisplay == "graph"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
-                }`}
+                className={`${graphTableButtonStyle} ${classPopularityDisplay == "graph"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
+                  }`}
                 onClick={() => setClassPopularityDisplay("graph")}>
                 Graph
               </button>
               <button
-                className={`${graphTableButtonStyle} ${
-                  classPopularityDisplay == "table"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
-                }`}
+                className={`${graphTableButtonStyle} ${classPopularityDisplay == "table"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
+                  }`}
                 onClick={() => setClassPopularityDisplay("table")}>
                 Table
               </button>
@@ -684,20 +695,18 @@ export default function AcuityDashboardPage() {
           <div className={`${centerItemsInDiv} pt-8`}>
             <div className="flex flex-row">
               <button
-                className={`${graphTableButtonStyle} ${
-                  instructorPopularityDisplay == "graph"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
-                }`}
+                className={`${graphTableButtonStyle} ${instructorPopularityDisplay == "graph"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
+                  }`}
                 onClick={() => setInstructorPopularityDisplay("graph")}>
                 Graph
               </button>
               <button
-                className={`${graphTableButtonStyle} ${
-                  instructorPopularityDisplay == "table"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
-                }`}
+                className={`${graphTableButtonStyle} ${instructorPopularityDisplay == "table"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
+                  }`}
                 onClick={() => setInstructorPopularityDisplay("table")}>
                 Table
               </button>
@@ -721,28 +730,31 @@ export default function AcuityDashboardPage() {
                 ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
                 : ""
             }
-            ref={instructorPopularityChartRef}>
+            ref={instructorPopularityChartRef}
+          >
             <div className="flex justify-between items-center space-x-4">
-              <div className="text-2xl font-semibold">
+              <div className="mb-5 text-2xl font-semibold">
                 Instructor Popularity Over Time,
-                {instructorPopularityDisplay === "graph" ? <br /> : <></>}{" "}
-                2/19/25 - 3/19/25
+                {instructorPopularityDisplay === "graph" ? <br /> : null} 2/19/25 - 3/19/25
               </div>
 
-              {/* Instructor dropdown */}
-              <div className="flex items-center space-x-2">
-                <label className="text-sm font-medium"></label>
-                <select
-                  className="border rounded-md px-2 py-1 text-sm"
-                  value={selectedInstructor}
-                  onChange={(e) => setSelectedInstructor(e.target.value)}>
-                  <option>All Classes</option>
-                  {allInstructorData.map((ins) => (
-                    <option key={ins.key}>{ins.key}</option>
-                  ))}
-                </select>
-              </div>
+              {/* header select only in GRAPH view */}
+              {instructorPopularityDisplay === "graph" && (
+                <div className="flex items-center space-x-2">
+                  <select
+                    className="border rounded-md px-3 py-2 text-sm"
+                    value={selectedInstructor}
+                    onChange={(e) => setSelectedInstructor(e.target.value)}
+                  >
+                    <option>All Classes</option>
+                    {allInstructorData.map((ins) => (
+                      <option key={ins.key}>{ins.key}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
+
             {instructorPopularityDisplay === "graph" ? (
               <div className="w-full h-96">
                 <LineChart
@@ -752,15 +764,80 @@ export default function AcuityDashboardPage() {
                 />
               </div>
             ) : (
-              <DataTable
-                columns={instructorColumns}
-                data={instructorData}
-                tableType="default"
-              />
+              // ===== TABLE MODE =====
+              <section className="border-[2px] border-[#000000] rounded-none overflow-hidden">
+                {/* blue strip w/ dropdown (Figma) */}
+                <div className="flex items-center justify-end bg-[#CED8E1] px-3 py-2 border-b-0">
+                  <select
+                    className="h-9 rounded-md border bg-white px-3 text-sm"
+                    value={selectedInstructor}
+                    onChange={(e) => setSelectedInstructor(e.target.value)}
+                  >
+                    <option>ALL CLASSES</option>
+                    {allInstructorData.map((ins) => (
+                      <option key={ins.key}>{ins.key}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* wrap DataTable to target styles without a CSS file */}
+                <div className="bcgw-acuity-table">
+                  <DataTable
+                    columns={instructorColumns}
+                    data={instructorTableRows}
+                    tableType="default"
+                  />
+                </div>
+              </section>
             )}
           </div>
+
+
         </div>
       </div>
+      <style>{`
+  /* kill any wrapper border/padding the DataTable adds */
+  .bcgw-acuity-table > div {
+    border: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* table reset */
+  .bcgw-acuity-table table {
+    border: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 0;
+    width: 100%;
+  }
+
+  /* header (new blue) + single line under it */
+  .bcgw-acuity-table thead th {
+    background: #CED8E1;          /* << new blue */
+    font-weight: 700;
+    border-top: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+  }
+
+  /* compact cells */
+  .bcgw-acuity-table thead th,
+  .bcgw-acuity-table tbody td {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+  }
+
+  /* uniform row color */
+  .bcgw-acuity-table tbody tr { background: #FFFFFF; }
+
+  /* black separators BETWEEN rows (keeps lines) */
+  .bcgw-acuity-table tbody tr + tr td {
+    border-top: 1px solid #000000;
+  }
+`}</style>
+
+
+
     </>
   );
 }
