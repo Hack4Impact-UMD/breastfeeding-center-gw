@@ -1,5 +1,6 @@
 import csv from "csvtojson";
-import { Baby, Client } from "../types/ClientType";
+import * as XLSX from "xlsx";
+import { Baby, Client } from "../types/clientTypes";
 
 export async function parseClientSheet(
   fileName: string,
@@ -16,7 +17,7 @@ export async function parseClientSheet(
   }
 
   const requiredHeaders = [
-    "patient_number",
+    "Patient Number",
     "First Name",
     "Middle Name",
     "Last Name",
@@ -40,10 +41,51 @@ export async function parseClientSheet(
     }
   } else {
     // xlsx here
-    // watch out for dob being string or number maybe
-    return "Missing headers";
-  }
+    const workbook = XLSX.read(fileAsBuffer);
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const xlsxDataArray = XLSX.utils.sheet_to_json(worksheet, {
+      header: 1,
+      raw: true,
+    });
 
+    const headers: string[] = xlsxDataArray[0] as string[];
+    console.log("headers", headers);
+    const columnIndices = requiredHeaders.map((col) => headers.indexOf(col));
+    // requiredHeaders.forEach((h) => {
+    //   if (headers.indexOf(h) === -1) {
+    //     console.log(h, "is missing");
+    //   }
+    // });
+    if (columnIndices.includes(-1)) {
+      console.log("missing");
+      return "Missing headers";
+    }
+
+    // console.log(xlsxDataArray);
+    // console.log(columnIndices);
+
+    jsonArray = (xlsxDataArray.slice(1) as any[]).map((data: string[]) => {
+      const jsonObj = {};
+      requiredHeaders.forEach((columnName, idx) => {
+        // add key pair value for relevant columns
+        (jsonObj as any)[columnName] = data[columnIndices[idx]];
+        // console.log(columnName, data[columnIndices[idx]]);
+
+        // need to convert date at all???
+        // if (columnName === "start_at" || columnName === "end_at") {
+        //   // remove the timezone so that ISO string will be consistent later on?
+        //   const value = (jsonObj as any)[columnName];
+        //   if (value.includes("-0400")) {
+        //     (jsonObj as any)[columnName] = data[columnIndices[idx]].slice(
+        //       0,
+        //       -6,
+        //     );
+        //   }
+        // }
+      });
+      return jsonObj;
+    });
+  }
   // parse raw json data into client type
   // check if baby or client by looking at preferred name
   // call appropriate function
@@ -66,10 +108,16 @@ function parseClient(clientRawData: any) {
   client.email = clientRawData.Email.trim();
   client.firstName = clientRawData["First Name"].trim();
   client.lastName = clientRawData["Last Name"].trim();
-  if (clientRawData["Middle Name"].length !== 0) {
+  if (
+    clientRawData["Middle Name"] !== undefined &&
+    clientRawData["Middle Name"].length !== 0
+  ) {
     client.middleName = clientRawData["Middle Name"];
   }
-  if (clientRawData["Insurance Company Name"].length !== 0) {
+  if (
+    clientRawData["Insurance Company Name"] !== undefined &&
+    clientRawData["Insurance Company Name"].length !== 0
+  ) {
     client.insurance = clientRawData["Insurance Company Name"];
   }
   return client;
@@ -82,7 +130,10 @@ function parseBaby(babyRawData: any) {
   baby.firstName = babyRawData["First Name"].trim();
   baby.lastName = babyRawData["Last Name"].trim();
 
-  if (babyRawData["Middle Name"].length !== 0) {
+  if (
+    babyRawData["Middle Name"] !== undefined &&
+    babyRawData["Middle Name"].length !== 0
+  ) {
     baby.middleName = babyRawData["Middle Name"];
   }
 

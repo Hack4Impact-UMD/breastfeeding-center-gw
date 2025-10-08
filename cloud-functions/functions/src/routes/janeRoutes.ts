@@ -1,19 +1,11 @@
 import { Request, Router, Response } from "express";
 import { upload } from "../middleware/filesMiddleware";
-// import { logger } from "firebase-functions";
-// import {
-//   // parseAppointmentRow,
-//   parseAppointmentSheet,
-// } from "../utils/janeUploadAppts";
 import { logger } from "firebase-functions";
 import { parseAppointmentSheet } from "../utils/janeUploadAppts";
 import { parseClientSheet } from "../utils/janeUploadClients";
-import { JaneAppt } from "../types/JaneType";
-import { Client, Baby } from "../types/ClientType";
+import { JaneAppt } from "../types/janeType";
+import { Client, Baby } from "../types/clientTypes";
 import { db } from "../services/firebase";
-
-// import { parseDateXlsx } from "../utils/janeUploadAppts";
-// import { Jane, VisitType } from "../types/janeType";
 
 const router = Router();
 

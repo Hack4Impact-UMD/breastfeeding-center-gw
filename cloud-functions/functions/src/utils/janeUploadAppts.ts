@@ -1,8 +1,6 @@
 import * as XLSX from "xlsx";
 import csv from "csvtojson";
-import { JaneAppt, VisitType } from "../types/JaneType";
-import { json } from "stream/consumers";
-import { app } from "firebase-admin";
+import { JaneAppt, VisitType } from "../types/janeType";
 
 export async function parseAppointmentSheet(
   fileName: string,
