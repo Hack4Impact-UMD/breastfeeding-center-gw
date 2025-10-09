@@ -1,8 +1,7 @@
 import { Jane, JaneID } from "@/types/JaneType";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
-import { LuArrowUpDown } from "react-icons/lu";
+import ColumnSortButton from "@/components/DataTable/ColumnSortIcon";
 
 export const janeDataColumns: ColumnDef<Jane>[] = [
   {
@@ -15,7 +14,7 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
-        className="cursor-pointer rounded-none"
+        className="cursor-pointer rounded-none pl-0 ml-2"
       />
     ),
     cell: ({ row }) => (
@@ -31,13 +30,9 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "date",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <ColumnSortButton column={column}>
           VISIT
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -45,13 +40,9 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "apptId",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <ColumnSortButton column={column}>
           ID
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -59,13 +50,9 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "email",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <ColumnSortButton column={column}>
           EMAIL
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -73,13 +60,9 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "firstName",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <ColumnSortButton column={column}>
           F. NAME
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -87,13 +70,9 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "lastName",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <ColumnSortButton column={column}>
           L. NAME
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -101,13 +80,9 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "babyDob",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <ColumnSortButton column={column}>
           DOB
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -115,13 +90,9 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "visitType",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <ColumnSortButton column={column}>
           VISIT TYPE
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -129,13 +100,9 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     accessorKey: "insurance",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+        <ColumnSortButton column={column}>
           INSURANCE
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
