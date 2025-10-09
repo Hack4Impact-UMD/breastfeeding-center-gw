@@ -9,13 +9,13 @@ import { db } from "../services/firebase";
 
 const router = Router();
 
-router.post("/upload", [upload], async (req: Request, res: Response) => {
+router.post("/upload", upload, async (req: Request, res: Response) => {
   // NOTE: req.files is an object with keys being the fieldName (appointments/clients)
   // and the values being a list of uploaded files for that field. Examples for reading
   // the text content of those fields is below. We can assume each field name has only one
   // file for our purposes. Also note, req.files is populated by the `upload` middleware
   // used on this route.
-  logger.info(req.files);
+  // logger.info(req.files);
 
   if (!req.files) return res.status(400).send("Missing files!");
   const appointmentParseResults = await parseAppointmentSheet(
@@ -71,7 +71,10 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
   const missing_clients: string[] = [];
 
   function is_baby_appt(appt: JaneAppt): boolean {
-    return babyList.some((baby: { id: string }) => baby.id === appt.patientId);
+    if (babyList?.some((baby: { id: string }) => baby.id === appt.patientId)) {
+      return true;
+    }
+    return false;
   }
 
   async function appt_in_firebase(appt: JaneAppt): Promise<boolean> {
@@ -145,7 +148,7 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
     );
   }
 
-  for (const [[start_time, staff_member], appointments] of appointments_map) {
+  for (const appointments of appointments_map.values()) {
     let parent = null; // Client type
     const babies: Baby[] = []; // list of baby type
     let parentAppt = null; // JaneAppt type, the parent's appointment

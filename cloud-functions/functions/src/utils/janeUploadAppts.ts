@@ -104,7 +104,7 @@ export async function parseAppointmentSheet(
 
 function parseAppointment(appt: any) {
   const janeAppt = {} as JaneAppt;
-  janeAppt.apptId = appt.id.trim();
+  janeAppt.apptId = appt.id;
   janeAppt.patientId = appt.patient_number.trim();
   janeAppt.clinician = appt.staff_member_name.trim();
   janeAppt.firstVisit = appt.first_visit.trim() === "true";

@@ -5,6 +5,7 @@ import { IoIosClose } from "react-icons/io";
 import { Tooltip } from "react-tooltip";
 import apptUploadIcon from "../../assets/apptUpload.svg";
 import clientUploadIcon from "../../assets/clientUpload.svg";
+import { axiosClient } from "@/lib/utils";
 
 type FileUploadPopupProps = {
   isOpen: boolean;
@@ -79,22 +80,35 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
     }
   };
   const handleSubmit = () => {
+    handleUploadSubmit(apptFile, clientFile);
+    handleClose();
+  };
+
+  const handleUploadSubmit = async (
+    apptFile: File | null,
+    clientFile: File | null,
+  ) => {
+    // TODO: Handle file upload logic
+    const formData = new FormData();
+    if (apptFile) {
+      formData.append("appointments", apptFile);
+    }
+    if (clientFile) {
+      formData.append("clients", clientFile);
+    }
+    try {
+      const axiosInstance = axiosClient();
+      const response = (await axiosInstance).post("/jane/upload", formData);
+      console.log("File uploaded successfully:", (await response).data);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+
     const missingClients = false; // TODO: implement check for missing clients
     if (missingClients) {
       setErrorType("missingClients");
       return;
     }
-    handleUploadSubmit(apptFile, clientFile);
-    handleClose();
-  };
-
-  const handleUploadSubmit = (
-    apptFile: File | null,
-    clientFile: File | null,
-  ) => {
-    // TODO: Handle file upload logic
-    console.log("Appointment file:", apptFile);
-    console.log("Client file:", clientFile);
   };
 
   const uploadButtonEnabled = !!apptFile && errorType === "none";

@@ -92,7 +92,7 @@ export async function parseClientSheet(
   const clientList: Client[] = [];
   const babyList: Baby[] = [];
   jsonArray.forEach((jsonObj) => {
-    if (jsonObj["Preferred Name"].toLowerCase().includes("baby")) {
+    if (jsonObj["Preferred Name"]?.toLowerCase().includes("baby")) {
       babyList.push(parseBaby(jsonObj));
     } else {
       clientList.push(parseClient(jsonObj));
