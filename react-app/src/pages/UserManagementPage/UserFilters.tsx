@@ -44,9 +44,9 @@ const UserFilters: React.FC<Props> = ({
               className="h-9 px-4 w-32 border border-black rounded bg-white text-sm focus:outline-none"
             >
               <option value="All">All</option>
-              <option value="Director">Director</option>
-              <option value="Admin">Admin</option>
-              <option value="Volunteer">Volunteer</option>
+              <option value="DIRECTOR">Director</option>
+              <option value="ADMIN">Admin</option>
+              <option value="VOLUNTEER">Volunteer</option>
             </select>
           </div>
         </div>
