@@ -74,8 +74,8 @@ export function DataTable<TData, TValue>({
   useEffect(() => {
     setRowsSelected(
       Object.values(table.getSelectedRowModel().rowsById).map(
-        (item) => item.original
-      )
+        (item) => item.original,
+      ),
     );
   }, [rowSelection]);
 
@@ -94,7 +94,8 @@ export function DataTable<TData, TValue>({
                 : "bg-bcgw-yellow-dark cursor-pointer hover:bg-bcgw-yellow-light"
             } text-base border-1 border-black-500 py-1.5 font-bold px-6 rounded-[10px]`}
             disabled={rowsSelected.length === 0}
-            onClick={openModal}>
+            onClick={openModal}
+          >
             <div className="flex items-center gap-2">
               <FiTrash /> Delete
             </div>
@@ -119,10 +120,13 @@ export function DataTable<TData, TValue>({
         <Table>
           <TableHeader
             className={`${
-              tableType === "janeData" || tableType === "default"
+              tableType === "janeData" ||
+              tableType === "default" ||
+              tableType === "clientsLost"
                 ? "bg-[#0C3D6B33]"
                 : "bg-[#B9C4CE]"
-            }`}>
+            }`}
+          >
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -132,7 +136,7 @@ export function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -151,18 +155,21 @@ export function DataTable<TData, TValue>({
                     }
                   }}
                   data-state={row.getIsSelected() ? "selected" : "unselected"}
-                  className={`group data-[state=selected]:bg-gray data-[state=unselected]:bg-white`}>
+                  className={`group data-[state=selected]:bg-gray data-[state=unselected]:bg-white`}
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
                       className={`${
-                        tableType === "clientList"
+                        tableType === "clientList" ||
+                        tableType === "clientsLost"
                           ? "cursor-pointer group-hover:bg-gray-300 transition-colors"
                           : ""
-                      }`}>
+                      }`}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -172,7 +179,8 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center">
+                  className="h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>
@@ -187,7 +195,8 @@ export function DataTable<TData, TValue>({
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
               table.setPageSize(Number(value));
-            }}>
+            }}
+          >
             <SelectTrigger className="h-8 w-[70px] bg-white cursor-pointer">
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
@@ -196,7 +205,8 @@ export function DataTable<TData, TValue>({
                 <SelectItem
                   key={pageSize}
                   value={`${pageSize}`}
-                  className="cursor-pointer">
+                  className="cursor-pointer"
+                >
                   {pageSize}
                 </SelectItem>
               ))}
@@ -209,7 +219,8 @@ export function DataTable<TData, TValue>({
                 : "cursor-not-allowed opacity-50"
             }`}
             onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}>
+            disabled={!table.getCanPreviousPage()}
+          >
             {"<"}
           </button>
           <button
@@ -219,7 +230,8 @@ export function DataTable<TData, TValue>({
                 : "cursor-not-allowed opacity-50"
             }`}
             onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}>
+            disabled={!table.getCanNextPage()}
+          >
             {">"}
           </button>
         </div>

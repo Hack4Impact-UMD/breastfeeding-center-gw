@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import Header from "../../components/Header.tsx";
 import NavigationBar from "../../components/NavigationBar/NavigationBar.tsx";
+import ClientLostPopup from "./ClientLostPopup.tsx";
 import {
   PieArcSeries,
   PieChart,
@@ -29,9 +30,6 @@ import {
   makeRetentionRateColumns,
 } from "./JaneTableColumns";
 import { DataTable } from "@/components/DataTable/DataTable";
-import { ColumnDef } from "@tanstack/react-table";
-
-
 
 const JaneDashboardPage = () => {
   //nav bar
@@ -52,7 +50,7 @@ const JaneDashboardPage = () => {
   const [janeData, setJaneData] = useState<Jane[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [chartData, setChartData] = useState<{ key: string; data: number }[]>(
-    []
+    [],
   );
   const [visitDisplay, setVisitDisplay] = useState<string>("graph");
   const [retentionDisplay, setRetentionDisplay] = useState<string>("graph");
@@ -86,25 +84,10 @@ const JaneDashboardPage = () => {
       key: "6th week",
     },
   ];
-  type LostClient = { first: string; last: string; email: string };
-  const lostClientColumns: ColumnDef<LostClient>[] = [
-    {
-      accessorKey: "first", header: "First Name",
-      cell: ({ row }) => <span className="hover:underline cursor-pointer">{row.getValue("first")}</span>
-    },
-    {
-      accessorKey: "last", header: "Last Name",
-      cell: ({ row }) => <span className="hover:underline cursor-pointer">{row.getValue("last")}</span>
-    },
-    {
-      accessorKey: "email", header: "Email",
-      cell: ({ row }) => <span className="hover:underline cursor-pointer">{row.getValue("email")}</span>
-    },
-  ];
 
   const handleExport = async (
     ref: React.RefObject<HTMLDivElement | null>,
-    filename: string
+    filename: string,
   ) => {
     const element = ref.current;
     if (!element) {
@@ -274,8 +257,6 @@ const JaneDashboardPage = () => {
     },
   ];
 
-
-
   useEffect(() => {
     setLoading(true);
     getAllJaneData().then((janeData) => {
@@ -297,8 +278,10 @@ const JaneDashboardPage = () => {
     <>
       <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
       <div
-        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-          }`}>
+        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
+          navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
+        }`}
+      >
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-20">
           {/*headings*/}
@@ -331,25 +314,30 @@ const JaneDashboardPage = () => {
               <div className={`${centerItemsInDiv} pt-4 mb-6`}>
                 <div className="flex flex-row">
                   <button
-                    className={`${graphTableButtonStyle} ${visitDisplay == "graph"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#CED8E1]"
-                      }`}
-                    onClick={() => setVisitDisplay("graph")}>
+                    className={`${graphTableButtonStyle} ${
+                      visitDisplay == "graph"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#CED8E1]"
+                    }`}
+                    onClick={() => setVisitDisplay("graph")}
+                  >
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${visitDisplay == "table"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#CED8E1]"
-                      }`}
-                    onClick={() => setVisitDisplay("table")}>
+                    className={`${graphTableButtonStyle} ${
+                      visitDisplay == "table"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#CED8E1]"
+                    }`}
+                    onClick={() => setVisitDisplay("table")}
+                  >
                     Table
                   </button>
                 </div>
                 <button
                   className={transparentGrayButtonStyle}
-                  onClick={() => handleExport(pieChartRef, "visit_breakdown")}>
+                  onClick={() => handleExport(pieChartRef, "visit_breakdown")}
+                >
                   Export
                 </button>
               </div>
@@ -360,15 +348,16 @@ const JaneDashboardPage = () => {
                     Visit Breakdown:{" "}
                     {dateRange.startDate && dateRange.endDate
                       ? formatDate(dateRange.startDate) +
-                      " - " +
-                      formatDate(dateRange.endDate)
+                        " - " +
+                        formatDate(dateRange.endDate)
                       : "All Data"}
                   </span>
                   {/*chart*/}
                   {chartData.length > 0 ? (
                     <div
                       className="chartContainer"
-                      style={{ width: "250px", height: "250px" }}>
+                      style={{ width: "250px", height: "250px" }}
+                    >
                       {loading ? (
                         <Loading />
                       ) : (
@@ -409,8 +398,8 @@ const JaneDashboardPage = () => {
                     Visit Breakdown:{" "}
                     {dateRange.startDate && dateRange.endDate
                       ? formatDate(dateRange.startDate) +
-                      " - " +
-                      formatDate(dateRange.endDate)
+                        " - " +
+                        formatDate(dateRange.endDate)
                       : "All Data"}
                   </span>
                   <DataTable
@@ -427,43 +416,48 @@ const JaneDashboardPage = () => {
                 retentionDisplay === "graph"
                   ? "flex-1 min-w-[300px] max-w-[60%]"
                   : ""
-              }>
+              }
+            >
               <div className={`${centerItemsInDiv} pt-4 mb-6`}>
                 <div className="flex flex-row">
                   <button
-                    className={`${graphTableButtonStyle} ${retentionDisplay == "graph"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#CED8E1]"
-                      }`}
-                    onClick={() => setRetentionDisplay("graph")}>
+                    className={`${graphTableButtonStyle} ${
+                      retentionDisplay == "graph"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#CED8E1]"
+                    }`}
+                    onClick={() => setRetentionDisplay("graph")}
+                  >
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${retentionDisplay == "table"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#CED8E1]"
-                      }`}
-                    onClick={() => setRetentionDisplay("table")}>
+                    className={`${graphTableButtonStyle} ${
+                      retentionDisplay == "table"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#CED8E1]"
+                    }`}
+                    onClick={() => setRetentionDisplay("table")}
+                  >
                     Table
                   </button>
                 </div>
                 <button
                   className={transparentGrayButtonStyle}
-                  onClick={() =>
-                    handleExport(funnelChartRef, "retention_rate")
-                  }>
+                  onClick={() => handleExport(funnelChartRef, "retention_rate")}
+                >
                   Export
                 </button>
               </div>
               <div
                 className={retentionDisplay === "graph" ? chartDiv : ""}
-                ref={funnelChartRef}>
+                ref={funnelChartRef}
+              >
                 <span className="self-start font-semibold text-2xl mb-2">
                   Retention Rate:{" "}
                   {dateRange.startDate && dateRange.endDate
                     ? formatDate(dateRange.startDate) +
-                    " - " +
-                    formatDate(dateRange.endDate)
+                      " - " +
+                      formatDate(dateRange.endDate)
                     : "All Data"}
                 </span>
                 {retentionDisplay === "graph" ? (
@@ -489,88 +483,23 @@ const JaneDashboardPage = () => {
                   />
                 ) : (
                   <>
-                    <div className="[&_td]:py-3 [&_th]:py-">
+                    <div className="[&_td]:py-3 [&_th]:py-3">
                       <DataTable
-                        columns={makeRetentionRateColumns((row) => setOpenRow(row))}
+                        columns={makeRetentionRateColumns((row) =>
+                          setOpenRow(row),
+                        )}
                         data={retentionData}
                         tableType="default"
                       />
                     </div>
 
                     {openRow && (
-                      <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-                        <div className="bg-white w-[min(900px,95vw)] max-h-[80vh] rounded-lg border-2 border-black overflow-auto">
-                          {/* Header (edge-to-edge) */}
-                          <div className="-m-4">
-                            <div className="flex items-center justify-between p-4">
-                              <h2 className="ml-4 mt-2 text-2xl font-semibold">
-                                Clients Lost After {openRow.visit}
-                              </h2>
-                              <button
-                                aria-label="Close"
-                                onClick={() => setOpenRow(null)}
-                                className="mt-3 mr-3 text-2xl leading-none"
-                              >
-                                ×
-                              </button>
-                            </div>
-                            {/* Full-width black line */}
-                            <div className="mb-3 w-full border-t-2 border-black" />
-                          </div>
-
-                          {/* Content area (padded) */}
-                          <div className="p-4">
-                            {/* Export button row */}
-                            <div className="flex justify-end mb-0">
-                              <button className=" px-4 py-1 border-2 border-black rounded-full hover:bg-gray-100">
-                                Export
-                              </button>
-                            </div>
-
-                            {/* Table + footer */}
-                            <div className="mt-0 flex flex-col">
-                              <DataTable
-                                tableType="default"
-                                columns={lostClientColumns}
-                                data={(openRow?.clients ?? []) as any}
-                              />
-
-                              {/* Pagination footer (visual, to match mock) */}
-                              <div className="flex justify-end items-center gap-2 mt-2 pr-1">
-                                <span className="text-sm text-gray-800">Showing 1 -</span>
-
-                                {/* custom pill w/ arrows */}
-                                <div className="inline-flex items-center h-8 px-3 border-2 border-black rounded-full">
-                                  <span className="text-sm">{openRow?.clients?.length ?? 0}</span>
-                                  <div className="flex flex-col ml-2 select-none">
-                                    <span className="text-[10px] leading-none pointer-events-none">▲</span>
-                                    <span className="text-[10px] leading-none -mt-[2px] pointer-events-none">▼</span>
-                                  </div>
-                                </div>
-
-                                <span className="text-sm text-gray-800">
-                                  of {openRow?.clients?.length ?? 0}
-                                </span>
-
-                                <button className="w-6 h-6 border border-black text-xs leading-none pb-[2px] cursor-not-allowed opacity-50" disabled>
-                                  {"<"}
-                                </button>
-                                <button className="w-6 h-6 border border-black text-xs leading-none pb-[2px] cursor-not-allowed opacity-50" disabled>
-                                  {">"}
-                                </button>
-                              </div>
-
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      <ClientLostPopup
+                        openRow={openRow!}
+                        setOpenRow={setOpenRow}
+                      />
                     )}
-
-
-
-
                   </>
-
                 )}
               </div>
             </div>
