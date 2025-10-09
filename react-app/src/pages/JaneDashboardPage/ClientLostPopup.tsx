@@ -1,6 +1,6 @@
 import Modal from "../../components/Modal";
 import { IoIosClose } from "react-icons/io";
-import { RetentionRate } from "./JaneTableColumns";
+import { RetentionRate, LostClient } from "./JaneTableColumns";
 import { DataTable } from "@/components/DataTable/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -14,7 +14,6 @@ const ClientLostPopup = ({ openRow, setOpenRow }: ClientLostPopupProps) => {
     setOpenRow(null);
   };
 
-  type LostClient = { first: string; last: string; email: string };
   const lostClientColumns: ColumnDef<LostClient>[] = [
     {
       accessorKey: "first",
