@@ -41,7 +41,7 @@ const UserFilters: React.FC<Props> = ({
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="h-9 px-10 border border-black rounded bg-white text-sm focus:outline-none"
+              className="h-9 px-4 w-32 border border-black rounded bg-white text-sm focus:outline-none"
             >
               <option value="All">All</option>
               <option value="Director">Director</option>

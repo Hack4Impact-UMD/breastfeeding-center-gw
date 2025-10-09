@@ -1,14 +1,7 @@
 import React from "react";
 import ProfileIcon from "../../components/ProfileIcon";
 import Modal from "../../components/Modal";
-
-export type User = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone?: string;
-  role: "Director" | "Admin" | "Volunteer" | string;
-};
+import { User } from "@/types/UserType";
 
 const roleChipClass =
   "px-5 py-1 rounded-full text-base border border-black bg-white flex items-center";
@@ -20,9 +13,8 @@ const ActionButton: React.FC<{
 }> = ({ children, onClick, className }) => (
   <button
     onClick={onClick}
-    className={`text-base px-4 py-2 border border-black rounded transition focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer ${
-      className ?? ""
-    }`}
+    className={`text-base px-4 py-2 border border-black rounded transition focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer ${className ?? ""
+      }`}
   >
     {children}
   </button>
@@ -33,8 +25,8 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
   const initials = `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase();
   const [isChangeAccessOpen, setIsChangeAccessOpen] = React.useState(false);
   const defaultAccess: "Volunteer" | "Admin" =
-    user.role === "Volunteer" ? "Volunteer" : "Admin";
-  const isDirector = user.role === "Director";
+    user.type === "VOLUNTEER" ? "Volunteer" : "Admin";
+  const isDirector = user.type === "DIRECTOR";
   const [selectedAccess, setSelectedAccess] = React.useState<
     "Volunteer" | "Admin"
   >(defaultAccess);
@@ -53,7 +45,7 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
           <a className="text-2xl text-blue w-65">
             {user.lastName}, {user.firstName}
           </a>
-          <span className={roleChipClass}>{user.role}</span>
+          <span className={roleChipClass}>{user.type.substring(0, 1) + user.type.substring(1).toLowerCase()}</span>
         </div>
 
         <div className="mt-4 space-y-2">
@@ -112,7 +104,7 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
                 xmlns="http://www.w3.org/2000/svg"
                 className="text-gray-700"
               >
-                <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
               </svg>
             </button>
 
@@ -164,9 +156,8 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
                             role="option"
                             aria-selected={selectedAccess === role}
                             key={role}
-                            className={`px-4 py-2 text-sm font-semibold cursor-pointer select-none ${
-                              selectedAccess === role ? "bg-gray-100" : "hover:bg-gray-50"
-                            }`}
+                            className={`px-4 py-2 text-sm font-semibold cursor-pointer select-none ${selectedAccess === role ? "bg-gray-100" : "hover:bg-gray-50"
+                              }`}
                             onClick={() => {
                               setSelectedAccess(role);
                               setIsDropdownOpen(false);
@@ -225,7 +216,7 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
               xmlns="http://www.w3.org/2000/svg"
               className="text-gray-700"
             >
-              <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
           </button>
 
@@ -276,7 +267,7 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
               xmlns="http://www.w3.org/2000/svg"
               className="text-gray-700"
             >
-              <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+              <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
           </button>
 

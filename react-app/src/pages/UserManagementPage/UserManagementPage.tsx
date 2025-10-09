@@ -3,8 +3,9 @@ import React, { useMemo, useState } from "react";
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
 import Header from "../../components/Header";
 import UserFilters from "./UserFilters";
-import UserCard, { User } from "./UserCard";
+import UserCard from "./UserCard";
 import AddAccountModal from "./AddAccountModal";
+import { User } from "@/types/UserType";
 
 
 const UserManagementPage: React.FC = () => {
@@ -13,17 +14,17 @@ const UserManagementPage: React.FC = () => {
   const [roleFilter, setRoleFilter] = useState("All");
   const [showAddModal, setShowAddModal] = useState(false);
 
-  const [users, setUsers] = useState<User[]>([
-    { firstName: "Isabella", lastName: "Clarke", email: "example@gmail.com", phone: "XXX-XXX-XXXX", role: "Director" },
-    { firstName: "Mark", lastName: "Cooke", email: "example@gmail.com", phone: "XXX-XXX-XXXX", role: "Volunteer" },
-    { firstName: "William", lastName: "Williams", email: "example@gmail.com", phone: "XXX-XXX-XXXX", role: "Admin" },
+  const [users] = useState<User[]>([
+    { firstName: "Isabella", lastName: "Clarke", email: "example@gmail.com", phone: "XXX-XXX-XXXX", type: "DIRECTOR", auth_id: "123" },
+    { firstName: "Mark", lastName: "Cooke", email: "example@gmail.com", phone: "XXX-XXX-XXXX", type: "VOLUNTEER", auth_id: "def" },
+    { firstName: "William", lastName: "Williams", email: "example@gmail.com", phone: "XXX-XXX-XXXX", type: "ADMIN", auth_id: "abc" },
   ]);
 
   const filteredUsers = useMemo(() => users.filter((u) => {
     const fullName = `${u.lastName}, ${u.firstName}`.toLowerCase();
     return (
       fullName.includes(search.toLowerCase()) &&
-      (roleFilter === "All" || u.role === roleFilter)
+      (roleFilter === "All" || u.type === roleFilter)
     );
   }), [users, roleFilter, search]);
 
@@ -53,23 +54,15 @@ const UserManagementPage: React.FC = () => {
 
           {/* user list */}
           <div className="mt-3">
-            {filteredUsers.map((u, i) => (
-              <UserCard key={i} user={u} />
+            {filteredUsers.map((u) => (
+              <UserCard key={u.auth_id} user={u} />
             ))}
           </div>
           <AddAccountModal
             open={showAddModal}
             onClose={() => setShowAddModal(false)}
-            onConfirm={newUser => {
-              setUsers([
-                ...users,
-                {
-                  ...newUser,
-                  phone: "XXX-XXX-XXXX", // or let user enter phone if you want
-                  role: "Volunteer",     // default role for new users
-                },
-              ]);
-              setShowAddModal(false);
+            onConfirm={() => {
+              //TODO: implement
             }}
           />
         </div>

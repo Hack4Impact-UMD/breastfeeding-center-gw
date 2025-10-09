@@ -3,30 +3,22 @@ import React from "react";
 
 type ProfileIconProps = {
   initials?: string;
-  size?: number; 
+  size?: number;
 };
 
 const ProfileIcon: React.FC<ProfileIconProps> = ({
   initials = "",
-  size = 112, 
+  size = 112,
 }) => {
-  const style: React.CSSProperties = {
-    width: size,
-    height: size,
-    borderWidth: 3, 
-  };
-
   return (
     <div
-      className="rounded-full flex items-center justify-center bg-bcgw-yellow-dark border-black"
-      style={style}
+      className={`size-[${size}px] border-[3px] rounded-full flex items-center justify-center bg-bcgw-yellow-dark border-black`}
     >
       {initials ? (
         <span
-          className="text-blue-dark"
+          className={`text-blue-dark leading-none`}
           style={{
             fontSize: Math.round(size / 2.2),
-            lineHeight: 1,
           }}
         >
           {initials}
