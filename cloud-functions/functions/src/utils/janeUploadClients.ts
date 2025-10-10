@@ -3,32 +3,23 @@ import * as XLSX from "xlsx";
 import { Baby, Client } from "../types/clientTypes";
 
 export async function parseClientSheet(
-  fileName: string,
+  fileType: string,
   fileAsBuffer: Buffer<ArrayBufferLike>,
 ) {
-  const parts = fileName.split(".");
-  let isCsv = false;
-
-  const extension = parts.length > 1 ? parts.pop()!.toLowerCase() : "";
-  if (extension === "csv") {
-    isCsv = true;
-  } else if (extension !== "xlsx") {
-    return "error not csv/xlsx";
-  }
-
   const requiredHeaders = [
     "Patient Number",
     "First Name",
-    "Middle Name",
     "Last Name",
     "Email",
+    "Birth Date",
+    "Middle Name", // this and below do not need to be populated
+    "Preferred Name",
     "Mobile Phone",
     "Insurance Company Name",
-    "Preferred Name",
-    "Birth Date",
   ];
 
   let jsonArray = [];
+  const isCsv = fileType === "csv";
 
   if (isCsv) {
     const fileAsString = fileAsBuffer.toString();
@@ -37,7 +28,7 @@ export async function parseClientSheet(
     const missing = headers.filter((h: string) => requiredHeaders.includes(h));
     if (missing.length !== 8) {
       console.log(missing);
-      return "Missing headers";
+      throw new Error("Missing headers");
     }
   } else {
     // xlsx here
@@ -51,14 +42,8 @@ export async function parseClientSheet(
     const headers: string[] = xlsxDataArray[0] as string[];
     console.log("headers", headers);
     const columnIndices = requiredHeaders.map((col) => headers.indexOf(col));
-    // requiredHeaders.forEach((h) => {
-    //   if (headers.indexOf(h) === -1) {
-    //     console.log(h, "is missing");
-    //   }
-    // });
     if (columnIndices.includes(-1)) {
-      console.log("missing");
-      return "Missing headers";
+      throw new Error("Missing headers");
     }
 
     // console.log(xlsxDataArray);
@@ -66,33 +51,32 @@ export async function parseClientSheet(
 
     jsonArray = (xlsxDataArray.slice(1) as any[]).map((data: string[]) => {
       const jsonObj = {};
-      requiredHeaders.forEach((columnName, idx) => {
+      requiredHeaders.slice().forEach((columnName, idx) => {
         // add key pair value for relevant columns
         (jsonObj as any)[columnName] = data[columnIndices[idx]];
-        // console.log(columnName, data[columnIndices[idx]]);
-
-        // need to convert date at all???
-        // if (columnName === "start_at" || columnName === "end_at") {
-        //   // remove the timezone so that ISO string will be consistent later on?
-        //   const value = (jsonObj as any)[columnName];
-        //   if (value.includes("-0400")) {
-        //     (jsonObj as any)[columnName] = data[columnIndices[idx]].slice(
-        //       0,
-        //       -6,
-        //     );
-        //   }
-        // }
       });
       return jsonObj;
     });
   }
-  // parse raw json data into client type
-  // check if baby or client by looking at preferred name
-  // call appropriate function
+
+  // check array for any undefined values on required columns
+  // const objsUndefinedData = jsonArray.filter((obj) =>
+  //   requiredHeaders.slice(0, 5).forEach((h) => obj[h] === undefined),
+  // );
+  // if (objsUndefinedData.length !== 0) {
+  //   console.log("required data missing");
+  //   console.log(objsUndefinedData);
+  //   return "error";
+  // }
+
+  // parse raw json data into client type or baby type
   const clientList: Client[] = [];
   const babyList: Baby[] = [];
   jsonArray.forEach((jsonObj) => {
-    if (jsonObj["Preferred Name"]?.toLowerCase().includes("baby")) {
+    if (
+      jsonObj["Preferred Name"]?.toLowerCase().includes("baby") ||
+      jsonObj["Preferred Name"]?.toLowerCase().includes("twin")
+    ) {
       babyList.push(parseBaby(jsonObj));
     } else {
       clientList.push(parseClient(jsonObj));
