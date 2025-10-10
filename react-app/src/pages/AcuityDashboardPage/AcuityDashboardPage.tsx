@@ -353,7 +353,7 @@ export default function AcuityDashboardPage() {
 
   const handleExport = async (
     ref: React.RefObject<HTMLDivElement | null>,
-    filename: string
+    filename: string,
   ) => {
     const element = ref.current;
     if (!element) {
@@ -384,7 +384,6 @@ export default function AcuityDashboardPage() {
     const cat = typeToCategory[selectedInstructor] ?? selectedInstructor;
     return instructorData.filter((r) => r.category === cat);
   }, [selectedInstructor, instructorData]);
-
 
   const allInstructorData = [
     {
@@ -453,8 +452,10 @@ export default function AcuityDashboardPage() {
 
       {/* Main Content */}
       <div
-        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-          }`}>
+        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
+          navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
+        }`}
+      >
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-20 space-y-5">
           <div className={centerItemsInDiv}>
@@ -474,19 +475,23 @@ export default function AcuityDashboardPage() {
           <div className={`${centerItemsInDiv} pt-4`}>
             <div className="flex flex-row">
               <button
-                className={`${graphTableButtonStyle} ${attendanceDisplay == "graph"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#f5f5f5]"
-                  }`}
-                onClick={() => setAttendanceDisplay("graph")}>
+                className={`${graphTableButtonStyle} ${
+                  attendanceDisplay == "graph"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
+                }`}
+                onClick={() => setAttendanceDisplay("graph")}
+              >
                 Graph
               </button>
               <button
-                className={`${graphTableButtonStyle} ${attendanceDisplay == "table"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#f5f5f5]"
-                  }`}
-                onClick={() => setAttendanceDisplay("table")}>
+                className={`${graphTableButtonStyle} ${
+                  attendanceDisplay == "table"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
+                }`}
+                onClick={() => setAttendanceDisplay("table")}
+              >
                 Table
               </button>
             </div>
@@ -494,7 +499,8 @@ export default function AcuityDashboardPage() {
               className={transparentGrayButtonStyle}
               onClick={() =>
                 handleExport(attendanceChartRef, "class_attendance")
-              }>
+              }
+            >
               Export
             </button>
           </div>
@@ -506,7 +512,8 @@ export default function AcuityDashboardPage() {
                 ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
                 : ""
             }
-            ref={attendanceChartRef}>
+            ref={attendanceChartRef}
+          >
             <div className="flex justify-between items-center space-x-4">
               <div className="mb-5 text-2xl font-semibold">
                 Class Attendance By Trimester,{" "}
@@ -520,7 +527,8 @@ export default function AcuityDashboardPage() {
                   <select
                     className="border rounded-md px-2 py-1 text-sm"
                     value={selectedClass}
-                    onChange={(e) => setSelectedClass(e.target.value)}>
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                  >
                     <option>All Classes</option>
                     {allClassData.map((c) => (
                       <option key={c.key}>{c.key}</option>
@@ -621,23 +629,26 @@ export default function AcuityDashboardPage() {
             )}
           </div>
 
-
           <div className={`${centerItemsInDiv} pt-8`}>
             <div className="flex flex-row">
               <button
-                className={`${graphTableButtonStyle} ${classPopularityDisplay == "graph"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#f5f5f5]"
-                  }`}
-                onClick={() => setClassPopularityDisplay("graph")}>
+                className={`${graphTableButtonStyle} ${
+                  classPopularityDisplay == "graph"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
+                }`}
+                onClick={() => setClassPopularityDisplay("graph")}
+              >
                 Graph
               </button>
               <button
-                className={`${graphTableButtonStyle} ${classPopularityDisplay == "table"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#f5f5f5]"
-                  }`}
-                onClick={() => setClassPopularityDisplay("table")}>
+                className={`${graphTableButtonStyle} ${
+                  classPopularityDisplay == "table"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
+                }`}
+                onClick={() => setClassPopularityDisplay("table")}
+              >
                 Table
               </button>
             </div>
@@ -645,7 +656,8 @@ export default function AcuityDashboardPage() {
               className={transparentGrayButtonStyle}
               onClick={() =>
                 handleExport(classPopularityChartRef, "class_popularity")
-              }>
+              }
+            >
               Export
             </button>
           </div>
@@ -657,7 +669,8 @@ export default function AcuityDashboardPage() {
                 ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
                 : ""
             }
-            ref={classPopularityChartRef}>
+            ref={classPopularityChartRef}
+          >
             <div className="flex justify-between items-center space-x-4">
               <div className="mb-5 text-2xl font-semibold">
                 Class Popularity Over Time,{" "}
@@ -680,7 +693,6 @@ export default function AcuityDashboardPage() {
                   </select>
                 </div>
               )}
-
             </div>
             {classPopularityDisplay === "graph" ? (
               <div className="w-full h-96">
@@ -709,7 +721,9 @@ export default function AcuityDashboardPage() {
                 {/* styled DataTable (using current placeholder columns/data) */}
                 <div className="bcgw-acuity-table">
                   <DataTable
-                    columns={instructorColumns}   /* keep until you have class-popularity columns */
+                    columns={
+                      instructorColumns
+                    } /* keep until you have class-popularity columns */
                     data={instructorData}
                     tableType="default"
                   />
@@ -721,19 +735,23 @@ export default function AcuityDashboardPage() {
           <div className={`${centerItemsInDiv} pt-8`}>
             <div className="flex flex-row">
               <button
-                className={`${graphTableButtonStyle} ${instructorPopularityDisplay == "graph"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#f5f5f5]"
-                  }`}
-                onClick={() => setInstructorPopularityDisplay("graph")}>
+                className={`${graphTableButtonStyle} ${
+                  instructorPopularityDisplay == "graph"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
+                }`}
+                onClick={() => setInstructorPopularityDisplay("graph")}
+              >
                 Graph
               </button>
               <button
-                className={`${graphTableButtonStyle} ${instructorPopularityDisplay == "table"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#f5f5f5]"
-                  }`}
-                onClick={() => setInstructorPopularityDisplay("table")}>
+                className={`${graphTableButtonStyle} ${
+                  instructorPopularityDisplay == "table"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
+                }`}
+                onClick={() => setInstructorPopularityDisplay("table")}
+              >
                 Table
               </button>
             </div>
@@ -742,9 +760,10 @@ export default function AcuityDashboardPage() {
               onClick={() =>
                 handleExport(
                   instructorPopularityChartRef,
-                  "instructor_popularity"
+                  "instructor_popularity",
                 )
-              }>
+              }
+            >
               Export
             </button>
           </div>
@@ -761,7 +780,8 @@ export default function AcuityDashboardPage() {
             <div className="flex justify-between items-center space-x-4">
               <div className="mb-5 text-2xl font-semibold">
                 Instructor Popularity Over Time,
-                {instructorPopularityDisplay === "graph" ? <br /> : null} 2/19/25 - 3/19/25
+                {instructorPopularityDisplay === "graph" ? <br /> : null}{" "}
+                2/19/25 - 3/19/25
               </div>
 
               {/* header select only in GRAPH view */}
@@ -817,8 +837,6 @@ export default function AcuityDashboardPage() {
               </section>
             )}
           </div>
-
-
         </div>
       </div>
       <style>{`
@@ -829,8 +847,7 @@ export default function AcuityDashboardPage() {
     margin: 0 !important;
     padding: 0 !important;
   }
-
-  /* table reset */
+    
   .bcgw-acuity-table table {
     border: 0;
     border-collapse: separate;
@@ -850,7 +867,6 @@ export default function AcuityDashboardPage() {
   /* compact cells */
   .bcgw-acuity-table thead th,
   .bcgw-acuity-table tbody td {
-        padding-left:
     padding-top: 10px !important;
     padding-bottom: 10px !important;
   }

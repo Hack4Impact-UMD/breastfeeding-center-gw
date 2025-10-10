@@ -1,17 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-
-/** Same header as Jane (static ⇅, click toggles sorting) */
-const headerButton = (title: string, column: any) => (
-  <button
-    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-    className="flex items-center gap-2 px-1 py-2 w-full text-left hover:opacity-90"
-    aria-label={`Sort by ${title}`}
-    type="button"
-  >
-    <span className="font-bold">{title}</span>
-    <span className="text-sm">⇅</span>
-  </button>
-);
+import ColumnSortButton from "@/components/DataTable/ColumnSortIcon";
 
 /* ---------- Trimester Attendance ---------- */
 export type TrimesterAttendance = {
@@ -28,16 +16,55 @@ export type TrimesterAttendance = {
 export const trimesterColumns: ColumnDef<TrimesterAttendance>[] = [
   {
     accessorKey: "class",
-    header: ({ column }) => headerButton("CLASS", column),
-    cell: ({ row }) => <span className="font-bold">{row.getValue("class")}</span>,
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>Class</ColumnSortButton>;
+    },
+    cell: ({ row }) => (
+      <span className="font-bold">{row.getValue("class")}</span>
+    ),
   },
-  { accessorKey: "category", header: ({ column }) => headerButton("CATEGORY", column) },
-  { accessorKey: "first", header: ({ column }) => headerButton("1ST", column) },
-  { accessorKey: "second", header: ({ column }) => headerButton("2ND", column) },
-  { accessorKey: "third", header: ({ column }) => headerButton("3RD", column) },
-  { accessorKey: "fourth", header: ({ column }) => headerButton("4TH", column) },
-  { accessorKey: "fifth", header: ({ column }) => headerButton("5TH", column) },
-  { accessorKey: "total", header: ({ column }) => headerButton("TOTAL", column) },
+  {
+    accessorKey: "category",
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>Category</ColumnSortButton>;
+    },
+  },
+  {
+    accessorKey: "first",
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>1st</ColumnSortButton>;
+    },
+  },
+  {
+    accessorKey: "second",
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>2nd</ColumnSortButton>;
+    },
+  },
+  {
+    accessorKey: "third",
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>3rd</ColumnSortButton>;
+    },
+  },
+  {
+    accessorKey: "fourth",
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>4th</ColumnSortButton>;
+    },
+  },
+  {
+    accessorKey: "fifth",
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>5th</ColumnSortButton>;
+    },
+  },
+  {
+    accessorKey: "total",
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>Total</ColumnSortButton>;
+    },
+  },
 ];
 
 /* ---------- Instructor Attendance ---------- */
@@ -52,11 +79,37 @@ export type InstructorAttendance = {
 export const instructorColumns: ColumnDef<InstructorAttendance>[] = [
   {
     accessorKey: "class",
-    header: ({ column }) => headerButton("CLASS", column),
-    cell: ({ row }) => <span className="font-bold">{row.getValue("class")}</span>,
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>Class</ColumnSortButton>;
+    },
+    cell: ({ row }) => (
+      <span className="font-bold">{row.getValue("class")}</span>
+    ),
   },
-  { accessorKey: "category", header: ({ column }) => headerButton("CATEGORY", column) },
-  { accessorKey: "total_attendance", header: ({ column }) => headerButton("TOTAL ATTENDANCE", column) },
-  { accessorKey: "instructor1_attendance", header: ({ column }) => headerButton("KAELY HARROD", column) },
-  { accessorKey: "instructor2_attendance", header: ({ column }) => headerButton("INSTRUCTOR 2", column) },
+  {
+    accessorKey: "category",
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>Category</ColumnSortButton>;
+    },
+  },
+  {
+    accessorKey: "total_attendance",
+    header: ({ column }) => {
+      return (
+        <ColumnSortButton column={column}>Total Attendance</ColumnSortButton>
+      );
+    },
+  },
+  {
+    accessorKey: "instructor1_attendance",
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>Kaely Harrod</ColumnSortButton>;
+    },
+  },
+  {
+    accessorKey: "instructor2_attendance",
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>Instructor 2</ColumnSortButton>;
+    },
+  },
 ];

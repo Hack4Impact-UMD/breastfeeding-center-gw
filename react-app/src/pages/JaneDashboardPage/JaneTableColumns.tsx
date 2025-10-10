@@ -1,4 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
+import ColumnSortButton from "@/components/DataTable/ColumnSortIcon";
 
 export type VisitBreakdown = {
   visitType: string;
@@ -11,14 +12,18 @@ export type LostClient = { first: string; last: string; email: string };
 export const visitBreakdownColumns: ColumnDef<VisitBreakdown>[] = [
   {
     accessorKey: "visitType",
-    header: () => <span className="font-bold">Visit Type</span>,
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>Visit Type</ColumnSortButton>;
+    },
     cell: ({ row }) => (
       <span className="font-bold">{row.getValue("visitType")}</span>
     ),
   },
   {
     accessorKey: "percent",
-    header: () => <span className="font-bold">Percent</span>,
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>Percent</ColumnSortButton>;
+    },
     cell: ({ row }) => {
       const value = row.getValue<number>("percent");
       return `${value}%`;
@@ -26,7 +31,9 @@ export const visitBreakdownColumns: ColumnDef<VisitBreakdown>[] = [
   },
   {
     accessorKey: "count",
-    header: () => <span className="font-bold">Count</span>,
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>Count</ColumnSortButton>;
+    },
     cell: ({ row }) => {
       const value = row.getValue<number>("count");
       return value.toLocaleString();
@@ -48,29 +55,43 @@ export function makeRetentionRateColumns(
   return [
     {
       accessorKey: "visit",
-      header: () => <span className="font-bold">Visits</span>,
+      header: ({ column }) => {
+        return <ColumnSortButton column={column}>Visits</ColumnSortButton>;
+      },
       cell: ({ row }) => (
         <span className="font-bold">{row.getValue("visit")}</span>
       ),
     },
     {
       accessorKey: "numberVisited",
-      header: () => <span className="font-bold">Number Visited</span>,
+      header: ({ column }) => {
+        return (
+          <ColumnSortButton column={column}>Number Visited</ColumnSortButton>
+        );
+      },
     },
     {
       accessorKey: "percent",
-      header: () => <span className="font-bold">Percent</span>,
+      header: ({ column }) => {
+        return <ColumnSortButton column={column}>Percent</ColumnSortButton>;
+      },
       cell: ({ row }) => `${row.getValue<number>("percent")}%`,
     },
     {
       // compute from clients so it always matches the chip count
       accessorKey: "loss",
-      header: () => <span className="font-bold">Loss</span>,
+      header: ({ column }) => {
+        return <ColumnSortButton column={column}>Loss</ColumnSortButton>;
+      },
       cell: ({ row }) => row.original.clients?.length ?? 0,
     },
     {
       accessorKey: "clientsLostNames",
-      header: () => <span className="font-bold">Clients Lost</span>,
+      header: ({ column }) => {
+        return (
+          <ColumnSortButton column={column}>Clients Lost</ColumnSortButton>
+        );
+      },
       cell: ({ row }) => {
         const r = row.original as RetentionRate;
         const hasClients = (r.clients?.length ?? 0) > 0;
