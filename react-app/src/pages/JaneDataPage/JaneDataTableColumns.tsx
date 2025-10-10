@@ -29,81 +29,49 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
   {
     accessorKey: "date",
     header: ({ column }) => {
-      return (
-        <ColumnSortButton column={column}>
-          VISIT
-        </ColumnSortButton>
-      );
+      return <ColumnSortButton column={column}>Visit</ColumnSortButton>;
     },
   },
   {
     accessorKey: "apptId",
     header: ({ column }) => {
-      return (
-        <ColumnSortButton column={column}>
-          ID
-        </ColumnSortButton>
-      );
+      return <ColumnSortButton column={column}>Id</ColumnSortButton>;
     },
   },
   {
     accessorKey: "email",
     header: ({ column }) => {
-      return (
-        <ColumnSortButton column={column}>
-          EMAIL
-        </ColumnSortButton>
-      );
+      return <ColumnSortButton column={column}>Email</ColumnSortButton>;
     },
   },
   {
     accessorKey: "firstName",
     header: ({ column }) => {
-      return (
-        <ColumnSortButton column={column}>
-          F. NAME
-        </ColumnSortButton>
-      );
+      return <ColumnSortButton column={column}>F. Name</ColumnSortButton>;
     },
   },
   {
     accessorKey: "lastName",
     header: ({ column }) => {
-      return (
-        <ColumnSortButton column={column}>
-          L. NAME
-        </ColumnSortButton>
-      );
+      return <ColumnSortButton column={column}>L. Name</ColumnSortButton>;
     },
   },
   {
     accessorKey: "babyDob",
     header: ({ column }) => {
-      return (
-        <ColumnSortButton column={column}>
-          DOB
-        </ColumnSortButton>
-      );
+      return <ColumnSortButton column={column}>DOB</ColumnSortButton>;
     },
   },
   {
     accessorKey: "visitType",
     header: ({ column }) => {
-      return (
-        <ColumnSortButton column={column}>
-          VISIT TYPE
-        </ColumnSortButton>
-      );
+      return <ColumnSortButton column={column}>Visit Type</ColumnSortButton>;
     },
   },
   {
     accessorKey: "insurance",
     header: ({ column }) => {
-      return (
-        <ColumnSortButton column={column}>
-          INSURANCE
-        </ColumnSortButton>
-      );
+      return <ColumnSortButton column={column}>Insurance</ColumnSortButton>;
     },
   },
 ];

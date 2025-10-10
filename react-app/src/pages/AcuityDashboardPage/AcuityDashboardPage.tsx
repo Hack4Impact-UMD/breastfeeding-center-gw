@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import {
   LineChart,
   LineSeries,
@@ -353,7 +353,7 @@ export default function AcuityDashboardPage() {
 
   const handleExport = async (
     ref: React.RefObject<HTMLDivElement | null>,
-    filename: string
+    filename: string,
   ) => {
     const element = ref.current;
     if (!element) {
@@ -370,6 +370,21 @@ export default function AcuityDashboardPage() {
 
   // ── INSTRUCTOR dropdown state & data ─────────────────────────
   const [selectedInstructor, setSelectedInstructor] = useState("All Classes");
+
+  const typeToCategory: Record<string, string> = {
+    "Postpartum Classes": "Postpartum",
+    "Prenatal Classes": "Prenatal",
+    "Infant Massage": "Infant Massage",
+    "Parent Groups": "Parent Groups",
+    "Childbirth Classes": "Childbirth",
+  };
+
+  const instructorTableRows = useMemo(() => {
+    if (selectedInstructor === "All Classes") return instructorData;
+    const cat = typeToCategory[selectedInstructor] ?? selectedInstructor;
+    return instructorData.filter((r) => r.category === cat);
+  }, [selectedInstructor, instructorData]);
+
   const allInstructorData = [
     {
       key: "Postpartum Classes",
@@ -439,7 +454,8 @@ export default function AcuityDashboardPage() {
       <div
         className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
           navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-        }`}>
+        }`}
+      >
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-20 space-y-5">
           <div className={centerItemsInDiv}>
@@ -464,7 +480,8 @@ export default function AcuityDashboardPage() {
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
                 }`}
-                onClick={() => setAttendanceDisplay("graph")}>
+                onClick={() => setAttendanceDisplay("graph")}
+              >
                 Graph
               </button>
               <button
@@ -473,7 +490,8 @@ export default function AcuityDashboardPage() {
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
                 }`}
-                onClick={() => setAttendanceDisplay("table")}>
+                onClick={() => setAttendanceDisplay("table")}
+              >
                 Table
               </button>
             </div>
@@ -481,7 +499,8 @@ export default function AcuityDashboardPage() {
               className={transparentGrayButtonStyle}
               onClick={() =>
                 handleExport(attendanceChartRef, "class_attendance")
-              }>
+              }
+            >
               Export
             </button>
           </div>
@@ -493,9 +512,10 @@ export default function AcuityDashboardPage() {
                 ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
                 : ""
             }
-            ref={attendanceChartRef}>
+            ref={attendanceChartRef}
+          >
             <div className="flex justify-between items-center space-x-4">
-              <div className="text-2xl font-semibold">
+              <div className="mb-5 text-2xl font-semibold">
                 Class Attendance By Trimester,{" "}
                 {attendanceDisplay === "graph" ? <br /> : <></>}2/19/25 -
                 3/19/25
@@ -507,7 +527,8 @@ export default function AcuityDashboardPage() {
                   <select
                     className="border rounded-md px-2 py-1 text-sm"
                     value={selectedClass}
-                    onChange={(e) => setSelectedClass(e.target.value)}>
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                  >
                     <option>All Classes</option>
                     {allClassData.map((c) => (
                       <option key={c.key}>{c.key}</option>
@@ -581,11 +602,30 @@ export default function AcuityDashboardPage() {
                 )}
               </div>
             ) : (
-              <DataTable
-                columns={trimesterColumns}
-                data={trimesterData}
-                tableType="default"
-              />
+              <section className="border-[2px] border-[#000000] rounded-none overflow-hidden">
+                {/* blue strip with Class Type dropdown */}
+                <div className="flex items-center justify-end bg-[#CED8E1] px-3 py-2 border-b-0">
+                  <select
+                    className="h-9 rounded-md border bg-white px-3 text-sm"
+                    value={selectedClass}
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                  >
+                    <option>All Classes</option>
+                    {allClassData.map((c) => (
+                      <option key={c.key}>{c.key}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* styled DataTable */}
+                <div className="bcgw-acuity-table">
+                  <DataTable
+                    columns={trimesterColumns}
+                    data={trimesterData}
+                    tableType="default"
+                  />
+                </div>
+              </section>
             )}
           </div>
 
@@ -597,7 +637,8 @@ export default function AcuityDashboardPage() {
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
                 }`}
-                onClick={() => setClassPopularityDisplay("graph")}>
+                onClick={() => setClassPopularityDisplay("graph")}
+              >
                 Graph
               </button>
               <button
@@ -606,7 +647,8 @@ export default function AcuityDashboardPage() {
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
                 }`}
-                onClick={() => setClassPopularityDisplay("table")}>
+                onClick={() => setClassPopularityDisplay("table")}
+              >
                 Table
               </button>
             </div>
@@ -614,7 +656,8 @@ export default function AcuityDashboardPage() {
               className={transparentGrayButtonStyle}
               onClick={() =>
                 handleExport(classPopularityChartRef, "class_popularity")
-              }>
+              }
+            >
               Export
             </button>
           </div>
@@ -626,35 +669,23 @@ export default function AcuityDashboardPage() {
                 ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
                 : ""
             }
-            ref={classPopularityChartRef}>
+            ref={classPopularityChartRef}
+          >
             <div className="flex justify-between items-center space-x-4">
-              <div className="text-2xl font-semibold">
+              <div className="mb-5 text-2xl font-semibold">
                 Class Popularity Over Time,{" "}
                 {classPopularityDisplay === "graph" ? <br /> : <></>} 2/19/25 -
                 3/19/25
               </div>
 
-              {classPopularityDisplay === "graph" ? (
-                // Class dropdown
+              {classPopularityDisplay === "graph" && (
                 <div className="flex items-center space-x-2">
                   <label className="text-sm font-medium"></label>
                   <select
                     className="border rounded-md px-2 py-1 text-sm"
                     value={selectedClass}
-                    onChange={(e) => setSelectedClass(e.target.value)}>
-                    <option>All Classes</option>
-                    {allClassData.map((c) => (
-                      <option key={c.key}>{c.key}</option>
-                    ))}
-                  </select>
-                </div>
-              ) : (
-                <div className="flex items-center space-x-2">
-                  <label className="text-sm font-medium"></label>
-                  <select
-                    className="border rounded-md px-2 py-1 text-sm"
-                    value={selectedClass}
-                    onChange={(e) => setSelectedClass(e.target.value)}>
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                  >
                     <option>All Classes</option>
                     {allClassData.map((c) => (
                       <option key={c.key}>{c.key}</option>
@@ -672,12 +703,32 @@ export default function AcuityDashboardPage() {
                 />
               </div>
             ) : (
-              <DataTable
-                columns={instructorColumns} // this should be changed to class popularity data
-                // but seems like there is no difference based on figma
-                data={instructorData}
-                tableType="default"
-              />
+              <section className="border-[2px] border-[#000000] rounded-none overflow-hidden">
+                {/* blue strip with Class Type dropdown */}
+                <div className="flex items-center justify-end bg-[#CED8E1] px-3 py-2 border-b-0">
+                  <select
+                    className="h-9 rounded-md border bg-white px-3 text-sm"
+                    value={selectedClass}
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                  >
+                    <option>All Classes</option>
+                    {allClassData.map((c) => (
+                      <option key={c.key}>{c.key}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* styled DataTable (using current placeholder columns/data) */}
+                <div className="bcgw-acuity-table">
+                  <DataTable
+                    columns={
+                      instructorColumns
+                    } /* keep until you have class-popularity columns */
+                    data={instructorData}
+                    tableType="default"
+                  />
+                </div>
+              </section>
             )}
           </div>
 
@@ -689,7 +740,8 @@ export default function AcuityDashboardPage() {
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
                 }`}
-                onClick={() => setInstructorPopularityDisplay("graph")}>
+                onClick={() => setInstructorPopularityDisplay("graph")}
+              >
                 Graph
               </button>
               <button
@@ -698,7 +750,8 @@ export default function AcuityDashboardPage() {
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
                 }`}
-                onClick={() => setInstructorPopularityDisplay("table")}>
+                onClick={() => setInstructorPopularityDisplay("table")}
+              >
                 Table
               </button>
             </div>
@@ -707,9 +760,10 @@ export default function AcuityDashboardPage() {
               onClick={() =>
                 handleExport(
                   instructorPopularityChartRef,
-                  "instructor_popularity"
+                  "instructor_popularity",
                 )
-              }>
+              }
+            >
               Export
             </button>
           </div>
@@ -721,28 +775,32 @@ export default function AcuityDashboardPage() {
                 ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
                 : ""
             }
-            ref={instructorPopularityChartRef}>
+            ref={instructorPopularityChartRef}
+          >
             <div className="flex justify-between items-center space-x-4">
-              <div className="text-2xl font-semibold">
+              <div className="mb-5 text-2xl font-semibold">
                 Instructor Popularity Over Time,
-                {instructorPopularityDisplay === "graph" ? <br /> : <></>}{" "}
+                {instructorPopularityDisplay === "graph" ? <br /> : null}{" "}
                 2/19/25 - 3/19/25
               </div>
 
-              {/* Instructor dropdown */}
-              <div className="flex items-center space-x-2">
-                <label className="text-sm font-medium"></label>
-                <select
-                  className="border rounded-md px-2 py-1 text-sm"
-                  value={selectedInstructor}
-                  onChange={(e) => setSelectedInstructor(e.target.value)}>
-                  <option>All Classes</option>
-                  {allInstructorData.map((ins) => (
-                    <option key={ins.key}>{ins.key}</option>
-                  ))}
-                </select>
-              </div>
+              {/* header select only in GRAPH view */}
+              {instructorPopularityDisplay === "graph" && (
+                <div className="flex items-center space-x-2">
+                  <select
+                    className="border rounded-md px-3 py-2 text-sm"
+                    value={selectedInstructor}
+                    onChange={(e) => setSelectedInstructor(e.target.value)}
+                  >
+                    <option>All Classes</option>
+                    {allInstructorData.map((ins) => (
+                      <option key={ins.key}>{ins.key}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
+
             {instructorPopularityDisplay === "graph" ? (
               <div className="w-full h-96">
                 <LineChart
@@ -752,15 +810,85 @@ export default function AcuityDashboardPage() {
                 />
               </div>
             ) : (
-              <DataTable
-                columns={instructorColumns}
-                data={instructorData}
-                tableType="default"
-              />
+              // ===== TABLE MODE =====
+              <section className="border-[2px] border-[#000000] rounded-none overflow-hidden">
+                {/* blue strip w/ dropdown (Figma) */}
+                <div className="flex items-center justify-end bg-[#CED8E1] px-3 py-2 border-b-0">
+                  <select
+                    className="h-9 rounded-md border bg-white px-3 text-sm"
+                    value={selectedInstructor}
+                    onChange={(e) => setSelectedInstructor(e.target.value)}
+                  >
+                    <option>ALL CLASSES</option>
+                    {allInstructorData.map((ins) => (
+                      <option key={ins.key}>{ins.key}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* wrap DataTable to target styles without a CSS file */}
+                <div className="bcgw-acuity-table">
+                  <DataTable
+                    columns={instructorColumns}
+                    data={instructorTableRows}
+                    tableType="default"
+                  />
+                </div>
+              </section>
             )}
           </div>
         </div>
       </div>
+      <style>{`
+
+
+  .bcgw-acuity-table > div {
+    border: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+    
+  .bcgw-acuity-table table {
+    border: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 0;
+    width: 100%;
+  }
+
+  /* header (new blue) + single line under it */
+  .bcgw-acuity-table thead th {
+    background: #CED8E1;          /* << new blue */
+    font-weight: 700;
+    border-top: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+  }
+
+  /* compact cells */
+  .bcgw-acuity-table thead th,
+  .bcgw-acuity-table tbody td {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+  }
+
+  .bcgw-acuity-table thead th:first-child,
+  .bcgw-acuity-table tbody td:first-child {
+    padding-left: 20px; 
+  }
+
+  .bcgw-acuity-table thead th:last-child,
+  .bcgw-acuity-table tbody td:last-child {
+    padding-right: 16px;
+  }
+
+  /* uniform row color */
+  .bcgw-acuity-table tbody tr { background: #FFFFFF; }
+
+  /* black separators betwen rows */
+  .bcgw-acuity-table tbody tr + tr td {
+    border-top: 1px solid #000000;
+  }
+`}</style>
     </>
   );
 }

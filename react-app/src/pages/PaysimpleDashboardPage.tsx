@@ -11,6 +11,7 @@ import {
 } from "@/components/DateRangePicker/DateRangePicker";
 import { DataTable } from "@/components/DataTable/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
+import ColumnSortButton from "@/components/DataTable/ColumnSortIcon";
 
 // record of colors to use for each rental item
 const colors: Record<string, string> = {
@@ -91,16 +92,22 @@ export default function PaysimpleDashboardPage() {
   const columns: ColumnDef<Rental>[] = [
     {
       accessorKey: "item",
-      header: () => <span className="font-bold">Item</span>,
+      header: ({ column }) => {
+        return <ColumnSortButton column={column}>Item</ColumnSortButton>;
+      },
       cell: ({ row }) => (
         <span className="font-bold">{row.getValue("item")}</span>
       ),
     },
     {
       accessorKey: "durationMonths",
-      header: () => (
-        <span className="font-bold">Average Rental Duration (Months)</span>
-      ),
+      header: ({ column }) => {
+        return (
+          <ColumnSortButton column={column}>
+            Average Rental Duration (Months)
+          </ColumnSortButton>
+        );
+      },
     },
   ];
 
@@ -114,7 +121,7 @@ export default function PaysimpleDashboardPage() {
 
   const handleExport = async (
     ref: React.RefObject<HTMLDivElement | null>,
-    filename: string
+    filename: string,
   ) => {
     const element = ref.current;
     if (!element) {
@@ -134,8 +141,10 @@ export default function PaysimpleDashboardPage() {
       <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
 
       <div
-        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-          }`}>
+        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
+          navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
+        }`}
+      >
         <Header />
 
         <div className="flex flex-col p-8 pr-20 pl-20 space-y-5">
@@ -159,25 +168,30 @@ export default function PaysimpleDashboardPage() {
           <div className={`${centerItemsInDiv} pt-4`}>
             <div className="flex flex-row">
               <button
-                className={`${graphTableButtonStyle} ${rentalDisplay == "graph"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#f5f5f5]"
-                  }`}
-                onClick={() => setRentalDisplay("graph")}>
+                className={`${graphTableButtonStyle} ${
+                  rentalDisplay == "graph"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
+                }`}
+                onClick={() => setRentalDisplay("graph")}
+              >
                 Graph
               </button>
               <button
-                className={`${graphTableButtonStyle} ${rentalDisplay == "table"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#f5f5f5]"
-                  }`}
-                onClick={() => setRentalDisplay("table")}>
+                className={`${graphTableButtonStyle} ${
+                  rentalDisplay == "table"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
+                }`}
+                onClick={() => setRentalDisplay("table")}
+              >
                 Table
               </button>
             </div>
             <button
               className={transparentGrayButtonStyle}
-              onClick={() => handleExport(rentalChartRef, "rental_duration")}>
+              onClick={() => handleExport(rentalChartRef, "rental_duration")}
+            >
               Export
             </button>
           </div>
@@ -189,7 +203,8 @@ export default function PaysimpleDashboardPage() {
                 ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
                 : ""
             }
-            ref={rentalChartRef}>
+            ref={rentalChartRef}
+          >
             <div className="flex justify-between items-center">
               <div className="text-2xl font-semibold">
                 Average Rental Duration By Item, {formattedRange}
