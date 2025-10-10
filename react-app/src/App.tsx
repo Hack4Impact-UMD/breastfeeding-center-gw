@@ -3,6 +3,7 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import LogoutPage from "./pages/LogoutPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
+import UserManagementPage from "./pages/UserManagementPage/UserManagementPage";
 import NavigationBar from "./components/NavigationBar/NavigationBar";
 import Header from "./components/Header";
 import RequireAuth from "./auth/RequireAuth";
@@ -105,6 +106,14 @@ function App() {
                 element={
                   <RequireAuth>
                     <ProfilePage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/user-management"
+                element={
+                  <RequireAuth>
+                    <UserManagementPage />
                   </RequireAuth>
                 }
               />
