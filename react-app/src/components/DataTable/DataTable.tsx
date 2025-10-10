@@ -65,8 +65,8 @@ export function DataTable<TData, TValue>({
   useEffect(() => {
     setRowsSelected(
       Object.values(table.getSelectedRowModel().rowsById).map(
-        (item) => item.original
-      )
+        (item) => item.original,
+      ),
     );
   }, [rowSelection]);
 
@@ -113,7 +113,9 @@ export function DataTable<TData, TValue>({
         <Table>
           <TableHeader
             className={`${
-              tableType === "janeData" || tableType === "default"
+              tableType === "janeData" ||
+              tableType === "default" ||
+              tableType === "clientsLost"
                 ? "bg-[#0C3D6B33]"
                 : "bg-[#B9C4CE]"
             }`}
@@ -128,16 +130,18 @@ export function DataTable<TData, TValue>({
 
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="align-left p-0">
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                ))}
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead key={header.id} className="align-left p-0">
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
+                  );
+                })}
               </TableRow>
             ))}
           </TableHeader>
@@ -159,14 +163,15 @@ export function DataTable<TData, TValue>({
                     <TableCell
                       key={cell.id}
                       className={`${
-                        tableType === "clientList"
+                        tableType === "clientList" ||
+                        tableType === "clientsLost"
                           ? "cursor-pointer group-hover:bg-gray-300 transition-colors"
                           : ""
                       }`}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}

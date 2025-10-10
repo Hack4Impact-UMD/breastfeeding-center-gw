@@ -24,6 +24,8 @@ export type VisitBreakdown = {
   count: number;
 };
 
+export type LostClient = { first: string; last: string; email: string };
+
 export const visitBreakdownColumns: ColumnDef<VisitBreakdown>[] = [
   {
     accessorKey: "visitType",
@@ -34,7 +36,7 @@ export const visitBreakdownColumns: ColumnDef<VisitBreakdown>[] = [
   },
   {
     accessorKey: "percent",
-    header: ({ column }) => headerButton("Percentage", column),
+    header: () => <span className="font-bold">Percent</span>,
     cell: ({ row }) => {
       const value = row.getValue<number>("percent");
       return `${value}%`;
@@ -42,7 +44,7 @@ export const visitBreakdownColumns: ColumnDef<VisitBreakdown>[] = [
   },
   {
     accessorKey: "count",
-    header: ({ column }) => headerButton("Count", column),
+    header: () => <span className="font-bold">Count</span>,
     cell: ({ row }) => {
       const value = row.getValue<number>("count");
       return value.toLocaleString();
@@ -55,38 +57,58 @@ export type RetentionRate = {
   numberVisited: number;
   percent: number;
   loss: number;
-  clientsLost: string;
+  clientsLostNames: string;
+  clients?: LostClient[];
 };
-
-export const retentionRateColumns: ColumnDef<RetentionRate>[] = [
-  {
-    accessorKey: "visit",
-    header: ({ column }) => headerButton("Visits", column),
-    cell: ({ row }) => (
-      <span className="font-bold">{row.getValue("visit")}</span>
-    ),
-  },
-  {
-    accessorKey: "numberVisited",
-    header: ({ column }) => headerButton("Number Visited", column),
-    cell: ({ row }) => row.getValue<number>("numberVisited"),
-  },
-  {
-    accessorKey: "percent",
-    header: ({ column }) => headerButton("Percent", column),
-    cell: ({ row }) => {
-      const value = row.getValue<number>("percent");
-      return `${value}%`;
+export function makeRetentionRateColumns(
+  onOpen: (row: RetentionRate) => void,
+): ColumnDef<RetentionRate>[] {
+  return [
+    {
+      accessorKey: "visit",
+      header: () => <span className="font-bold">Visits</span>,
+      cell: ({ row }) => (
+        <span className="font-bold">{row.getValue("visit")}</span>
+      ),
     },
-  },
-  {
-    accessorKey: "loss",
-    header: ({ column }) => headerButton("Loss", column),
-    cell: ({ row }) => row.getValue<number>("loss"),
-  },
-  {
-    accessorKey: "clientsLost",
-    header: ({ column }) => headerButton("Clients Lost", column),
-    cell: ({ row }) => row.getValue<string>("clientsLost"),
-  },
-];
+    {
+      accessorKey: "numberVisited",
+      header: () => <span className="font-bold">Number Visited</span>,
+    },
+    {
+      accessorKey: "percent",
+      header: () => <span className="font-bold">Percent</span>,
+      cell: ({ row }) => `${row.getValue<number>("percent")}%`,
+    },
+    {
+      // compute from clients so it always matches the chip count
+      accessorKey: "loss",
+      header: () => <span className="font-bold">Loss</span>,
+      cell: ({ row }) => row.original.clients?.length ?? 0,
+    },
+    {
+      accessorKey: "clientsLostNames",
+      header: () => <span className="font-bold">Clients Lost</span>,
+      cell: ({ row }) => {
+        const r = row.original as RetentionRate;
+        const hasClients = (r.clients?.length ?? 0) > 0;
+
+        if (!hasClients)
+          return (
+            <span className="text-gray-900 text-center w-full block">N/A</span>
+          );
+
+        return (
+          <button
+            title={r.clientsLostNames}
+            onClick={() => onOpen(r)}
+            className="w-56 sm:w-64 truncate rounded-full px-3 py-1 text-sm font-medium
+                       bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light cursor-pointer"
+          >
+            {r.clientsLostNames}
+          </button>
+        );
+      },
+    },
+  ];
+}

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import Header from "../../components/Header.tsx";
 import NavigationBar from "../../components/NavigationBar/NavigationBar.tsx";
+import ClientLostPopup from "./ClientLostPopup.tsx";
 import {
   PieArcSeries,
   PieChart,
@@ -26,7 +27,7 @@ import {
   VisitBreakdown,
   visitBreakdownColumns,
   RetentionRate,
-  retentionRateColumns,
+  makeRetentionRateColumns,
 } from "./JaneTableColumns";
 import { DataTable } from "@/components/DataTable/DataTable";
 
@@ -47,10 +48,11 @@ const JaneDashboardPage = () => {
   const [janeData, setJaneData] = useState<Jane[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [chartData, setChartData] = useState<{ key: string; data: number }[]>(
-    []
+    [],
   );
   const [visitDisplay, setVisitDisplay] = useState<string>("graph");
   const [retentionDisplay, setRetentionDisplay] = useState<string>("graph");
+  const [openRow, setOpenRow] = useState<RetentionRate | null>(null);
   const pieChartRef = useRef<HTMLDivElement>(null);
   const funnelChartRef = useRef<HTMLDivElement>(null);
 
@@ -65,7 +67,7 @@ const JaneDashboardPage = () => {
 
   const handleExport = async (
     ref: React.RefObject<HTMLDivElement | null>,
-    filename: string
+    filename: string,
   ) => {
     const element = ref.current;
     if (!element) {
@@ -147,14 +149,70 @@ const JaneDashboardPage = () => {
     { visitType: "Telehealth", percent: 66.6, count: 600000 },
     { visitType: "Total", percent: 100, count: 900000 },
   ];
-
   const retentionData: RetentionRate[] = [
-    { visit: "1 Visit", numberVisited: 12, percent: 16.6, loss: 1, clientsLost: "Jane Doe" },
-    { visit: "2 Visits", numberVisited: 11, percent: 16.6, loss: 1, clientsLost: "Jane Doe" },
-    { visit: "3 Visits", numberVisited: 12, percent: 16.6, loss: 1, clientsLost: "Jane Doe" },
-    { visit: "4 Visits", numberVisited: 12, percent: 16.6, loss: 1, clientsLost: "Jane Doe" },
-    { visit: "5 Visits", numberVisited: 12, percent: 16.6, loss: 1, clientsLost: "Jane Doe" },
-    { visit: "6+ Visits", numberVisited: 12, percent: 16.6, loss: 1, clientsLost: "Jane Doe" },
+    {
+      visit: "1 Visit",
+      numberVisited: 12,
+      percent: 16.6,
+      loss: 0,
+      clientsLostNames: "",
+      clients: [],
+    },
+    {
+      visit: "2 Visits",
+      numberVisited: 14,
+      percent: 4.23,
+      loss: 5,
+      clientsLostNames: "Jane Doe, Jane Doe, Jane Doe, Jane Doe, Jane Doe",
+      clients: [
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+      ],
+    },
+    {
+      visit: "3 Visits",
+      numberVisited: 10,
+      percent: 16.6,
+      loss: 2,
+      clientsLostNames: "Jane Doe, Jane Doe",
+      clients: [
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+      ],
+    },
+    {
+      visit: "4 Visits",
+      numberVisited: 9,
+      percent: 16.6,
+      loss: 1,
+      clientsLostNames: "Jane Doe",
+      clients: [{ first: "Jane", last: "Doe", email: "jdoe@gmail.com" }],
+    },
+    {
+      visit: "5 Visits",
+      numberVisited: 8,
+      percent: 28.88,
+      loss: 9,
+      clientsLostNames: "Jane Doe, Jane Doe, Jane Doe, Jane Doe, Jane Doe",
+      clients: [
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+      ],
+    },
+    {
+      visit: "6+ Visits",
+      numberVisited: 7,
+      percent: 16.6,
+      loss: 1,
+      clientsLostNames: "Jane Doe",
+      clients: [{ first: "Jane", last: "Doe", email: "jdoe@gmail.com" }],
+    },
   ];
 
   useEffect(() => {
@@ -198,8 +256,9 @@ const JaneDashboardPage = () => {
     <>
       <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
       <div
-        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]"
-          }`}
+        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
+          navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
+        }`}
       >
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-20">
@@ -249,6 +308,8 @@ const JaneDashboardPage = () => {
                 </div>
                 <button
                   className={transparentGrayButtonStyle}
+                  onClick={() => handleExport(pieChartRef, "visit_breakdown")}
+                >
                   onClick={() => handleExport(pieChartRef, "visit_breakdown")}
                 >
                   Export
@@ -319,12 +380,17 @@ const JaneDashboardPage = () => {
                     Table
                   </button>
                 </div>
-                <button className={transparentGrayButtonStyle} onClick={() => handleExport(funnelChartRef, "retention_rate")}>
+                <button
+                  className={transparentGrayButtonStyle}
+                  onClick={() => handleExport(funnelChartRef, "retention_rate")}
+                >
                   Export
                 </button>
               </div>
-
-              <div className={retentionDisplay === "graph" ? chartDiv : ""} ref={funnelChartRef}>
+              <div
+                className={retentionDisplay === "graph" ? chartDiv : ""}
+                ref={funnelChartRef}
+              >
                 <span className="self-start font-semibold text-2xl mb-2">
                   Retention Rate:{" "}
                   {dateRange.startDate && dateRange.endDate
@@ -348,15 +414,25 @@ const JaneDashboardPage = () => {
                     }
                   />
                 ) : (
-                  <div className="space-y-2">
-                    {/* DataTable receives the dropdowns as a headerExtras row inside the gray header */}
-                    <DataTable
-                      columns={retentionRateColumns}
-                      data={retentionData}
-                      tableType="default"
-                      tableHeaderExtras={retentionHeaderExtras}
-                    />
-                  </div>
+                  <>
+                    <div className="[&_td]:py-3 [&_th]:py-3">
+                      <DataTable
+                        columns={makeRetentionRateColumns((row) =>
+                          setOpenRow(row),
+                        )}
+                        data={retentionData}
+                        tableType="default"
+                        tableHeaderExtras={retentionHeaderExtras}
+                      />
+                    </div>
+
+                    {openRow && (
+                      <ClientLostPopup
+                        openRow={openRow!}
+                        setOpenRow={setOpenRow}
+                      />
+                    )}
+                  </>
                 )}
               </div>
             </div>

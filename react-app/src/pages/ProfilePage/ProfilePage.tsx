@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import ConfirmPasswordPopup from "./ConfirmPasswordPopup";
-import ProfileIcon from "./ProfileIcon";
+import ProfileIcon from "../../components/ProfileIcon";
 import Header from "../../components/Header";
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
 
