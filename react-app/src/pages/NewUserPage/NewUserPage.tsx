@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineInfoCircle } from "react-icons/ai";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const PRONOUN_OPTIONS = [
   "she/her",
@@ -46,7 +47,7 @@ export default function NewUserPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [showPasswordInfo, setShowPasswordInfo] = useState(false);
+  // const [showPasswordInfo, setShowPasswordInfo] = useState(false);
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
@@ -62,32 +63,27 @@ export default function NewUserPage() {
     password &&
     confirmPassword;
 
-  const canSubmit =
-    allFieldsFilled &&
-    validatePhone(phone) &&
-    validatePassword(password) &&
-    doPasswordsMatch;
-
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    
+
     // Check for validation errors and show appropriate message
     if (!validatePhone(phone)) {
-      setError("One or more fields is invalid. Please re-enter phone or email fields to create an account.");
+      setError("One or more fields is invalid. Please re-enter phone or password fields to create an account.");
       return;
     }
     if (!validatePassword(password)) {
-      setError("One or more fields is invalid. Please re-enter phone or email fields to create an account.");
+      setError("One or more fields is invalid. Please re-enter phone or password fields to create an account.");
       return;
     }
     if (password !== confirmPassword) {
-      setError("One or more fields is invalid. Please re-enter phone or email fields to create an account.");
+      setError("One or more fields is invalid. Please re-enter phone or password fields to create an account.");
       return;
     }
-    
+
     setError("");
     navigate("/register-success");
   }
+
 
   return (
     <div className="flex flex-col items-center min-h-screen justify-center bg-white">
@@ -157,13 +153,13 @@ export default function NewUserPage() {
             disabled
           />
         </div>
-        <div className="relative w-[114%]">
+        <div className="relative">
           <label className="block font-medium mb-1">
             Password <span className="text-red-500">*</span>
           </label>
-          <div className="flex items-center gap-2">
+          <div className="relative items-center gap-2">
             <input
-              className={`flex-1 border rounded px-3 py-2 ${password && !isPasswordValid ? "border-red-500" : ""}`}
+              className={`w-full border rounded px-3 py-2 ${password && !isPasswordValid ? "border-red-500" : ""}`}
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={e => setPassword(e.target.value)}
@@ -172,38 +168,43 @@ export default function NewUserPage() {
             />
             <button
               type="button"
-              className="text-2xl text-gray-500 flex-shrink-0 cursor-pointer hover:text-gray-700"
+              className="absolute right-2 top-2 text-2xl text-gray-500 flex-shrink-0 cursor-pointer hover:text-gray-700"
               onClick={() => setShowPassword(v => !v)}
               tabIndex={-1}
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
             </button>
-            <button
-              type="button"
-              className="text-2xl text-gray-500 flex-shrink-0 cursor-pointer hover:text-gray-700"
-              onClick={() => setShowPasswordInfo(v => !v)}
-              tabIndex={-1}
-              aria-label="Password requirements"
-            >
-              <AiOutlineInfoCircle />
-            </button>
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  className="absolute top-2 ml-2 text-2xl text-gray-500 flex-shrink-0 cursor-pointer hover:text-gray-700"
+                  tabIndex={-1}
+                  aria-label="Password requirements"
+                >
+                  <AiOutlineInfoCircle className="text-[#0F4374]" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="p-0 border-0 bg-transparent rounded text-sm">
+                <div className="bg-[#0F4374] text-white p-2 rounded-lg">
+                  <ul className="">
+                    {PASSWORD_REQUIREMENTS.map(req => (
+                      <li key={req} className="">• {req}</li>
+                    ))}
+                  </ul>
+                </div>
+              </TooltipContent>
+            </Tooltip>
           </div>
-          {showPasswordInfo && (
-            <ul className="mt-2 ml-1 text-xs bg-gray-50 border rounded p-2 shadow">
-              {PASSWORD_REQUIREMENTS.map(req => (
-                <li key={req} className="text-gray-700">• {req}</li>
-              ))}
-            </ul>
-          )}
         </div>
-        <div className="relative w-[108%]">
+        <div className="relative">
           <label className="block font-medium mb-1">
             Confirm Password <span className="text-red-500">*</span>
           </label>
-          <div className="flex items-center gap-2">
+          <div className="relative items-center gap-2">
             <input
-              className={`flex-1 border rounded px-3 py-2 ${confirmPassword && !doPasswordsMatch ? "border-red-500" : ""}`}
+              className={`w-full border rounded px-3 py-2 ${confirmPassword && !doPasswordsMatch ? "border-red-500" : ""}`}
               type={showConfirmPassword ? "text" : "password"}
               value={confirmPassword}
               onChange={e => setConfirmPassword(e.target.value)}
@@ -212,7 +213,7 @@ export default function NewUserPage() {
             />
             <button
               type="button"
-              className="text-2xl text-gray-500 flex-shrink-0 cursor-pointer hover:text-gray-700"
+              className="absolute right-2 top-2 text-2xl text-gray-500 flex-shrink-0 cursor-pointer hover:text-gray-700"
               onClick={() => setShowConfirmPassword(v => !v)}
               tabIndex={-1}
               aria-label={showConfirmPassword ? "Hide password" : "Show password"}
@@ -224,11 +225,10 @@ export default function NewUserPage() {
         <div className="flex justify-center mt-4">
           <button
             type="submit"
-            className={`px-8 py-2 rounded-full text-white font-semibold transition ${
-              allFieldsFilled
-                ? "bg-yellow-500 hover:bg-yellow-600 cursor-pointer"
-                : "bg-gray-300 cursor-not-allowed"
-            }`}
+            className={`px-8 py-2 rounded-full text-white font-semibold transition ${allFieldsFilled
+              ? "bg-yellow-500 hover:bg-yellow-600 cursor-pointer"
+              : "bg-gray-300 cursor-not-allowed"
+              }`}
             disabled={!allFieldsFilled}
           >
             Create Account
