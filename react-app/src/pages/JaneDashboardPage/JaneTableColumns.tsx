@@ -1,23 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
 
-/**
- * Header with static sort icon (⇅)
- * This version does NOT change on sorting.
- */
-const headerButton = (title: string, column: any) => {
-  return (
-    <button
-      onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-      className="flex items-center gap-2 px-3 py-2 w-full text-left hover:opacity-90"
-      aria-label={`Sort by ${title}`}
-      type="button"
-    >
-      <span className="font-bold">{title}</span>
-      <span className="text-sm">⇅</span>
-    </button>
-  );
-};
-
 export type VisitBreakdown = {
   visitType: string;
   percent: number;
@@ -29,7 +11,7 @@ export type LostClient = { first: string; last: string; email: string };
 export const visitBreakdownColumns: ColumnDef<VisitBreakdown>[] = [
   {
     accessorKey: "visitType",
-    header: ({ column }) => headerButton("Visit Type", column),
+    header: () => <span className="font-bold">Visit Type</span>,
     cell: ({ row }) => (
       <span className="font-bold">{row.getValue("visitType")}</span>
     ),

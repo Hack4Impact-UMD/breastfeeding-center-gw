@@ -32,7 +32,6 @@ import {
 import { DataTable } from "@/components/DataTable/DataTable";
 
 const JaneDashboardPage = () => {
-
   const [navBarOpen, setNavBarOpen] = useState(true);
 
   const buttonStyle =
@@ -90,9 +89,8 @@ const JaneDashboardPage = () => {
   });
 
   const [clientsFilter, setClientsFilter] = useState<string>("ALL CLIENTS");
-  const [cliniciansFilter, setCliniciansFilter] = useState<string>(
-    "ALL CLINICIANS"
-  );
+  const [cliniciansFilter, setCliniciansFilter] =
+    useState<string>("ALL CLINICIANS");
 
   const handleDateRangeChange = (newRange: DateRange | undefined) => {
     if (newRange) {
@@ -251,7 +249,6 @@ const JaneDashboardPage = () => {
     </div>
   );
 
-
   return (
     <>
       <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
@@ -288,19 +285,24 @@ const JaneDashboardPage = () => {
           <div className="flex flex-wrap gap-8 pt-3">
             {/* Visit Breakdown */}
             <div className="flex-[0_0_48%] max-w-[50%] min-w-[560px]">
-
               <div className={`${centerItemsInDiv} pt-4 mb-6`}>
                 <div className="flex flex-row">
                   <button
-                    className={`${graphTableButtonStyle} ${visitDisplay == "graph" ? "bg-bcgw-gray-light" : "bg-[#f5f5f5]"
-                      }`}
+                    className={`${graphTableButtonStyle} ${
+                      visitDisplay == "graph"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#f5f5f5]"
+                    }`}
                     onClick={() => setVisitDisplay("graph")}
                   >
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${visitDisplay == "table" ? "bg-bcgw-gray-light" : "bg-[#f5f5f5]"
-                      }`}
+                    className={`${graphTableButtonStyle} ${
+                      visitDisplay == "table"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#f5f5f5]"
+                    }`}
                     onClick={() => setVisitDisplay("table")}
                   >
                     Table
@@ -308,8 +310,6 @@ const JaneDashboardPage = () => {
                 </div>
                 <button
                   className={transparentGrayButtonStyle}
-                  onClick={() => handleExport(pieChartRef, "visit_breakdown")}
-                >
                   onClick={() => handleExport(pieChartRef, "visit_breakdown")}
                 >
                   Export
@@ -321,18 +321,29 @@ const JaneDashboardPage = () => {
                   <span className="self-start font-semibold text-2xl mb-7">
                     Visit Breakdown:{" "}
                     {dateRange.startDate && dateRange.endDate
-                      ? formatDate(dateRange.startDate) + " - " + formatDate(dateRange.endDate)
+                      ? formatDate(dateRange.startDate) +
+                        " - " +
+                        formatDate(dateRange.endDate)
                       : "All Data"}
                   </span>
 
                   {chartData.length > 0 ? (
-                    <div className="chartContainer" style={{ width: "250px", height: "250px" }}>
+                    <div
+                      className="chartContainer"
+                      style={{ width: "250px", height: "250px" }}
+                    >
                       {loading ? (
                         <Loading />
                       ) : (
                         <PieChart
                           data={chartData}
-                          series={<PieArcSeries doughnut={true} colorScheme={chartColors} label={null} />}
+                          series={
+                            <PieArcSeries
+                              doughnut={true}
+                              colorScheme={chartColors}
+                              label={null}
+                            />
+                          }
                         />
                       )}
                     </div>
@@ -343,7 +354,13 @@ const JaneDashboardPage = () => {
                   <div className="mt-4 flex flex-wrap justify-center gap-4">
                     {chartData.map((item, index) => (
                       <div key={item.key} className="flex items-center gap-2">
-                        <div className="w-10 h-4" style={{ backgroundColor: chartColors[index % chartColors.length] }} />
+                        <div
+                          className="w-10 h-4"
+                          style={{
+                            backgroundColor:
+                              chartColors[index % chartColors.length],
+                          }}
+                        />
                         <span>{item.key}</span>
                       </div>
                     ))}
@@ -354,17 +371,22 @@ const JaneDashboardPage = () => {
                   <span className="font-semibold text-2xl">
                     Visit Breakdown:{" "}
                     {dateRange.startDate && dateRange.endDate
-                      ? formatDate(dateRange.startDate) + " - " + formatDate(dateRange.endDate)
+                      ? formatDate(dateRange.startDate) +
+                        " - " +
+                        formatDate(dateRange.endDate)
                       : "All Data"}
                   </span>
-                  <DataTable columns={visitBreakdownColumns} data={visitBreakdownData} tableType="default" />
+                  <DataTable
+                    columns={visitBreakdownColumns}
+                    data={visitBreakdownData}
+                    tableType="default"
+                  />
                 </div>
               )}
             </div>
 
             {/* Retention Rate */}
             <div className="flex-[0_0_48%] max-w-[50%] min-w-[560px]">
-
               <div className={`${centerItemsInDiv} pt-4 mb-6`}>
                 <div className="flex flex-row">
                   <button
@@ -394,7 +416,9 @@ const JaneDashboardPage = () => {
                 <span className="self-start font-semibold text-2xl mb-2">
                   Retention Rate:{" "}
                   {dateRange.startDate && dateRange.endDate
-                    ? formatDate(dateRange.startDate) + " - " + formatDate(dateRange.endDate)
+                    ? formatDate(dateRange.startDate) +
+                      " - " +
+                      formatDate(dateRange.endDate)
                     : "All Data"}
                 </span>
 
@@ -407,7 +431,13 @@ const JaneDashboardPage = () => {
                         arc={<FunnelArc variant="layered" />}
                         axis={
                           <FunnelAxis
-                            label={<FunnelAxisLabel fontSize={10} position="bottom" fill="#000000" />}
+                            label={
+                              <FunnelAxisLabel
+                                fontSize={10}
+                                position="bottom"
+                                fill="#000000"
+                              />
+                            }
                           />
                         }
                       />
