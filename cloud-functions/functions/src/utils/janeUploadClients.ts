@@ -105,9 +105,10 @@ export async function parseClientSheet(
 function parseClient(clientRawData: any) {
   const client = {} as Client;
   client.id = clientRawData["Patient Number"].trim();
-  client.email = clientRawData.Email.trim();
-  client.firstName = clientRawData["First Name"].trim();
-  client.lastName = clientRawData["Last Name"].trim();
+  client.email = clientRawData.Email?.trim();
+  client.firstName = clientRawData["First Name"]?.trim();
+  client.lastName = clientRawData["Last Name"]?.trim();
+  client.baby = [];
   if (
     clientRawData["Middle Name"] !== undefined &&
     clientRawData["Middle Name"].length !== 0
@@ -126,9 +127,15 @@ function parseClient(clientRawData: any) {
 function parseBaby(babyRawData: any) {
   const baby = {} as Baby;
   baby.id = babyRawData["Patient Number"].trim();
-  baby.dob = new Date(babyRawData["Birth Date"].trim()).toISOString();
-  baby.firstName = babyRawData["First Name"].trim();
-  baby.lastName = babyRawData["Last Name"].trim();
+  const birthDateStr = babyRawData["Birth Date"]?.trim();
+  if (birthDateStr) {
+    const date = new Date(birthDateStr);
+    if (!isNaN(date.getTime())) {
+      baby.dob = date.toISOString();
+    }
+  }
+  baby.firstName = babyRawData["First Name"]?.trim();
+  baby.lastName = babyRawData["Last Name"]?.trim();
 
   if (
     babyRawData["Middle Name"] !== undefined &&

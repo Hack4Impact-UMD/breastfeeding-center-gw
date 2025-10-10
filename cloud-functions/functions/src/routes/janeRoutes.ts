@@ -102,7 +102,7 @@ router.post("/upload", upload, async (req: Request, res: Response) => {
 
     if (querySnapshot.docs.length == 0) {
       logger.info(
-        `No matching appointment in Client collection for client ID: ${patientId}`,
+        `No matching client in Client collection for client ID: ${patientId}`,
       );
       return false;
     }
@@ -110,11 +110,15 @@ router.post("/upload", upload, async (req: Request, res: Response) => {
   }
 
   async function add_to_clients_collection(parent: Client) {
+    logger.info(`parent: ${parent.id} and babies: ${parent.baby}`);
+    if (!parent.baby) {
+      parent.baby = [];
+    }
     await db.collection("Client").doc(parent.id).set(parent);
   }
 
   async function add_to_appts_collection(appt: JaneAppt) {
-    await db.collection("JaneAppt").doc(appt.apptId).set(appt);
+    await db.collection("JaneAppt").doc(String(appt.apptId)).set(appt);
   }
 
   async function get_client_from_firebase(patientId: string): Promise<Client> {
@@ -203,10 +207,18 @@ router.post("/upload", upload, async (req: Request, res: Response) => {
     // add to the parent object's babies array using the babies matched with their appointment.
     // NOTE: only add the new babies if they do not already exist in the parent's baby array (check based on their ids)
     const parentResolved = await parent;
+    if (!parentResolved) {
+      continue;
+    }
+
+    for (const baby of babies) {
+      logger.info(`BABY IN BABIES: ${baby.id}`);
+    }
 
     // merging parent existing baby list and new baby
     // this implementation may be inefficient
     babies.forEach((baby) => {
+      logger.info(`Baby: ${baby.id} for parent: ${parent!.id}`);
       if (
         !parentResolved?.baby.some(
           (existingBaby: { id: string }) => existingBaby.id === baby.id,
