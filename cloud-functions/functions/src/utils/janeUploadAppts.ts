@@ -53,7 +53,6 @@ export async function parseAppointmentSheet(
       return jsonObj;
     });
   }
-  console.log(jsonArray);
 
   type PatientInfo = {
     firstName: string;
@@ -68,13 +67,23 @@ export async function parseAppointmentSheet(
   for (const rawAppt of jsonArray) {
     // parsing rawAppt data in jsonArray and adding it to appointments list
     const appt = parseAppointment(rawAppt);
-    appointments.push(appt);
-
-    // parsing rawAppt data in jsonArray and adding it to patientNames list
-    patientNames[rawAppt.patient_number] = {
-      firstName: rawAppt.patient_first_name,
-      lastName: rawAppt.patient_last_name,
-    };
+    // only push if appt is not null (ids not found)
+    if (appt) {
+      appointments.push(appt);
+      // parsing rawAppt data in jsonArray and adding it to patientNames list
+      patientNames[rawAppt.patient_number] = {
+        firstName:
+          rawAppt.patient_first_name === undefined ||
+          rawAppt.patient_first_name === ""
+            ? "N/A"
+            : rawAppt.patient_first_name.trim(),
+        lastName:
+          rawAppt.patient_last_name === undefined ||
+          rawAppt.patient_last_name === ""
+            ? "N/A"
+            : rawAppt.patient_last_name.trim(),
+      };
+    }
   }
 
   return { appointments, patientNames };
@@ -82,35 +91,69 @@ export async function parseAppointmentSheet(
 
 function parseAppointment(appt: any) {
   const janeAppt = {} as JaneAppt;
+
+  if (appt.id === undefined || appt.id.toString().trim() === "") {
+    return null;
+  }
   janeAppt.apptId = appt.id;
+
+  if (
+    appt.patient_number === undefined ||
+    appt.patient_number.toString().trim() === ""
+  ) {
+    return null;
+  }
   janeAppt.patientId = appt.patient_number.trim();
-  janeAppt.clinician = appt.staff_member_name.trim();
-  janeAppt.firstVisit = appt.first_visit.trim() === "true";
+
+  janeAppt.clinician =
+    appt.staff_member_name === undefined || appt.staff_member_name.trim() === ""
+      ? "N/A"
+      : appt.staff_member_name.trim();
+  janeAppt.firstVisit =
+    appt.first_visit === undefined || appt.first_visit.trim() === ""
+      ? false
+      : appt.first_visit.trim() === "true";
 
   // dates
-  janeAppt.startAt = new Date(appt.start_at.trim()).toISOString();
-  janeAppt.endAt = new Date(appt.end_at.trim()).toISOString();
+  janeAppt.startAt =
+    appt.start_at === undefined || appt.start_at.trim() === ""
+      ? "N/A"
+      : new Date(appt.start_at.trim()).toISOString();
+  janeAppt.endAt =
+    appt.end_at === undefined || appt.end_at.trim() === ""
+      ? "N/A"
+      : new Date(appt.end_at.trim()).toISOString();
 
-  // parse visit type
-  const fullServiceType = appt.treatment_name.replace(/:/g, "").trim();
-  const serviceLowercase = fullServiceType.toLowerCase();
-  // get service from the visit type
   let visitType: VisitType = "OFFICE"; // default
-  let service = fullServiceType.trim();
+  let service = "N/A";
+  // parse visit type
+  if (appt.treatment_name && appt.treatment_name.trim() !== "") {
+    let fullServiceType = appt.treatment_name.replace(/:/g, "").trim();
+    const serviceLowercase = fullServiceType.toLowerCase();
 
-  // NEED TO FIX - maybe find index of the word and then grab whatever is after that. shouldn't be hardcoded
-  if (serviceLowercase.includes("telehealth short")) {
-    visitType = "TELEHEALTH";
-    service = fullServiceType.substring(17).trim();
-  } else if (serviceLowercase.includes("telehealth")) {
-    visitType = "TELEHEALTH";
-    service = fullServiceType.substring(11).trim();
-  } else if (serviceLowercase.includes("dc office")) {
-    visitType = "OFFICE";
-    service = fullServiceType.substring(10).trim();
-  } else if (serviceLowercase.includes("home visit")) {
-    visitType = "HOMEVISIT";
-    service = fullServiceType.substring(11).trim();
+    // get service from the visit type
+    service = fullServiceType.trim();
+
+    if (serviceLowercase.includes("telehealth")) {
+      visitType = "TELEHEALTH";
+      // convert "telehealth short" to just "telehealth"
+      fullServiceType = fullServiceType
+        .replace(/telehealth(\s)*(short)*/i, "telehealth")
+        .trim();
+
+      let idx = fullServiceType.indexOf("telehealth") + 10;
+      service = fullServiceType.substring(idx).trim();
+    } else if (serviceLowercase.includes("office")) {
+      visitType = "OFFICE";
+      service = fullServiceType
+        .substring(serviceLowercase.indexOf("office") + 6)
+        .trim();
+    } else if (serviceLowercase.includes("home visit")) {
+      visitType = "HOMEVISIT";
+      service = fullServiceType
+        .substring(serviceLowercase.indexOf("home visit") + 10)
+        .trim();
+    }
   }
 
   janeAppt.visitType = visitType;
