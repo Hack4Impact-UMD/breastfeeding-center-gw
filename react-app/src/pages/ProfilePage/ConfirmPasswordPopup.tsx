@@ -52,7 +52,8 @@ const ConfirmPasswordPopup = ({
           onClick={() => {
             onClose();
           }}
-          className="absolute top-0.25 right-0.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer">
+          className="absolute top-0.25 right-0.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
+        >
           <IoIosClose size={45} />
         </button>
       </div>
@@ -68,7 +69,8 @@ const ConfirmPasswordPopup = ({
           handleOnClose();
         }}
         height={220}
-        width={500}>
+        width={500}
+      >
         <div className="flex flex-col h-full">
           <div>
             <ModalHeader
@@ -107,7 +109,8 @@ const ConfirmPasswordPopup = ({
                   : "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light cursor-pointer"
               }`}
               onClick={handleNextFromCurrent}
-              disabled={!currentPasswordInput}>
+              disabled={!currentPasswordInput}
+            >
               Next
             </button>
           </div>

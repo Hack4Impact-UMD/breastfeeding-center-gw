@@ -20,7 +20,8 @@ export const clientListColumns: ColumnDef<Client>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           F. Name
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -34,7 +35,8 @@ export const clientListColumns: ColumnDef<Client>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           L. Name
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -48,7 +50,8 @@ export const clientListColumns: ColumnDef<Client>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Email
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -62,7 +65,8 @@ export const clientListColumns: ColumnDef<Client>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Acuity Classes
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -76,7 +80,8 @@ export const clientListColumns: ColumnDef<Client>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           JANE Consults
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -90,7 +95,8 @@ export const clientListColumns: ColumnDef<Client>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Rentals
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
@@ -104,7 +110,8 @@ export const clientListColumns: ColumnDef<Client>[] = [
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
           Purchases
           <LuArrowUpDown className="h-4 w-4" />
         </Button>

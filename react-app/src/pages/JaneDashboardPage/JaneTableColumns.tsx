@@ -105,7 +105,7 @@ export function makeRetentionRateColumns(
           <button
             title={r.clientsLostNames}
             onClick={() => onOpen(r)}
-            className="w-56 sm:w-64 truncate rounded-full px-3 py-1 text-sm font-medium
+            className="w-56 sm:w-64 truncate border rounded-full px-3 py-1 text-sm font-medium
                        bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light cursor-pointer"
           >
             {r.clientsLostNames}

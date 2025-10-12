@@ -230,7 +230,7 @@ const JaneDashboardPage = () => {
       <select
         value={clientsFilter}
         onChange={(e) => setClientsFilter(e.target.value)}
-        className="border border-gray-400 rounded-md px-3 py-1 text-sm bg-white"
+        className="border border-black rounded-md px-3 py-1 text-sm bg-white h-9"
       >
         <option>ALL CLIENTS</option>
         <option>RECENT CHILDBIRTH</option>
@@ -240,7 +240,7 @@ const JaneDashboardPage = () => {
       <select
         value={cliniciansFilter}
         onChange={(e) => setCliniciansFilter(e.target.value)}
-        className="border border-gray-400 rounded-md px-3 py-1 text-sm bg-white"
+        className="border border-black rounded-md px-3 py-1 text-sm bg-white h-9"
       >
         <option>ALL CLINICIANS</option>
         <option>Dr. Smith</option>

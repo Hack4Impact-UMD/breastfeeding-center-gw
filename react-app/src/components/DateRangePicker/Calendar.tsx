@@ -36,7 +36,7 @@ const NavigationButton = React.forwardRef<
 >(
   (
     { onClick, icon, disabled, ...props }: NavigationButtonProps,
-    forwardedRef
+    forwardedRef,
   ) => {
     const Icon = icon;
     return (
@@ -58,7 +58,7 @@ const NavigationButton = React.forwardRef<
           "disabled:pointer-events-none",
           "disabled:border-gray-200 dark:disabled:border-gray-800",
           "disabled:text-gray-400 dark:disabled:text-gray-600",
-          focusRing
+          focusRing,
         )}
         onClick={onClick}
         {...props}
@@ -66,7 +66,7 @@ const NavigationButton = React.forwardRef<
         <Icon className="size-full shrink-0" />
       </button>
     );
-  }
+  },
 );
 
 NavigationButton.displayName = "NavigationButton";
@@ -120,19 +120,19 @@ const Calendar = ({
         row: "w-full mt-0.5",
         cell: cx(
           "relative p-0 text-center focus-within:relative",
-          "text-gray-900 dark:text-gray-50"
+          "text-gray-900 dark:text-gray-50",
         ),
         day: cx(
           "size-9 rounded-sm text-sm focus:z-10",
           "text-gray-900 dark:text-gray-50",
           "hover:bg-gray-200 dark:hover:bg-gray-700",
-          focusRing
+          focusRing,
         ),
         day_today: "font-semibold",
         day_selected: cx(
           "rounded-sm",
           "aria-selected:bg-bcgw-yellow-dark aria-selected:text-gray-900",
-          "dark:aria-selected:bg-bcgw-yellow-dark dark:aria-selected:text-gray-900"
+          "dark:aria-selected:bg-bcgw-yellow-dark dark:aria-selected:text-gray-900",
         ),
         day_disabled:
           "text-gray-300! dark:text-gray-700! line-through disabled:hover:bg-transparent",
@@ -140,7 +140,7 @@ const Calendar = ({
         day_range_middle: cx(
           "rounded-none!",
           "aria-selected:bg-gray-100! aria-selected:text-gray-900!",
-          "dark:aria-selected:bg-gray-900! dark:aria-selected:text-gray-50!"
+          "dark:aria-selected:bg-gray-900! dark:aria-selected:text-gray-50!",
         ),
         day_range_start: "rounded-r-none rounded-l!",
         day_range_end: "rounded-l-none rounded-r!",
@@ -165,7 +165,7 @@ const Calendar = ({
           const { numberOfMonths, fromDate, toDate } = useDayPicker();
 
           const displayIndex = displayMonths.findIndex((month) =>
-            isSameMonth(props.displayMonth, month)
+            isSameMonth(props.displayMonth, month),
           );
           const isFirst = displayIndex === 0;
           const isLast = displayIndex === displayMonths.length - 1;
@@ -271,7 +271,7 @@ const Calendar = ({
                 {...divProps}
                 className={cx(
                   "flex items-center justify-center",
-                  divProps.className
+                  divProps.className,
                 )}
               />
             );
@@ -302,7 +302,7 @@ const Calendar = ({
                         selected && range_middle,
                       "bg-gray-400 text-gray-400 dark:bg-gray-400 dark:text-gray-600":
                         disabled,
-                    }
+                    },
                   )}
                 />
               )}

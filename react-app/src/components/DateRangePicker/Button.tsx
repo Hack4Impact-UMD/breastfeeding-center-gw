@@ -112,7 +112,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       ...props
     }: ButtonProps,
-    forwardedRef
+    forwardedRef,
   ) => {
     const Component = asChild ? Slot : "button";
     return (
@@ -139,7 +139,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
       </Component>
     );
-  }
+  },
 );
 
 Button.displayName = "Button";

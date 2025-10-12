@@ -110,6 +110,12 @@ export function DataTable<TData, TValue>({
       </div>
 
       <div className="border-2 rounded-none overflow-hidden">
+        {tableHeaderExtras && (
+          <div className="p-2 w-full bg-[#0C3D6B33] border-b">
+            {tableHeaderExtras}
+          </div>
+        )}
+
         <Table>
           <TableHeader
             className={`${
@@ -120,14 +126,6 @@ export function DataTable<TData, TValue>({
                 : "bg-[#B9C4CE]"
             }`}
           >
-            {tableHeaderExtras && (
-              <TableRow>
-                <TableHead colSpan={columns.length} className="p-2">
-                  {tableHeaderExtras}
-                </TableHead>
-              </TableRow>
-            )}
-
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {

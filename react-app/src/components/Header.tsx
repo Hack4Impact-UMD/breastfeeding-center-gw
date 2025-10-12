@@ -23,7 +23,8 @@ const Header = () => {
           onMouseLeave={() => setHover(false)}
           onClick={() => {
             navigate("/profile");
-          }}>
+          }}
+        >
           {hover ? <img className="h-5" src={editIcon} /> : initials}
         </div>
       </div>
