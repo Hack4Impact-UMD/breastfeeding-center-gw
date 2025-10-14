@@ -140,6 +140,7 @@ function App() {
                   <RequireAuth>
                     <div className="flex flex-col gap-2 p-2">
                       <div className="space-x-3">
+                        <strong>Yellow: </strong>
                         <Button
                           variant={"yellow"}
                           onClick={async () => {
@@ -169,6 +170,7 @@ function App() {
                         </Button>
                       </div>
                       <div className="space-x-3">
+                        <strong>Outline: </strong>
                         <Button
                           variant={"outline"}
                         >
@@ -189,6 +191,7 @@ function App() {
                         </Button>
                       </div>
                       <div className="space-x-3">
+                        <strong>Gray: </strong>
                         <Button
                           variant={"gray"}
                         >
