@@ -23,7 +23,7 @@ import { tv, type VariantProps } from "tailwind-variants";
 
 import { cx, focusInput, focusRing, hasErrorInput } from "@/lib/utils";
 
-import { Button } from "./Button";
+import { DateRangePickerButton } from "./DateRangePickerButton";
 import { Calendar as CalendarPrimitive, type Matcher } from "./Calendar";
 
 //#region TimeInput
@@ -172,7 +172,7 @@ const triggerStyles = tv({
 
 interface TriggerProps
   extends React.ComponentProps<"button">,
-    VariantProps<typeof triggerStyles> {
+  VariantProps<typeof triggerStyles> {
   placeholder?: string;
 }
 
@@ -490,8 +490,8 @@ const SingleDatePicker = ({
     value
       ? new Time(value.getHours(), value.getMinutes())
       : defaultValue
-      ? new Time(defaultValue.getHours(), defaultValue.getMinutes())
-      : new Time(0, 0)
+        ? new Time(defaultValue.getHours(), defaultValue.getMinutes())
+        : new Time(0, 0)
   );
 
   const initialDate = React.useMemo(() => {
@@ -587,8 +587,8 @@ const SingleDatePicker = ({
       value
         ? new Time(value.getHours(), value.getMinutes())
         : defaultValue
-        ? new Time(defaultValue.getHours(), defaultValue.getMinutes())
-        : new Time(0, 0)
+          ? new Time(defaultValue.getHours(), defaultValue.getMinutes())
+          : new Time(0, 0)
     );
   }, [value, defaultValue]);
 
@@ -656,22 +656,22 @@ const SingleDatePicker = ({
                 </div>
               )}
               <div className="flex items-center gap-x-2 border-t border-gray-200 p-3 dark:border-gray-800">
-                <Button
+                <DateRangePickerButton
                   variant="secondary"
                   className="h-8 w-full"
                   type="button"
                   onClick={onCancel}
                 >
                   {translations?.cancel ?? "Cancel"}
-                </Button>
-                <Button
+                </DateRangePickerButton>
+                <DateRangePickerButton
                   variant="primary"
                   className="h-8 w-full"
                   type="button"
                   onClick={onApply}
                 >
                   {translations?.apply ?? "Apply"}
-                </Button>
+                </DateRangePickerButton>
               </div>
             </div>
           </div>
@@ -719,15 +719,15 @@ const RangeDatePicker = ({
     value?.from
       ? new Time(value.from.getHours(), value.from.getMinutes())
       : defaultValue?.from
-      ? new Time(defaultValue.from.getHours(), defaultValue.from.getMinutes())
-      : new Time(0, 0)
+        ? new Time(defaultValue.from.getHours(), defaultValue.from.getMinutes())
+        : new Time(0, 0)
   );
   const [endTime, setEndTime] = React.useState<TimeValue | null>(
     value?.to
       ? new Time(value.to.getHours(), value.to.getMinutes())
       : defaultValue?.to
-      ? new Time(defaultValue.to.getHours(), defaultValue.to.getMinutes())
-      : new Time(0, 0)
+        ? new Time(defaultValue.to.getHours(), defaultValue.to.getMinutes())
+        : new Time(0, 0)
   );
 
   const initialRange = React.useMemo(() => {
@@ -864,15 +864,15 @@ const RangeDatePicker = ({
       value?.from
         ? new Time(value.from.getHours(), value.from.getMinutes())
         : defaultValue?.from
-        ? new Time(defaultValue.from.getHours(), defaultValue.from.getMinutes())
-        : new Time(0, 0)
+          ? new Time(defaultValue.from.getHours(), defaultValue.from.getMinutes())
+          : new Time(0, 0)
     );
     setEndTime(
       value?.to
         ? new Time(value.to.getHours(), value.to.getMinutes())
         : defaultValue?.to
-        ? new Time(defaultValue.to.getHours(), defaultValue.to.getMinutes())
-        : new Time(0, 0)
+          ? new Time(defaultValue.to.getHours(), defaultValue.to.getMinutes())
+          : new Time(0, 0)
     );
   }, [value, defaultValue]);
 
@@ -881,9 +881,8 @@ const RangeDatePicker = ({
       return null;
     }
 
-    return `${
-      range.from ? formatDate(range.from, locale, showTimePicker) : ""
-    } - ${range.to ? formatDate(range.to, locale, showTimePicker) : ""}`;
+    return `${range.from ? formatDate(range.from, locale, showTimePicker) : ""
+      } - ${range.to ? formatDate(range.to, locale, showTimePicker) : ""}`;
   }, [range, locale, showTimePicker]);
 
   const onApply = () => {
@@ -985,22 +984,22 @@ const RangeDatePicker = ({
                   <span className="font-medium">{displayRange}</span>
                 </p>
                 <div className="mt-2 flex items-center gap-x-2 sm:mt-0">
-                  <Button
+                  <DateRangePickerButton
                     variant="secondary"
                     className="h-8 w-full sm:w-fit"
                     type="button"
                     onClick={onCancel}
                   >
                     {translations?.cancel ?? "Cancel"}
-                  </Button>
-                  <Button
+                  </DateRangePickerButton>
+                  <DateRangePickerButton
                     variant="primary"
                     className="h-8 w-full sm:w-fit"
                     type="button"
                     onClick={onApply}
                   >
                     {translations?.apply ?? "Apply"}
-                  </Button>
+                  </DateRangePickerButton>
                 </div>
               </div>
             </div>
@@ -1131,8 +1130,7 @@ const validatePresets = (
 
           if (presetDay && presetDay < fromDay.getDate()) {
             throw new Error(
-              `Preset ${
-                preset.dateRange.from
+              `Preset ${preset.dateRange.from
               }'s 'from' is before fromDay ${format(fromDay, "MMM dd, yyyy")}.`
             );
           }

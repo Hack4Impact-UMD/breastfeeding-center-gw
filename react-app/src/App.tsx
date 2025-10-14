@@ -22,6 +22,7 @@ import JaneDataPage from "./pages/JaneDataPage/JaneDataPage";
 import NewUserPage from "./pages/NewUserPage/NewUserPage";
 import RegisterSuccessPage from "./pages/NewUserPage/RegisterSuccessPage";
 import { TooltipProvider } from "./components/ui/tooltip";
+import { Button } from "./components/ui/button";
 // import "@tremor/react/dist/esm/tremor.css";
 
 function App() {
@@ -137,20 +138,77 @@ function App() {
                 path="/testfunctions"
                 element={
                   <RequireAuth>
-                    <button
-                      className={"bg-bcgw-yellow-dark rounded-lg px-2 py-1 m-2"}
-                      onClick={async () => {
-                        getBabyInfo()
-                          .then(() => console.log("Success"))
-                          .catch();
+                    <div className="flex flex-col gap-2 p-2">
+                      <div className="space-x-3">
+                        <Button
+                          variant={"yellow"}
+                          onClick={async () => {
+                            getBabyInfo()
+                              .then(() => console.log("Success"))
+                              .catch();
 
-                        getClientAppointments()
-                          .then(() => console.log("Success"))
-                          .catch();
-                      }}
-                    >
-                      TEST
-                    </button>
+                            getClientAppointments()
+                              .then(() => console.log("Success"))
+                              .catch();
+                          }}
+                        >
+                          TEST
+                        </Button>
+                        <Button
+                          variant={"yellow"}
+                          size="lg"
+                          disabled
+                        >
+                          TEST
+                        </Button>
+                        <Button
+                          variant={"yellow"}
+                          className="rounded-full"
+                        >
+                          TEST
+                        </Button>
+                      </div>
+                      <div className="space-x-3">
+                        <Button
+                          variant={"outline"}
+                        >
+                          TEST
+                        </Button>
+                        <Button
+                          variant={"outline"}
+                          className="rounded-full"
+                        >
+                          TEST
+                        </Button>
+                        <Button
+                          variant={"outline"}
+                          disabled
+                          className="rounded-full"
+                        >
+                          TEST
+                        </Button>
+                      </div>
+                      <div className="space-x-3">
+                        <Button
+                          variant={"gray"}
+                        >
+                          TEST
+                        </Button>
+                        <Button
+                          variant={"gray"}
+                          className="rounded-full"
+                        >
+                          TEST
+                        </Button>
+                        <Button
+                          variant={"gray"}
+                          disabled
+                          className="rounded-full"
+                        >
+                          TEST
+                        </Button>
+                      </div>
+                    </div>
                   </RequireAuth>
                 }
               />
