@@ -25,8 +25,10 @@ export async function parseAppointmentSheet(
     const fileAsString = fileAsBuffer.toString();
     jsonArray = await csv().fromString(fileAsString);
     const headers = Object.keys(jsonArray[0]);
-    const missing = headers.filter((h: string) => requiredHeaders.includes(h));
-    if (missing.length !== 9) {
+    const matchingHeaders = headers.filter((h: string) =>
+      requiredHeaders.includes(h),
+    );
+    if (matchingHeaders.length !== requiredHeaders.length) {
       throw new Error("Missing headers");
     }
   } else {

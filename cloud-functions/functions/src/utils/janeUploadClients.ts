@@ -25,13 +25,14 @@ export async function parseClientSheet(
     const fileAsString = fileAsBuffer.toString();
     jsonArray = await csv().fromString(fileAsString);
     const headers = Object.keys(jsonArray[0]);
-    const missing = headers.filter((h: string) => requiredHeaders.includes(h));
-    if (missing.length !== 8) {
-      console.log(missing);
+    const matchingHeaders = headers.filter((h: string) =>
+      requiredHeaders.includes(h),
+    );
+    if (matchingHeaders.length !== requiredHeaders.length) {
+      console.log(matchingHeaders);
       throw new Error("Missing headers");
     }
   } else {
-    // xlsx here
     const workbook = XLSX.read(fileAsBuffer);
     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
     const xlsxDataArray = XLSX.utils.sheet_to_json(worksheet, {
@@ -40,14 +41,10 @@ export async function parseClientSheet(
     });
 
     const headers: string[] = xlsxDataArray[0] as string[];
-    console.log("headers", headers);
     const columnIndices = requiredHeaders.map((col) => headers.indexOf(col));
     if (columnIndices.includes(-1)) {
       throw new Error("Missing headers");
     }
-
-    // console.log(xlsxDataArray);
-    // console.log(columnIndices);
 
     jsonArray = (xlsxDataArray.slice(1) as any[]).map((data: string[]) => {
       const jsonObj = {};
@@ -59,27 +56,25 @@ export async function parseClientSheet(
     });
   }
 
-  // check array for any undefined values on required columns
-  // const objsUndefinedData = jsonArray.filter((obj) =>
-  //   requiredHeaders.slice(0, 5).forEach((h) => obj[h] === undefined),
-  // );
-  // if (objsUndefinedData.length !== 0) {
-  //   console.log("required data missing");
-  //   console.log(objsUndefinedData);
-  //   return "error";
-  // }
-
   // parse raw json data into client type or baby type
   const clientList: Client[] = [];
   const babyList: Baby[] = [];
   jsonArray.forEach((jsonObj) => {
+    // skip rows with undefined patient numbers
     if (
-      jsonObj["Preferred Name"]?.toLowerCase().includes("baby") ||
-      jsonObj["Preferred Name"]?.toLowerCase().includes("twin")
+      jsonObj["Patient Number"] !== undefined &&
+      jsonObj["Patient Number"].toString().trim() !== ""
     ) {
-      babyList.push(parseBaby(jsonObj));
-    } else {
-      clientList.push(parseClient(jsonObj));
+      if (
+        jsonObj["Preferred Name"]?.toLowerCase().includes("baby") ||
+        jsonObj["Preferred Name"]?.toLowerCase().includes("twin") ||
+        jsonObj["First Name"]?.toLowerCase().includes("baby") ||
+        jsonObj["First Name"]?.toLowerCase().includes("twin")
+      ) {
+        babyList.push(parseBaby(jsonObj));
+      } else {
+        clientList.push(parseClient(jsonObj));
+      }
     }
   });
 
@@ -89,37 +84,73 @@ export async function parseClientSheet(
 function parseClient(clientRawData: any) {
   const client = {} as Client;
   client.id = clientRawData["Patient Number"].trim();
-  client.email = clientRawData.Email?.trim();
-  client.firstName = clientRawData["First Name"]?.trim();
-  client.lastName = clientRawData["Last Name"]?.trim();
+
+  client.email =
+    clientRawData.Email === undefined || clientRawData.Email.trim() === ""
+      ? "N/A"
+      : clientRawData.Email.trim();
+
+  client.firstName =
+    clientRawData["First Name"] === undefined ||
+    clientRawData["First Name"].trim() === ""
+      ? "N/A"
+      : clientRawData["First Name"].trim();
+  client.lastName =
+    clientRawData["Last Name"] === undefined ||
+    clientRawData["Last Name"].trim() === ""
+      ? "N/A"
+      : clientRawData["Last Name"].trim();
+
   client.baby = [];
+
   if (
     clientRawData["Middle Name"] !== undefined &&
     clientRawData["Middle Name"].length !== 0
   ) {
-    client.middleName = clientRawData["Middle Name"];
+    client.middleName = clientRawData["Middle Name"].trim();
   }
   if (
     clientRawData["Insurance Company Name"] !== undefined &&
     clientRawData["Insurance Company Name"].length !== 0
   ) {
-    client.insurance = clientRawData["Insurance Company Name"];
+    client.insurance = clientRawData["Insurance Company Name"].trim();
   }
+  if (
+    clientRawData["Mobile Phone"] !== undefined &&
+    clientRawData["Mobile Phone"].length !== 0
+  ) {
+    client.phone = clientRawData["Mobile Phone"].trim();
+  }
+
   return client;
 }
 
 function parseBaby(babyRawData: any) {
   const baby = {} as Baby;
   baby.id = babyRawData["Patient Number"].trim();
+
   const birthDateStr = babyRawData["Birth Date"]?.trim();
   if (birthDateStr) {
     const date = new Date(birthDateStr);
     if (!isNaN(date.getTime())) {
       baby.dob = date.toISOString();
     }
+  } else {
+    baby.dob = "N/A";
   }
-  baby.firstName = babyRawData["First Name"]?.trim();
-  baby.lastName = babyRawData["Last Name"]?.trim();
+  baby.firstName =
+    babyRawData["First Name"] === undefined ||
+    babyRawData["First Name"].trim() === ""
+      ? "N/A"
+      : babyRawData["First Name"].trim();
+  // "baby" or "twin" may be in first name
+  baby.firstName = baby.firstName.replace(/(twin)*(baby)*(\s)*/i, "");
+
+  baby.lastName =
+    babyRawData["Last Name"] === undefined ||
+    babyRawData["Last Name"].trim() === ""
+      ? "N/A"
+      : babyRawData["Last Name"].trim();
 
   if (
     babyRawData["Middle Name"] !== undefined &&
