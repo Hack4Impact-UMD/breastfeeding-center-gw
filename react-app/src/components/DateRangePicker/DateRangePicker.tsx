@@ -23,7 +23,7 @@ import { tv, type VariantProps } from "tailwind-variants";
 
 import { cx, focusInput, focusRing, hasErrorInput } from "@/lib/utils";
 
-import { Button } from "./Button";
+import { DateRangePickerButton } from "./DateRangePickerButton";
 import { Calendar as CalendarPrimitive, type Matcher } from "./Calendar";
 
 //#region TimeInput
@@ -80,7 +80,7 @@ const TimeSegment = ({ segment, state }: TimeSegmentProps) => {
             segment.type === "literal",
           "border-gray-300 bg-gray-100 text-gray-400 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-500":
             state.isDisabled && segment.text !== ":",
-        },
+        }
       )}
     >
       {segment.isPlaceholder ? segment.placeholder : segment.text}
@@ -99,7 +99,7 @@ const TimeInput = React.forwardRef<HTMLDivElement, TimeInputProps>(
 
     React.useImperativeHandle<HTMLDivElement | null, HTMLDivElement | null>(
       ref,
-      () => innerRef?.current,
+      () => innerRef?.current
     );
 
     const locale = window !== undefined ? window.navigator.language : "en-US";
@@ -119,7 +119,7 @@ const TimeInput = React.forwardRef<HTMLDivElement, TimeInputProps>(
         shouldForceLeadingZeros: true,
       },
       state,
-      innerRef,
+      innerRef
     );
 
     return (
@@ -133,7 +133,7 @@ const TimeInput = React.forwardRef<HTMLDivElement, TimeInputProps>(
         ))}
       </div>
     );
-  },
+  }
 );
 TimeInput.displayName = "TimeInput";
 
@@ -172,14 +172,14 @@ const triggerStyles = tv({
 
 interface TriggerProps
   extends React.ComponentProps<"button">,
-    VariantProps<typeof triggerStyles> {
+  VariantProps<typeof triggerStyles> {
   placeholder?: string;
 }
 
 const Trigger = React.forwardRef<HTMLButtonElement, TriggerProps>(
   (
     { className, children, placeholder, hasError, ...props }: TriggerProps,
-    forwardedRef,
+    forwardedRef
   ) => {
     return (
       <PopoverPrimitives.Trigger asChild>
@@ -201,7 +201,7 @@ const Trigger = React.forwardRef<HTMLButtonElement, TriggerProps>(
         </button>
       </PopoverPrimitives.Trigger>
     );
-  },
+  }
 );
 
 Trigger.displayName = "DatePicker.Trigger";
@@ -235,7 +235,7 @@ const CalendarPopover = React.forwardRef<
           "will-change-[transform,opacity]",
           "data-[state=closed]:animate-hide",
           "data-[state=open]:data-[side=bottom]:animate-slide-down-and-fade data-[state=open]:data-[side=left]:animate-slide-left-and-fade data-[state=open]:data-[side=right]:animate-slide-right-and-fade data-[state=open]:data-[side=top]:animate-slide-up-and-fade",
-          className,
+          className
         )}
         {...props}
       >
@@ -373,7 +373,7 @@ const PresetContainer = <TPreset extends Preset, TValue>({
                 "hover:bg-gray-100 dark:hover:bg-gray-900",
                 {
                   "bg-gray-100 dark:bg-gray-900": matchesCurrent(preset),
-                },
+                }
               )}
               onClick={() => handleClick(preset)}
               aria-label={`Select ${preset.label}`}
@@ -395,7 +395,7 @@ PresetContainer.displayName = "DatePicker.PresetContainer";
 const formatDate = (
   date: Date,
   locale: Locale,
-  includeTime?: boolean,
+  includeTime?: boolean
 ): string => {
   const usesAmPm = !isBrowserLocaleClockType24h();
   let dateString: string;
@@ -482,7 +482,7 @@ const SingleDatePicker = ({
 }: SingleProps) => {
   const [open, setOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date | undefined>(
-    value ?? defaultValue ?? undefined,
+    value ?? defaultValue ?? undefined
   );
   const [month, setMonth] = React.useState<Date | undefined>(date);
 
@@ -491,7 +491,7 @@ const SingleDatePicker = ({
       ? new Time(value.getHours(), value.getMinutes())
       : defaultValue
         ? new Time(defaultValue.getHours(), defaultValue.getMinutes())
-        : new Time(0, 0),
+        : new Time(0, 0)
   );
 
   const initialDate = React.useMemo(() => {
@@ -521,7 +521,7 @@ const SingleDatePicker = ({
     setTime(
       initialDate
         ? new Time(initialDate.getHours(), initialDate.getMinutes())
-        : new Time(0, 0),
+        : new Time(0, 0)
     );
     setOpen(false);
   };
@@ -588,7 +588,7 @@ const SingleDatePicker = ({
         ? new Time(value.getHours(), value.getMinutes())
         : defaultValue
           ? new Time(defaultValue.getHours(), defaultValue.getMinutes())
-          : new Time(0, 0),
+          : new Time(0, 0)
     );
   }, [value, defaultValue]);
 
@@ -618,7 +618,7 @@ const SingleDatePicker = ({
                 className={cx(
                   "relative flex h-14 w-full items-center sm:h-full sm:w-40",
                   "border-b border-gray-200 sm:border-r sm:border-b-0 dark:border-gray-800",
-                  "overflow-auto",
+                  "overflow-auto"
                 )}
               >
                 <div className="absolute px-2 pr-2 sm:inset-0 sm:left-0 sm:py-2">
@@ -656,22 +656,22 @@ const SingleDatePicker = ({
                 </div>
               )}
               <div className="flex items-center gap-x-2 border-t border-gray-200 p-3 dark:border-gray-800">
-                <Button
+                <DateRangePickerButton
                   variant="secondary"
                   className="h-8 w-full"
                   type="button"
                   onClick={onCancel}
                 >
                   {translations?.cancel ?? "Cancel"}
-                </Button>
-                <Button
+                </DateRangePickerButton>
+                <DateRangePickerButton
                   variant="primary"
                   className="h-8 w-full"
                   type="button"
                   onClick={onApply}
                 >
                   {translations?.apply ?? "Apply"}
-                </Button>
+                </DateRangePickerButton>
               </div>
             </div>
           </div>
@@ -711,7 +711,7 @@ const RangeDatePicker = ({
 }: RangeProps) => {
   const [open, setOpen] = React.useState(false);
   const [range, setRange] = React.useState<DateRange | undefined>(
-    value ?? defaultValue ?? undefined,
+    value ?? defaultValue ?? undefined
   );
   const [month, setMonth] = React.useState<Date | undefined>(range?.from);
 
@@ -720,14 +720,14 @@ const RangeDatePicker = ({
       ? new Time(value.from.getHours(), value.from.getMinutes())
       : defaultValue?.from
         ? new Time(defaultValue.from.getHours(), defaultValue.from.getMinutes())
-        : new Time(0, 0),
+        : new Time(0, 0)
   );
   const [endTime, setEndTime] = React.useState<TimeValue | null>(
     value?.to
       ? new Time(value.to.getHours(), value.to.getMinutes())
       : defaultValue?.to
         ? new Time(defaultValue.to.getHours(), defaultValue.to.getMinutes())
-        : new Time(0, 0),
+        : new Time(0, 0)
   );
 
   const initialRange = React.useMemo(() => {
@@ -782,12 +782,12 @@ const RangeDatePicker = ({
     setStartTime(
       initialRange?.from
         ? new Time(initialRange.from.getHours(), initialRange.from.getMinutes())
-        : new Time(0, 0),
+        : new Time(0, 0)
     );
     setEndTime(
       initialRange?.to
         ? new Time(initialRange.to.getHours(), initialRange.to.getMinutes())
-        : new Time(0, 0),
+        : new Time(0, 0)
     );
     setOpen(false);
   };
@@ -864,18 +864,15 @@ const RangeDatePicker = ({
       value?.from
         ? new Time(value.from.getHours(), value.from.getMinutes())
         : defaultValue?.from
-          ? new Time(
-              defaultValue.from.getHours(),
-              defaultValue.from.getMinutes(),
-            )
-          : new Time(0, 0),
+          ? new Time(defaultValue.from.getHours(), defaultValue.from.getMinutes())
+          : new Time(0, 0)
     );
     setEndTime(
       value?.to
         ? new Time(value.to.getHours(), value.to.getMinutes())
         : defaultValue?.to
           ? new Time(defaultValue.to.getHours(), defaultValue.to.getMinutes())
-          : new Time(0, 0),
+          : new Time(0, 0)
     );
   }, [value, defaultValue]);
 
@@ -884,9 +881,8 @@ const RangeDatePicker = ({
       return null;
     }
 
-    return `${
-      range.from ? formatDate(range.from, locale, showTimePicker) : ""
-    } - ${range.to ? formatDate(range.to, locale, showTimePicker) : ""}`;
+    return `${range.from ? formatDate(range.from, locale, showTimePicker) : ""
+      } - ${range.to ? formatDate(range.to, locale, showTimePicker) : ""}`;
   }, [range, locale, showTimePicker]);
 
   const onApply = () => {
@@ -920,7 +916,7 @@ const RangeDatePicker = ({
                 className={cx(
                   "relative flex h-16 w-full items-center sm:h-full sm:w-40",
                   "border-b border-gray-200 sm:border-r sm:border-b-0 dark:border-gray-800",
-                  "overflow-auto",
+                  "overflow-auto"
                 )}
               >
                 <div className="absolute px-3 sm:inset-0 sm:left-0 sm:p-2">
@@ -988,22 +984,22 @@ const RangeDatePicker = ({
                   <span className="font-medium">{displayRange}</span>
                 </p>
                 <div className="mt-2 flex items-center gap-x-2 sm:mt-0">
-                  <Button
+                  <DateRangePickerButton
                     variant="secondary"
                     className="h-8 w-full sm:w-fit"
                     type="button"
                     onClick={onCancel}
                   >
                     {translations?.cancel ?? "Cancel"}
-                  </Button>
-                  <Button
+                  </DateRangePickerButton>
+                  <DateRangePickerButton
                     variant="primary"
                     className="h-8 w-full sm:w-fit"
                     type="button"
                     onClick={onApply}
                   >
                     {translations?.apply ?? "Apply"}
-                  </Button>
+                  </DateRangePickerButton>
                 </div>
               </div>
             </div>
@@ -1019,7 +1015,7 @@ const RangeDatePicker = ({
 
 const validatePresets = (
   presets: DateRangePreset[] | DatePreset[],
-  rules: PickerProps,
+  rules: PickerProps
 ) => {
   const { toYear, fromYear, fromMonth, toMonth, fromDay, toDay } = rules;
 
@@ -1033,13 +1029,13 @@ const validatePresets = (
 
         if (fromYear && presetYear < fromYear) {
           throw new Error(
-            `Preset ${preset.label} is before fromYear ${fromYearToUse}.`,
+            `Preset ${preset.label} is before fromYear ${fromYearToUse}.`
           );
         }
 
         if (toYear && presetYear > toYear) {
           throw new Error(
-            `Preset ${preset.label} is after toYear ${toYearToUse}.`,
+            `Preset ${preset.label} is after toYear ${toYearToUse}.`
           );
         }
 
@@ -1048,7 +1044,7 @@ const validatePresets = (
 
           if (presetMonth < fromMonth.getMonth()) {
             throw new Error(
-              `Preset ${preset.label} is before fromMonth ${fromMonth}.`,
+              `Preset ${preset.label} is before fromMonth ${fromMonth}.`
             );
           }
         }
@@ -1058,7 +1054,7 @@ const validatePresets = (
 
           if (presetMonth > toMonth.getMonth()) {
             throw new Error(
-              `Preset ${preset.label} is after toMonth ${toMonth}.`,
+              `Preset ${preset.label} is after toMonth ${toMonth}.`
             );
           }
         }
@@ -1068,7 +1064,7 @@ const validatePresets = (
 
           if (presetDay < fromDay.getDate()) {
             throw new Error(
-              `Preset ${preset.label} is before fromDay ${fromDay}.`,
+              `Preset ${preset.label} is before fromDay ${fromDay}.`
             );
           }
         }
@@ -1080,8 +1076,8 @@ const validatePresets = (
             throw new Error(
               `Preset ${preset.label} is after toDay ${format(
                 toDay,
-                "MMM dd, yyyy",
-              )}.`,
+                "MMM dd, yyyy"
+              )}.`
             );
           }
         }
@@ -1093,13 +1089,13 @@ const validatePresets = (
 
         if (presetFromYear && fromYear && presetFromYear < fromYear) {
           throw new Error(
-            `Preset ${preset.label}'s 'from' is before fromYear ${fromYearToUse}.`,
+            `Preset ${preset.label}'s 'from' is before fromYear ${fromYearToUse}.`
           );
         }
 
         if (presetToYear && toYear && presetToYear > toYear) {
           throw new Error(
-            `Preset ${preset.label}'s 'to' is after toYear ${toYearToUse}.`,
+            `Preset ${preset.label}'s 'to' is after toYear ${toYearToUse}.`
           );
         }
 
@@ -1110,8 +1106,8 @@ const validatePresets = (
             throw new Error(
               `Preset ${preset.label}'s 'from' is before fromMonth ${format(
                 fromMonth,
-                "MMM, yyyy",
-              )}.`,
+                "MMM, yyyy"
+              )}.`
             );
           }
         }
@@ -1123,8 +1119,8 @@ const validatePresets = (
             throw new Error(
               `Preset ${preset.label}'s 'to' is after toMonth ${format(
                 toMonth,
-                "MMM, yyyy",
-              )}.`,
+                "MMM, yyyy"
+              )}.`
             );
           }
         }
@@ -1134,9 +1130,8 @@ const validatePresets = (
 
           if (presetDay && presetDay < fromDay.getDate()) {
             throw new Error(
-              `Preset ${
-                preset.dateRange.from
-              }'s 'from' is before fromDay ${format(fromDay, "MMM dd, yyyy")}.`,
+              `Preset ${preset.dateRange.from
+              }'s 'from' is before fromDay ${format(fromDay, "MMM dd, yyyy")}.`
             );
           }
         }
@@ -1148,8 +1143,8 @@ const validatePresets = (
             throw new Error(
               `Preset ${preset.label}'s 'to' is after toDay ${format(
                 toDay,
-                "MMM dd, yyyy",
-              )}.`,
+                "MMM dd, yyyy"
+              )}.`
             );
           }
         }

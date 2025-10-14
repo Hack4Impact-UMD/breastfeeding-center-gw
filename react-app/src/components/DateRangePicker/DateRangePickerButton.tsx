@@ -94,13 +94,13 @@ const buttonVariants = tv({
 
 interface ButtonProps
   extends React.ComponentPropsWithoutRef<"button">,
-    VariantProps<typeof buttonVariants> {
+  VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   isLoading?: boolean;
   loadingText?: string;
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+const DateRangePickerButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       asChild,
@@ -142,6 +142,4 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   },
 );
 
-Button.displayName = "Button";
-
-export { Button, buttonVariants, type ButtonProps };
+export { DateRangePickerButton, buttonVariants, type ButtonProps };
