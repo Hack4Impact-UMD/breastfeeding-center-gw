@@ -3,7 +3,6 @@ import { VisitType } from "@/types/JaneType";
 import { Button } from "@/components/ui/button";
 import { LuArrowUpDown } from "react-icons/lu";
 
-
 export type AcuityData = {
   class: string;
   instructor: string;

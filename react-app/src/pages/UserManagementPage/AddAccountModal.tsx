@@ -6,10 +6,18 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 interface AddAccountModalProps {
   open: boolean;
   onClose: () => void;
-  onConfirm: (user: { firstName: string; lastName: string; email: string }) => void;
+  onConfirm: (user: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  }) => void;
 }
 
-const AddAccountModal: React.FC<AddAccountModalProps> = ({ open, onClose, onConfirm }) => {
+const AddAccountModal: React.FC<AddAccountModalProps> = ({
+  open,
+  onClose,
+  onConfirm,
+}) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -22,7 +30,8 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ open, onClose, onConf
   const canConfirm = allFilled && emailValid && emailsMatch;
 
   let error = "";
-  if (touched && !allFilled) error = "One of the fields is empty or contains invalid data.";
+  if (touched && !allFilled)
+    error = "One of the fields is empty or contains invalid data.";
   else if (touched && !emailValid) error = "Email invalid";
   else if (touched && !emailsMatch) error = "Email addresses don’t match";
 
@@ -36,20 +45,22 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ open, onClose, onConf
         >
           ×
         </button>
-        <h2 className="text-2xl font-bold text-center mb-4 pt-6">Add Account</h2>
+        <h2 className="text-2xl font-bold text-center mb-4 pt-6">
+          Add Account
+        </h2>
         <div className="flex gap-2 mb-3 px-8">
           <input
             className="border rounded px-2 py-1 flex-1"
             placeholder="First Name"
             value={firstName}
-            onChange={e => setFirstName(e.target.value)}
+            onChange={(e) => setFirstName(e.target.value)}
             onBlur={() => setTouched(true)}
           />
           <input
             className="border rounded px-2 py-3 flex-1"
             placeholder="Last Name"
             value={lastName}
-            onChange={e => setLastName(e.target.value)}
+            onChange={(e) => setLastName(e.target.value)}
             onBlur={() => setTouched(true)}
           />
         </div>
@@ -58,14 +69,14 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({ open, onClose, onConf
             className="border rounded px-2 py-3 mb-2 w-full"
             placeholder="Email"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             onBlur={() => setTouched(true)}
           />
           <input
             className="border rounded px-2 py-3 w-full"
             placeholder="Confirm Email"
             value={confirmEmail}
-            onChange={e => setConfirmEmail(e.target.value)}
+            onChange={(e) => setConfirmEmail(e.target.value)}
             onBlur={() => setTouched(true)}
           />
         </div>

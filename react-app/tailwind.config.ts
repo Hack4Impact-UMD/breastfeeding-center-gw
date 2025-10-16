@@ -1,8 +1,10 @@
 import type { Config } from "tailwindcss";
 // import defaultTheme from 'tailwindcss/defaultTheme';
+import forms from "@tailwindcss/forms";
 
 const config: Config = {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  darkMode: false,
   theme: {
     extend: {
       keyframes: {
@@ -75,11 +77,11 @@ const config: Config = {
           "dialogContentShow 150ms cubic-bezier(0.16, 1, 0.3, 1)",
         // Drawer
         drawerSlideLeftAndFade:
-        "drawerSlideLeftAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1)",
+          "drawerSlideLeftAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1)",
         drawerSlideRightAndFade: "drawerSlideRightAndFade 150ms ease-in",
       },
     },
   },
-  plugins: [require("@tailwindcss/forms")],
+  plugins: [forms],
 };
 export default config;

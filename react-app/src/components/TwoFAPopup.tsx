@@ -25,7 +25,7 @@ const TwoFAPopup = ({
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    index: number
+    index: number,
   ) => {
     const value = e.target.value;
     if (!/^[0-9]$/.test(value)) return;
@@ -39,7 +39,7 @@ const TwoFAPopup = ({
 
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
-    index: number
+    index: number,
   ) => {
     if (e.key === "Backspace") {
       const newOtp = [...otp];
@@ -106,14 +106,16 @@ const TwoFAPopup = ({
         <p
           className={`text-red-500 text-center mt-2 ${
             error ? "block" : "hidden"
-          }`}>
+          }`}
+        >
           Two-factor authentication code is incorrect
         </p>
 
         <p
           className={`leading-6 font-Inter text-lg text-center mb-6 mx-6 ${
             error ? "mt-2" : "mt-10"
-          }`}>
+          }`}
+        >
           The verification code has been sent to your phone. Enter the code to
           continue.
         </p>
@@ -124,7 +126,8 @@ const TwoFAPopup = ({
             allFilled
               ? "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light cursor-pointer "
               : "bg-bcgw-gray-light cursor-not-allowed"
-          } self-center text-lg font-bold`}>
+          } self-center text-lg font-bold`}
+        >
           Submit
         </button>
 
@@ -132,7 +135,8 @@ const TwoFAPopup = ({
           Didn't get a verification code?
           <button
             onClick={handleResendCode}
-            className="underline text-[#1239BB] hover:opacity-80 transition cursor-pointer">
+            className="underline text-[#1239BB] hover:opacity-80 transition cursor-pointer"
+          >
             Resend a new code
           </button>
         </p>

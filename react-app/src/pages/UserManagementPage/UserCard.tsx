@@ -13,16 +13,17 @@ const ActionButton: React.FC<{
 }> = ({ children, onClick, className }) => (
   <button
     onClick={onClick}
-    className={`text-base px-4 py-2 border border-black rounded transition focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer ${className ?? ""
-      }`}
+    className={`text-base px-4 py-2 border border-black rounded transition focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer ${
+      className ?? ""
+    }`}
   >
     {children}
   </button>
 );
 
-
 const UserCard: React.FC<{ user: User }> = ({ user }) => {
-  const initials = `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase();
+  const initials =
+    `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase();
   const [isChangeAccessOpen, setIsChangeAccessOpen] = React.useState(false);
   const defaultAccess: "Volunteer" | "Admin" =
     user.type === "VOLUNTEER" ? "Volunteer" : "Admin";
@@ -36,7 +37,6 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
 
   return (
     <div className="grid grid-cols-[auto_1fr_auto] items-center py-9 px-6 border-b border-black gap-8">
-
       <ProfileIcon initials={initials} size={112} />
 
       {/* name + contact info */}
@@ -45,7 +45,9 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
           <a className="text-2xl text-blue w-65">
             {user.lastName}, {user.firstName}
           </a>
-          <span className={roleChipClass}>{user.type.substring(0, 1) + user.type.substring(1).toLowerCase()}</span>
+          <span className={roleChipClass}>
+            {user.type.substring(0, 1) + user.type.substring(1).toLowerCase()}
+          </span>
         </div>
 
         <div className="mt-4 space-y-2">
@@ -104,13 +106,20 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
                 xmlns="http://www.w3.org/2000/svg"
                 className="text-gray-700"
               >
-                <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path
+                  d="M1 1L13 13M13 1L1 13"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
               </svg>
             </button>
 
             {/* Title */}
             <div className="px-8 pt-10 pb-6">
-              <h3 className="text-2xl font-semibold text-center">Change Access</h3>
+              <h3 className="text-2xl font-semibold text-center">
+                Change Access
+              </h3>
             </div>
 
             {/* Real dropdown, defaults to current card role */}
@@ -123,9 +132,12 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
                     </div>
                   </div>
                 ) : (
-                  <div className="relative" onKeyDown={(e) => {
-                    if (e.key === 'Escape') setIsDropdownOpen(false);
-                  }}>
+                  <div
+                    className="relative"
+                    onKeyDown={(e) => {
+                      if (e.key === "Escape") setIsDropdownOpen(false);
+                    }}
+                  >
                     <button
                       type="button"
                       className="w-full border border-gray-300 rounded-full h-12 pl-4 pr-12 text-sm font-semibold tracking-wide shadow-sm bg-white text-gray-900 flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-blue-400 relative cursor-pointer"
@@ -156,8 +168,11 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
                             role="option"
                             aria-selected={selectedAccess === role}
                             key={role}
-                            className={`px-4 py-2 text-sm font-semibold cursor-pointer select-none ${selectedAccess === role ? "bg-gray-100" : "hover:bg-gray-50"
-                              }`}
+                            className={`px-4 py-2 text-sm font-semibold cursor-pointer select-none ${
+                              selectedAccess === role
+                                ? "bg-gray-100"
+                                : "hover:bg-gray-50"
+                            }`}
                             onClick={() => {
                               setSelectedAccess(role);
                               setIsDropdownOpen(false);
@@ -216,12 +231,19 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
               xmlns="http://www.w3.org/2000/svg"
               className="text-gray-700"
             >
-              <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              <path
+                d="M1 1L13 13M13 1L1 13"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
             </svg>
           </button>
 
           <div className="px-8 pt-8 pb-2">
-            <h3 className="text-2xl font-semibold text-center">Remove Access?</h3>
+            <h3 className="text-2xl font-semibold text-center">
+              Remove Access?
+            </h3>
           </div>
           <div className="px-8 text-center text-lg text-gray-700">
             Are you sure you would like to remove this user's account?
@@ -267,15 +289,23 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
               xmlns="http://www.w3.org/2000/svg"
               className="text-gray-700"
             >
-              <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              <path
+                d="M1 1L13 13M13 1L1 13"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
             </svg>
           </button>
 
           <div className="px-8 pt-8 pb-3">
-            <h3 className="text-2xl font-semibold text-center">Account Cannot Be Modified</h3>
+            <h3 className="text-2xl font-semibold text-center">
+              Account Cannot Be Modified
+            </h3>
           </div>
           <div className="px-8 text-center text-lg text-gray-700 leading-relaxed">
-            This director account cannot be removed or set to a lower permission. There must be one director.
+            This director account cannot be removed or set to a lower
+            permission. There must be one director.
           </div>
         </div>
       </Modal>

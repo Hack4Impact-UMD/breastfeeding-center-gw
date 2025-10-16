@@ -48,8 +48,10 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
 
   return (
     <div
-      className={`flex flex-col justify-left h-screen fixed bg-[#F9F8F8] shadow-[4px_4px_4px_0px_rgba(0,_0,_0,_0.25)] transition-all duration-200 ease-in-out ${navBarOpen ? "w-[250px]" : "w-[60px]"
-        }`}>
+      className={`flex flex-col justify-left h-screen fixed bg-[#F9F8F8] shadow-[4px_4px_4px_0px_rgba(0,_0,_0,_0.25)] transition-all duration-200 ease-in-out ${
+        navBarOpen ? "w-[250px]" : "w-[60px]"
+      }`}
+    >
       <div className="flex flex-col h-full ">
         <div className="flex flex-row justify-between items-center pr-3 pt-1">
           <button onClick={toggleNavBar} className="flex ml-auto">
@@ -87,7 +89,8 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                   to="/"
                   className={({ isActive }) =>
                     isActive ? activeStyle : notActiveStyle
-                  }>
+                  }
+                >
                   <img className="w-[30px] h-[30px] " src={home} />
                   <span className={categoryMargin}>Home</span>
                 </NavLink>
@@ -103,7 +106,8 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                   onClick={(e) => {
                     e.preventDefault();
                     toggleServicesDropdown();
-                  }}>
+                  }}
+                >
                   <div className="flex items-center justify-between w-full">
                     <div className="flex items-center">
                       <img className="w-[30px] h-[30px]" src={service} />
@@ -127,7 +131,8 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                       to="/services/jane"
                       className={({ isActive }) =>
                         isActive ? activeStyle : notActiveStyle
-                      }>
+                      }
+                    >
                       <span className={serviceMargin}>Jane</span>
                     </NavLink>
                   </div>
@@ -136,7 +141,8 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                       to="/services/acuity"
                       className={({ isActive }) =>
                         isActive ? activeStyle : notActiveStyle
-                      }>
+                      }
+                    >
                       <span className={serviceMargin}>Acuity</span>
                     </NavLink>
                   </div>
@@ -145,7 +151,8 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                       to="/services/paysimple"
                       className={({ isActive }) =>
                         isActive ? activeStyle : notActiveStyle
-                      }>
+                      }
+                    >
                       <span className={serviceMargin}>PaySimple</span>
                     </NavLink>
                   </div>
@@ -158,7 +165,8 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                   to="/clients"
                   className={({ isActive }) =>
                     isActive ? activeStyle : notActiveStyle
-                  }>
+                  }
+                >
                   <img className="w-[30px] h-[30px]" src={clients} />
                   <span className={categoryMargin}>Client List</span>
                 </NavLink>
@@ -170,7 +178,8 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                   to="/management"
                   className={({ isActive }) =>
                     isActive ? activeStyle : notActiveStyle
-                  }>
+                  }
+                >
                   <img className="w-[30px] h-[30px]" src={management} />
                   <span className={categoryMargin}>User Management</span>
                 </NavLink>
@@ -184,7 +193,8 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                 className="flex justify-left items-center text-bcgw-blue-dark pl-3 gap-3 cursor-pointer hover:underline"
                 onClick={() => {
                   handleLogOut();
-                }}>
+                }}
+              >
                 <img src={logout} className="w-[30px] h-[30px]" />
                 LOGOUT
               </button>
@@ -198,7 +208,8 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                 to="/"
                 className={({ isActive }) =>
                   isActive ? activeIconStyle : notActiveIconStyle
-                }>
+                }
+              >
                 <img className="w-[30px] h-[30px]" src={home} />
               </NavLink>
 
@@ -211,7 +222,8 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                   e.preventDefault();
                   toggleNavBar();
                   setOpenServices(true);
-                }}>
+                }}
+              >
                 <img className="w-[30px] h-[30px]" src={service} />
               </NavLink>
 
@@ -219,7 +231,8 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                 to="/clients"
                 className={({ isActive }) =>
                   isActive ? activeIconStyle : notActiveIconStyle
-                }>
+                }
+              >
                 <img className="w-[30px] h-[30px]" src={clients} />
               </NavLink>
 
@@ -227,7 +240,8 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                 to="/management"
                 className={({ isActive }) =>
                   isActive ? activeIconStyle : notActiveIconStyle
-                }>
+                }
+              >
                 <img className="w-[30px] h-[30px]" src={management} />
               </NavLink>
             </div>
@@ -236,19 +250,21 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
               className="mt-auto cursor-pointer"
               onClick={() => {
                 handleLogOut();
-              }}>
+              }}
+            >
               <img src={logout} className="w-[30px] h-[30px]" />
             </button>
           </div>
         )}
       </div>
-      {openLogoutConfirmation && createPortal(
-        <LogoutConfirmation
-          open={openLogoutConfirmation}
-          onClose={() => setOpenLogoutConfirmation(false)}
-        />,
-        document.body
-      )}
+      {openLogoutConfirmation &&
+        createPortal(
+          <LogoutConfirmation
+            open={openLogoutConfirmation}
+            onClose={() => setOpenLogoutConfirmation(false)}
+          />,
+          document.body,
+        )}
     </div>
   );
 };

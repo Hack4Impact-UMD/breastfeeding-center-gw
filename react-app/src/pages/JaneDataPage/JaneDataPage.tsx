@@ -65,8 +65,9 @@ const JaneDataPage = () => {
     <>
       <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
       <div
-        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-          }`}
+        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
+          navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
+        }`}
       >
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-20">
@@ -91,38 +92,36 @@ const JaneDataPage = () => {
             <div className={centerItemsInDiv}>
               <button
                 className={`${buttonStyle} mr-5 text-nowrap`}
-                onClick={() => setShowUploadPopup(true)}>
+                onClick={() => setShowUploadPopup(true)}
+              >
                 UPLOAD NEW SPREADSHEETS
               </button>
             </div>
           </div>
-          {
-            isPending ? (
-              <div className="flex justify-center items-center">
-                <Loading />
-              </div>
-            ) : (
-              error ? (
-                <div className="flex justify-center items-center p-8">
-                  <p className="text-red-600">Failed to load Jane data: {error.message}</p>
-                </div>
-              )
-                : (
-                  <DataTable
-                    columns={janeIDDataColumns}
-                    data={janeConsultations}
-                    handleDelete={handleDelete}
-                    tableType="janeData"
-                  />
-                )
-            )
-          }
+          {isPending ? (
+            <div className="flex justify-center items-center">
+              <Loading />
+            </div>
+          ) : error ? (
+            <div className="flex justify-center items-center p-8">
+              <p className="text-red-600">
+                Failed to load Jane data: {error.message}
+              </p>
+            </div>
+          ) : (
+            <DataTable
+              columns={janeIDDataColumns}
+              data={janeConsultations}
+              handleDelete={handleDelete}
+              tableType="janeData"
+            />
+          )}
           <FileUploadPopup
             isOpen={showUploadPopup}
             onClose={() => setShowUploadPopup(false)}
           />
-        </div >
-      </div >
+        </div>
+      </div>
     </>
   );
 };

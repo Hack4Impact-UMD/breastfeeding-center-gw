@@ -68,7 +68,7 @@ const ChangeEmailPopup = ({
                 setNewEmail(e.target.value);
                 setShowEmailMatchError(e.target.value !== confirmNewEmail);
                 setShowEmailInvalidError(
-                  e.target.value ? !validateEmail(e.target.value) : false
+                  e.target.value ? !validateEmail(e.target.value) : false,
                 );
               }}
               className="flex-1 border-[1.5px] border-black px-3 py-2"
@@ -115,7 +115,8 @@ const ChangeEmailPopup = ({
               !confirmNewEmail ||
               newEmail !== confirmNewEmail ||
               showEmailInvalidError
-            }>
+            }
+          >
             Save
           </button>
         </div>
