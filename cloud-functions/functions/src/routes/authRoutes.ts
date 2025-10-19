@@ -6,6 +6,7 @@ import { logger } from "firebase-functions";
 import { auth, db } from "../services/firebase";
 import { config } from "../config";
 import { UserInvite } from "../types/inviteType";
+import { INVITES_COLLECTION, USERS_COLLECTION } from "../types/collections";
 
 const router = Router();
 
@@ -18,8 +19,6 @@ type UserRegisterForm = {
   password: string;
 }
 
-const USERS_COLLECTION = "Users"
-const INVITES_COLLECTION = "Invites"
 
 // create the root user
 router.post("/register/root", async (req: Request, res: Response) => {
@@ -77,6 +76,8 @@ router.post("/register/root", async (req: Request, res: Response) => {
 // register a user from an invite
 router.post("/register/invite/:invite_id", async (req: Request, res: Response) => {
   const { inviteId } = req.params;
+  logger.info(`Register request received using invite ${inviteId}`)
+
   const {
     firstName,
     lastName,
@@ -93,6 +94,8 @@ router.post("/register/invite/:invite_id", async (req: Request, res: Response) =
   const invite: UserInvite = (await db.collection(INVITES_COLLECTION).doc(inviteId).get()).data() as UserInvite
 
   if (!invite) {
+    logger.warn("Register request attempted without valid invite!")
+    logger.warn(req.body)
     return res.status(404).send("Invite not found or has already been used!")
   }
 
