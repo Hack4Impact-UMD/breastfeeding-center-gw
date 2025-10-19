@@ -6,7 +6,13 @@ import * as admin from "firebase-admin";
 admin.initializeApp();
 
 import app from "./app";
+import { config } from "./config";
+import { logger, onInit } from "firebase-functions";
 
+
+onInit(() => {
+  logger.info(`INIT: USING ROOT USER EMAIL: ${config.rootUserEmail.value()}`)
+})
 
 exports.api = onRequest({ region: "us-east4" }, app);
 

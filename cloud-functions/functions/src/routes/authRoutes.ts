@@ -4,8 +4,139 @@ import crypto from "crypto";
 import { Role, User } from "../types/userTypes";
 import { logger } from "firebase-functions";
 import { auth, db } from "../services/firebase";
+import { config } from "../config";
+import { UserInvite } from "../types/inviteType";
 
 const router = Router();
+
+type UserRegisterForm = {
+  email: string;
+  firstName: string;
+  lastName: string;
+  pronouns?: string;
+  phone?: string;
+  password: string;
+}
+
+const USERS_COLLECTION = "Users"
+const INVITES_COLLECTION = "Invites"
+
+// create the root user
+router.post("/register/root", async (req: Request, res: Response) => {
+  logger.info("Root user register request received!");
+  const {
+    firstName,
+    lastName,
+    password,
+    email,
+    pronouns,
+    phone
+  } = req.body as UserRegisterForm
+
+  if (!firstName || !lastName || !password || !email) {
+    return res.status(400).send("Bad request, missing required fields!");
+  }
+
+  if (email !== config.rootUserEmail.value()) {
+    logger.warn(`Root user register request attempted with unauthorized email: ${email}!`);
+    return res.status(403).send("Forbidden");
+  }
+
+  // if the root user already exists, return
+  if (await auth.getUserByEmail(email).catch(() => undefined)) {
+    logger.warn("Root user register request attempted when root user already exists!");
+    return res.status(400).send("Root user already exists");
+  }
+
+  const authUser = await auth.createUser({
+    displayName: `${firstName} ${lastName}`,
+    email: email,
+    password: password,
+    phoneNumber: phone,
+  });
+
+  const user: User = {
+    auth_id: authUser.uid,
+    email: email,
+    firstName: firstName,
+    lastName: lastName,
+    pronouns: pronouns,
+    phone: phone,
+    type: "DIRECTOR"
+  };
+
+  await db.collection(USERS_COLLECTION).doc(user.auth_id).set(user);
+
+  logger.info("Successfully created root user: ", user);
+
+  return res.status(200).send(
+    user
+  );
+})
+
+// register a user from an invite
+router.post("/register/invite/:invite_id", async (req: Request, res: Response) => {
+  const { inviteId } = req.params;
+  const {
+    firstName,
+    lastName,
+    password,
+    email,
+    pronouns,
+    phone
+  } = req.body as UserRegisterForm
+
+  if (!inviteId) {
+    return res.status(400).send("No invite ID provided!")
+  }
+
+  const invite: UserInvite = (await db.collection(INVITES_COLLECTION).doc(inviteId).get()).data() as UserInvite
+
+  if (!invite) {
+    return res.status(404).send("Invite not found or has already been used!")
+  }
+
+  if (!firstName || !lastName || !password || !email) {
+    return res.status(400).send("Bad request, missing required fields!");
+  }
+
+  if (email !== invite.email) {
+    logger.warn(`Attempt to register with an invite using a different email: ${email}. Invite email: ${invite.email}!`);
+    return res.status(403).send("Forbidden");
+  }
+
+  // if user already exists, return
+  if (await auth.getUserByEmail(email).catch(() => undefined)) {
+    logger.warn("User register request attempted when user already exists!");
+    return res.status(400).send("User already exists");
+  }
+
+  const authUser = await auth.createUser({
+    displayName: `${firstName} ${lastName}`,
+    email: email,
+    password: password,
+    phoneNumber: phone,
+  });
+
+  const user: User = {
+    auth_id: authUser.uid,
+    email: email,
+    firstName: firstName,
+    lastName: lastName,
+    pronouns: pronouns,
+    phone: phone,
+    type: invite.role
+  };
+
+  await db.collection(USERS_COLLECTION).doc(user.auth_id).set(user);
+
+  logger.info(`Successfully created user ${user.email} with role ${user.type}`);
+
+  return res.status(200).send(
+    user
+  );
+})
+
 
 /*
  * Creates a new admin.
