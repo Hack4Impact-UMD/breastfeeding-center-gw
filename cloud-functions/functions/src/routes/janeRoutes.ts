@@ -50,20 +50,15 @@ router.post("/upload", upload, async (req: Request, res: Response) => {
     }
     console.log(babyList[0].middleName);
 
-    const appointments_map = new Map<[string, string], JaneAppt[]>();
+    const appointments_map = new Map<string, JaneAppt[]>();
 
     appointments_sheet.forEach((jane_appt: JaneAppt) => {
-      const appt_group = appointments_map.get([
-        jane_appt.startAt,
-        jane_appt.clinician,
-      ]);
+      const key = `${jane_appt.startAt}-${jane_appt.clinician}`;
+      const appt_group = appointments_map.get(key);
       if (appt_group) {
         appt_group.push(jane_appt);
       } else {
-        appointments_map.set(
-          [jane_appt.startAt, jane_appt.clinician],
-          [jane_appt],
-        );
+        appointments_map.set(key, [jane_appt]);
       }
     });
 
@@ -111,7 +106,6 @@ router.post("/upload", upload, async (req: Request, res: Response) => {
     }
 
     async function add_to_clients_collection(parent: Client) {
-      logger.info(`parent: ${parent.id} and babies: ${parent.baby}`);
       if (!parent.baby) {
         parent.baby = [];
       }
@@ -214,14 +208,9 @@ router.post("/upload", upload, async (req: Request, res: Response) => {
         continue;
       }
 
-      for (const baby of babies) {
-        logger.info(`BABY IN BABIES: ${baby.id}`);
-      }
-
       // merging parent existing baby list and new baby
       // this implementation may be inefficient
       babies.forEach((baby) => {
-        logger.info(`Baby: ${baby.id} for parent: ${parent!.id}`);
         if (
           !parentResolved?.baby.some(
             (existingBaby: { id: string }) => existingBaby.id === baby.id,
