@@ -10,3 +10,14 @@ export type UserInvite = {
   createdAt: Timestamp,
   used: boolean
 }
+
+export function inviteValid(invite: UserInvite, expireDays: number) {
+  if (invite.used) return false;
+
+  const issueTimeSecs = invite.createdAt.seconds;
+  const currentTimeSecs = Timestamp.now().seconds;
+
+  const daysSince = (currentTimeSecs - issueTimeSecs) / (60 * 60 * 24);
+
+  return daysSince <= expireDays
+}

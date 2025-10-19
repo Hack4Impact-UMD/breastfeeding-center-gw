@@ -4,6 +4,11 @@ const rootUserEmail = defineString("ROOT_USER_EMAIL", {
   description: "The email for the root user with the DIRECTOR role. A root user is required to invite other users to register."
 })
 
+const rootUserSecret = defineString("ROOT_USER_SECRET", {
+  description: "The secret to verify root user registration requests",
+  default: crypto.randomUUID()
+})
+
 const inviteExpirationDays = defineInt("INVITE_EXPIRE_DAYS", {
   description: "The number of days until a registration invite expires from the time it's issued",
   default: 7
@@ -11,7 +16,8 @@ const inviteExpirationDays = defineInt("INVITE_EXPIRE_DAYS", {
 
 const config = {
   rootUserEmail,
-  inviteExpirationDays
+  inviteExpirationDays,
+  rootUserSecret
 }
 
 export {

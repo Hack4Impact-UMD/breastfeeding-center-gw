@@ -1,12 +1,11 @@
 import { Request, Response, Router } from "express";
-import { hasRoles, isAuthenticated } from "../middleware/authMiddleware";
-import crypto from "crypto";
-import { Role, User } from "../types/userTypes";
+import { User } from "../types/userTypes";
 import { logger } from "firebase-functions";
 import { auth, db } from "../services/firebase";
 import { config } from "../config";
-import { UserInvite } from "../types/inviteType";
+import { inviteValid, UserInvite } from "../types/inviteType";
 import { INVITES_COLLECTION, USERS_COLLECTION } from "../types/collections";
+import { CollectionReference } from "firebase-admin/firestore";
 
 const router = Router();
 
@@ -19,10 +18,25 @@ type UserRegisterForm = {
   password: string;
 }
 
+/**
+  Creates the root user: the initial user with the director role that 
+  can invite other users to register.
+  
+  Valid register request requirements:
+  * Secret must match the root user secret defined in the config
+  * Email must match the root user email defined in the config
+  * Must have all required fields in UserRegisterForm in the body
+*/
+router.post("/register/root/:secret", async (req: Request, res: Response) => {
+  const secret = req.params.secret;
 
-// create the root user
-router.post("/register/root", async (req: Request, res: Response) => {
   logger.info("Root user register request received!");
+
+  if (secret !== config.rootUserSecret.value()) {
+    logger.warn(`Root user register request attempted with bad secret: ${secret}!`);
+    return res.status(403).send("Unauthorized")
+  }
+
   const {
     firstName,
     lastName,
@@ -73,7 +87,14 @@ router.post("/register/root", async (req: Request, res: Response) => {
   );
 })
 
-// register a user from an invite
+/**
+  Register a user from an invite.
+
+  invite_id - the id of the invite to register with, must match credentials
+  with the register request
+
+  Request body must have all required fields in UserRegisterForm
+*/
 router.post("/register/invite/:invite_id", async (req: Request, res: Response) => {
   const { inviteId } = req.params;
   logger.info(`Register request received using invite ${inviteId}`)
@@ -91,12 +112,20 @@ router.post("/register/invite/:invite_id", async (req: Request, res: Response) =
     return res.status(400).send("No invite ID provided!")
   }
 
-  const invite: UserInvite = (await db.collection(INVITES_COLLECTION).doc(inviteId).get()).data() as UserInvite
+  const invitesCollection = db.collection(INVITES_COLLECTION) as CollectionReference<UserInvite>;
+  const inviteDoc = invitesCollection.doc(inviteId);
+  const invite: UserInvite = (await inviteDoc.get()).data() as UserInvite
 
   if (!invite) {
-    logger.warn("Register request attempted without valid invite!")
+    logger.warn("Register request attempted without invite!")
     logger.warn(req.body)
     return res.status(404).send("Invite not found or has already been used!")
+  }
+
+  if (!inviteValid(invite, config.inviteExpirationDays.value())) {
+    logger.warn("Register request attempted with invalid invite!");
+    logger.warn(invite);
+    return res.status(403).send("Invite not valid!")
   }
 
   if (!firstName || !lastName || !password || !email) {
@@ -131,192 +160,19 @@ router.post("/register/invite/:invite_id", async (req: Request, res: Response) =
     type: invite.role
   };
 
-  await db.collection(USERS_COLLECTION).doc(user.auth_id).set(user);
+  const usersCollection = db.collection(USERS_COLLECTION) as CollectionReference<User>
+  await usersCollection.doc(user.auth_id).set(user);
 
   logger.info(`Successfully created user ${user.email} with role ${user.type}`);
+
+  // update the invite to used
+  await inviteDoc.update({
+    used: true
+  })
 
   return res.status(200).send(
     user
   );
 })
-
-
-/*
- * Creates a new admin.
- * Takes an object as a parameter that should contain an email, first name, and last name.
- * Arguments: email: string, the user's email
- *            first name: string, the user's first name
- *            last name: string, the user's last name
- */
-// only admins can create other admins
-router.post(
-  "/create/admin",
-  [isAuthenticated, hasRoles(["ADMIN"])],
-  async (req: Request, res: Response) => {
-    try {
-      const { email, firstName, lastName } = req.body;
-
-      if (!email?.trim() || !firstName?.trim() || !lastName?.trim()) {
-        return res.status(400).send("Missing required fields");
-      }
-
-      const pass = crypto.randomBytes(32).toString("hex");
-      const userRecord = await auth.createUser({
-        email: email,
-        password: pass,
-      });
-
-      await auth.setCustomUserClaims(userRecord.uid, {
-        role: "ADMIN",
-      });
-
-      const collectionObject: User = {
-        auth_id: userRecord.uid,
-        email: email,
-        firstName: firstName,
-        lastName: lastName,
-        type: "ADMIN",
-      };
-
-      const querySnapshot = await db
-        .collection("Users")
-        .where("auth_id", "==", userRecord.uid)
-        .get();
-
-      //user does not exist yet
-      if (querySnapshot.docs.length == 0) {
-        await db.collection("Users").add(collectionObject);
-
-        return res.status(200).send("Success");
-      } else {
-        return res.status(400).send("User already exists");
-      }
-    } catch (err) {
-      logger.error("Create admin user error!");
-      logger.error(err);
-      return res.status(500).send(err);
-    }
-  },
-);
-
-/**
- * Deletes the user
- * parameter: firebase_id - the user's firebase auth id
- */
-router.delete(
-  "/user/:firebase_id",
-  [isAuthenticated, hasRoles(["ADMIN"])],
-  async (req: Request, res: Response) => {
-    try {
-      const userId = req.params.firebase_id;
-
-      await auth.deleteUser(userId);
-
-      const querySnapshot = await db
-        .collection("Users")
-        .where("auth_id", "==", userId)
-        .get();
-      if (querySnapshot.docs.length == 0) {
-        return res.status(404).send("User not found!");
-      } else {
-        await Promise.all(
-          querySnapshot.docs.map(async (doc) => {
-            await doc.ref.delete();
-          }),
-        );
-        return res.status(200).send();
-      }
-    } catch (err) {
-      logger.error("Delete user error!");
-      logger.error(err);
-      return res.status(500).send(err);
-    }
-  },
-);
-
-/**
- * Updates the current user's email
- * Arguments: email - the user's current email
- *            newEmail - the user's new email
- */
-router.post(
-  "/me/email",
-  [isAuthenticated],
-  async (req: Request, res: Response) => {
-    try {
-      const { email, newEmail } = req.body as {
-        email: string;
-        newEmail: string;
-      };
-
-      if (!email || !newEmail || req.token?.email !== email)
-        return res.status(400).send("Invalid request!");
-
-      await auth.updateUser(req.token.uid, {
-        email: newEmail,
-      });
-
-      const querySnapshot = await db
-        .collection("Users")
-        .where("auth_id", "==", req.token.uid)
-        .get();
-
-      if (querySnapshot.docs.length == 0) {
-        return res.status(404).send("Failed to find user");
-      } else {
-        await Promise.all(
-          querySnapshot.docs.map(async (doc) => {
-            await doc.ref.update({ email: newEmail });
-          }),
-        );
-        return res.status(200).send("Success");
-      }
-    } catch (err) {
-      logger.error("Update email error!");
-      logger.error(err);
-      return res.status(500).send(err);
-    }
-  },
-);
-
-/*
- * Changes a user's role in both authorization and the database.
- * Takes an object as a parameter that should contain a firebase_id field and a role field.
- * This function can only be called by a user with admin status
- * Arguments: firebase_id - the id of the user
- *            role: the user's new role; string, (Options: "ADMIN", "TEACHER")
- */
-router.post(
-  "/user/:firebase_id/role",
-  [isAuthenticated, hasRoles(["ADMIN"])],
-  async (req: Request, res: Response) => {
-    try {
-      const authId = req.params.firebase_id;
-      const { role } = req.body as { role: Role };
-
-      if (!role) return res.status(400).send("Missing role!");
-
-      await auth.setCustomUserClaims(authId, { role: role });
-      const querySnapshot = await db
-        .collection("Users")
-        .where("auth_id", "==", authId)
-        .get();
-      if (querySnapshot.docs.length == 0) {
-        return res.status(404).send("User not found!");
-      } else {
-        await Promise.all(
-          querySnapshot.docs.map(async (doc) => {
-            await doc.ref.update({ type: role });
-          }),
-        );
-        return res.status(200).send();
-      }
-    } catch (err) {
-      logger.error("Update role error!");
-      logger.error(err);
-      return res.status(500).send(err);
-    }
-  },
-);
 
 export default router;
