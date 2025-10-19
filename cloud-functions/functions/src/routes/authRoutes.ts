@@ -153,8 +153,8 @@ router.post(
       email: email,
       firstName: firstName,
       lastName: lastName,
-      pronouns: pronouns,
-      phone: phone,
+      pronouns: pronouns ?? "",
+      phone: phone ?? "",
       type: invite.role,
     };
 
