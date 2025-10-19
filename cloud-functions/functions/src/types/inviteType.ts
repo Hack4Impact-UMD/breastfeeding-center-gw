@@ -3,6 +3,7 @@ import { Role } from "./userTypes";
 
 export type UserInvite = {
   id: string;
+  sentBy: string;
   firstName: string;
   lastName: string;
   email: string;

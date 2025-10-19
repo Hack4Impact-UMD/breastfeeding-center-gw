@@ -73,15 +73,15 @@ router.post("/register/root/:secret", async (req: Request, res: Response) => {
     phoneNumber: phone,
   });
 
-  const user: User = {
+  const user = {
     auth_id: authUser.uid,
     email: email,
     firstName: firstName,
     lastName: lastName,
-    pronouns: pronouns ?? "",
-    phone: phone ?? "",
+    pronouns: pronouns ?? null,
+    phone: phone ?? null,
     type: "DIRECTOR",
-  };
+  } as User;
 
   await db.collection(USERS_COLLECTION).doc(user.auth_id).set(user);
 
@@ -153,15 +153,15 @@ router.post(
       phoneNumber: phone,
     });
 
-    const user: User = {
+    const user = {
       auth_id: authUser.uid,
       email: email,
       firstName: firstName,
       lastName: lastName,
-      pronouns: pronouns ?? "",
-      phone: phone ?? "",
+      pronouns: pronouns ?? null,
+      phone: phone ?? null,
       type: invite.role,
-    };
+    } as User;
 
     const usersCollection = db.collection(
       USERS_COLLECTION,

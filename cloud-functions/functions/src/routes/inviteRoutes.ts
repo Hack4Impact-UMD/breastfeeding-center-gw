@@ -39,6 +39,7 @@ router.post("/send", [isAuthenticated, hasRoles(["ADMIN", "DIRECTOR"])], async (
 
   const invite: UserInvite = {
     id: uuidv7(),
+    sentBy: req.token!.uid,
     createdAt: Timestamp.now(),
     email: email,
     firstName: firstName,
@@ -52,8 +53,8 @@ router.post("/send", [isAuthenticated, hasRoles(["ADMIN", "DIRECTOR"])], async (
 
   await inviteDoc.set(invite)
 
-  const siteURL = process.env.FUNCTIONS_EMULATOR === "true" ? "http://localhost:5173" : "<PROD_URL_HERE>";
   //TODO: this link should start with the website url
+  const siteURL = process.env.FUNCTIONS_EMULATOR === "true" ? "http://localhost:5173" : "<PROD_URL_HERE>";
   const registerLink = `${siteURL}/register/${invite.id}`
 
   logger.info(`Invite for user ${firstName} ${lastName} (${email}) created.`)
