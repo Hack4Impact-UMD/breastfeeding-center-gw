@@ -11,7 +11,7 @@ export type UserInvite = {
   used: boolean
 }
 
-export function inviteValid(invite: UserInvite, expireDays: number) {
+export function isInviteValid(invite: UserInvite, expireDays: number) {
   if (invite.used) return false;
 
   const issueTimeSecs = invite.createdAt.seconds;
