@@ -353,7 +353,7 @@ export default function AcuityDashboardPage() {
 
   const handleExport = async (
     ref: React.RefObject<HTMLDivElement | null>,
-    filename: string
+    filename: string,
   ) => {
     const element = ref.current;
     if (!element) {
@@ -439,7 +439,8 @@ export default function AcuityDashboardPage() {
       <div
         className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
           navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-        }`}>
+        }`}
+      >
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-20 space-y-5">
           <div className={centerItemsInDiv}>
@@ -464,7 +465,8 @@ export default function AcuityDashboardPage() {
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
                 }`}
-                onClick={() => setAttendanceDisplay("graph")}>
+                onClick={() => setAttendanceDisplay("graph")}
+              >
                 Graph
               </button>
               <button
@@ -473,7 +475,8 @@ export default function AcuityDashboardPage() {
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
                 }`}
-                onClick={() => setAttendanceDisplay("table")}>
+                onClick={() => setAttendanceDisplay("table")}
+              >
                 Table
               </button>
             </div>
@@ -481,7 +484,8 @@ export default function AcuityDashboardPage() {
               className={transparentGrayButtonStyle}
               onClick={() =>
                 handleExport(attendanceChartRef, "class_attendance")
-              }>
+              }
+            >
               Export
             </button>
           </div>
@@ -493,7 +497,8 @@ export default function AcuityDashboardPage() {
                 ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
                 : ""
             }
-            ref={attendanceChartRef}>
+            ref={attendanceChartRef}
+          >
             <div className="flex justify-between items-center space-x-4">
               <div className="text-2xl font-semibold">
                 Class Attendance By Trimester,{" "}
@@ -507,7 +512,8 @@ export default function AcuityDashboardPage() {
                   <select
                     className="border rounded-md px-2 py-1 text-sm"
                     value={selectedClass}
-                    onChange={(e) => setSelectedClass(e.target.value)}>
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                  >
                     <option>All Classes</option>
                     {allClassData.map((c) => (
                       <option key={c.key}>{c.key}</option>
@@ -597,7 +603,8 @@ export default function AcuityDashboardPage() {
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
                 }`}
-                onClick={() => setClassPopularityDisplay("graph")}>
+                onClick={() => setClassPopularityDisplay("graph")}
+              >
                 Graph
               </button>
               <button
@@ -606,7 +613,8 @@ export default function AcuityDashboardPage() {
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
                 }`}
-                onClick={() => setClassPopularityDisplay("table")}>
+                onClick={() => setClassPopularityDisplay("table")}
+              >
                 Table
               </button>
             </div>
@@ -614,7 +622,8 @@ export default function AcuityDashboardPage() {
               className={transparentGrayButtonStyle}
               onClick={() =>
                 handleExport(classPopularityChartRef, "class_popularity")
-              }>
+              }
+            >
               Export
             </button>
           </div>
@@ -626,10 +635,15 @@ export default function AcuityDashboardPage() {
                 ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
                 : ""
             }
-            ref={classPopularityChartRef}>
+            ref={classPopularityChartRef}
+          >
             <div className="flex justify-between items-center space-x-4">
               <div className="text-2xl font-semibold">
-                Class Popularity Over Time,{" "}
+                {classPopularityDisplay === "graph" ? (
+                  <span>Class Attendance Over Time</span>
+                ) : (
+                  <span>Class Attendance</span>
+                )}
                 {classPopularityDisplay === "graph" ? <br /> : <></>} 2/19/25 -
                 3/19/25
               </div>
@@ -641,7 +655,8 @@ export default function AcuityDashboardPage() {
                   <select
                     className="border rounded-md px-2 py-1 text-sm"
                     value={selectedClass}
-                    onChange={(e) => setSelectedClass(e.target.value)}>
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                  >
                     <option>All Classes</option>
                     {allClassData.map((c) => (
                       <option key={c.key}>{c.key}</option>
@@ -654,7 +669,8 @@ export default function AcuityDashboardPage() {
                   <select
                     className="border rounded-md px-2 py-1 text-sm"
                     value={selectedClass}
-                    onChange={(e) => setSelectedClass(e.target.value)}>
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                  >
                     <option>All Classes</option>
                     {allClassData.map((c) => (
                       <option key={c.key}>{c.key}</option>
@@ -689,7 +705,8 @@ export default function AcuityDashboardPage() {
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
                 }`}
-                onClick={() => setInstructorPopularityDisplay("graph")}>
+                onClick={() => setInstructorPopularityDisplay("graph")}
+              >
                 Graph
               </button>
               <button
@@ -698,7 +715,8 @@ export default function AcuityDashboardPage() {
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
                 }`}
-                onClick={() => setInstructorPopularityDisplay("table")}>
+                onClick={() => setInstructorPopularityDisplay("table")}
+              >
                 Table
               </button>
             </div>
@@ -707,9 +725,10 @@ export default function AcuityDashboardPage() {
               onClick={() =>
                 handleExport(
                   instructorPopularityChartRef,
-                  "instructor_popularity"
+                  "instructor_popularity",
                 )
-              }>
+              }
+            >
               Export
             </button>
           </div>
@@ -721,10 +740,15 @@ export default function AcuityDashboardPage() {
                 ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
                 : ""
             }
-            ref={instructorPopularityChartRef}>
+            ref={instructorPopularityChartRef}
+          >
             <div className="flex justify-between items-center space-x-4">
               <div className="text-2xl font-semibold">
-                Instructor Popularity Over Time,
+                {instructorPopularityDisplay === "graph" ? (
+                  <span>Class Attendance by Instructor Over Time</span>
+                ) : (
+                  <span>Class Attendance by Instructor</span>
+                )}
                 {instructorPopularityDisplay === "graph" ? <br /> : <></>}{" "}
                 2/19/25 - 3/19/25
               </div>
@@ -735,7 +759,8 @@ export default function AcuityDashboardPage() {
                 <select
                   className="border rounded-md px-2 py-1 text-sm"
                   value={selectedInstructor}
-                  onChange={(e) => setSelectedInstructor(e.target.value)}>
+                  onChange={(e) => setSelectedInstructor(e.target.value)}
+                >
                   <option>All Classes</option>
                   {allInstructorData.map((ins) => (
                     <option key={ins.key}>{ins.key}</option>

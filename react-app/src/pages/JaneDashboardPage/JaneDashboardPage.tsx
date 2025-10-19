@@ -10,6 +10,7 @@ import {
   FunnelAxis,
   FunnelAxisLabel,
   FunnelArc,
+  FunnelAxisLine,
 } from "reaviz";
 import { FunnelSeries } from "reaviz";
 import { Jane } from "../../types/JaneType.ts";
@@ -35,6 +36,9 @@ const JaneDashboardPage = () => {
   //nav bar
   const [navBarOpen, setNavBarOpen] = useState(true);
 
+  //dropdown
+  const [selectedDropdown, setSelectedDropdown] = useState("ALL CLIENTS");
+
   //styles
   const buttonStyle =
     "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light text-lg border-1 border-black-500 py-2 px-8 rounded-full cursor-pointer";
@@ -44,7 +48,7 @@ const JaneDashboardPage = () => {
     "py-1 px-4 text-center shadow-sm bg-[#CED8E1] hover:shadow-md text-black cursor-pointer";
   const centerItemsInDiv = "flex justify-between items-center";
   const chartDiv =
-    "flex flex-col items-center justify-center bg-white h-[400px] border-2 border-black p-5 rounded-lg";
+    "flex flex-col items-center justify-start bg-white h-[370px] border-2 border-black p-5 rounded-lg";
 
   //file upload
   const [janeData, setJaneData] = useState<Jane[]>([]);
@@ -60,27 +64,27 @@ const JaneDashboardPage = () => {
 
   const funnelData = [
     {
-      data: 58,
+      data: 50,
       key: "1st week",
     },
     {
-      data: 43,
+      data: 40,
       key: "2nd week",
     },
     {
-      data: 23,
+      data: 34,
       key: "3rd week",
     },
     {
-      data: 15,
+      data: 25,
       key: "4th week",
     },
     {
-      data: 8,
+      data: 20,
       key: "5th week",
     },
     {
-      data: 5,
+      data: 18,
       key: "6th week",
     },
   ];
@@ -341,17 +345,17 @@ const JaneDashboardPage = () => {
                   Export
                 </button>
               </div>
+              {/*chart title*/}
+              <span className="self-start font-semibold text-2xl mb-7">
+                Visit Breakdown:{" "}
+                {dateRange.startDate && dateRange.endDate
+                  ? formatDate(dateRange.startDate) +
+                    " - " +
+                    formatDate(dateRange.endDate)
+                  : "All Data"}
+              </span>
               {visitDisplay === "graph" ? (
                 <div className={chartDiv} ref={pieChartRef}>
-                  {/*chart title*/}
-                  <span className="self-start font-semibold text-2xl mb-7">
-                    Visit Breakdown:{" "}
-                    {dateRange.startDate && dateRange.endDate
-                      ? formatDate(dateRange.startDate) +
-                        " - " +
-                        formatDate(dateRange.endDate)
-                      : "All Data"}
-                  </span>
                   {/*chart*/}
                   {chartData.length > 0 ? (
                     <div
@@ -448,39 +452,66 @@ const JaneDashboardPage = () => {
                   Export
                 </button>
               </div>
+              <span className="self-start font-semibold text-2xl">
+                Retention Rate:{" "}
+                {dateRange.startDate && dateRange.endDate
+                  ? formatDate(dateRange.startDate) +
+                    " - " +
+                    formatDate(dateRange.endDate)
+                  : "All Data"}
+              </span>
               <div
                 className={retentionDisplay === "graph" ? chartDiv : ""}
                 ref={funnelChartRef}
               >
-                <span className="self-start font-semibold text-2xl mb-2">
-                  Retention Rate:{" "}
-                  {dateRange.startDate && dateRange.endDate
-                    ? formatDate(dateRange.startDate) +
-                      " - " +
-                      formatDate(dateRange.endDate)
-                    : "All Data"}
-                </span>
                 {retentionDisplay === "graph" ? (
-                  <FunnelChart
-                    height={290}
-                    data={funnelData}
-                    series={
-                      <FunnelSeries
-                        arc={<FunnelArc variant="layered" />}
-                        axis={
-                          <FunnelAxis
-                            label={
-                              <FunnelAxisLabel
-                                fontSize={10}
-                                position="bottom"
-                                fill="#000000"
+                  <>
+                    <div className="self-end">
+                      <label className="text-sm font-medium"></label>
+                      <select
+                        className="border rounded-md px-2 py-1 text-sm"
+                        value={selectedDropdown}
+                        onChange={(e) => setSelectedDropdown(e.target.value)}
+                      >
+                        <option>ALL CLIENTS</option>
+                        <option>RECENT CHILDBIRTH</option>
+                      </select>
+                    </div>
+                    <div className="flex items-center">
+                      <span className="text-xl whitespace-nowrap -rotate-90 -mr-15 -ml-15">
+                        Number of Visits
+                      </span>
+
+                      <FunnelChart
+                        height={290}
+                        width={450}
+                        data={funnelData}
+                        series={
+                          <FunnelSeries
+                            arc={<FunnelArc colorScheme="#05182A" />}
+                            axis={
+                              <FunnelAxis
+                                line={
+                                  <FunnelAxisLine
+                                    strokeColor="#FFFFFF"
+                                    strokeWidth={5}
+                                  ></FunnelAxisLine>
+                                }
+                                label={
+                                  <FunnelAxisLabel
+                                    className=""
+                                    fontSize={12}
+                                    position="middle"
+                                    fill="#FFFFFF"
+                                  />
+                                }
                               />
                             }
                           />
                         }
                       />
-                    }
-                  />
+                    </div>
+                  </>
                 ) : (
                   <>
                     <div className="[&_td]:py-3 [&_th]:py-3">

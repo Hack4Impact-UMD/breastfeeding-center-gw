@@ -1,6 +1,5 @@
 import { IoIosClose } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import { logOut } from "../../backend/AuthFunctions";
 import Modal from "../Modal.tsx";
 
 export default function LogoutConfirmation({
@@ -13,13 +12,7 @@ export default function LogoutConfirmation({
   const navigate = useNavigate();
 
   function handleLogOut() {
-    logOut()
-      .then(() => {
-        navigate("/logout", { state: { fromApp: true } });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    navigate("/logout", { state: { fromApp: true } });
   }
 
   return (
@@ -28,12 +21,14 @@ export default function LogoutConfirmation({
       onClose={() => {
         onClose();
       }}
-      height={250}>
+      height={250}
+    >
       <button
         onClick={() => {
           onClose();
         }}
-        className="absolute top-4 right-4 text-bcgw-blue-dark hover:text-gray-600 z-10 cursor-pointer">
+        className="absolute top-4 right-4 text-bcgw-blue-dark hover:text-gray-600 z-10 cursor-pointer"
+      >
         <IoIosClose size={50} />
       </button>
       <div className="relative p-8 flex flex-col items-center justify-center text-center h-full">
@@ -45,12 +40,14 @@ export default function LogoutConfirmation({
             onClick={() => {
               onClose();
             }}
-            className="hover:bg-bcgw-yellow-light rounded-lg px-2 py-2 border border-black cursor-pointer">
+            className="hover:bg-bcgw-yellow-light rounded-lg px-2 py-2 border border-black cursor-pointer"
+          >
             CANCEL
           </button>
           <button
             onClick={() => handleLogOut()}
-            className="bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light rounded-lg px-2 py-2 border border-black cursor-pointer">
+            className="bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light rounded-lg px-2 py-2 border border-black cursor-pointer"
+          >
             CONFIRM
           </button>
         </div>
