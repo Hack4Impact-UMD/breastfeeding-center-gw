@@ -3,7 +3,7 @@ import { User } from "../types/userTypes";
 import { logger } from "firebase-functions";
 import { auth, db } from "../services/firebase";
 import { config } from "../config";
-import { inviteValid, UserInvite } from "../types/inviteType";
+import { isInviteValid, UserInvite } from "../types/inviteType";
 import { INVITES_COLLECTION, USERS_COLLECTION } from "../types/collections";
 import { CollectionReference } from "firebase-admin/firestore";
 
@@ -118,7 +118,7 @@ router.post(
       return res.status(404).send("Invite not found or has already been used!");
     }
 
-    if (!inviteValid(invite, config.inviteExpirationDays.value())) {
+    if (!isInviteValid(invite, config.inviteExpirationDays.value())) {
       logger.warn("Register request attempted with invalid invite!");
       logger.warn(invite);
       return res.status(403).send("Invite not valid!");
