@@ -1,2 +1,2 @@
-export const USERS_COLLECTION = "Users"
-export const INVITES_COLLECTION = "Invites"
+export const USERS_COLLECTION = "Users";
+export const INVITES_COLLECTION = "Invites";

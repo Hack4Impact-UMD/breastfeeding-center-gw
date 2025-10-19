@@ -3,7 +3,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import authRouter from "./routes/authRoutes";
 import acuityRouter from "./routes/acuityRoutes";
-import userRouter from "./routes/userRoutes"
+import userRouter from "./routes/userRoutes";
 
 const app = express();
 

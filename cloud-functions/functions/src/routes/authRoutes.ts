@@ -16,7 +16,7 @@ type UserRegisterForm = {
   pronouns?: string;
   phone?: string;
   password: string;
-}
+};
 
 /**
   Creates the root user: the initial user with the director role that 
@@ -33,31 +33,31 @@ router.post("/register/root/:secret", async (req: Request, res: Response) => {
   logger.info("Root user register request received!");
 
   if (secret !== config.rootUserSecret.value()) {
-    logger.warn(`Root user register request attempted with bad secret: ${secret}!`);
-    return res.status(403).send("Unauthorized")
+    logger.warn(
+      `Root user register request attempted with bad secret: ${secret}!`,
+    );
+    return res.status(403).send("Unauthorized");
   }
 
-  const {
-    firstName,
-    lastName,
-    password,
-    email,
-    pronouns,
-    phone
-  } = req.body as UserRegisterForm
+  const { firstName, lastName, password, email, pronouns, phone } =
+    req.body as UserRegisterForm;
 
   if (!firstName || !lastName || !password || !email) {
     return res.status(400).send("Bad request, missing required fields!");
   }
 
   if (email !== config.rootUserEmail.value()) {
-    logger.warn(`Root user register request attempted with unauthorized email: ${email}!`);
+    logger.warn(
+      `Root user register request attempted with unauthorized email: ${email}!`,
+    );
     return res.status(403).send("Forbidden");
   }
 
   // if the root user already exists, return
   if (await auth.getUserByEmail(email).catch(() => undefined)) {
-    logger.warn("Root user register request attempted when root user already exists!");
+    logger.warn(
+      "Root user register request attempted when root user already exists!",
+    );
     return res.status(400).send("Root user already exists");
   }
 
@@ -75,17 +75,15 @@ router.post("/register/root/:secret", async (req: Request, res: Response) => {
     lastName: lastName,
     pronouns: pronouns,
     phone: phone,
-    type: "DIRECTOR"
+    type: "DIRECTOR",
   };
 
   await db.collection(USERS_COLLECTION).doc(user.auth_id).set(user);
 
   logger.info("Successfully created root user: ", user);
 
-  return res.status(200).send(
-    user
-  );
-})
+  return res.status(200).send(user);
+});
 
 /**
   Register a user from an invite.
@@ -95,84 +93,87 @@ router.post("/register/root/:secret", async (req: Request, res: Response) => {
 
   Request body must have all required fields in UserRegisterForm
 */
-router.post("/register/invite/:invite_id", async (req: Request, res: Response) => {
-  const { inviteId } = req.params;
-  logger.info(`Register request received using invite ${inviteId}`)
+router.post(
+  "/register/invite/:invite_id",
+  async (req: Request, res: Response) => {
+    const { inviteId } = req.params;
+    logger.info(`Register request received using invite ${inviteId}`);
 
-  const {
-    firstName,
-    lastName,
-    password,
-    email,
-    pronouns,
-    phone
-  } = req.body as UserRegisterForm
+    const { firstName, lastName, password, email, pronouns, phone } =
+      req.body as UserRegisterForm;
 
-  if (!inviteId) {
-    return res.status(400).send("No invite ID provided!")
-  }
+    if (!inviteId) {
+      return res.status(400).send("No invite ID provided!");
+    }
 
-  const invitesCollection = db.collection(INVITES_COLLECTION) as CollectionReference<UserInvite>;
-  const inviteDoc = invitesCollection.doc(inviteId);
-  const invite: UserInvite = (await inviteDoc.get()).data() as UserInvite
+    const invitesCollection = db.collection(
+      INVITES_COLLECTION,
+    ) as CollectionReference<UserInvite>;
+    const inviteDoc = invitesCollection.doc(inviteId);
+    const invite: UserInvite = (await inviteDoc.get()).data() as UserInvite;
 
-  if (!invite) {
-    logger.warn("Register request attempted without invite!")
-    logger.warn(req.body)
-    return res.status(404).send("Invite not found or has already been used!")
-  }
+    if (!invite) {
+      logger.warn("Register request attempted without invite!");
+      logger.warn(req.body);
+      return res.status(404).send("Invite not found or has already been used!");
+    }
 
-  if (!inviteValid(invite, config.inviteExpirationDays.value())) {
-    logger.warn("Register request attempted with invalid invite!");
-    logger.warn(invite);
-    return res.status(403).send("Invite not valid!")
-  }
+    if (!inviteValid(invite, config.inviteExpirationDays.value())) {
+      logger.warn("Register request attempted with invalid invite!");
+      logger.warn(invite);
+      return res.status(403).send("Invite not valid!");
+    }
 
-  if (!firstName || !lastName || !password || !email) {
-    return res.status(400).send("Bad request, missing required fields!");
-  }
+    if (!firstName || !lastName || !password || !email) {
+      return res.status(400).send("Bad request, missing required fields!");
+    }
 
-  if (email !== invite.email) {
-    logger.warn(`Attempt to register with an invite using a different email: ${email}. Invite email: ${invite.email}!`);
-    return res.status(403).send("Forbidden");
-  }
+    if (email !== invite.email) {
+      logger.warn(
+        `Attempt to register with an invite using a different email: ${email}. Invite email: ${invite.email}!`,
+      );
+      return res.status(403).send("Forbidden");
+    }
 
-  // if user already exists, return
-  if (await auth.getUserByEmail(email).catch(() => undefined)) {
-    logger.warn("User register request attempted when user already exists!");
-    return res.status(400).send("User already exists");
-  }
+    // if user already exists, return
+    if (await auth.getUserByEmail(email).catch(() => undefined)) {
+      logger.warn("User register request attempted when user already exists!");
+      return res.status(400).send("User already exists");
+    }
 
-  const authUser = await auth.createUser({
-    displayName: `${firstName} ${lastName}`,
-    email: email,
-    password: password,
-    phoneNumber: phone,
-  });
+    const authUser = await auth.createUser({
+      displayName: `${firstName} ${lastName}`,
+      email: email,
+      password: password,
+      phoneNumber: phone,
+    });
 
-  const user: User = {
-    auth_id: authUser.uid,
-    email: email,
-    firstName: firstName,
-    lastName: lastName,
-    pronouns: pronouns,
-    phone: phone,
-    type: invite.role
-  };
+    const user: User = {
+      auth_id: authUser.uid,
+      email: email,
+      firstName: firstName,
+      lastName: lastName,
+      pronouns: pronouns,
+      phone: phone,
+      type: invite.role,
+    };
 
-  const usersCollection = db.collection(USERS_COLLECTION) as CollectionReference<User>
-  await usersCollection.doc(user.auth_id).set(user);
+    const usersCollection = db.collection(
+      USERS_COLLECTION,
+    ) as CollectionReference<User>;
+    await usersCollection.doc(user.auth_id).set(user);
 
-  logger.info(`Successfully created user ${user.email} with role ${user.type}`);
+    logger.info(
+      `Successfully created user ${user.email} with role ${user.type}`,
+    );
 
-  // update the invite to used
-  await inviteDoc.update({
-    used: true
-  })
+    // update the invite to used
+    await inviteDoc.update({
+      used: true,
+    });
 
-  return res.status(200).send(
-    user
-  );
-})
+    return res.status(200).send(user);
+  },
+);
 
 export default router;
