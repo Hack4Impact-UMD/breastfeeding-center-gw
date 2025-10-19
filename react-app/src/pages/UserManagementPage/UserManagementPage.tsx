@@ -5,7 +5,8 @@ import Header from "../../components/Header";
 import UserFilters from "./UserFilters";
 import UserCard from "./UserCard";
 import AddAccountModal from "./AddAccountModal";
-import { User } from "@/types/UserType";
+import { useAllUsers } from "@/hooks/queries/useUsers";
+import Loading from "@/components/Loading";
 
 const UserManagementPage: React.FC = () => {
   const [navBarOpen, setNavBarOpen] = useState(true);
@@ -13,36 +14,11 @@ const UserManagementPage: React.FC = () => {
   const [roleFilter, setRoleFilter] = useState("All");
   const [showAddModal, setShowAddModal] = useState(false);
 
-  const [users] = useState<User[]>([
-    {
-      firstName: "Isabella",
-      lastName: "Clarke",
-      email: "example@gmail.com",
-      phone: "XXX-XXX-XXXX",
-      type: "DIRECTOR",
-      auth_id: "123",
-    },
-    {
-      firstName: "Mark",
-      lastName: "Cooke",
-      email: "example@gmail.com",
-      phone: "XXX-XXX-XXXX",
-      type: "VOLUNTEER",
-      auth_id: "def",
-    },
-    {
-      firstName: "William",
-      lastName: "Williams",
-      email: "example@gmail.com",
-      phone: "XXX-XXX-XXXX",
-      type: "ADMIN",
-      auth_id: "abc",
-    },
-  ]);
+  const { data: users, isPending, error } = useAllUsers()
 
   const filteredUsers = useMemo(
     () =>
-      users.filter((u) => {
+      users?.filter((u) => {
         const fullName = `${u.lastName}, ${u.firstName}`.toLowerCase();
         return (
           fullName.includes(search.toLowerCase()) &&
@@ -77,9 +53,17 @@ const UserManagementPage: React.FC = () => {
 
           {/* user list */}
           <div className="mt-3">
-            {filteredUsers.map((u) => (
-              <UserCard key={u.auth_id} user={u} />
-            ))}
+            {
+              isPending ? (
+                <Loading />
+              ) : error ? (
+                <p>Something went wrong: {error.message}</p>
+              ) : (
+                filteredUsers?.map((u) => (
+                  <UserCard key={u.auth_id} user={u} />
+                ))
+              )
+            }
           </div>
           <AddAccountModal
             open={showAddModal}
