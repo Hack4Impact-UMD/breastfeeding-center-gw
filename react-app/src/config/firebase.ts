@@ -1,11 +1,11 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 // import { getAnalytics } from "firebase/analytics";
 // import {connectFunctionsEmulator} from "firebase/functions";
 import { connectFunctionsEmulator, getFunctions } from "firebase/functions";
-import { getAuth } from "firebase/auth";
+import { connectAuthEmulator, getAuth } from "firebase/auth";
 
 export const API_URL = import.meta.env.DEV
   ? "http://127.0.0.1:5001/breastfeeding-center-gw/us-east4/api"
@@ -42,6 +42,8 @@ if (import.meta.env.DEV) {
   console.info("Running in DEVELOPMENT mode!");
   console.info("Attempting to connect to Firebase emulators...");
   connectFunctionsEmulator(functions, "127.0.0.1", 5001);
+  connectFirestoreEmulator(db, "127.0.0.1", 8088);
+  connectAuthEmulator(auth, "http://127.0.0.1:9099");
 }
 
 export default app;

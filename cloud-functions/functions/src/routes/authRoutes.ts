@@ -73,8 +73,8 @@ router.post("/register/root/:secret", async (req: Request, res: Response) => {
     email: email,
     firstName: firstName,
     lastName: lastName,
-    pronouns: pronouns,
-    phone: phone,
+    pronouns: pronouns ?? "",
+    phone: phone ?? "",
     type: "DIRECTOR",
   };
 
