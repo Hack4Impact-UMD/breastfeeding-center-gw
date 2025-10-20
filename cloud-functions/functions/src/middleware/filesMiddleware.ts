@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import busboy from "busboy"
 import { logger } from "firebase-functions";
 
+const FILE_UPLOAD_SIZE_LIMIT_MB = 20;
+
 export class UploadedFile {
   name: string;
   mimeType: string;
@@ -36,7 +38,8 @@ export async function upload(req: Request, _: Response, next: NextFunction) {
   }
 
   const bb = busboy({
-    headers: req.headers
+    headers: req.headers,
+    limits: { fileSize: FILE_UPLOAD_SIZE_LIMIT_MB * 1024 * 1024 } //
   })
 
   const files: { [fieldName: string]: UploadedFile[] } = {}
