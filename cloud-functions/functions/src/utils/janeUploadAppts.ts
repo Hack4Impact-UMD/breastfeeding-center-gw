@@ -5,7 +5,7 @@ import { JaneAppt, VisitType } from "../types/janeType";
 
 export async function parseAppointmentSheet(
   fileType: string,
-  fileAsBuffer: Buffer<ArrayBufferLike>,
+  fileAsBuffer: Buffer,
 ) {
   const requiredHeaders = [
     "id",
@@ -122,29 +122,29 @@ function parseAppointment(appt: Record<string, string>) {
   janeAppt.patientId = appt.patient_number.trim();
 
   janeAppt.clinician =
-    appt.staff_member_name === undefined || appt.staff_member_name.trim() === ""
+    appt.staff_member_name === undefined || String(appt.staff_member_name).trim() === ""
       ? "N/A"
-      : appt.staff_member_name.trim();
+      : String(appt.staff_member_name).trim();
   janeAppt.firstVisit =
-    appt.first_visit === undefined || appt.first_visit.trim() === ""
+    appt.first_visit === undefined || String(appt.first_visit).trim() === ""
       ? false
-      : appt.first_visit.trim() === "true";
+      : String(appt.first_visit).trim() === "true";
 
   // dates
   janeAppt.startAt =
-    appt.start_at === undefined || appt.start_at.trim() === ""
+    appt.start_at === undefined || String(appt.start_at).trim() === ""
       ? "N/A"
-      : new Date(appt.start_at.trim()).toISOString();
+      : new Date(String(appt.start_at).trim()).toISOString();
   janeAppt.endAt =
-    appt.end_at === undefined || appt.end_at.trim() === ""
+    appt.end_at === undefined || String(appt.end_at).trim() === ""
       ? "N/A"
-      : new Date(appt.end_at.trim()).toISOString();
+      : new Date(String(appt.end_at).trim()).toISOString();
 
   let visitType: VisitType = "OFFICE"; // default
   let service = "N/A";
   // parse visit type
-  if (appt.treatment_name && appt.treatment_name.trim() !== "") {
-    let fullServiceType = appt.treatment_name.replace(/:/g, "").trim();
+  if (appt.treatment_name && String(appt.treatment_name).trim() !== "") {
+    let fullServiceType = String(appt.treatment_name).replace(/:/g, "").trim();
     const serviceLowercase = fullServiceType.toLowerCase();
 
     // get service from the visit type

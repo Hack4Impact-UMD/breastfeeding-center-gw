@@ -254,14 +254,14 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
     for (let i = 0; i < parentsToAdd.length; i += chunkSize) {
       const chunk = parentsToAdd.slice(i, i + chunkSize)
       const batch = db.batch()
-      chunk.forEach(parent => batch.set(db.collection("Client").doc(parent.id), parent))
+      chunk.forEach(parent => batch.set(db.collection("Client").doc(parent.id), parent, { merge: true }))
       await batch.commit()
     }
 
     for (let i = 0; i < apptsToAdd.length; i += chunkSize) {
       const chunk = apptsToAdd.slice(i, i + chunkSize)
       const batch = db.batch()
-      chunk.forEach(appt => batch.set(db.collection("JaneAppt").doc(appt.apptId), appt))
+      chunk.forEach(appt => batch.set(db.collection("JaneAppt").doc(appt.apptId), appt, { merge: true }))
       await batch.commit()
     }
 
