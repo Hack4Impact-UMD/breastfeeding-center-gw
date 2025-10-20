@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import { hasRoles, isAuthenticated } from "../middleware/authMiddleware";
 import crypto from "crypto";
-import { Role, User } from "../types/UserTypes";
+import { Role, User } from "../types/userTypes";
 import { logger } from "firebase-functions";
 import { auth, db } from "../services/firebase";
 

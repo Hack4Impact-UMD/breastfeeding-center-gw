@@ -46,11 +46,11 @@ export async function parseClientSheet(
       throw new Error("Missing headers");
     }
 
-    jsonArray = (xlsxDataArray.slice(1) as any[]).map((data: string[]) => {
-      const jsonObj = {};
+    jsonArray = (xlsxDataArray.slice(1) as string[][]).map((data: string[]) => {
+      const jsonObj: Record<string, string> = {};
       requiredHeaders.slice().forEach((columnName, idx) => {
         // add key pair value for relevant columns
-        (jsonObj as any)[columnName] = data[columnIndices[idx]];
+        jsonObj[columnName] = data[columnIndices[idx]];
       });
       return jsonObj;
     });
@@ -92,12 +92,12 @@ function parseClient(clientRawData: any) {
 
   client.firstName =
     clientRawData["First Name"] === undefined ||
-    clientRawData["First Name"].trim() === ""
+      clientRawData["First Name"].trim() === ""
       ? "N/A"
       : clientRawData["First Name"].trim();
   client.lastName =
     clientRawData["Last Name"] === undefined ||
-    clientRawData["Last Name"].trim() === ""
+      clientRawData["Last Name"].trim() === ""
       ? "N/A"
       : clientRawData["Last Name"].trim();
 
@@ -140,7 +140,7 @@ function parseBaby(babyRawData: any) {
   }
   baby.firstName =
     babyRawData["First Name"] === undefined ||
-    babyRawData["First Name"].trim() === ""
+      babyRawData["First Name"].trim() === ""
       ? "N/A"
       : babyRawData["First Name"].trim();
   // "baby" or "twin" may be in first name
@@ -148,7 +148,7 @@ function parseBaby(babyRawData: any) {
 
   baby.lastName =
     babyRawData["Last Name"] === undefined ||
-    babyRawData["Last Name"].trim() === ""
+      babyRawData["Last Name"].trim() === ""
       ? "N/A"
       : babyRawData["Last Name"].trim();
 

@@ -32,7 +32,7 @@ export class UploadedFile {
 export async function upload(req: Request, _: Response, next: NextFunction) {
   if (!req.headers["content-type"]?.includes("multipart/form-data")) {
     logger.warn("Request not multipart/from, ignoring!")
-    next();
+    return next();
   }
 
   const bb = busboy({

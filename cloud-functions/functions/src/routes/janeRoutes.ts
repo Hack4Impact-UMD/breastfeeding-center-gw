@@ -81,9 +81,9 @@ router.post("/upload", upload, async (req: Request, res: Response) => {
         .get();
 
       if (querySnapshot.docs.length == 0) {
-        logger.info(
-          `No matching appointment in JaneAppt collection for appointment: ${appt.apptId}`,
-        );
+        // logger.info(
+        //   `No matching appointment in JaneAppt collection for appointment: ${appt.apptId}`,
+        // );
         return false;
       }
       return true;
@@ -97,9 +97,9 @@ router.post("/upload", upload, async (req: Request, res: Response) => {
         .get();
 
       if (querySnapshot.docs.length == 0) {
-        logger.info(
-          `No matching client in Client collection for client ID: ${patientId}`,
-        );
+        // logger.info(
+        //   `No matching client in Client collection for client ID: ${patientId}`,
+        // );
         return false;
       }
       return true;
@@ -203,7 +203,7 @@ router.post("/upload", upload, async (req: Request, res: Response) => {
 
       // add to the parent object's babies array using the babies matched with their appointment.
       // NOTE: only add the new babies if they do not already exist in the parent's baby array (check based on their ids)
-      const parentResolved = await parent;
+      const parentResolved = parent;
       if (!parentResolved) {
         continue;
       }
