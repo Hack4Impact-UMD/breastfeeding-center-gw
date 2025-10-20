@@ -24,8 +24,11 @@ export async function parseAppointmentSheet(
 
   if (isCsv) {
     const fileAsString = fileAsBuffer.toString();
+    if (!fileAsString.trim()) throw new Error("Empty file");
     jsonArray = await csv().fromString(fileAsString);
-    const headers = Object.keys(jsonArray[0]);
+    if (jsonArray.length === 0) throw new Error("Empty file");
+    const headers = Object.keys(jsonArray[0] ?? {});
+
     const matchingHeaders = headers.filter((h: string) =>
       requiredHeaders.includes(h),
     );
@@ -37,8 +40,10 @@ export async function parseAppointmentSheet(
     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
     const xlsxDataArray = XLSX.utils.sheet_to_json(worksheet, {
       header: 1,
-      raw: true,
+      raw: false,
     });
+
+    if (!xlsxDataArray || xlsxDataArray.length == 0) throw new Error("Empty file")
 
     const headers: string[] = xlsxDataArray[0] as string[];
     const columnIndices = requiredHeaders.map((col) => headers.indexOf(col));
@@ -82,17 +87,9 @@ export async function parseAppointmentSheet(
       }
       appointments.push(appt);
       // parsing rawAppt data in jsonArray and adding it to patientNames list
-      patientNames[rawAppt.patient_number] = {
-        firstName:
-          rawAppt.patient_first_name === undefined ||
-            rawAppt.patient_first_name === ""
-            ? "N/A"
-            : rawAppt.patient_first_name.trim(),
-        lastName:
-          rawAppt.patient_last_name === undefined ||
-            rawAppt.patient_last_name === ""
-            ? "N/A"
-            : rawAppt.patient_last_name.trim(),
+      patientNames[String(rawAppt.patient_number)] = {
+        firstName: (String(rawAppt.patient_first_name ?? "").trim() || "N/A"),
+        lastName: (String(rawAppt.patient_last_name ?? "").trim() || "N/A"),
       };
     }
   }

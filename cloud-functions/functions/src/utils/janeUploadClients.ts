@@ -1,10 +1,11 @@
 import csv from "csvtojson";
 import * as XLSX from "xlsx";
 import { Baby, Client } from "../types/clientTypes";
+import { logger } from "firebase-functions";
 
 export async function parseClientSheet(
   fileType: string,
-  fileAsBuffer: Buffer<ArrayBufferLike>,
+  fileAsBuffer: Buffer,
 ) {
   const requiredHeaders = [
     "Patient Number",
@@ -24,12 +25,15 @@ export async function parseClientSheet(
   if (isCsv) {
     const fileAsString = fileAsBuffer.toString();
     jsonArray = await csv().fromString(fileAsString);
+    if (jsonArray.length == 0) throw new Error("Missing file");
+
     const headers = Object.keys(jsonArray[0]);
     const matchingHeaders = headers.filter((h: string) =>
       requiredHeaders.includes(h),
     );
+
     if (matchingHeaders.length !== requiredHeaders.length) {
-      console.log(matchingHeaders);
+      logger.log(matchingHeaders);
       throw new Error("Missing headers");
     }
   } else {
@@ -81,7 +85,7 @@ export async function parseClientSheet(
   return { clientList, babyList };
 }
 
-function parseClient(clientRawData: any) {
+function parseClient(clientRawData: Record<string, string>) {
   const client = {} as Client;
   client.id = clientRawData["Patient Number"].trim();
 
@@ -125,7 +129,7 @@ function parseClient(clientRawData: any) {
   return client;
 }
 
-function parseBaby(babyRawData: any) {
+function parseBaby(babyRawData: Record<string, string>) {
   const baby = {} as Baby;
   baby.id = babyRawData["Patient Number"].trim();
 

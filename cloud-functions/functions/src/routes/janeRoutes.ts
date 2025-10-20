@@ -217,6 +217,10 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
 
       // merging parent existing baby list and new baby
       // this implementation may be inefficient
+      if (!parentResolved.baby) {
+        parentResolved.baby = []
+      }
+
       babies.forEach((baby) => {
         if (
           !parentResolved?.baby.some(

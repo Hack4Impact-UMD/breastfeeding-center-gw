@@ -79,8 +79,9 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
       clientFileInputRef.current.value = "";
     }
   };
-  const handleSubmit = () => {
-    handleUploadSubmit(apptFile, clientFile);
+  const handleSubmit = async () => {
+    //TODO: Better loading state
+    await handleUploadSubmit(apptFile, clientFile);
     handleClose();
   };
 
@@ -267,8 +268,8 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
         <div className="flex justify-center mt-6">
           <button
             className={`px-6 py-2 rounded-lg border border-black ${uploadButtonEnabled
-                ? "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light"
-                : "bg-gray-300 cursor-not-allowed"
+              ? "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light"
+              : "bg-gray-300 cursor-not-allowed"
               }`}
             disabled={!uploadButtonEnabled}
             onClick={handleSubmit}
