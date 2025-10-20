@@ -1,6 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table";
+import ColumnSortButton from "@/components/DataTable/ColumnSortIcon";
 
-// class attendance by trimester
+/* ---------- Trimester Attendance ---------- */
 export type TrimesterAttendance = {
   class: string;
   category: string;
@@ -15,42 +16,58 @@ export type TrimesterAttendance = {
 export const trimesterColumns: ColumnDef<TrimesterAttendance>[] = [
   {
     accessorKey: "class",
-    header: () => <span className="font-bold">CLASS</span>,
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>Class</ColumnSortButton>;
+    },
     cell: ({ row }) => (
       <span className="font-bold">{row.getValue("class")}</span>
     ),
   },
   {
     accessorKey: "category",
-    header: () => <span className="font-bold">CATEGORY</span>,
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>Category</ColumnSortButton>;
+    },
   },
   {
     accessorKey: "first",
-    header: () => <span className="font-bold">1ST</span>,
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>1st</ColumnSortButton>;
+    },
   },
   {
     accessorKey: "second",
-    header: () => <span className="font-bold">2ND</span>,
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>2nd</ColumnSortButton>;
+    },
   },
   {
     accessorKey: "third",
-    header: () => <span className="font-bold">3RD</span>,
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>3rd</ColumnSortButton>;
+    },
   },
   {
     accessorKey: "fourth",
-    header: () => <span className="font-bold">4TH</span>,
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>4th</ColumnSortButton>;
+    },
   },
   {
     accessorKey: "fifth",
-    header: () => <span className="font-bold">5TH</span>,
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>5th</ColumnSortButton>;
+    },
   },
   {
     accessorKey: "total",
-    header: () => <span className="font-bold">TOTAL</span>,
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>Total</ColumnSortButton>;
+    },
   },
 ];
 
-// class attendance by instructor popularity
+/* ---------- Instructor Attendance ---------- */
 export type InstructorAttendance = {
   class: string;
   category: string;
@@ -62,25 +79,37 @@ export type InstructorAttendance = {
 export const instructorColumns: ColumnDef<InstructorAttendance>[] = [
   {
     accessorKey: "class",
-    header: () => <span className="font-bold">CLASS</span>,
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>Class</ColumnSortButton>;
+    },
     cell: ({ row }) => (
       <span className="font-bold">{row.getValue("class")}</span>
     ),
   },
   {
     accessorKey: "category",
-    header: () => <span className="font-bold">CATEGORY</span>,
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>Category</ColumnSortButton>;
+    },
   },
   {
     accessorKey: "total_attendance",
-    header: () => <span className="font-bold">TOTAL ATTENDANCE</span>,
+    header: ({ column }) => {
+      return (
+        <ColumnSortButton column={column}>Total Attendance</ColumnSortButton>
+      );
+    },
   },
   {
     accessorKey: "instructor1_attendance",
-    header: () => <span className="font-bold">KAELY HARROD</span>,
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>Kaely Harrod</ColumnSortButton>;
+    },
   },
   {
     accessorKey: "instructor2_attendance",
-    header: () => <span className="font-bold">INSTRUCTOR 2</span>,
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>Instructor 2</ColumnSortButton>;
+    },
   },
 ];

@@ -72,14 +72,16 @@ const ForgotPasswordPopup = ({
         />
         <button
           onClick={handleSubmit}
-          className="mt-4 px-18 py-4 cursor-pointer rounded-full bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light self-center text-lg font-bold">
+          className="mt-4 px-18 py-4 cursor-pointer rounded-full bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light self-center text-lg font-bold"
+        >
           {showLoading ? <Loading /> : "Submit"}
         </button>
         {/* error message */}
         <p
           className={
             error ? "mt-2 text-red-500 text-center" : "mt-2 invisible h-[24px]"
-          }>
+          }
+        >
           {error}
         </p>
       </div>
@@ -90,7 +92,8 @@ const ForgotPasswordPopup = ({
     <div>
       <button
         onClick={handleClose}
-        className="absolute top-4 right-4 text-bcgw-blue-dark hover:text-gray-600 z-10 cursor-pointer">
+        className="absolute top-4 right-4 text-bcgw-blue-dark hover:text-gray-600 z-10 cursor-pointer"
+      >
         <IoIosClose size={50} />
       </button>
       <div className="relative p-8 flex flex-col items-center justify-center text-center h-full">
@@ -105,7 +108,8 @@ const ForgotPasswordPopup = ({
       open={openModal}
       onClose={handleClose}
       height={showSuccess ? 175 : 380}
-      width={475}>
+      width={475}
+    >
       {showSuccess ? successContent : forgotPassContent}
     </Modal>
   );

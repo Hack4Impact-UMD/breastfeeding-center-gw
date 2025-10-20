@@ -6,7 +6,8 @@ const Loading = ({ className = "" }: { className?: string }): React.JSX.Element 
       <div
         className="w-5 h-5 border-2 border-[#0081AF]
                       border-t-transparent rounded-full 
-                      animate-spin"></div>
+                      animate-spin"
+      ></div>
     </div>
   );
 };

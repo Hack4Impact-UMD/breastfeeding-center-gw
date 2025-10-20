@@ -58,7 +58,8 @@ const ChangePasswordPopup = ({
           onClick={() => {
             onClose();
           }}
-          className="absolute top-0.25 right-0.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer">
+          className="absolute top-0.25 right-0.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
+        >
           <IoIosClose size={45} />
         </button>
       </div>
@@ -73,7 +74,8 @@ const ChangePasswordPopup = ({
         handleOnClose();
       }}
       height={450}
-      width={600}>
+      width={600}
+    >
       <div className="flex flex-col h-full">
         <div>
           <ModalHeader
@@ -92,7 +94,7 @@ const ChangePasswordPopup = ({
               onChange={(e) => {
                 setNewPassword(e.target.value);
                 setShowPasswordRequirementsError(
-                  e.target.value !== "" && !validatePassword(e.target.value)
+                  e.target.value !== "" && !validatePassword(e.target.value),
                 );
               }}
               className="w-full border-[1.5px] border-black px-2 py-2"
@@ -168,7 +170,8 @@ const ChangePasswordPopup = ({
               !confirmNewPassword ||
               newPassword !== confirmNewPassword ||
               !validatePassword(newPassword)
-            }>
+            }
+          >
             Save
           </button>
         </div>

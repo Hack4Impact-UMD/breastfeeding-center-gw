@@ -250,7 +250,7 @@ export async function getClientAppointments(): Promise<
 
   console.log(
     "Clients with only classes (and the date, instructor, class name, and class type):",
-    clientMap
+    clientMap,
   );
   return clientMap;
 }

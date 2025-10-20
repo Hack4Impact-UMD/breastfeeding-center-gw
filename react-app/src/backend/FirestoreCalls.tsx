@@ -33,7 +33,7 @@ export const addJaneSpreadsheet = async (janeList: Jane[]) => {
 
   await Promise.all(uploadPromises);
   console.log(
-    `Upload Summary: Attempted: ${uploadsAttempted}, Skipped: ${uploadsSkipped}`
+    `Upload Summary: Attempted: ${uploadsAttempted}, Skipped: ${uploadsSkipped}`,
   );
 };
 

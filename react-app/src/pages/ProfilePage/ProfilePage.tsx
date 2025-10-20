@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import ConfirmPasswordPopup from "./ConfirmPasswordPopup";
-import ProfileIcon from "./ProfileIcon";
+import ProfileIcon from "../../components/ProfileIcon";
 import Header from "../../components/Header";
 import NavigationBar from "../../components/NavigationBar/NavigationBar";
 
@@ -25,7 +25,8 @@ const ProfilePage = () => {
       <div
         className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
           navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-        }`}>
+        }`}
+      >
         <Header />
         <div className="flex justify-center px-10 py-16 text-black">
           {/* Main row layout: ProfileIcon | Right content */}

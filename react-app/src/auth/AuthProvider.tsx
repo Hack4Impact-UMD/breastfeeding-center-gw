@@ -1,8 +1,4 @@
-import {
-  onIdTokenChanged,
-  type User,
-  type IdTokenResult,
-} from "firebase/auth";
+import { onIdTokenChanged, type User, type IdTokenResult } from "firebase/auth";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { auth } from "../config/firebase";
 
@@ -25,38 +21,35 @@ export const AuthProvider = ({ children }: Props): React.ReactElement => {
   const [authState, setAuthState] = useState<AuthContextType>({
     loading: true,
     token: null,
-    user: null
-  })
+    user: null,
+  });
 
   useEffect(() => {
     return onIdTokenChanged(auth, async (newUser) => {
       if (newUser != null) {
-        const token = await newUser.getIdTokenResult()
-          .catch((err) => {
-            console.error("Failed to get ID token!");
-            console.error(err);
-            return null;
-          });
+        const token = await newUser.getIdTokenResult().catch((err) => {
+          console.error("Failed to get ID token!");
+          console.error(err);
+          return null;
+        });
 
         setAuthState({
           user: newUser,
           token,
-          loading: false
-        })
+          loading: false,
+        });
       } else {
         setAuthState({
           user: null,
           token: null,
-          loading: false
-        })
+          loading: false,
+        });
       }
     });
   }, []);
 
   return (
-    <AuthContext.Provider value={authState}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={authState}>{children}</AuthContext.Provider>
   );
 };
 

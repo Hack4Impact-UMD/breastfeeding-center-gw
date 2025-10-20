@@ -56,7 +56,7 @@ const LoginPage = () => {
           const code = (error as AuthError).code;
           if (code === "auth/too-many-requests") {
             setError(
-              "Access to this account has been temporarily disabled due to many failed login attempts. You can reset your password or try again later."
+              "Access to this account has been temporarily disabled due to many failed login attempts. You can reset your password or try again later.",
             );
           } else {
             setError("Incorrect email address or password");
@@ -78,7 +78,8 @@ const LoginPage = () => {
           if (!openForgotModal) {
             handleSubmit(event);
           }
-        }}>
+        }}
+      >
         <input // input for email
           type="email"
           placeholder="Email Address"
@@ -100,7 +101,8 @@ const LoginPage = () => {
           <button
             type="button"
             onClick={viewPassword}
-            className="absolute right-3 top-4 text-gray-500 hover:text-gray-700 cursor-pointer">
+            className="absolute right-3 top-4 text-gray-500 hover:text-gray-700 cursor-pointer"
+          >
             {visibility ? (
               <IoMdEyeOff className="w-5 h-5" />
             ) : (
@@ -114,7 +116,8 @@ const LoginPage = () => {
           className="text-s hover:underline tracking-wide cursor-pointer"
           onClick={() => {
             setOpenForgotModal(true);
-          }}>
+          }}
+        >
           FORGOT PASSWORD?
         </button>
 
@@ -122,7 +125,8 @@ const LoginPage = () => {
           <button
             type="submit"
             onClick={(e) => handleSubmit(e)}
-            className="bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light font-bold text-lg py-4 px-18 rounded-full cursor-pointer">
+            className="bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light font-bold text-lg py-4 px-18 rounded-full cursor-pointer"
+          >
             {showLoading ? <Loading /> : "Sign In"}
           </button>
         </div>
@@ -131,7 +135,8 @@ const LoginPage = () => {
         <p
           className={
             error ? "mt-2 text-red-500 text-center" : " mt-2 invisible h-[24px]"
-          }>
+          }
+        >
           {error}
         </p>
       </form>

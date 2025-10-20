@@ -18,22 +18,22 @@ import { axiosClient } from "@/lib/utils";
 export async function createAdminUser(
   newEmail: string,
   newFirstName: string,
-  newLastName: string
+  newLastName: string,
 ): Promise<void> {
-  const axios = await axiosClient()
+  const axios = await axiosClient();
 
   await axios.post("/auth/create/admin", {
     email: newEmail,
     firstName: newFirstName,
     lastName: newLastName,
-  })
+  });
 
-  await sendPasswordResetEmail(auth, newEmail)
+  await sendPasswordResetEmail(auth, newEmail);
 }
 
 export function authenticateUserEmailAndPassword(
   email: string,
-  password: string
+  password: string,
 ): Promise<User> {
   return new Promise((resolve, reject) => {
     signInWithEmailAndPassword(auth, email, password)
@@ -48,12 +48,12 @@ export function authenticateUserEmailAndPassword(
 
 export function updateUserEmail(
   oldEmail: string,
-  currentEmail: string
+  currentEmail: string,
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const updateUserEmailCloudFunction = httpsCallable(
       functions,
-      "updateUserEmail"
+      "updateUserEmail",
     );
 
     updateUserEmailCloudFunction({ email: oldEmail, newEmail: currentEmail })
@@ -75,7 +75,7 @@ export function updateUserEmail(
    */
 export async function updateUserPassword(
   newPassword: string,
-  oldPassword: string
+  oldPassword: string,
 ): Promise<string> {
   return await new Promise((resolve, reject) => {
     const user = auth.currentUser;
@@ -130,8 +130,8 @@ export function sendResetEmail(email: string): Promise<void> {
  * Deletes a user given their auth id
  */
 export async function deleteUser(auth_id: string): Promise<void> {
-  const axios = await axiosClient()
-  await axios.delete(`/auth/user/${auth_id}`)
+  const axios = await axiosClient();
+  await axios.delete(`/auth/user/${auth_id}`);
 }
 
 export function logOut(): Promise<void> {
