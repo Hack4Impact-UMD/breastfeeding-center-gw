@@ -6,10 +6,11 @@ import { parseClientSheet } from "../utils/janeUploadClients";
 import { JaneAppt } from "../types/janeType";
 import { Client, Baby } from "../types/clientTypes";
 import { db } from "../services/firebase";
+import { isAuthenticated } from "../middleware/authMiddleware";
 
 const router = Router();
 
-router.post("/upload", upload, async (req: Request, res: Response) => {
+router.post("/upload", [isAuthenticated, upload], async (req: Request, res: Response) => {
   // NOTE: req.files is an object with keys being the fieldName (appointments/clients)
   // and the values being a list of uploaded files for that field. Examples for reading
   // the text content of those fields is below. We can assume each field name has only one
