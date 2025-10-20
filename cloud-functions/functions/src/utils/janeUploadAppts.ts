@@ -98,10 +98,9 @@ export async function parseAppointmentSheet(
 }
 
 function isBabyAppt(appt: Record<string, string>) {
-  const firstName = appt.patient_first_name;
-  const preferredName = appt.patient_preferred_name;
-  const lastName = appt.patient_last_name;
-
+  const firstName = appt.patient_first_name ?? "";
+  const preferredName = appt.patient_preferred_name ?? "";
+  const lastName = appt.patient_last_name ?? "";
 
   return ((firstName + lastName + preferredName).toLowerCase().includes("baby") || (firstName + lastName + preferredName).toLowerCase().includes("twin"))
 }
