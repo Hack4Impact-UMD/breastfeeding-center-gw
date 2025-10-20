@@ -46,8 +46,8 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
 
     const babyApptSet = new Set(babyAppts.map(appt => appt.apptId));
 
-    let clients_sheet: Client[] = [];
-    let babies_list: Baby[] = []
+    let clientsList: Client[] = [];
+    const babiesMap: Map<string, Baby> = new Map();
     if (clientFileExists) {
       const clientFileType = getFileType(clientsFile.name);
       const clientParseResults = await parseClientSheet(
@@ -55,12 +55,25 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
         clientsFile.buffer,
       );
 
-      clients_sheet = clientParseResults.clientList;
-      babies_list = clientParseResults.babyList;
+      clientsList = clientParseResults.clientList;
+      const babies = clientParseResults.babyList;
+
+      babies.forEach(b => {
+        babiesMap.set(b.id, b);
+      })
     } else {
-      clients_sheet = await getAllFirebaseClients();
-      babies_list = clients_sheet.flatMap(client => client.baby);
+      clientsList = await getAllFirebaseClients();
+      const babies = clientsList.flatMap(client => client.baby);
+      babies.forEach(b => {
+        babiesMap.set(b.id, b);
+      })
     }
+
+    const clientMap: Map<string, Client> = new Map();
+
+    clientsList.forEach(client => {
+      clientMap.set(client.id, client);
+    })
 
     const appointments_map = new Map<string, JaneAppt[]>();
 
@@ -101,53 +114,51 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
       return true;
     }
 
-    async function client_in_firebase(patientId: string): Promise<boolean> {
-      // check patientid in firebase client collection
-      const querySnapshot = await db
-        .collection("Client")
-        .where("id", "==", patientId)
-        .get();
-
-      if (querySnapshot.docs.length == 0) {
-        // logger.info(
-        //   `No matching client in Client collection for client ID: ${patientId}`,
-        // );
-        return false;
-      }
-      return true;
-    }
-
-    async function get_client_from_firebase(
-      patientId: string,
-    ): Promise<Client> {
-      const querySnapshot = await db
-        .collection("Client")
-        .where("id", "==", patientId)
-        .get();
-
-      // querySnapshot is guaranteed to not be empty
-      const doc = querySnapshot.docs[0];
-      const data = doc.data();
-
-      const client: Client = {
-        id: data.id,
-        firstName: data.firstName,
-        ...(data.middleName && { middleName: data.middleName }),
-        lastName: data.lastName,
-        email: data.email,
-        ...(data.phone && { phone: data.phone }),
-        ...(data.insurance && { insurance: data.insurance }),
-        ...(data.paysimpleId && { paysimpleId: data.paysimpleId }),
-        baby: data.baby,
-      };
-
-      return client;
-    }
-
-    function client_in_clients_sheet(patientId: string): boolean {
-      return clients_sheet.some(
-        (client: { id: string }) => client.id === patientId,
-      );
+    // async function client_in_firebase(patientId: string): Promise<boolean> {
+    //   // check patientid in firebase client collection
+    //   const querySnapshot = await db
+    //     .collection("Client")
+    //     .where("id", "==", patientId)
+    //     .get();
+    //
+    //   if (querySnapshot.docs.length == 0) {
+    //     // logger.info(
+    //     //   `No matching client in Client collection for client ID: ${patientId}`,
+    //     // );
+    //     return false;
+    //   }
+    //   return true;
+    // }
+    //
+    // async function get_client_from_firebase(
+    //   patientId: string,
+    // ): Promise<Client> {
+    //   const querySnapshot = await db
+    //     .collection("Client")
+    //     .where("id", "==", patientId)
+    //     .get();
+    //
+    //   // querySnapshot is guaranteed to not be empty
+    //   const doc = querySnapshot.docs[0];
+    //   const data = doc.data();
+    //
+    //   const client: Client = {
+    //     id: data.id,
+    //     firstName: data.firstName,
+    //     ...(data.middleName && { middleName: data.middleName }),
+    //     lastName: data.lastName,
+    //     email: data.email,
+    //     ...(data.phone && { phone: data.phone }),
+    //     ...(data.insurance && { insurance: data.insurance }),
+    //     ...(data.paysimpleId && { paysimpleId: data.paysimpleId }),
+    //     baby: data.baby,
+    //   };
+    //
+    //   return client;
+    // }
+    //
+    function clientExists(patientId: string): boolean {
+      return clientMap.has(patientId)
     }
 
     const parentsToAdd: Client[] = []
@@ -164,8 +175,8 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
         // the appt is for baby
         const patientName = patientNames[appt.patientId];
         if (is_baby_appt(appt)) {
-          const baby = babies_list.find(
-            (baby: { id: string }) => baby.id === appt.patientId,
+          const baby = babiesMap.get(
+            appt.patientId
           ); // find matching baby
           if (baby) {
             babies.push(baby);
@@ -181,14 +192,11 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
           }
 
           // get the client info, either from firebase or the clients sheet if the client is not in the db yet
-          if (await client_in_firebase(appt.patientId)) {
-            parent = await get_client_from_firebase(appt.patientId);
-          } else if (
-            clientFileExists &&
-            client_in_clients_sheet(appt.patientId)
+          if (
+            clientExists(appt.patientId)
           ) {
-            const client = clients_sheet.find(
-              (client: { id: string }) => client.id == appt.patientId,
+            const client = clientMap.get(
+              appt.patientId,
             );
             parent = client;
           } else {
