@@ -68,6 +68,14 @@ export async function upload(req: Request, _: Response, next: NextFunction) {
     next();
   })
 
-  bb.end(req.rawBody);
+  bb.on("error", next);
+
+  if (!req.rawBody || req.rawBody.length == 0) {
+    logger.warn("file upload: no raw body found, skipping!")
+    return next();
+  } else {
+    bb.end(req.rawBody);
+  }
+
   return;
 }
