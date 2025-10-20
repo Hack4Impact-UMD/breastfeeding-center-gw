@@ -21,18 +21,24 @@ router.post("/upload", [isAuthenticated, upload], async (req: Request, res: Resp
   if (!req.files) return res.status(400).send("Missing files!");
 
   try {
+    const clientsFile = req.files["clients"]?.[0];
+    const apptsFile = req.files["appointments"]?.[0];
+
+    if (!apptsFile) {
+      return res.status(400).send("Missing appointments file!");
+    }
+
     // confirm received files are of valid type
-    const appointmentFileType = getFileType(req.files["appointments"][0].name);
+    const appointmentFileType = getFileType(apptsFile.name);
 
     let clientFileExists = false;
-    if (req.files?.["clients"]?.[0]) {
+    if (clientsFile) {
       clientFileExists = true;
     }
-    const clientFileType = getFileType(req.files["clients"][0].name);
 
     const appointmentParseResults = await parseAppointmentSheet(
       appointmentFileType,
-      req.files["appointments"][0].buffer,
+      apptsFile.buffer,
     );
 
     const { appointments: appointments_sheet, patientNames } =
@@ -41,15 +47,15 @@ router.post("/upload", [isAuthenticated, upload], async (req: Request, res: Resp
     let clients_sheet!: Client[];
     let babyList!: Baby[];
     if (clientFileExists) {
+      const clientFileType = getFileType(clientsFile.name);
       const clientParseResults = await parseClientSheet(
         clientFileType,
-        req.files["clients"][0].buffer,
+        clientsFile.buffer,
       );
 
       clients_sheet = clientParseResults.clientList;
       babyList = clientParseResults.babyList;
     }
-    console.log(babyList[0].middleName);
 
     const appointments_map = new Map<string, JaneAppt[]>();
 

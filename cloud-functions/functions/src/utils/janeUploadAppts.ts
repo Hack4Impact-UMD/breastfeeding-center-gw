@@ -46,11 +46,11 @@ export async function parseAppointmentSheet(
     }
 
     // convert the array of string arrays into array of json objects
-    jsonArray = (xlsxDataArray.slice(1) as any[]).map((data: string[]) => {
-      const jsonObj = {};
+    jsonArray = (xlsxDataArray.slice(1) as string[][]).map((data: string[]) => {
+      const jsonObj: Record<string, string> = {};
       requiredHeaders.forEach((columnName, idx) => {
         // add key pair value for relevant columns
-        (jsonObj as any)[columnName] = data[columnIndices[idx]];
+        jsonObj[columnName] = data[columnIndices[idx]];
       });
       return jsonObj;
     });
@@ -76,12 +76,12 @@ export async function parseAppointmentSheet(
       patientNames[rawAppt.patient_number] = {
         firstName:
           rawAppt.patient_first_name === undefined ||
-          rawAppt.patient_first_name === ""
+            rawAppt.patient_first_name === ""
             ? "N/A"
             : rawAppt.patient_first_name.trim(),
         lastName:
           rawAppt.patient_last_name === undefined ||
-          rawAppt.patient_last_name === ""
+            rawAppt.patient_last_name === ""
             ? "N/A"
             : rawAppt.patient_last_name.trim(),
       };
@@ -91,7 +91,7 @@ export async function parseAppointmentSheet(
   return { appointments, patientNames };
 }
 
-function parseAppointment(appt: any) {
+function parseAppointment(appt: Record<string, string>) {
   const janeAppt = {} as JaneAppt;
 
   if (appt.id === undefined || appt.id.toString().trim() === "") {
@@ -143,7 +143,7 @@ function parseAppointment(appt: any) {
         .replace(/telehealth(\s)*(short)*/i, "telehealth")
         .trim();
 
-      let idx = fullServiceType.indexOf("telehealth") + 10;
+      const idx = fullServiceType.indexOf("telehealth") + 10;
       service = fullServiceType.substring(idx).trim();
     } else if (serviceLowercase.includes("office")) {
       visitType = "OFFICE";
