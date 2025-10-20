@@ -97,8 +97,8 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
       formData.append("clients", clientFile);
     }
     try {
-      const axiosInstance = axiosClient();
-      const response = (await axiosInstance).post("/jane/upload", formData);
+      const axiosInstance = await axiosClient();
+      const response = axiosInstance.post("/jane/upload", formData);
       console.log("File uploaded successfully:", (await response).data);
     } catch (error) {
       console.error("Error uploading file:", error);
@@ -266,11 +266,10 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
 
         <div className="flex justify-center mt-6">
           <button
-            className={`px-6 py-2 rounded-lg border border-black ${
-              uploadButtonEnabled
+            className={`px-6 py-2 rounded-lg border border-black ${uploadButtonEnabled
                 ? "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light"
                 : "bg-gray-300 cursor-not-allowed"
-            }`}
+              }`}
             disabled={!uploadButtonEnabled}
             onClick={handleSubmit}
           >

@@ -6,11 +6,11 @@ import { parseClientSheet } from "../utils/janeUploadClients";
 import { JaneAppt } from "../types/janeType";
 import { Client, Baby } from "../types/clientTypes";
 import { db } from "../services/firebase";
-import { isAuthenticated } from "../middleware/authMiddleware";
+// import { isAuthenticated } from "../middleware/authMiddleware";
 
 const router = Router();
 
-router.post("/upload", [isAuthenticated, upload], async (req: Request, res: Response) => {
+router.post("/upload", [upload], async (req: Request, res: Response) => {
   // NOTE: req.files is an object with keys being the fieldName (appointments/clients)
   // and the values being a list of uploaded files for that field. Examples for reading
   // the text content of those fields is below. We can assume each field name has only one
@@ -41,11 +41,13 @@ router.post("/upload", [isAuthenticated, upload], async (req: Request, res: Resp
       apptsFile.buffer,
     );
 
-    const { appointments: appointments_sheet, patientNames } =
+    const { appointments: appointments_sheet, patientNames, babyAppts } =
       appointmentParseResults;
 
-    let clients_sheet!: Client[];
-    let babyList!: Baby[];
+    const babyApptSet = new Set(babyAppts.map(appt => appt.apptId));
+
+    let clients_sheet: Client[] = [];
+    let babies_list: Baby[] = []
     if (clientFileExists) {
       const clientFileType = getFileType(clientsFile.name);
       const clientParseResults = await parseClientSheet(
@@ -54,7 +56,10 @@ router.post("/upload", [isAuthenticated, upload], async (req: Request, res: Resp
       );
 
       clients_sheet = clientParseResults.clientList;
-      babyList = clientParseResults.babyList;
+      babies_list = clientParseResults.babyList;
+    } else {
+      clients_sheet = await getAllFirebaseClients();
+      babies_list = clients_sheet.flatMap(client => client.baby);
     }
 
     const appointments_map = new Map<string, JaneAppt[]>();
@@ -72,12 +77,12 @@ router.post("/upload", [isAuthenticated, upload], async (req: Request, res: Resp
     const missing_clients: string[] = [];
 
     function is_baby_appt(appt: JaneAppt): boolean {
-      if (
-        babyList?.some((baby: { id: string }) => baby.id === appt.patientId)
-      ) {
-        return true;
-      }
-      return false;
+      return babyApptSet.has(appt.apptId);
+    }
+
+    async function getAllFirebaseClients() {
+      const clients = db.collection("Client");
+      return (await clients.get()).docs.map(d => d.data() as Client)
     }
 
     async function appt_in_firebase(appt: JaneAppt): Promise<boolean> {
@@ -110,17 +115,6 @@ router.post("/upload", [isAuthenticated, upload], async (req: Request, res: Resp
         return false;
       }
       return true;
-    }
-
-    async function add_to_clients_collection(parent: Client) {
-      if (!parent.baby) {
-        parent.baby = [];
-      }
-      await db.collection("Client").doc(parent.id).set(parent);
-    }
-
-    async function add_to_appts_collection(appt: JaneAppt) {
-      await db.collection("JaneAppt").doc(String(appt.apptId)).set(appt);
     }
 
     async function get_client_from_firebase(
@@ -156,6 +150,9 @@ router.post("/upload", [isAuthenticated, upload], async (req: Request, res: Resp
       );
     }
 
+    const parentsToAdd: Client[] = []
+    const apptsToAdd: JaneAppt[] = []
+
     for (const appointments of appointments_map.values()) {
       let parent = null; // Client type
       const babies: Baby[] = []; // list of baby type
@@ -165,12 +162,16 @@ router.post("/upload", [isAuthenticated, upload], async (req: Request, res: Resp
 
       for (const appt of appointments) {
         // the appt is for baby
+        const patientName = patientNames[appt.patientId];
         if (is_baby_appt(appt)) {
-          const baby = babyList.find(
+          const baby = babies_list.find(
             (baby: { id: string }) => baby.id === appt.patientId,
           ); // find matching baby
           if (baby) {
             babies.push(baby);
+          } else {
+            // the baby could not be found, add them to missing clients
+            missing_clients.push(`${patientName.firstName} ${patientName.lastName}`)
           }
         } else {
           // the appt is for client
@@ -191,7 +192,6 @@ router.post("/upload", [isAuthenticated, upload], async (req: Request, res: Resp
             );
             parent = client;
           } else {
-            const patientName = patientNames[appt.patientId];
             // if the client is not in firebase or the clients sheet, we cannot add this appointment
             // get the patient's first and last name and add them to the missing clients list
             if (patientName) {
@@ -228,10 +228,10 @@ router.post("/upload", [isAuthenticated, upload], async (req: Request, res: Resp
       });
 
       if (parentResolved) {
-        await add_to_clients_collection(parentResolved);
+        parentsToAdd.push(parentResolved);
       }
       if (parentAppt) {
-        await add_to_appts_collection(parentAppt);
+        apptsToAdd.push(parentAppt)
       }
     }
 
@@ -243,6 +243,22 @@ router.post("/upload", [isAuthenticated, upload], async (req: Request, res: Resp
         error: "Missing clients!",
         details: missing_clients,
       });
+    }
+
+    // batch transaction for performace, limit is 500 per batch
+    const chunkSize = 500;
+    for (let i = 0; i < parentsToAdd.length; i += chunkSize) {
+      const chunk = parentsToAdd.slice(i, i + chunkSize)
+      const batch = db.batch()
+      chunk.forEach(parent => batch.set(db.collection("Client").doc(parent.id), parent))
+      await batch.commit()
+    }
+
+    for (let i = 0; i < apptsToAdd.length; i += chunkSize) {
+      const chunk = apptsToAdd.slice(i, i + chunkSize)
+      const batch = db.batch()
+      chunk.forEach(appt => batch.set(db.collection("JaneAppt").doc(appt.apptId), appt))
+      await batch.commit()
     }
 
     return res.status(200).send();

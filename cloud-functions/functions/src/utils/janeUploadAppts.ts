@@ -1,6 +1,7 @@
 import * as XLSX from "xlsx";
 import csv from "csvtojson";
 import { JaneAppt, VisitType } from "../types/janeType";
+// import { logger } from "firebase-functions";
 
 export async function parseAppointmentSheet(
   fileType: string,
@@ -64,13 +65,21 @@ export async function parseAppointmentSheet(
   // initializing the objects to return
   const patientNames: { [id: string]: PatientInfo } = {};
   const appointments: JaneAppt[] = [];
+  const babyAppts: JaneAppt[] = []
 
   // looping through each element in jsonArray to turn into JaneAppt obj
   for (const rawAppt of jsonArray) {
     // parsing rawAppt data in jsonArray and adding it to appointments list
+
     const appt = parseAppointment(rawAppt);
+
+
     // only push if appt is not null (ids not found)
     if (appt) {
+      if (isBabyAppt(rawAppt)) {
+        // logger.info("baby appt found!", appt);
+        babyAppts.push(appt);
+      }
       appointments.push(appt);
       // parsing rawAppt data in jsonArray and adding it to patientNames list
       patientNames[rawAppt.patient_number] = {
@@ -88,7 +97,16 @@ export async function parseAppointmentSheet(
     }
   }
 
-  return { appointments, patientNames };
+  return { appointments, patientNames, babyAppts };
+}
+
+function isBabyAppt(appt: Record<string, string>) {
+  const firstName = appt.patient_first_name;
+  const preferredName = appt.patient_preferred_name;
+  const lastName = appt.patient_last_name;
+
+
+  return ((firstName + lastName + preferredName).toLowerCase().includes("baby") || (firstName + lastName + preferredName).toLowerCase().includes("twin"))
 }
 
 function parseAppointment(appt: Record<string, string>) {
