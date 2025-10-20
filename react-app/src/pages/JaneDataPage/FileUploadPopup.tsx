@@ -116,7 +116,7 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
     })
   };
 
-  const uploadButtonEnabled = (!!apptFile && errorType === "none") || uploadMutation.isPending;
+  const uploadButtonEnabled = (!!apptFile && errorType === "none") && !uploadMutation.isPending;
 
   return (
     <Modal open={isOpen} onClose={handleClose} height={350} width={500}>
