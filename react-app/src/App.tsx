@@ -23,6 +23,7 @@ import NewUserPage from "./pages/NewUserPage/NewUserPage";
 import RegisterSuccessPage from "./pages/NewUserPage/RegisterSuccessPage";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { Button } from "./components/ui/button";
+import { axiosClient } from "./lib/utils";
 // import "@tremor/react/dist/esm/tremor.css";
 
 function App() {
@@ -153,31 +154,17 @@ function App() {
                         >
                           TEST
                         </Button>
-                        <Button
-                          variant={"yellow"}
-                          size="lg"
-                          disabled
-                        >
+                        <Button variant={"yellow"} size="lg" disabled>
                           TEST
                         </Button>
-                        <Button
-                          variant={"yellow"}
-                          className="rounded-full"
-                        >
+                        <Button variant={"yellow"} className="rounded-full">
                           TEST
                         </Button>
                       </div>
                       <div className="space-x-3">
                         <strong>Outline: </strong>
-                        <Button
-                          variant={"outline"}
-                        >
-                          TEST
-                        </Button>
-                        <Button
-                          variant={"outline"}
-                          className="rounded-full"
-                        >
+                        <Button variant={"outline"}>TEST</Button>
+                        <Button variant={"outline"} className="rounded-full">
                           TEST
                         </Button>
                         <Button
@@ -190,23 +177,23 @@ function App() {
                       </div>
                       <div className="space-x-3">
                         <strong>Gray: </strong>
-                        <Button
-                          variant={"gray"}
-                        >
-                          TEST
-                        </Button>
-                        <Button
-                          variant={"gray"}
-                          className="rounded-full"
-                        >
+                        <Button variant={"gray"}>TEST</Button>
+                        <Button variant={"gray"} className="rounded-full">
                           TEST
                         </Button>
                         <Button
                           variant={"gray"}
                           disabled
                           className="rounded-full"
+                          onClick={async () => {
+                            const axiosInstance = await axiosClient();
+                            await axiosInstance
+                              .get("/jane/appointments")
+                              .then((response) => console.log(response))
+                              .catch((error) => console.log(error));
+                          }}
                         >
-                          TEST
+                          TEST HERE
                         </Button>
                       </div>
                     </div>
