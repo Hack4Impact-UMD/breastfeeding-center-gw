@@ -8,6 +8,7 @@ import clientUploadIcon from "../../assets/clientUpload.svg";
 import { useUploadJaneData } from "@/hooks/mutations/useUploadJaneData";
 import Loading from "@/components/Loading";
 import { AxiosError } from "axios";
+import { Button } from "@/components/ui/button";
 
 type FileUploadPopupProps = {
   isOpen: boolean;
@@ -273,16 +274,14 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
           {uploadMutation.isPending ?
             <Loading /> :
             (
-              <button
-                className={`px-6 py-2 rounded-lg border border-black cursor-pointer ${uploadButtonEnabled
-                  ? "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light"
-                  : "bg-gray-300 cursor-not-allowed"
-                  }`}
+              <Button
+                variant={"yellow"}
+                className={`px-6 py-2 rounded-lg border border-black cursor-pointer`}
                 disabled={!uploadButtonEnabled}
                 onClick={handleSubmit}
               >
                 UPLOAD DATA
-              </button>
+              </Button>
             )
           }
         </div>
