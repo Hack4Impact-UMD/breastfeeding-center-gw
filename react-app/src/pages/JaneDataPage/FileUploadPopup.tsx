@@ -31,7 +31,7 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    type: "appt" | "client"
+    type: "appt" | "client",
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -59,7 +59,7 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
 
   const handleUploadSubmit = (
     apptFile: File | null,
-    clientFile: File | null
+    clientFile: File | null,
   ) => {
     // TODO: Handle file upload logic
     console.log("Appointment file:", apptFile);
@@ -77,7 +77,8 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
             onClick={() => {
               handleClose();
             }}
-            className="absolute top-0.25 right-0.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer">
+            className="absolute top-0.25 right-0.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
+          >
             <IoIosClose size={40} />
           </button>
         </div>
@@ -91,7 +92,8 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
           <div className="flex flex-col items-center">
             <label
               htmlFor="appt-upload"
-              className="cursor-pointer flex flex-col items-center">
+              className="cursor-pointer flex flex-col items-center"
+            >
               <img
                 src={apptUploadIcon}
                 alt="Upload Appts"
@@ -123,7 +125,8 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
           <div className="flex flex-col items-center mb-2">
             <label
               htmlFor="client-upload"
-              className="cursor-pointer flex flex-col items-center">
+              className="cursor-pointer flex flex-col items-center"
+            >
               <img
                 src={clientUploadIcon}
                 alt="Upload Clients"
@@ -163,7 +166,8 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
               system. Please upload client sheet with new clients.{" "}
               <span
                 data-tooltip-id="missingClientsTip"
-                className="underline cursor-pointer">
+                className="underline cursor-pointer"
+              >
                 View missing clients
               </span>
             </p>
@@ -189,7 +193,8 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
                 : "bg-gray-300 cursor-not-allowed"
             }`}
             disabled={!uploadButtonEnabled}
-            onClick={handleSubmit}>
+            onClick={handleSubmit}
+          >
             UPLOAD DATA
           </button>
         </div>

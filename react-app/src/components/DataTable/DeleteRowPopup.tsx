@@ -26,7 +26,8 @@ const DeleteRowPopup = ({
         onClick={() => {
           onClose();
         }}
-        className="absolute top-4 right-4 text-bcgw-blue-dark hover:text-gray-600 z-10 cursor-pointer">
+        className="absolute top-4 right-4 text-bcgw-blue-dark hover:text-gray-600 z-10 cursor-pointer"
+      >
         <IoIosClose size={50} />
       </button>
       <div className="relative p-8 flex flex-col items-center justify-center text-center h-full">

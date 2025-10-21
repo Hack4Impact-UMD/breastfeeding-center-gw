@@ -19,7 +19,8 @@ const Modal = ({
       className="z-20"
       onClick={(e) => {
         e.stopPropagation();
-      }}>
+      }}
+    >
       {open ? (
         <>
           <div
@@ -32,7 +33,8 @@ const Modal = ({
               style={{
                 height: heightString,
                 width: `${width}px`,
-              }}>
+              }}
+            >
               {children}
             </div>
           </div>
