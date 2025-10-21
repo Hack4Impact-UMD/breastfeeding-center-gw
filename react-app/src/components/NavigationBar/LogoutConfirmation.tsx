@@ -1,6 +1,7 @@
 import { IoIosClose } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import Modal from "../Modal.tsx";
+import { logOut } from "@/backend/AuthFunctions.tsx";
 
 export default function LogoutConfirmation({
   open,
@@ -13,6 +14,7 @@ export default function LogoutConfirmation({
 
   function handleLogOut() {
     navigate("/logout", { state: { fromApp: true } });
+    logOut()
   }
 
   return (
