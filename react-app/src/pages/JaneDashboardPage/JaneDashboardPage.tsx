@@ -485,7 +485,8 @@ const JaneDashboardPage = () => {
                                 label={
                                   <FunnelAxisLabel
                                     className=""
-                                    fontSize={12}
+                                    labelVisibility="always"
+                                    fontSize={15}
                                     position="middle"
                                     fill="#FFFFFF"
                                   />
