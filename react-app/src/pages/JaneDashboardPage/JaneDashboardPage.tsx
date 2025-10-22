@@ -16,8 +16,8 @@ import {
 import { Jane } from "../../types/JaneType.ts";
 import { getAllJaneData } from "../../backend/FirestoreCalls.tsx";
 import Loading from "../../components/Loading.tsx";
-import { toPng } from "html-to-image";
-import download from "downloadjs";
+import { exportAsSvg } from "@/components/Exportable";
+
 import {
   DateRangePicker,
   defaultPresets,
@@ -87,20 +87,129 @@ const JaneDashboardPage = () => {
     },
   ];
 
-  const handleExport = async (
-    ref: React.RefObject<HTMLDivElement | null>,
-    filename: string,
-  ) => {
-    const element = ref.current;
-    if (!element) {
-      return;
+  const retentionFileTitle = () => {
+    const dr =
+      dateRange.startDate && dateRange.endDate
+        ? `${formatDate(dateRange.startDate)} - ${formatDate(dateRange.endDate)}`
+        : "All Data";
+    return `jane-retention-${dr.replaceAll(" ", "").replaceAll("/", "-")}`;
+  };
+
+  function buildFunnelSVGString(
+    data: Array<{ key: string; data: number }>,
+    width = 1000,
+    height = 420,
+    palette = ["#0F2742", "#1C2E56", "#2C3B6D", "#3D4A83", "#4E5A97", "#6370AD"]
+  ) {
+    const paddingX = 10;
+    const segHeight = 220;
+    const centerY = height / 2;
+    const gap = 12;
+    const maxW = width - paddingX * 2 - 80;
+
+    const maxVal = Math.max(...data.map((d) => d.data));
+    const scale = (v: number) => Math.max(60, (v / maxVal) * maxW);
+
+    let x = paddingX + 60;
+    const parts: string[] = [];
+
+    // background
+    parts.push(`<rect x="0" y="0" width="${width}" height="${height}" fill="#FFFFFF"/>`);
+
+    // left axis label
+    parts.push(
+      `<g transform="translate(${paddingX}, ${centerY}) rotate(-90)">
+       <text x="0" y="0" text-anchor="middle" font-size="18" font-weight="600" fill="#1F2937">
+         Number of Clients
+       </text>
+     </g>`
+    );
+
+    for (let i = 0; i < data.length; i++) {
+      const leftW = scale(data[i].data);
+      const rightW = scale(data[i + 1]?.data ?? data[i].data);
+      const halfH = segHeight / 2;
+
+      const tlx = x, tly = centerY - halfH;
+      const trx = x + leftW, try_ = centerY - halfH;
+      const brx = x + rightW, bry = centerY + halfH;
+      const blx = x, bly = centerY + halfH;
+
+      const path = `M ${tlx},${tly} L ${trx},${try_} L ${brx},${bry} L ${blx},${bly} Z`;
+      const cx = x + Math.min(leftW, rightW) / 2 + Math.abs(leftW - rightW) / 4;
+
+      parts.push(`<path d="${path}" fill="${palette[i % palette.length]}" />`);
+
+      // big number
+      parts.push(
+        `<text x="${cx}" y="${centerY - 8}" text-anchor="middle" font-size="36" font-weight="600" fill="#FFFFFF">
+        ${data[i].data}
+       </text>`
+      );
+
+      // small label
+      parts.push(
+        `<text x="${cx}" y="${centerY + 20}" text-anchor="middle" font-size="16" fill="#E5E7EB">
+        ${data[i].key}
+       </text>`
+      );
+
+      x += Math.min(rightW, leftW) + gap;
     }
-    try {
-      const dataUrl = await toPng(element);
-      download(dataUrl, `${filename}.png`);
-    } catch (error) {
-      console.error("Export failed:", error);
-    }
+
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">${parts.join(
+      ""
+    )}</svg>`;
+  }
+
+
+  const handleExportRetention = async () => {
+    // Title and lines under it (Figma wants title + date range + filters)
+    const title = `Retention Rate over a Six Week Period`;
+    const dr =
+      dateRange.startDate && dateRange.endDate
+        ? `${formatDate(dateRange.startDate)} - ${formatDate(dateRange.endDate)}`
+        : "All Data";
+
+    const svgString = buildFunnelSVGString(funnelData, 1000, 420);
+    const dataUri = `data:image/svg+xml;utf8,${encodeURIComponent(svgString)}`;
+
+    const exportContent = (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <img
+          src={dataUri}
+          width={1000}
+          height={420}
+          alt="Jane retention funnel"
+          style={{ display: "block" }}
+        />
+      </div>
+    );
+
+
+
+    await exportAsSvg({
+      content: exportContent,
+      title: `${title}, ${dr}`,
+      dateRange: null, // already appended to title per Figma
+      selectedFilters: {
+        // show selected dropdowns beneath title, as required
+        Clients: clientsFilter,
+        Clinicians: cliniciansFilter,
+      },
+      width: 1200,
+      height: 760,
+      filename: retentionFileTitle(),
+      backgroundColor: "#FFFFFF",
+    });
   };
 
   const [dateRange, setDateRange] = useState<{
@@ -330,7 +439,8 @@ const JaneDashboardPage = () => {
                 </div>
                 <button
                   className={transparentGrayButtonStyle}
-                  onClick={() => handleExport(pieChartRef, "visit_breakdown")}
+                  disabled={retentionDisplay !== "graph"} // only export when graph tab is active
+                  onClick={handleExportRetention}
                 >
                   Export
                 </button>
@@ -432,7 +542,8 @@ const JaneDashboardPage = () => {
                 </div>
                 <button
                   className={transparentGrayButtonStyle}
-                  onClick={() => handleExport(funnelChartRef, "retention_rate")}
+                  disabled={retentionDisplay !== "graph"} // only export when graph tab is active
+                  onClick={handleExportRetention}
                 >
                   Export
                 </button>
