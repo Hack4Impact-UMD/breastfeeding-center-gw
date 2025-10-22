@@ -3,11 +3,15 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import authRouter from "./routes/authRoutes";
 import acuityRouter from "./routes/acuityRoutes";
+import janeRouter from "./routes/janeRoutes";
 
 const app = express();
 
 //TODO: Enforce stricter cors rules when this is deployed, currently all origins are allowed
 app.use(cors());
+
+app.use("/jane", janeRouter);
+
 app.use(bodyParser.json());
 
 app.use("/auth", authRouter);
