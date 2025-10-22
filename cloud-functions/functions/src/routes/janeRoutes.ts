@@ -1,6 +1,6 @@
 import { Request, Router, Response } from "express";
 import { logger } from "firebase-functions";
-import { Client, Baby } from "../types/clientTypes";
+import { Client } from "../types/clientTypes";
 import { JaneAppt } from "../types/janeType";
 import { db } from "../services/firebase";
 import { isAuthenticated } from "../middleware/authMiddleware";

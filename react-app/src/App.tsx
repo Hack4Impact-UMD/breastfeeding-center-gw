@@ -9,7 +9,6 @@ import Header from "./components/Header";
 import RequireAuth from "./auth/RequireAuth";
 import PaysimpleDashboard from "./pages/PaysimpleDashboardPage";
 import { AuthProvider } from "./auth/AuthProvider";
-import { getBabyInfo, getClientAppointments } from "./backend/AcuityCalls";
 import AcuityDashboard from "./pages/AcuityDashboardPage/AcuityDashboardPage";
 import JaneDashboard from "./pages/JaneDashboardPage/JaneDashboardPage";
 import { useState } from "react";
@@ -24,6 +23,7 @@ import RegisterSuccessPage from "./pages/NewUserPage/RegisterSuccessPage";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { Button } from "./components/ui/button";
 import { axiosClient } from "./lib/utils";
+import { getAllJaneApptsInRange } from "./backend/JaneFunctions";
 // import "@tremor/react/dist/esm/tremor.css";
 
 function App() {
@@ -143,13 +143,7 @@ function App() {
                         <Button
                           variant={"yellow"}
                           onClick={async () => {
-                            getBabyInfo()
-                              .then(() => console.log("Success"))
-                              .catch();
-
-                            getClientAppointments()
-                              .then(() => console.log("Success"))
-                              .catch();
+                           await getAllJaneApptsInRange()
                           }}
                         >
                           TEST
