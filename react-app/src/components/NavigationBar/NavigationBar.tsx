@@ -175,7 +175,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
               {/*USER MANAGEMENT*/}
               <div className="flex flex-row border-b border-bcgw-gray-light w-full cursor-pointer">
                 <NavLink
-                  to="/management"
+                  to="/user-management"
                   className={({ isActive }) =>
                     isActive ? activeStyle : notActiveStyle
                   }
