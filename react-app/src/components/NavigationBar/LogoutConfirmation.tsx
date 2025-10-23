@@ -1,7 +1,7 @@
 import { IoIosClose } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import { logOut } from "../../backend/AuthFunctions";
 import Modal from "../Modal.tsx";
+import { logOut } from "@/backend/AuthFunctions.tsx";
 
 export default function LogoutConfirmation({
   open,
@@ -13,13 +13,8 @@ export default function LogoutConfirmation({
   const navigate = useNavigate();
 
   function handleLogOut() {
+    navigate("/logout", { state: { fromApp: true } });
     logOut()
-      .then(() => {
-        navigate("/logout", { state: { fromApp: true } });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
   }
 
   return (

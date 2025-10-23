@@ -700,13 +700,44 @@ export default function AcuityDashboardPage() {
           >
             <div className="flex justify-between items-center space-x-4">
               <div className="text-2xl font-semibold">
-                Class Popularity Over Time,{" "}
+                {classPopularityDisplay === "graph" ? (
+                  <span>Class Attendance Over Time</span>
+                ) : (
+                  <span>Class Attendance</span>
+                )}
                 {classPopularityDisplay === "graph" ? <br /> : <></>} 2/19/25 -
                 3/19/25
               </div>
 
-              {classPopularityDisplay === "graph" && (
-                <div className="flex items-center space-x-2"></div>
+              {classPopularityDisplay === "graph" ? (
+                // Class dropdown
+                <div className="flex items-center space-x-2">
+                  <label className="text-sm font-medium"></label>
+                  <select
+                    className="border rounded-md px-2 py-1 text-sm"
+                    value={selectedClass}
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                  >
+                    <option>All Classes</option>
+                    {allClassData.map((c) => (
+                      <option key={c.key}>{c.key}</option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  <label className="text-sm font-medium"></label>
+                  <select
+                    className="border rounded-md px-2 py-1 text-sm"
+                    value={selectedClass}
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                  >
+                    <option>All Classes</option>
+                    {allClassData.map((c) => (
+                      <option key={c.key}>{c.key}</option>
+                    ))}
+                  </select>
+                </div>
               )}
             </div>
             {classPopularityDisplay === "graph" ? (
@@ -776,26 +807,29 @@ export default function AcuityDashboardPage() {
           >
             <div className="flex justify-between items-center space-x-4">
               <div className="text-2xl font-semibold">
-                Instructor Popularity Over Time,
-                {instructorPopularityDisplay === "graph" ? <br /> : null}{" "}
+                {instructorPopularityDisplay === "graph" ? (
+                  <span>Class Attendance by Instructor Over Time</span>
+                ) : (
+                  <span>Class Attendance by Instructor</span>
+                )}
+                {instructorPopularityDisplay === "graph" ? <br /> : <></>}{" "}
                 2/19/25 - 3/19/25
               </div>
 
-              {/* header select only in GRAPH view */}
-              {instructorPopularityDisplay === "graph" && (
-                <div className="flex items-center space-x-2">
-                  <select
-                    className="border rounded-md px-3 py-2 text-sm"
-                    value={selectedInstructor}
-                    onChange={(e) => setSelectedInstructor(e.target.value)}
-                  >
-                    <option>ALL CLASSES</option>
-                    {allInstructorData.map((ins) => (
-                      <option key={ins.key}>{ins.key}</option>
-                    ))}
-                  </select>
-                </div>
-              )}
+              {/* Instructor dropdown */}
+              <div className="flex items-center space-x-2">
+                <label className="text-sm font-medium"></label>
+                <select
+                  className="border rounded-md px-2 py-1 text-sm"
+                  value={selectedInstructor}
+                  onChange={(e) => setSelectedInstructor(e.target.value)}
+                >
+                  <option>All Classes</option>
+                  {allInstructorData.map((ins) => (
+                    <option key={ins.key}>{ins.key}</option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             {instructorPopularityDisplay === "graph" ? (
