@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import {
   AiOutlineEye,
@@ -47,6 +47,7 @@ export default function NewUserPage() {
   const prefilledLastName = invite?.lastName ?? ""
   const prefilledEmail = invite?.email ?? ""
 
+
   const [firstName, setFirstName] = useState(prefilledFirstName);
   const [lastName, setLastName] = useState(prefilledLastName);
   const [pronouns, setPronouns] = useState(PRONOUN_OPTIONS[0]);
@@ -75,7 +76,7 @@ export default function NewUserPage() {
     <Loading />
   </div>
 
-  if (error) return <Navigate to="/" />
+  if (error) return <p>Something went wrong {error.message}</p>
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -125,7 +126,7 @@ export default function NewUserPage() {
             </label>
             <input
               className="w-full border rounded px-3 py-2"
-              value={firstName}
+              defaultValue={prefilledFirstName}
               onChange={(e) => setFirstName(e.target.value)}
               required
             />
@@ -136,7 +137,7 @@ export default function NewUserPage() {
             </label>
             <input
               className="w-full border rounded px-3 py-2"
-              value={lastName}
+              defaultValue={prefilledLastName}
               onChange={(e) => setLastName(e.target.value)}
               required
             />

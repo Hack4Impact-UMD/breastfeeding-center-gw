@@ -3,7 +3,7 @@ import { hasRoles, isAuthenticated } from "../middleware/authMiddleware";
 import { db } from "../services/firebase";
 import { INVITES_COLLECTION, USERS_COLLECTION } from "../types/collections";
 import { CollectionReference, Timestamp } from "firebase-admin/firestore";
-import { User } from "../types/userTypes";
+import { Role, User } from "../types/userTypes";
 import { UserInvite } from "../types/inviteType";
 import { v7 as uuidv7 } from "uuid"
 import { logger } from "firebase-functions";
@@ -16,6 +16,7 @@ type UserInviteForm = {
   firstName: string,
   lastName: string,
   email: string
+  role?: Role
 }
 
 // creates and sends a registration invite
@@ -23,7 +24,8 @@ router.post("/send", [isAuthenticated, hasRoles(["ADMIN", "DIRECTOR"])], async (
   const {
     firstName,
     lastName,
-    email
+    email,
+    role
   } = req.body as UserInviteForm;
 
   if (!firstName || !lastName || !email) {
@@ -44,7 +46,7 @@ router.post("/send", [isAuthenticated, hasRoles(["ADMIN", "DIRECTOR"])], async (
     email: email,
     firstName: firstName,
     lastName: lastName,
-    role: "VOLUNTEER", // TODO: For now defaults to volunteer
+    role: role ?? "VOLUNTEER",
     used: false
   }
 

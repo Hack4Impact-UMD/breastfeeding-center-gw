@@ -7,6 +7,8 @@ import UserCard from "./UserCard";
 import AddAccountModal from "./AddAccountModal";
 import { useAllUsers } from "@/hooks/queries/useUsers";
 import Loading from "@/components/Loading";
+import { useMutation } from "@tanstack/react-query";
+import { sendUserInvite } from "@/backend/InviteFunctions";
 
 const UserManagementPage: React.FC = () => {
   const [navBarOpen, setNavBarOpen] = useState(true);
@@ -27,6 +29,22 @@ const UserManagementPage: React.FC = () => {
       }),
     [users, roleFilter, search],
   );
+
+  const inviteUserMutation = useMutation({
+    mutationFn: async ({ firstName, lastName, email }: { firstName: string, lastName: string, email: string }) => {
+      await sendUserInvite(firstName, lastName, email, "VOLUNTEER") // TODO: update for different roles
+    },
+    onSuccess: () => {
+      console.log("Invite sent!")
+    },
+    onError: (err) => {
+      console.error("Failed to send invite")
+      console.error(err)
+    },
+    onSettled: () => {
+      setShowAddModal(false)
+    }
+  })
 
   return (
     <>
@@ -68,8 +86,10 @@ const UserManagementPage: React.FC = () => {
           <AddAccountModal
             open={showAddModal}
             onClose={() => setShowAddModal(false)}
-            onConfirm={() => {
-              //TODO: implement
+            onConfirm={(user) => {
+              if (!inviteUserMutation.isPending) {
+                inviteUserMutation.mutate(user)
+              }
             }}
           />
         </div>

@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { User } from "../types/userTypes";
+import { Role, User } from "../types/userTypes";
 import { logger } from "firebase-functions";
 import { auth, db } from "../services/firebase";
 import { config } from "../config";
@@ -72,6 +72,10 @@ router.post("/register/root/:secret", async (req: Request, res: Response) => {
     password: password,
     phoneNumber: phone,
   });
+
+  await auth.setCustomUserClaims(authUser.uid, {
+    role: "DIRECTOR" as Role
+  })
 
   const user = {
     auth_id: authUser.uid,
@@ -152,6 +156,10 @@ router.post(
       password: password,
       phoneNumber: phone,
     });
+
+    await auth.setCustomUserClaims(authUser.uid, {
+      role: "DIRECTOR" as Role
+    })
 
     const user = {
       auth_id: authUser.uid,
