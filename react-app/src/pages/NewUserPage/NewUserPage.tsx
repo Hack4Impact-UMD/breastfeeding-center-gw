@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import {
   AiOutlineEye,
@@ -76,9 +76,9 @@ export default function NewUserPage() {
     <Loading />
   </div>
 
-  if (error) return <p>Something went wrong {error.message}</p>
+  if (error) return <Navigate to="/" />
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
     // Check for validation errors and show appropriate message
