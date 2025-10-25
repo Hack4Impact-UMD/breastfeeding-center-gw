@@ -5,7 +5,10 @@ import Header from "../../components/Header";
 import UserFilters from "./UserFilters";
 import UserCard from "./UserCard";
 import AddAccountModal from "./AddAccountModal";
-import { User } from "@/types/UserType";
+import { useAllUsers } from "@/hooks/queries/useUsers";
+import Loading from "@/components/Loading";
+import { useMutation } from "@tanstack/react-query";
+import { sendUserInvite } from "@/backend/InviteFunctions";
 
 const UserManagementPage: React.FC = () => {
   const [navBarOpen, setNavBarOpen] = useState(true);
@@ -13,36 +16,11 @@ const UserManagementPage: React.FC = () => {
   const [roleFilter, setRoleFilter] = useState("All");
   const [showAddModal, setShowAddModal] = useState(false);
 
-  const [users] = useState<User[]>([
-    {
-      firstName: "Isabella",
-      lastName: "Clarke",
-      email: "example@gmail.com",
-      phone: "XXX-XXX-XXXX",
-      type: "DIRECTOR",
-      auth_id: "123",
-    },
-    {
-      firstName: "Mark",
-      lastName: "Cooke",
-      email: "example@gmail.com",
-      phone: "XXX-XXX-XXXX",
-      type: "VOLUNTEER",
-      auth_id: "def",
-    },
-    {
-      firstName: "William",
-      lastName: "Williams",
-      email: "example@gmail.com",
-      phone: "XXX-XXX-XXXX",
-      type: "ADMIN",
-      auth_id: "abc",
-    },
-  ]);
+  const { data: users, isPending, error } = useAllUsers()
 
   const filteredUsers = useMemo(
     () =>
-      users.filter((u) => {
+      users?.filter((u) => {
         const fullName = `${u.lastName}, ${u.firstName}`.toLowerCase();
         return (
           fullName.includes(search.toLowerCase()) &&
@@ -52,13 +30,28 @@ const UserManagementPage: React.FC = () => {
     [users, roleFilter, search],
   );
 
+  const inviteUserMutation = useMutation({
+    mutationFn: async ({ firstName, lastName, email }: { firstName: string, lastName: string, email: string }) => {
+      await sendUserInvite(firstName, lastName, email, "VOLUNTEER") // TODO: update for different roles
+    },
+    onSuccess: () => {
+      console.log("Invite sent!")
+    },
+    onError: (err) => {
+      console.error("Failed to send invite")
+      console.error(err)
+    },
+    onSettled: () => {
+      setShowAddModal(false)
+    }
+  })
+
   return (
     <>
       <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
       <div
-        className={`transition-all duration-200 ease-in-out bg-gray-100 min-h-screen overflow-x-hidden flex flex-col ${
-          navBarOpen ? "ml-[250px]" : "ml-[60px]"
-        }`}
+        className={`transition-all duration-200 ease-in-out bg-gray-100 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]"
+          }`}
       >
         <Header />
 
@@ -78,15 +71,25 @@ const UserManagementPage: React.FC = () => {
 
           {/* user list */}
           <div className="mt-3">
-            {filteredUsers.map((u) => (
-              <UserCard key={u.auth_id} user={u} />
-            ))}
+            {
+              isPending ? (
+                <Loading />
+              ) : error ? (
+                <p>Something went wrong: {error.message}</p>
+              ) : (
+                filteredUsers?.map((u) => (
+                  <UserCard key={u.auth_id} user={u} />
+                ))
+              )
+            }
           </div>
           <AddAccountModal
             open={showAddModal}
             onClose={() => setShowAddModal(false)}
-            onConfirm={() => {
-              //TODO: implement
+            onConfirm={(user) => {
+              if (!inviteUserMutation.isPending) {
+                inviteUserMutation.mutate(user)
+              }
             }}
           />
         </div>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Modal from "../../components/Modal";
+import { Button } from "@/components/ui/button";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -50,14 +51,14 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({
         </h2>
         <div className="flex gap-2 mb-3 px-8">
           <input
-            className="border rounded px-2 py-1 flex-1"
+            className="border rounded px-2 py-1 w-1/2"
             placeholder="First Name"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             onBlur={() => setTouched(true)}
           />
           <input
-            className="border rounded px-2 py-3 flex-1"
+            className="border rounded px-2 py-3 w-1/2"
             placeholder="Last Name"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
@@ -84,14 +85,16 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({
           Are you sure you would like to create a new account?
         </div>
         <div className="flex gap-4 justify-center mb-2">
-          <button
-            className="border px-4 py-1 rounded text-gray-700 hover:bg-gray-100"
+          <Button
+            variant="outline"
+            size="sm"
             onClick={onClose}
           >
             CANCEL
-          </button>
-          <button
-            className={`px-4 py-1 rounded text-white ${canConfirm ? "bg-[#F6B21B] hover:bg-yellow-500 cursor-pointer" : "bg-gray-300 cursor-not-allowed"}`}
+          </Button>
+          <Button
+            variant="yellow"
+            size="sm"
             disabled={!canConfirm}
             onClick={() => {
               setTouched(true);
@@ -106,7 +109,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({
             }}
           >
             CONFIRM
-          </button>
+          </Button>
         </div>
         {error && (
           <div className="text-xs text-red-600 text-center">{error}</div>

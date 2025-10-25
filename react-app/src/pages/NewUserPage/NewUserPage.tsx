@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { FormEvent, useState } from "react";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import {
   AiOutlineEye,
   AiOutlineEyeInvisible,
@@ -10,6 +10,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useInvite } from "@/hooks/queries/useInvite";
+import Loading from "@/components/Loading";
 
 const PRONOUN_OPTIONS = ["she/her", "he/him", "they/them", "Other", "None"];
 
@@ -37,9 +39,14 @@ function validatePhone(phone: string) {
 }
 
 export default function NewUserPage() {
-  const prefilledFirstName = "Monica";
-  const prefilledLastName = "Williams";
-  const prefilledEmail = "janedoe123@gmail.com";
+  const { inviteId = "" } = useParams()
+
+  const { data: invite, isPending, error } = useInvite(inviteId)
+
+  const prefilledFirstName = invite?.firstName ?? ""
+  const prefilledLastName = invite?.lastName ?? ""
+  const prefilledEmail = invite?.email ?? ""
+
 
   const [firstName, setFirstName] = useState(prefilledFirstName);
   const [lastName, setLastName] = useState(prefilledLastName);
@@ -50,7 +57,7 @@ export default function NewUserPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   // const [showPasswordInfo, setShowPasswordInfo] = useState(false);
-  const [error, setError] = useState("");
+  const [formError, setError] = useState("");
 
   const navigate = useNavigate();
 
@@ -65,7 +72,13 @@ export default function NewUserPage() {
     password &&
     confirmPassword;
 
-  function handleSubmit(e: React.FormEvent) {
+  if (isPending) return <div className="w-full h-full flex items-center justify-center">
+    <Loading />
+  </div>
+
+  if (error) return <Navigate to="/" />
+
+  function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
     // Check for validation errors and show appropriate message
@@ -113,7 +126,7 @@ export default function NewUserPage() {
             </label>
             <input
               className="w-full border rounded px-3 py-2"
-              value={firstName}
+              defaultValue={prefilledFirstName}
               onChange={(e) => setFirstName(e.target.value)}
               required
             />
@@ -124,7 +137,7 @@ export default function NewUserPage() {
             </label>
             <input
               className="w-full border rounded px-3 py-2"
-              value={lastName}
+              defaultValue={prefilledLastName}
               onChange={(e) => setLastName(e.target.value)}
               required
             />
@@ -246,18 +259,17 @@ export default function NewUserPage() {
         <div className="flex justify-center mt-4">
           <button
             type="submit"
-            className={`px-8 py-2 rounded-full text-white font-semibold transition ${
-              allFieldsFilled
-                ? "bg-yellow-500 hover:bg-yellow-600 cursor-pointer"
-                : "bg-gray-300 cursor-not-allowed"
-            }`}
+            className={`px-8 py-2 rounded-full text-white font-semibold transition ${allFieldsFilled
+              ? "bg-yellow-500 hover:bg-yellow-600 cursor-pointer"
+              : "bg-gray-300 cursor-not-allowed"
+              }`}
             disabled={!allFieldsFilled}
           >
             Create Account
           </button>
         </div>
-        {error && (
-          <div className="text-red-500 text-center text-sm mt-4">{error}</div>
+        {formError && (
+          <div className="text-red-500 text-center text-sm mt-4">{formError}</div>
         )}
       </form>
     </div>
