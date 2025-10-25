@@ -64,4 +64,19 @@ router.post("/send", [isAuthenticated, hasRoles(["ADMIN", "DIRECTOR"])], async (
   return res.status(200).send("Invite successfully created")
 })
 
+router.get("/id/:inviteId", async (req: Request, res: Response) => {
+  const inviteId = req.params.inviteId;
+  logger.info(`Fetching invite ${inviteId}`)
+
+  const invitesCollection = db.collection(INVITES_COLLECTION);
+  const docRef = invitesCollection.doc(inviteId)
+  const inviteDoc = await docRef.get();
+
+  if (!inviteDoc.exists) {
+    return res.status(404).send("Invite not found!");
+  }
+
+  return res.json(inviteDoc.data()).send()
+})
+
 export default router;

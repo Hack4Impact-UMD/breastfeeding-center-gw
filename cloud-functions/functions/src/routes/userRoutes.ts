@@ -24,6 +24,18 @@ router.get("/all", [isAuthenticated], async (_: Request, res: Response) => {
   return res.status(200).send(users);
 });
 
+router.get("/id/:auth_id", [isAuthenticated], async (req: Request, res: Response) => {
+  const id = req.params.auth_id;
+
+  const usersCollection = db.collection(USERS_COLLECTION);
+  const docRef = usersCollection.doc(id)
+  const user = await docRef.get()
+
+  if (!user.exists) return res.status(404).send("User does not exist!");
+
+  return res.status(200).send(user.data() as User);
+})
+
 // deletes user with the specified auth_id
 // TODO: The restrictions in this function need to be double checked.
 // TODO: Implement a check to ensure there is always 1 director after deletion.
