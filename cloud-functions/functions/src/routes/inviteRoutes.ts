@@ -1,9 +1,9 @@
 import { Request, Response, Router } from "express";
 import { hasRoles, isAuthenticated } from "../middleware/authMiddleware";
-import { db } from "../services/firebase";
+import { auth, db } from "../services/firebase";
 import { INVITES_COLLECTION, USERS_COLLECTION } from "../types/collections";
 import { CollectionReference, Timestamp } from "firebase-admin/firestore";
-import { Role, User } from "../types/userTypes";
+import { Role, RoleLevels, User } from "../types/userTypes";
 import { UserInvite } from "../types/inviteType";
 import { v7 as uuidv7 } from "uuid"
 import { logger } from "firebase-functions";
@@ -27,6 +27,13 @@ router.post("/send", [isAuthenticated, hasRoles(["ADMIN", "DIRECTOR"])], async (
     email,
     role
   } = req.body as UserInviteForm;
+
+  const currentUserRole = (await auth.getUser(req.token!.uid)).customClaims
+    ?.role as Role;
+
+  if (RoleLevels[role ?? "VOLUNTEER"] > RoleLevels[currentUserRole]) { // can't invite someone with a higher role
+    return res.status(403).send("Forbidden");
+  }
 
   if (!firstName || !lastName || !email) {
     return res.status(400).send("Missing fields!");
