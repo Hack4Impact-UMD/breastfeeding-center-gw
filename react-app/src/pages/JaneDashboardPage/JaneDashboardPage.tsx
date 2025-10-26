@@ -17,7 +17,6 @@ import { Jane } from "../../types/JaneType.ts";
 import { getAllJaneData } from "../../backend/FirestoreCalls.tsx";
 import Loading from "../../components/Loading.tsx";
 import { exportAsSvg } from "@/components/Exportable";
-
 import {
   DateRangePicker,
   defaultPresets,
@@ -31,24 +30,20 @@ import {
   makeRetentionRateColumns,
 } from "./JaneTableColumns";
 import { DataTable } from "@/components/DataTable/DataTable";
-
 const JaneDashboardPage = () => {
   const [navBarOpen, setNavBarOpen] = useState(true);
-
   //dropdown
   const [selectedDropdown, setSelectedDropdown] = useState("ALL CLIENTS");
-
   //styles
   const buttonStyle =
     "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light text-lg border-1 border-black-500 py-2 px-8 rounded-full cursor-pointer";
   const transparentGrayButtonStyle =
     "bg-transparent hover:bg-bcgw-gray-light text-gray border-2 border-gray py-1 px-6 rounded-full cursor-pointer";
   const graphTableButtonStyle =
-    "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer border border-gray-300";
+    "py-1 px-4 text-center shadow-sm bg-[#F5F5F5] hover:shadow-md text-black cursor-pointer border border-gray-300";
   const centerItemsInDiv = "flex justify-between items-center";
   const chartDiv =
     "flex flex-col items-center justify-start bg-white h-[370px] border-2 border-black p-5 mt-5 rounded-lg";
-
   const [janeData, setJaneData] = useState<Jane[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [chartData, setChartData] = useState<{ key: string; data: number }[]>(
@@ -59,34 +54,32 @@ const JaneDashboardPage = () => {
   const [openRow, setOpenRow] = useState<RetentionRate | null>(null);
   const pieChartRef = useRef<HTMLDivElement>(null);
   const funnelChartRef = useRef<HTMLDivElement>(null);
-
   const funnelData = [
     {
       data: 50,
-      key: "1st week",
+      key: "1 visit",
     },
     {
       data: 40,
-      key: "2nd week",
+      key: "2 visits",
     },
     {
       data: 34,
-      key: "3rd week",
+      key: "3 visits",
     },
     {
       data: 25,
-      key: "4th week",
+      key: "4 visits",
     },
     {
       data: 20,
-      key: "5th week",
+      key: "5 visits",
     },
     {
-      data: 18,
-      key: "6th week",
+      data: 16,
+      key: "6 visits",
     },
   ];
-
   const retentionFileTitle = () => {
     const dr =
       dateRange.startDate && dateRange.endDate
@@ -94,124 +87,88 @@ const JaneDashboardPage = () => {
         : "All Data";
     return `jane-retention-${dr.replaceAll(" ", "").replaceAll("/", "-")}`;
   };
-
-  function buildFunnelSVGString(
-    data: Array<{ key: string; data: number }>,
-    width = 1000,
-    height = 420,
-    palette = ["#0F2742", "#1C2E56", "#2C3B6D", "#3D4A83", "#4E5A97", "#6370AD"]
-  ) {
-    const paddingX = 10;
-    const segHeight = 220;
-    const centerY = height / 2;
-    const gap = 12;
-    const maxW = width - paddingX * 2 - 80;
-
-    const maxVal = Math.max(...data.map((d) => d.data));
-    const scale = (v: number) => Math.max(60, (v / maxVal) * maxW);
-
-    let x = paddingX + 60;
-    const parts: string[] = [];
-
-    // background
-    parts.push(`<rect x="0" y="0" width="${width}" height="${height}" fill="#FFFFFF"/>`);
-
-    // left axis label
-    parts.push(
-      `<g transform="translate(${paddingX}, ${centerY}) rotate(-90)">
-       <text x="0" y="0" text-anchor="middle" font-size="18" font-weight="600" fill="#1F2937">
-         Number of Clients
-       </text>
-     </g>`
-    );
-
-    for (let i = 0; i < data.length; i++) {
-      const leftW = scale(data[i].data);
-      const rightW = scale(data[i + 1]?.data ?? data[i].data);
-      const halfH = segHeight / 2;
-
-      const tlx = x, tly = centerY - halfH;
-      const trx = x + leftW, try_ = centerY - halfH;
-      const brx = x + rightW, bry = centerY + halfH;
-      const blx = x, bly = centerY + halfH;
-
-      const path = `M ${tlx},${tly} L ${trx},${try_} L ${brx},${bry} L ${blx},${bly} Z`;
-      const cx = x + Math.min(leftW, rightW) / 2 + Math.abs(leftW - rightW) / 4;
-
-      parts.push(`<path d="${path}" fill="${palette[i % palette.length]}" />`);
-
-      // big number
-      parts.push(
-        `<text x="${cx}" y="${centerY - 8}" text-anchor="middle" font-size="36" font-weight="600" fill="#FFFFFF">
-        ${data[i].data}
-       </text>`
-      );
-
-      // small label
-      parts.push(
-        `<text x="${cx}" y="${centerY + 20}" text-anchor="middle" font-size="16" fill="#E5E7EB">
-        ${data[i].key}
-       </text>`
-      );
-
-      x += Math.min(rightW, leftW) + gap;
-    }
-
-    return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">${parts.join(
-      ""
-    )}</svg>`;
-  }
-
-
   const handleExportRetention = async () => {
-    // Title and lines under it (Figma wants title + date range + filters)
+    // Title & date
     const title = `Retention Rate over a Six Week Period`;
     const dr =
       dateRange.startDate && dateRange.endDate
         ? `${formatDate(dateRange.startDate)} - ${formatDate(dateRange.endDate)}`
         : "All Data";
-
-    const svgString = buildFunnelSVGString(funnelData, 1000, 420);
-    const dataUri = `data:image/svg+xml;utf8,${encodeURIComponent(svgString)}`;
-
+    // 1) Grab the live SVG that Reaviz rendered
+    const container = funnelChartRef.current;
+    if (!container) {
+      alert("Funnel chart not found.");
+      return;
+    }
+    const svgEl = container.querySelector("svg");
+    if (!svgEl) {
+      alert("Funnel SVG not found.");
+      return;
+    }
+    // Normalize size so the export is consistent
+    const innerW = 1000;
+    const innerH = 420;
+    svgEl.setAttribute("width", String(innerW));
+    svgEl.setAttribute("height", String(innerH));
+    // Serialize the chart SVG
+    const rawChartSvg = new XMLSerializer().serializeToString(svgEl);
+    const chartDataUri = `data:image/svg+xml;utf8,${encodeURIComponent(rawChartSvg)}`;
+    // 2) Build a composite SVG that includes:
+    //    - left axis label ("Number of Clients") as real SVG text (rotated)
+    //    - the original chart SVG positioned with a left margin
+    const leftMargin = 80; // space for vertical label
+    const totalW = innerW + leftMargin;
+    const totalH = innerH;
+    const compositeSvgString = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${totalH}">
+      <rect x="0" y="0" width="${totalW}" height="${totalH}" fill="#FFFFFF" />
+      <!-- Vertical axis label -->
+      <g transform="translate(30 ${totalH / 2}) rotate(-90)">
+        <text text-anchor="middle" font-size="18" font-weight="600" fill="#1F2937">
+          Number of Clients
+        </text>
+      </g>
+      <!-- The actual Reaviz chart -->
+      <image href="${chartDataUri}" x="${leftMargin}" y="0" width="${innerW}" height="${innerH}" />
+    </svg>
+  `;
+    const compositeDataUri = `data:image/svg+xml;utf8,${encodeURIComponent(
+      compositeSvgString
+    )}`;
+    // 3) Build Satori content – keep it super simple (no transforms/absolute)
     const exportContent = (
       <div
         style={{
           width: "100%",
           height: "100%",
-          position: "relative",
           display: "flex",
-          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "flex-start",
         }}
       >
         <img
-          src={dataUri}
-          width={1000}
-          height={420}
+          src={compositeDataUri}
+          width={totalW}
+          height={totalH}
           alt="Jane retention funnel"
           style={{ display: "block" }}
         />
       </div>
     );
-
-
-
+    // 4) Export with Satori
     await exportAsSvg({
       content: exportContent,
       title: `${title}, ${dr}`,
-      dateRange: null, // already appended to title per Figma
       selectedFilters: {
-        // show selected dropdowns beneath title, as required
         Clients: clientsFilter,
         Clinicians: cliniciansFilter,
       },
       width: 1200,
       height: 760,
-      filename: retentionFileTitle(),
+      filename: `jane-retention-${dr.replaceAll(" ", "").replaceAll("/", "-")}`,
       backgroundColor: "#FFFFFF",
     });
   };
-
   const [dateRange, setDateRange] = useState<{
     startDate: Date | null;
     endDate: Date | null;
@@ -219,11 +176,9 @@ const JaneDashboardPage = () => {
     startDate: null,
     endDate: null,
   });
-
   const [clientsFilter, setClientsFilter] = useState<string>("ALL CLIENTS");
   const [cliniciansFilter, setCliniciansFilter] =
     useState<string>("ALL CLINICIANS");
-
   const handleDateRangeChange = (newRange: DateRange | undefined) => {
     if (newRange) {
       if (newRange.from && newRange.to) {
@@ -240,14 +195,12 @@ const JaneDashboardPage = () => {
       }
     }
   };
-
   const formatDate = (date: Date) =>
     date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "numeric",
       day: "numeric",
     });
-
   const filterData = () => {
     const visitTypeCounts: Record<string, number> = {};
     const filteredData = janeData.filter((jane) => {
@@ -270,9 +223,7 @@ const JaneDashboardPage = () => {
     }));
     setChartData(chartData);
   };
-
-  const chartColors = ["#f4bb47", "#05182a", "#3A8D8E"];
-
+  const chartColors = ["#F4BB47", "#05182A", "#3A8D8E"];
   const visitBreakdownData: VisitBreakdown[] = [
     { visitType: "Home Visit", percent: 16.6, count: 150000 },
     { visitType: "In Office", percent: 16.6, count: 150000 },
@@ -344,7 +295,6 @@ const JaneDashboardPage = () => {
       clients: [{ first: "Jane", last: "Doe", email: "jdoe@gmail.com" }],
     },
   ];
-
   useEffect(() => {
     setLoading(true);
     getAllJaneData().then((janeData) => {
@@ -352,11 +302,9 @@ const JaneDashboardPage = () => {
       setLoading(false);
     });
   }, []);
-
   useEffect(() => {
     filterData();
   }, [janeData, dateRange]);
-
   const retentionHeaderExtras = (
     <div className="w-full flex items-center justify-end gap-3">
       <select
@@ -368,7 +316,6 @@ const JaneDashboardPage = () => {
         <option>RECENT CHILDBIRTH</option>
         <option>POSTPARTUM</option>
       </select>
-
       <select
         value={cliniciansFilter}
         onChange={(e) => setCliniciansFilter(e.target.value)}
@@ -380,7 +327,6 @@ const JaneDashboardPage = () => {
       </select>
     </div>
   );
-
   return (
     <>
       <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
@@ -403,7 +349,6 @@ const JaneDashboardPage = () => {
               />
             </div>
           </div>
-
           <div className={`${centerItemsInDiv} basis-20xs mt-6`}>
             <Link to="/services/jane/data">
               <button className={`${buttonStyle} mr-5 text-nowrap`}>
@@ -411,7 +356,6 @@ const JaneDashboardPage = () => {
               </button>
             </Link>
           </div>
-
           {/* IMPORTANT: when either table switches to "table" view we remove the side-by-side flex so they stack */}
           <div className="flex flex-wrap gap-8 pt-3">
             {/* Visit Breakdown */}
@@ -516,7 +460,6 @@ const JaneDashboardPage = () => {
                 </div>
               )}
             </div>
-
             {/* Retention Rate */}
             <div className="flex-[0_0_48%] max-w-[50%] min-w-[560px]">
               <div className={`${centerItemsInDiv} pt-4 mb-6`}>
@@ -575,16 +518,15 @@ const JaneDashboardPage = () => {
                     </div>
                     <div className="flex items-center">
                       <span className="text-xl whitespace-nowrap -rotate-90 -mr-15 -ml-15">
-                        Number of Visits
+                        Number of Clients
                       </span>
-
                       <FunnelChart
                         height={290}
                         width={400}
                         data={funnelData}
                         series={
                           <FunnelSeries
-                            arc={<FunnelArc colorScheme="#05182A" />}
+                            arc={<FunnelArc colorScheme="#01284dff" />}
                             axis={
                               <FunnelAxis
                                 line={
@@ -621,7 +563,6 @@ const JaneDashboardPage = () => {
                         tableHeaderExtras={retentionHeaderExtras}
                       />
                     </div>
-
                     {openRow && (
                       <ClientLostPopup
                         openRow={openRow!}
@@ -638,5 +579,18 @@ const JaneDashboardPage = () => {
     </>
   );
 };
-
 export default JaneDashboardPage;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
