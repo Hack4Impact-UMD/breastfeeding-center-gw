@@ -286,7 +286,6 @@ export default function AcuityDashboardPage() {
     },
   ];
 
-  // Styles
   const centerItemsInDiv = "flex justify-between items-center";
   const transparentGrayButtonStyle =
     "bg-transparent hover:bg-bcgw-gray-light text-gray border-2 border-gray py-1 px-6 rounded-full cursor-pointer";
@@ -307,7 +306,6 @@ export default function AcuityDashboardPage() {
 
   const [selectedInstructor, setSelectedInstructor] = useState("ALL CLASSES");
 
-// Instructor data organized by instructor name over time
 const allInstructorData = [
   {
     key: "Sarah Johnson",
@@ -361,7 +359,6 @@ const allInstructorData = [
   },
 ];
 
-// Filter instructors by class category
 const postpartumInstructors = [
   {
     key: "Sarah Johnson",
@@ -402,7 +399,7 @@ const prenatalInstructors = [
       { key: new Date("2025-02-19"), data: 7 },
       { key: new Date("2025-02-26"), data: 9 },
       { key: new Date("2025-03-05"), data: 11 },
-      { key: new Date("2025-03-12"), data: 10 },
+      { key: new Date("2025-03-12"), data: 1 },
       { key: new Date("2025-03-19"), data: 8 },
     ],
   },
@@ -416,7 +413,7 @@ const infantMassageInstructors = [
       { key: new Date("2025-02-26"), data: 7 },
       { key: new Date("2025-03-05"), data: 9 },
       { key: new Date("2025-03-12"), data: 8 },
-      { key: new Date("2025-03-19"), data: 6 },
+      { key: new Date("2025-03-19"), data: 1 },
     ],
   },
 ];
@@ -427,7 +424,7 @@ const parentGroupInstructors = [
     data: [
       { key: new Date("2025-02-19"), data: 5 },
       { key: new Date("2025-02-26"), data: 6 },
-      { key: new Date("2025-03-05"), data: 7 },
+      { key: new Date("2025-03-05"), data: 3 },
       { key: new Date("2025-03-12"), data: 7 },
       { key: new Date("2025-03-19"), data: 6 },
     ],
@@ -498,7 +495,6 @@ const instructorTableRows = useMemo(() => {
 
 
 
-  // Helper to build stacked bar SVG for attendance chart
 function buildStackedBarSVG(
   data: Array<{
     key: string;
@@ -507,7 +503,7 @@ function buildStackedBarSVG(
   width = 1000,
   height = 400
 ) {
-  // Colors for TRIMESTERS (these stack within each bar)
+
   const trimesterColors = ["#F4D7A6", "#FF9900", "#5DB9FF", "#1E5A8E", "#0A1929"];
   const paddingLeft = 80;
   const paddingRight = 40;
@@ -516,14 +512,12 @@ function buildStackedBarSVG(
   const chartWidth = width - paddingLeft - paddingRight;
   const chartHeight = height - paddingTop - paddingBottom;
 
-  // Get all CLASS NAMES (these become the x-axis bars)
   const classNames = data.map((d) => d.key);
   const trimesters = data[0]?.data || [];
   const numBars = classNames.length;
   const barWidth = chartWidth / numBars * 0.6;
   const barSpacing = chartWidth / numBars;
 
-  // Calculate max stack height per class
   let maxStack = 0;
   classNames.forEach((className) => {
     const series = data.find((d) => d.key === className);
@@ -538,12 +532,11 @@ function buildStackedBarSVG(
 
   const parts: string[] = [];
   
-  // Background
+ 
   parts.push(
     `<rect x="0" y="0" width="${width}" height="${height}" fill="#FFFFFF"/>`
   );
 
-  // Grid lines (horizontal)
   const gridLines = 5;
   for (let i = 0; i <= gridLines; i++) {
     const y = paddingTop + (chartHeight / gridLines) * i;
@@ -558,19 +551,16 @@ function buildStackedBarSVG(
     );
   }
 
-  // Y-axis label (rotated)
   parts.push(
     `<text x="${15}" y="${paddingTop + chartHeight / 2}" text-anchor="middle" font-size="14" font-weight="600" font-family="system-ui, -apple-system, sans-serif" fill="#374151" transform="rotate(-90, 15, ${paddingTop + chartHeight / 2})">Participants</text>`
   );
 
-  // Draw bars for each CLASS
   classNames.forEach((className, classIndex) => {
     const centerX = paddingLeft + classIndex * barSpacing + barSpacing / 2;
     let stackY = paddingTop + chartHeight;
 
     const series = data.find((d) => d.key === className);
     if (series) {
-      // Stack each TRIMESTER within this class bar
       series.data.forEach((point, trimIndex) => {
         if (point.data > 0) {
           const barHeight = scale(point.data);
@@ -586,11 +576,9 @@ function buildStackedBarSVG(
       });
     }
 
-    // Draw class label
     const labelX = centerX;
     const labelY = paddingTop + chartHeight + 20;
     
-    // Shorten class names for display
     const displayName = className.replace(" Classes", "").replace("Infant ", "");
     
     parts.push(
@@ -601,7 +589,6 @@ function buildStackedBarSVG(
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">${parts.join("")}</svg>`;
 }
 
-// Helper to build single bar chart SVG
 function buildBarChartSVG(
   data: Array<{ key: string; data: number }>,
   width = 1000,
@@ -624,12 +611,11 @@ function buildBarChartSVG(
 
   const parts: string[] = [];
   
-  // Background
   parts.push(
     `<rect x="0" y="0" width="${width}" height="${height}" fill="#FFFFFF"/>`
   );
 
-  // Grid lines
+  
   const gridLines = 5;
   for (let i = 0; i <= gridLines; i++) {
     const y = paddingTop + (chartHeight / gridLines) * i;
@@ -644,7 +630,7 @@ function buildBarChartSVG(
     );
   }
 
-  // Y-axis label
+  
   parts.push(
     `<text x="${15}" y="${paddingTop + chartHeight / 2}" text-anchor="middle" font-size="14" font-weight="600" fill="#374151" transform="rotate(-90, 15, ${paddingTop + chartHeight / 2})">Participants</text>`
   );
@@ -659,12 +645,10 @@ function buildBarChartSVG(
       `<rect x="${barX}" y="${barY}" width="${barWidth}" height="${barHeight}" fill="#F4BB47" />`
     );
 
-    // Value label on top of bar
     parts.push(
       `<text x="${centerX}" y="${barY - 5}" text-anchor="middle" font-size="12" font-weight="600" fill="#374151">${item.data}</text>`
     );
 
-    // X-axis label (wrap long text)
     const labelWords = item.key.split(' ');
     let line1 = '';
     let line2 = '';
@@ -690,7 +674,6 @@ function buildBarChartSVG(
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">${parts.join("")}</svg>`;
 }
 
-// Helper to build line chart SVG
 function buildLineChartSVG(
   data: Array<{
     key: string;
@@ -711,7 +694,6 @@ function buildLineChartSVG(
     return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}"><rect fill="#FFFFFF" width="${width}" height="${height}"/><text x="${width/2}" y="${height/2}" text-anchor="middle" fill="#6B7280">No data available</text></svg>`;
   }
 
-  // Get all dates and format them
   const allDates = data[0].data.map((d) => d.key);
   const maxVal = Math.max(...data.flatMap((s) => s.data.map((d) => d.data)));
   const yMax = Math.ceil(maxVal / 10) * 10;
@@ -723,12 +705,12 @@ function buildLineChartSVG(
 
   const parts: string[] = [];
   
-  // Background
+ 
   parts.push(
     `<rect x="0" y="0" width="${width}" height="${height}" fill="#FFFFFF"/>`
   );
 
-  // Grid lines
+  
   const gridLines = 5;
   for (let i = 0; i <= gridLines; i++) {
     const y = paddingTop + (chartHeight / gridLines) * i;
@@ -743,7 +725,6 @@ function buildLineChartSVG(
     );
   }
 
-  // Vertical grid lines for each data point
   allDates.forEach((date, index) => {
     const x = scaleX(index);
     parts.push(
@@ -751,12 +732,10 @@ function buildLineChartSVG(
     );
   });
 
-  // Y-axis label
   parts.push(
     `<text x="${15}" y="${paddingTop + chartHeight / 2}" text-anchor="middle" font-size="14" font-weight="600" fill="#374151" transform="rotate(-90, 15, ${paddingTop + chartHeight / 2})">Participants</text>`
   );
 
-  // Draw lines for each series
   data.forEach((series, seriesIndex) => {
     const points = series.data
       .map((point, index) => `${scaleX(index)},${scaleY(point.data)}`)
@@ -766,7 +745,6 @@ function buildLineChartSVG(
       `<polyline points="${points}" fill="none" stroke="${palette[seriesIndex % palette.length]}" stroke-width="2.5" />`
     );
 
-    // Draw dots
     series.data.forEach((point, index) => {
       parts.push(
         `<circle cx="${scaleX(index)}" cy="${scaleY(point.data)}" r="4" fill="${palette[seriesIndex % palette.length]}" stroke="#FFFFFF" stroke-width="2"/>`
@@ -774,7 +752,6 @@ function buildLineChartSVG(
     });
   });
 
-  // X-axis labels (dates) - format as M/D
   allDates.forEach((date, index) => {
     const month = date.getMonth() + 1;
     const day = date.getDate();
@@ -788,8 +765,6 @@ function buildLineChartSVG(
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">${parts.join("")}</svg>`;
 }
 
-  // Export handler for attendance chart
-    // Export handler for attendance chart
   const handleExportAttendance = async () => {
     const svgString =
       selectedClass === "ALL CLASSES"
@@ -798,7 +773,6 @@ function buildLineChartSVG(
 
     const dataUri = `data:image/svg+xml;utf8,${encodeURIComponent(svgString)}`;
 
-    // Build legend for stacked chart
     let legend = null;
 if (selectedClass === "ALL CLASSES") {
   const trimesterLabels = ["Trimester 1", "Trimester 2", "Trimester 3", "Trimester 4", "Trimester 5"];
@@ -874,13 +848,11 @@ if (selectedClass === "ALL CLASSES") {
     });
   };
 
-  // Export handler for class popularity chart
-// Export handler for class popularity chart
+
 const handleExportClassPopularity = async () => {
   const svgString = buildLineChartSVG(filteredClassData, 900, 400);
   const dataUri = `data:image/svg+xml;utf8,${encodeURIComponent(svgString)}`;
 
-  // Build legend with correct colors
   const palette = ["#F4BB47", "#EF4444", "#3B82F6", "#05182A", "#10B981"];
   const legend = (
     <div
@@ -953,12 +925,10 @@ const handleExportClassPopularity = async () => {
   });
 };
 
-  // Export handler for instructor popularity chart
 const handleExportInstructorPopularity = async () => {
   const svgString = buildLineChartSVG(filteredInstructorData, 900, 400);
   const dataUri = `data:image/svg+xml;utf8,${encodeURIComponent(svgString)}`;
 
-  // Build legend with instructor names
   const palette = ["#F4BB47", "#EF4444", "#3B82F6", "#05182A", "#10B981"];
   const legend = (
     <div
