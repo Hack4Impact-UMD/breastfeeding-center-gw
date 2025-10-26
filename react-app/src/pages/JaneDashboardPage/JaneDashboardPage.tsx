@@ -206,21 +206,26 @@ const JaneDashboardPage = () => {
       firstVisit: false,
     },
   ];
+  const visitTypeMap = new Map<string, string>([
+    ["HOMEVISIT", "Home Visit"],
+    ["OFFICE", "In Office"],
+    ["TELEHEALTH", "Telehealth"],
+    ["TOTAL", "Total"],
+  ]);
 
   const sortVisitBreakdown = (janeAppts: JaneAppt[]) => {
     const breakdown = new Map<string, number>();
     janeAppts.forEach((janeAppt: JaneAppt) => {
-      const current = breakdown.get(janeAppt.visitType) ?? 0;
-      breakdown.set(janeAppt.visitType, current + 1);
+      const current = breakdown.get(visitTypeMap.get(janeAppt.visitType)!) ?? 0;
+      breakdown.set(visitTypeMap.get(janeAppt.visitType)!, current + 1);
     });
     const chartBreakdownData = Array.from(breakdown, ([key, data]) => ({
       key,
       data,
     }));
-    const VisitType = ["HOMEVISIT", "OFFICE", "TELEHEALTH", "TOTAL"];
     const visitBreakdown: VisitBreakdown[] = [];
-    for (const visitType of VisitType) {
-      if (visitType == "TOTAL") {
+    for (const visitType of visitTypeMap.values()) {
+      if (visitType == "Total") {
         const visitData = {
           visitType: visitType,
           percent: 100,
@@ -241,7 +246,6 @@ const JaneDashboardPage = () => {
         visitBreakdown.push(visitData);
       }
     }
-    console.log(visitBreakdown);
     setChartData(chartBreakdownData);
     setVisitBreakdownData(visitBreakdown);
   };
