@@ -87,6 +87,11 @@ const JaneDashboardPage = () => {
         : "All Data";
     return `jane-retention-${dr.replaceAll(" ", "").replaceAll("/", "-")}`;
   };
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 0bee1e58e798c4c96608485361d0b054405e5b3c
   const handleExportRetention = async () => {
     // Title & date
     const title = `Retention Rate over a Six Week Period`;
@@ -94,6 +99,10 @@ const JaneDashboardPage = () => {
       dateRange.startDate && dateRange.endDate
         ? `${formatDate(dateRange.startDate)} - ${formatDate(dateRange.endDate)}`
         : "All Data";
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0bee1e58e798c4c96608485361d0b054405e5b3c
     // 1) Grab the live SVG that Reaviz rendered
     const container = funnelChartRef.current;
     if (!container) {
@@ -105,20 +114,36 @@ const JaneDashboardPage = () => {
       alert("Funnel SVG not found.");
       return;
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0bee1e58e798c4c96608485361d0b054405e5b3c
     // Normalize size so the export is consistent
     const innerW = 1000;
     const innerH = 420;
     svgEl.setAttribute("width", String(innerW));
     svgEl.setAttribute("height", String(innerH));
+<<<<<<< HEAD
     // Serialize the chart SVG
     const rawChartSvg = new XMLSerializer().serializeToString(svgEl);
     const chartDataUri = `data:image/svg+xml;utf8,${encodeURIComponent(rawChartSvg)}`;
+=======
+
+    // Serialize the chart SVG
+    const rawChartSvg = new XMLSerializer().serializeToString(svgEl);
+    const chartDataUri = `data:image/svg+xml;utf8,${encodeURIComponent(rawChartSvg)}`;
+
+>>>>>>> 0bee1e58e798c4c96608485361d0b054405e5b3c
     // 2) Build a composite SVG that includes:
     //    - left axis label ("Number of Clients") as real SVG text (rotated)
     //    - the original chart SVG positioned with a left margin
     const leftMargin = 80; // space for vertical label
     const totalW = innerW + leftMargin;
     const totalH = innerH;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0bee1e58e798c4c96608485361d0b054405e5b3c
     const compositeSvgString = `
     <svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${totalH}">
       <rect x="0" y="0" width="${totalW}" height="${totalH}" fill="#FFFFFF" />
@@ -132,9 +157,17 @@ const JaneDashboardPage = () => {
       <image href="${chartDataUri}" x="${leftMargin}" y="0" width="${innerW}" height="${innerH}" />
     </svg>
   `;
+<<<<<<< HEAD
     const compositeDataUri = `data:image/svg+xml;utf8,${encodeURIComponent(
       compositeSvgString
     )}`;
+=======
+
+    const compositeDataUri = `data:image/svg+xml;utf8,${encodeURIComponent(
+      compositeSvgString
+    )}`;
+
+>>>>>>> 0bee1e58e798c4c96608485361d0b054405e5b3c
     // 3) Build Satori content – keep it super simple (no transforms/absolute)
     const exportContent = (
       <div
@@ -155,6 +188,10 @@ const JaneDashboardPage = () => {
         />
       </div>
     );
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0bee1e58e798c4c96608485361d0b054405e5b3c
     // 4) Export with Satori
     await exportAsSvg({
       content: exportContent,
@@ -169,6 +206,13 @@ const JaneDashboardPage = () => {
       backgroundColor: "#FFFFFF",
     });
   };
+<<<<<<< HEAD
+=======
+
+
+
+
+>>>>>>> 0bee1e58e798c4c96608485361d0b054405e5b3c
   const [dateRange, setDateRange] = useState<{
     startDate: Date | null;
     endDate: Date | null;
