@@ -103,7 +103,7 @@ router.post("/register/root/:secret", async (req: Request, res: Response) => {
   Request body must have all required fields in UserRegisterForm
 */
 router.post(
-  "/register/invite/:invite_id",
+  "/register/invite/:inviteId",
   async (req: Request, res: Response) => {
     const { inviteId } = req.params;
     logger.info(`Register request received using invite ${inviteId}`);
