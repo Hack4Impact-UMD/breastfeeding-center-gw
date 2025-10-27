@@ -4,9 +4,10 @@ import { auth, db } from "../services/firebase";
 import { INVITES_COLLECTION, USERS_COLLECTION } from "../types/collections";
 import { CollectionReference, Timestamp } from "firebase-admin/firestore";
 import { Role, RoleLevels, User } from "../types/userTypes";
-import { UserInvite } from "../types/inviteType";
+import { isInviteValid, UserInvite } from "../types/inviteType";
 import { v7 as uuidv7 } from "uuid"
 import { logger } from "firebase-functions";
+import { config } from "../config";
 
 const router = Router()
 
@@ -85,7 +86,13 @@ router.get("/id/:inviteId", async (req: Request, res: Response) => {
     return res.status(404).send("Invite not found!");
   }
 
-  return res.json(inviteDoc.data()).send()
+  const invite = inviteDoc.data() as UserInvite
+  const expire = config.inviteExpirationDays.value()
+
+  return res.json({
+    ...invite,
+    valid: isInviteValid(invite, expire)
+  }).send()
 })
 
 export default router;
