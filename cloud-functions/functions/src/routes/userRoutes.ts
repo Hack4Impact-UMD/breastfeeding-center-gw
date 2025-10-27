@@ -2,15 +2,10 @@ import { Request, Response, Router } from "express";
 import { hasRoles, isAuthenticated } from "../middleware/authMiddleware";
 import { auth, db } from "../services/firebase";
 import { USERS_COLLECTION } from "../types/collections";
-import { Role, User } from "../types/userTypes";
+import { Role, RoleLevels, User } from "../types/userTypes";
 import { logger } from "firebase-functions";
 import { CollectionReference } from "firebase-admin/firestore";
 
-const roleLevel: Record<Role, number> = {
-  VOLUNTEER: 0,
-  ADMIN: 1,
-  DIRECTOR: 2,
-};
 
 const router = Router();
 
@@ -55,7 +50,7 @@ router.delete(
       return res.status(404).send("User does not exist");
     }
 
-    if (roleLevel[user.type] >= roleLevel[currentUserRole]) {
+    if (RoleLevels[user.type] >= RoleLevels[currentUserRole]) {
       return res.status(403).send("Insufficient permissions to delete user!");
     }
 
@@ -131,13 +126,13 @@ router.put(
 
     if (
       !userToUpdate ||
-      roleLevel[userToUpdate.type] >= roleLevel[currentUserRole]
+      RoleLevels[userToUpdate.type] >= RoleLevels[currentUserRole]
     ) {
       return res.status(403).send("Cannot update user's role!");
     }
 
     // trying to give a user a role that is higher than the current user's role
-    if (roleLevel[newRole] > roleLevel[currentUserRole]) {
+    if (RoleLevels[newRole] > RoleLevels[currentUserRole]) {
       return res.status(403).send("Forbidden");
     }
 

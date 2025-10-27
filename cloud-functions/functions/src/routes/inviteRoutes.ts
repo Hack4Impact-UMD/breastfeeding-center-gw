@@ -1,12 +1,13 @@
 import { Request, Response, Router } from "express";
 import { hasRoles, isAuthenticated } from "../middleware/authMiddleware";
-import { db } from "../services/firebase";
+import { auth, db } from "../services/firebase";
 import { INVITES_COLLECTION, USERS_COLLECTION } from "../types/collections";
 import { CollectionReference, Timestamp } from "firebase-admin/firestore";
-import { Role, User } from "../types/userTypes";
-import { UserInvite } from "../types/inviteType";
+import { Role, RoleLevels, User } from "../types/userTypes";
+import { isInviteValid, UserInvite } from "../types/inviteType";
 import { v7 as uuidv7 } from "uuid"
 import { logger } from "firebase-functions";
+import { config } from "../config";
 
 const router = Router()
 
@@ -27,6 +28,13 @@ router.post("/send", [isAuthenticated, hasRoles(["ADMIN", "DIRECTOR"])], async (
     email,
     role
   } = req.body as UserInviteForm;
+
+  const currentUserRole = (await auth.getUser(req.token!.uid)).customClaims
+    ?.role as Role;
+
+  if (RoleLevels[role ?? "VOLUNTEER"] > RoleLevels[currentUserRole]) { // can't invite someone with a higher role
+    return res.status(403).send("Forbidden");
+  }
 
   if (!firstName || !lastName || !email) {
     return res.status(400).send("Missing fields!");
@@ -78,7 +86,13 @@ router.get("/id/:inviteId", async (req: Request, res: Response) => {
     return res.status(404).send("Invite not found!");
   }
 
-  return res.json(inviteDoc.data()).send()
+  const invite = inviteDoc.data() as UserInvite
+  const expire = config.inviteExpirationDays.value()
+
+  return res.json({
+    ...invite,
+    valid: isInviteValid(invite, expire)
+  }).send()
 })
 
 export default router;

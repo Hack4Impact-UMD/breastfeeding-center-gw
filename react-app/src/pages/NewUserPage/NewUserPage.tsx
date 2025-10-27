@@ -72,11 +72,25 @@ export default function NewUserPage() {
     password &&
     confirmPassword;
 
-  if (isPending) return <div className="w-full h-full flex items-center justify-center">
+  if (isPending) return <div className="p-2 w-full h-full flex items-center justify-center">
     <Loading />
   </div>
 
   if (error) return <Navigate to="/" />
+
+  if (!invite.valid) {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center">
+        <img src="/bcgw-logo.png" alt="logo" className="size-32 mb-4" />
+        <h1
+          className="text-4xl font-semibold mb-2 text-center"
+        >
+          Invalid Invite
+        </h1>
+        <p className="text-center text-lg">This invite has either expired or been used.</p>
+      </div>
+    )
+  }
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
