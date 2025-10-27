@@ -23,6 +23,7 @@ type ExportAsSvgProps = {
 // in Exportable.tsx
 let inter400: ArrayBuffer | null = null;
 let inter600: ArrayBuffer | null = null;
+let inter700: ArrayBuffer | null = null;
 
 async function tryLoadFonts() {
   try {
