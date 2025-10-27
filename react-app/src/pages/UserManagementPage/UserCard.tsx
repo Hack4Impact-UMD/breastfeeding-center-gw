@@ -2,24 +2,11 @@ import React from "react";
 import ProfileIcon from "../../components/ProfileIcon";
 import Modal from "../../components/Modal";
 import { User } from "@/types/UserType";
+import { Button } from "../../components/ui/button";
+import { IoIosClose } from "react-icons/io";
 
 const roleChipClass =
-  "px-5 py-1 rounded-full text-base border border-black bg-white flex items-center";
-
-const ActionButton: React.FC<{
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-}> = ({ children, onClick, className }) => (
-  <button
-    onClick={onClick}
-    className={`text-base px-4 py-2 border border-black rounded transition focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer ${
-      className ?? ""
-    }`}
-  >
-    {children}
-  </button>
-);
+  "px-5 py-1 rounded-full text-base border border-black bg-background flex items-center";
 
 const UserCard: React.FC<{ user: User }> = ({ user }) => {
   const initials =
@@ -42,7 +29,7 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
       {/* name + contact info */}
       <div>
         <div className="flex items-center">
-          <a className="text-2xl text-blue w-65">
+          <a className="text-2xl text-[#165896] w-65">
             {user.lastName}, {user.firstName}
           </a>
           <span className={roleChipClass}>
@@ -59,17 +46,17 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
       </div>
 
       <div className="flex gap-4 justify-end">
-        <ActionButton
+        <Button
+          variant="outline"
           onClick={() => {
             setSelectedAccess(defaultAccess);
             setIsChangeAccessOpen(true);
           }}
-          className="hover:bg-[#F5BB47] cursor-pointer"
         >
           Change Access
-        </ActionButton>
-        <ActionButton
-          className="hover:bg-[#F5BB47] cursor-pointer"
+        </Button>
+        <Button
+          variant="outline"
           onClick={() => {
             // Placeholder logic: show director block if this is a director
             if (isDirector) {
@@ -80,7 +67,7 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
           }}
         >
           Remove Access
-        </ActionButton>
+        </Button>
       </div>
 
       {/* Change Access Modal (UI only, no functionality wired) */}
@@ -89,30 +76,16 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
           open={isChangeAccessOpen}
           onClose={() => setIsChangeAccessOpen(false)}
           height={260}
-          width={520}
+          width={475}
         >
           <div className="h-full flex flex-col relative">
             {/* Close icon top-right */}
             <button
               aria-label="Close"
-              className="absolute right-4 top-4 p-1 rounded hover:bg-gray-100"
+              className="absolute top-2.25 right-2.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
               onClick={() => setIsChangeAccessOpen(false)}
             >
-              <svg
-                width="13.5"
-                height="13.5"
-                viewBox="0 0 14 14"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="text-gray-700"
-              >
-                <path
-                  d="M1 1L13 13M13 1L1 13"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
+              <IoIosClose size={40} />
             </button>
 
             {/* Title */}
@@ -190,21 +163,20 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
 
             {/* Actions */}
             <div className="px-8 pb-8 pt-4 flex justify-center gap-3">
-              <button
-                className="h-10 px-5 rounded border-2 border-black text-sm font-semibold hover:bg-gray-50 cursor-pointer"
+              <Button
+                variant="outline"
                 onClick={() => setIsChangeAccessOpen(false)}
               >
                 CANCEL
-              </button>
-              <button
-                className="h-10 px-5 rounded border-2 border-black text-sm font-semibold text-black cursor-pointer hover:opacity-90 transition-opacity"
-                style={{ backgroundColor: "#F5BB47" }}
+              </Button>
+              <Button
+                variant="yellow"
                 onClick={() => {
-                  // no-op for now
+                  // TODO: no-op for now
                 }}
               >
                 CONFIRM
-              </button>
+              </Button>
             </div>
           </div>
         </Modal>
@@ -220,24 +192,10 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
         <div className="h-full flex flex-col relative">
           <button
             aria-label="Close"
-            className="absolute right-4 top-4 p-1 rounded hover:bg-gray-100"
+            className="absolute top-2.25 right-2.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
             onClick={() => setIsRemoveConfirmOpen(false)}
           >
-            <svg
-              width="13.5"
-              height="13.5"
-              viewBox="0 0 14 14"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="text-gray-700"
-            >
-              <path
-                d="M1 1L13 13M13 1L1 13"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
+            <IoIosClose size={40} />
           </button>
 
           <div className="px-8 pt-8 pb-2">
@@ -249,21 +207,20 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
             Are you sure you would like to remove this user's account?
           </div>
           <div className="px-8 pb-6 pt-6 flex justify-center gap-3">
-            <button
-              className="h-10 px-5 rounded border-2 border-black text-sm font-semibold hover:bg-gray-50 cursor-pointer"
+            <Button
+              variant="outline"
               onClick={() => setIsRemoveConfirmOpen(false)}
             >
               CANCEL
-            </button>
-            <button
-              className="h-10 px-5 rounded border-2 border-black text-sm font-semibold text-black cursor-pointer hover:opacity-90 transition-opacity"
-              style={{ backgroundColor: "#F5BB47" }}
+            </Button>
+            <Button
+              variant="yellow"
               onClick={() => {
-                // no-op for now
+                // TODO: no-op for now
               }}
             >
               CONFIRM
-            </button>
+            </Button>
           </div>
         </div>
       </Modal>
@@ -278,24 +235,10 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
         <div className="h-full flex flex-col relative">
           <button
             aria-label="Close"
-            className="absolute right-4 top-4 p-1 rounded hover:bg-gray-100"
+            className="absolute top-2.25 right-2.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
             onClick={() => setIsDirectorBlockOpen(false)}
           >
-            <svg
-              width="13.5"
-              height="13.5"
-              viewBox="0 0 14 14"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="text-gray-700"
-            >
-              <path
-                d="M1 1L13 13M13 1L1 13"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
+            <IoIosClose size={40} />
           </button>
 
           <div className="px-8 pt-8 pb-3">

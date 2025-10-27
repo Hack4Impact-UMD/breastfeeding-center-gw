@@ -16,7 +16,7 @@ const UserManagementPage: React.FC = () => {
   const [roleFilter, setRoleFilter] = useState("All");
   const [showAddModal, setShowAddModal] = useState(false);
 
-  const { data: users, isPending, error } = useAllUsers()
+  const { data: users, isPending, error } = useAllUsers();
 
   const filteredUsers = useMemo(
     () =>
@@ -31,27 +31,36 @@ const UserManagementPage: React.FC = () => {
   );
 
   const inviteUserMutation = useMutation({
-    mutationFn: async ({ firstName, lastName, email }: { firstName: string, lastName: string, email: string }) => {
-      await sendUserInvite(firstName, lastName, email, "VOLUNTEER") // TODO: update for different roles
+    mutationFn: async ({
+      firstName,
+      lastName,
+      email,
+    }: {
+      firstName: string;
+      lastName: string;
+      email: string;
+    }) => {
+      await sendUserInvite(firstName, lastName, email, "VOLUNTEER"); // TODO: update for different roles
     },
     onSuccess: () => {
-      console.log("Invite sent!")
+      console.log("Invite sent!");
     },
     onError: (err) => {
-      console.error("Failed to send invite")
-      console.error(err)
+      console.error("Failed to send invite");
+      console.error(err);
     },
     onSettled: () => {
-      setShowAddModal(false)
-    }
-  })
+      setShowAddModal(false);
+    },
+  });
 
   return (
     <>
       <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
       <div
-        className={`transition-all duration-200 ease-in-out bg-gray-100 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]"
-          }`}
+        className={`transition-all duration-200 ease-in-out bg-gray-100 min-h-screen overflow-x-hidden flex flex-col ${
+          navBarOpen ? "ml-[250px]" : "ml-[60px]"
+        }`}
       >
         <Header />
 
@@ -65,30 +74,26 @@ const UserManagementPage: React.FC = () => {
           />
 
           <div className="flex justify-between items-center mt-4 pb-3 border-b border-gray-300">
-            <div className="text-sm font-semibold">Name</div>
-            <div className="text-sm font-semibold">Actions</div>
+            <div className="text-lg font-semibold">Name</div>
+            <div className="text-lg font-semibold">Actions</div>
           </div>
 
           {/* user list */}
           <div className="mt-3">
-            {
-              isPending ? (
-                <Loading />
-              ) : error ? (
-                <p>Something went wrong: {error.message}</p>
-              ) : (
-                filteredUsers?.map((u) => (
-                  <UserCard key={u.auth_id} user={u} />
-                ))
-              )
-            }
+            {isPending ? (
+              <Loading />
+            ) : error ? (
+              <p>Something went wrong: {error.message}</p>
+            ) : (
+              filteredUsers?.map((u) => <UserCard key={u.auth_id} user={u} />)
+            )}
           </div>
           <AddAccountModal
             open={showAddModal}
             onClose={() => setShowAddModal(false)}
             onConfirm={(user) => {
               if (!inviteUserMutation.isPending) {
-                inviteUserMutation.mutate(user)
+                inviteUserMutation.mutate(user);
               }
             }}
           />
