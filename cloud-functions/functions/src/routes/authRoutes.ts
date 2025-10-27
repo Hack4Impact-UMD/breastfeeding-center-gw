@@ -145,7 +145,7 @@ router.post(
     }
 
     // if user already exists, return
-    if (await auth.getUserByEmail(email).catch(() => undefined)) {
+    if (await userExists(email)) {
       logger.warn("User register request attempted when user already exists!");
       return res.status(400).send("User already exists");
     }
@@ -158,7 +158,7 @@ router.post(
     });
 
     await auth.setCustomUserClaims(authUser.uid, {
-      role: "DIRECTOR" as Role,
+      role: invite.role,
     });
 
     const user = {
@@ -188,5 +188,10 @@ router.post(
     return res.status(200).send(user);
   },
 );
+
+async function userExists(email: string) {
+  const user = await auth.getUserByEmail(email).catch(() => undefined);
+  return user !== undefined
+}
 
 export default router;
