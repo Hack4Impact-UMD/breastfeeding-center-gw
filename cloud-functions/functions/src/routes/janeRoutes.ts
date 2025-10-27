@@ -41,10 +41,13 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
       apptsFile.buffer,
     );
 
-    const { appointments: appointments_sheet, patientNames, babyAppts } =
-      appointmentParseResults;
+    const {
+      appointments: appointments_sheet,
+      patientNames,
+      babyAppts,
+    } = appointmentParseResults;
 
-    const babyApptSet = new Set(babyAppts.map(appt => appt.apptId));
+    const babyApptSet = new Set(babyAppts.map((appt) => appt.apptId));
 
     let clientsList: Client[] = [];
     const babiesMap: Map<string, Baby> = new Map();
@@ -58,22 +61,22 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
       clientsList = clientParseResults.clientList;
       const babies = clientParseResults.babyList;
 
-      babies.forEach(b => {
+      babies.forEach((b) => {
         babiesMap.set(b.id, b);
-      })
+      });
     } else {
       clientsList = await getAllFirebaseClients();
-      const babies = clientsList.flatMap(client => client.baby);
-      babies.forEach(b => {
+      const babies = clientsList.flatMap((client) => client.baby);
+      babies.forEach((b) => {
         babiesMap.set(b.id, b);
-      })
+      });
     }
 
     const clientMap: Map<string, Client> = new Map();
 
-    clientsList.forEach(client => {
+    clientsList.forEach((client) => {
       clientMap.set(client.id, client);
-    })
+    });
 
     const appointments_map = new Map<string, JaneAppt[]>();
 
@@ -95,7 +98,7 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
 
     async function getAllFirebaseClients() {
       const clients = db.collection("Client");
-      return (await clients.get()).docs.map(d => d.data() as Client)
+      return (await clients.get()).docs.map((d) => d.data() as Client);
     }
 
     async function appt_in_firebase(appt: JaneAppt): Promise<boolean> {
@@ -158,11 +161,11 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
     // }
     //
     function clientExists(patientId: string): boolean {
-      return clientMap.has(patientId)
+      return clientMap.has(patientId);
     }
 
-    const parentsToAdd: Client[] = []
-    const apptsToAdd: JaneAppt[] = []
+    const parentsToAdd: Client[] = [];
+    const apptsToAdd: JaneAppt[] = [];
 
     for (const appointments of appointments_map.values()) {
       let parent = null; // Client type
@@ -175,14 +178,14 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
         // the appt is for baby
         const patientName = patientNames[appt.patientId];
         if (is_baby_appt(appt)) {
-          const baby = babiesMap.get(
-            appt.patientId
-          ); // find matching baby
+          const baby = babiesMap.get(appt.patientId); // find matching baby
           if (baby) {
             babies.push(baby);
           } else {
             // the baby could not be found, add them to missing clients
-            missing_clients.push(`${patientName.firstName} ${patientName.lastName}`)
+            missing_clients.push(
+              `${patientName.firstName} ${patientName.lastName}`,
+            );
           }
         } else {
           // the appt is for client
@@ -192,12 +195,8 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
           }
 
           // get the client info, either from firebase or the clients sheet if the client is not in the db yet
-          if (
-            clientExists(appt.patientId)
-          ) {
-            const client = clientMap.get(
-              appt.patientId,
-            );
+          if (clientExists(appt.patientId)) {
+            const client = clientMap.get(appt.patientId);
             parent = client;
           } else {
             // if the client is not in firebase or the clients sheet, we cannot add this appointment
@@ -226,7 +225,7 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
       // merging parent existing baby list and new baby
       // this implementation may be inefficient
       if (!parentResolved.baby) {
-        parentResolved.baby = []
+        parentResolved.baby = [];
       }
 
       babies.forEach((baby) => {
@@ -243,7 +242,7 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
         parentsToAdd.push(parentResolved);
       }
       if (parentAppt) {
-        apptsToAdd.push(parentAppt)
+        apptsToAdd.push(parentAppt);
       }
     }
 
@@ -260,17 +259,25 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
     // batch transaction for performace, limit is 500 per batch
     const chunkSize = 500;
     for (let i = 0; i < parentsToAdd.length; i += chunkSize) {
-      const chunk = parentsToAdd.slice(i, i + chunkSize)
-      const batch = db.batch()
-      chunk.forEach(parent => batch.set(db.collection("Client").doc(parent.id), parent, { merge: true }))
-      await batch.commit()
+      const chunk = parentsToAdd.slice(i, i + chunkSize);
+      const batch = db.batch();
+      chunk.forEach((parent) =>
+        batch.set(db.collection("Client").doc(parent.id), parent, {
+          merge: true,
+        }),
+      );
+      await batch.commit();
     }
 
     for (let i = 0; i < apptsToAdd.length; i += chunkSize) {
-      const chunk = apptsToAdd.slice(i, i + chunkSize)
-      const batch = db.batch()
-      chunk.forEach(appt => batch.set(db.collection("JaneAppt").doc(appt.apptId), appt, { merge: true }))
-      await batch.commit()
+      const chunk = apptsToAdd.slice(i, i + chunkSize);
+      const batch = db.batch();
+      chunk.forEach((appt) =>
+        batch.set(db.collection("JaneAppt").doc(appt.apptId), appt, {
+          merge: true,
+        }),
+      );
+      await batch.commit();
     }
 
     return res.status(200).send();

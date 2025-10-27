@@ -89,6 +89,7 @@ const UserManagementPage: React.FC = () => {
             )}
           </div>
           <AddAccountModal
+            disabled={inviteUserMutation.isPending}
             open={showAddModal}
             onClose={() => setShowAddModal(false)}
             onConfirm={(user) => {

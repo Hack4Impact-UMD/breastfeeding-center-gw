@@ -6,6 +6,6 @@ import { useQuery } from "@tanstack/react-query";
 export function useAllUsers() {
   return useQuery<User[]>({
     ...queries.users.all,
-    queryFn: getAllUsers
-  })
+    queryFn: getAllUsers,
+  });
 }

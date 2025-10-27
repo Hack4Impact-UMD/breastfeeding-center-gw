@@ -74,8 +74,8 @@ router.post("/register/root/:secret", async (req: Request, res: Response) => {
   });
 
   await auth.setCustomUserClaims(authUser.uid, {
-    role: "DIRECTOR" as Role
-  })
+    role: "DIRECTOR" as Role,
+  });
 
   const user = {
     auth_id: authUser.uid,
@@ -158,8 +158,8 @@ router.post(
     });
 
     await auth.setCustomUserClaims(authUser.uid, {
-      role: "DIRECTOR" as Role
-    })
+      role: "DIRECTOR" as Role,
+    });
 
     const user = {
       auth_id: authUser.uid,

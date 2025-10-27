@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import busboy from "busboy"
+import busboy from "busboy";
 import { logger } from "firebase-functions";
 
 const FILE_UPLOAD_SIZE_LIMIT_MB = 20;
@@ -18,7 +18,7 @@ export class UploadedFile {
   }
 
   addChunk(chunk: Buffer) {
-    this.buffer = Buffer.concat([this.buffer, chunk])
+    this.buffer = Buffer.concat([this.buffer, chunk]);
   }
 }
 
@@ -33,45 +33,45 @@ export class UploadedFile {
  */
 export async function upload(req: Request, _: Response, next: NextFunction) {
   if (!req.headers["content-type"]?.includes("multipart/form-data")) {
-    logger.warn("Request not multipart/from, ignoring!")
+    logger.warn("Request not multipart/from, ignoring!");
     return next();
   }
 
   const bb = busboy({
     headers: req.headers,
-    limits: { fileSize: FILE_UPLOAD_SIZE_LIMIT_MB * 1024 * 1024 } //
-  })
+    limits: { fileSize: FILE_UPLOAD_SIZE_LIMIT_MB * 1024 * 1024 }, //
+  });
 
-  const files: { [fieldName: string]: UploadedFile[] } = {}
+  const files: { [fieldName: string]: UploadedFile[] } = {};
 
   bb.on("file", async (fieldName, stream, fileInfo) => {
-    if (!files[fieldName]) files[fieldName] = []
+    if (!files[fieldName]) files[fieldName] = [];
 
     const file = new UploadedFile(
       fileInfo.filename,
       fileInfo.mimeType,
-      fileInfo.encoding
-    )
+      fileInfo.encoding,
+    );
 
-    logger.log(`Found file ${fileInfo.filename} for field ${fieldName}.`)
+    logger.log(`Found file ${fileInfo.filename} for field ${fieldName}.`);
 
     files[fieldName].push(file);
 
     stream.on("data", (chunk) => {
-      logger.log(`Received data for file ${fileInfo.filename}...`)
+      logger.log(`Received data for file ${fileInfo.filename}...`);
       file.addChunk(chunk);
-    })
-  })
+    });
+  });
 
   bb.on("finish", () => {
     req.files = files;
     next();
-  })
+  });
 
   bb.on("error", next);
 
   if (!req.rawBody || req.rawBody.length == 0) {
-    logger.warn("file upload: no raw body found, skipping!")
+    logger.warn("file upload: no raw body found, skipping!");
     return next();
   } else {
     bb.end(req.rawBody);

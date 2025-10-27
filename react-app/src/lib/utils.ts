@@ -47,8 +47,10 @@ export const hasErrorInput = [
 export const axiosClient = async () => {
   return axios.create({
     baseURL: API_URL,
-    headers: auth.currentUser ? {
-      Authorization: `Bearer ${await auth.currentUser.getIdToken()}`,
-    } : {},
+    headers: auth.currentUser
+      ? {
+          Authorization: `Bearer ${await auth.currentUser.getIdToken()}`,
+        }
+      : {},
   });
 };

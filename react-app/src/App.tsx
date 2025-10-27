@@ -43,8 +43,9 @@ function App() {
                         setNavBarOpen={setNavBarOpen}
                       />
                       <div
-                        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-                          }`}
+                        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
+                          navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
+                        }`}
                       >
                         <Header />
                       </div>
@@ -152,31 +153,17 @@ function App() {
                         >
                           TEST
                         </Button>
-                        <Button
-                          variant={"yellow"}
-                          size="lg"
-                          disabled
-                        >
+                        <Button variant={"yellow"} size="lg" disabled>
                           TEST
                         </Button>
-                        <Button
-                          variant={"yellow"}
-                          className="rounded-full"
-                        >
+                        <Button variant={"yellow"} className="rounded-full">
                           TEST
                         </Button>
                       </div>
                       <div className="space-x-3">
                         <strong>Outline: </strong>
-                        <Button
-                          variant={"outline"}
-                        >
-                          TEST
-                        </Button>
-                        <Button
-                          variant={"outline"}
-                          className="rounded-full"
-                        >
+                        <Button variant={"outline"}>TEST</Button>
+                        <Button variant={"outline"} className="rounded-full">
                           TEST
                         </Button>
                         <Button
@@ -189,15 +176,8 @@ function App() {
                       </div>
                       <div className="space-x-3">
                         <strong>Gray: </strong>
-                        <Button
-                          variant={"gray"}
-                        >
-                          TEST
-                        </Button>
-                        <Button
-                          variant={"gray"}
-                          className="rounded-full"
-                        >
+                        <Button variant={"gray"}>TEST</Button>
+                        <Button variant={"gray"} className="rounded-full">
                           TEST
                         </Button>
                         <Button

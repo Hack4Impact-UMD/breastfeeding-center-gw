@@ -13,12 +13,14 @@ interface AddAccountModalProps {
     lastName: string;
     email: string;
   }) => void;
+  disabled?: boolean;
 }
 
 const AddAccountModal: React.FC<AddAccountModalProps> = ({
   open,
   onClose,
   onConfirm,
+  disabled = false,
 }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -86,12 +88,12 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({
           Are you sure you would like to create a new account?
         </div>
         <div className="flex gap-4 justify-center mb-2">
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={onClose} disabled={disabled}>
             CANCEL
           </Button>
           <Button
             variant="yellow"
-            disabled={!canConfirm}
+            disabled={!canConfirm || disabled}
             onClick={() => {
               setTouched(true);
               if (canConfirm) {

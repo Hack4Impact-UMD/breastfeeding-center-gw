@@ -5,9 +5,13 @@ import editIcon from "../assets/edit.svg";
 import { useAuth } from "@/auth/AuthProvider";
 
 const Header = () => {
-  const { user } = useAuth()
+  const { user } = useAuth();
   const name = user?.displayName ?? "";
-  const initials = user?.displayName?.split(" ").map(s => s.charAt(0).toUpperCase()).join("") ?? "";
+  const initials =
+    user?.displayName
+      ?.split(" ")
+      .map((s) => s.charAt(0).toUpperCase())
+      .join("") ?? "";
   const [hover, setHover] = useState(false);
   const navigate = useNavigate();
   return (

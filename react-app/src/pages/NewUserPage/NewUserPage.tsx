@@ -39,14 +39,13 @@ function validatePhone(phone: string) {
 }
 
 export default function NewUserPage() {
-  const { inviteId = "" } = useParams()
+  const { inviteId = "" } = useParams();
 
-  const { data: invite, isPending, error } = useInvite(inviteId)
+  const { data: invite, isPending, error } = useInvite(inviteId);
 
-  const prefilledFirstName = invite?.firstName ?? ""
-  const prefilledLastName = invite?.lastName ?? ""
-  const prefilledEmail = invite?.email ?? ""
-
+  const prefilledFirstName = invite?.firstName ?? "";
+  const prefilledLastName = invite?.lastName ?? "";
+  const prefilledEmail = invite?.email ?? "";
 
   const [firstName, setFirstName] = useState(prefilledFirstName);
   const [lastName, setLastName] = useState(prefilledLastName);
@@ -72,24 +71,27 @@ export default function NewUserPage() {
     password &&
     confirmPassword;
 
-  if (isPending) return <div className="p-2 w-full h-full flex items-center justify-center">
-    <Loading />
-  </div>
+  if (isPending)
+    return (
+      <div className="p-2 w-full h-full flex items-center justify-center">
+        <Loading />
+      </div>
+    );
 
-  if (error) return <Navigate to="/" />
+  if (error) return <Navigate to="/" />;
 
   if (!invite.valid) {
     return (
       <div className="w-full h-full flex flex-col items-center justify-center">
         <img src="/bcgw-logo.png" alt="logo" className="size-32 mb-4" />
-        <h1
-          className="text-4xl font-semibold mb-2 text-center"
-        >
+        <h1 className="text-4xl font-semibold mb-2 text-center">
           Invalid Invite
         </h1>
-        <p className="text-center text-lg">This invite has either expired or been used.</p>
+        <p className="text-center text-lg">
+          This invite has either expired or been used.
+        </p>
       </div>
-    )
+    );
   }
 
   function handleSubmit(e: FormEvent) {
@@ -273,17 +275,20 @@ export default function NewUserPage() {
         <div className="flex justify-center mt-4">
           <button
             type="submit"
-            className={`px-8 py-2 rounded-full text-white font-semibold transition ${allFieldsFilled
-              ? "bg-yellow-500 hover:bg-yellow-600 cursor-pointer"
-              : "bg-gray-300 cursor-not-allowed"
-              }`}
+            className={`px-8 py-2 rounded-full text-white font-semibold transition ${
+              allFieldsFilled
+                ? "bg-yellow-500 hover:bg-yellow-600 cursor-pointer"
+                : "bg-gray-300 cursor-not-allowed"
+            }`}
             disabled={!allFieldsFilled}
           >
             Create Account
           </button>
         </div>
         {formError && (
-          <div className="text-red-500 text-center text-sm mt-4">{formError}</div>
+          <div className="text-red-500 text-center text-sm mt-4">
+            {formError}
+          </div>
         )}
       </form>
     </div>
