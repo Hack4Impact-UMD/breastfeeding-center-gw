@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Modal from "../../components/Modal";
 import { Button } from "@/components/ui/button";
+import { IoIosClose } from "react-icons/io";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -40,11 +41,11 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({
     <Modal open={open} onClose={onClose} width={500} height={370}>
       <div className="relative flex flex-col h-full">
         <button
-          className="absolute top-4 right-4 text-2xl font-bold text-gray-500 hover:text-black"
+          className="absolute top-2.25 right-2.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
           onClick={onClose}
           aria-label="Close"
         >
-          ×
+          <IoIosClose size={40} />
         </button>
         <h2 className="text-2xl font-bold text-center mb-4 pt-6">
           Add Account
@@ -85,16 +86,11 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({
           Are you sure you would like to create a new account?
         </div>
         <div className="flex gap-4 justify-center mb-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onClose}
-          >
+          <Button variant="outline" onClick={onClose}>
             CANCEL
           </Button>
           <Button
             variant="yellow"
-            size="sm"
             disabled={!canConfirm}
             onClick={() => {
               setTouched(true);
