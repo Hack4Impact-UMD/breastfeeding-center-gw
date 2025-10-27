@@ -1,7 +1,7 @@
 // Exportable.tsx  (REPLACE FILE CONTENTS)
 
 import React from "react";
-import satori from "satori";
+import satori, { FontStyle, FontWeight } from "satori";
 
 type ExportAsSvgProps = {
   /** The chart + any extra elements (axis label, etc.) */
@@ -23,7 +23,6 @@ type ExportAsSvgProps = {
 // in Exportable.tsx
 let inter400: ArrayBuffer | null = null;
 let inter600: ArrayBuffer | null = null;
-let inter700: ArrayBuffer | null = null;
 
 async function tryLoadFonts() {
   try {
@@ -122,7 +121,15 @@ export async function exportAsSvg({
 
     const fonts = await tryLoadFonts();
 
-    const svg = await satori(exportDom, { width, height, fonts });
+    const svg = await satori(exportDom, {
+      width, height, fonts:
+        fonts.map(f => ({
+          data: f.data,
+          name: f.name,
+          style: f.style as FontStyle,
+          weight: f.weight as FontWeight
+        }))
+    });
 
     const blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
     const url = URL.createObjectURL(blob);

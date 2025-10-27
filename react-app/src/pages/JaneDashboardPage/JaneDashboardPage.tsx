@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import Header from "../../components/Header.tsx";
 import NavigationBar from "../../components/NavigationBar/NavigationBar.tsx";
@@ -127,17 +127,10 @@ const JaneDashboardPage = () => {
     },
   ];
 
-  const retentionFileTitle = () => {
-    const dr =
-      dateRange.startDate && dateRange.endDate
-        ? `${formatDate(dateRange.startDate)} - ${formatDate(dateRange.endDate)}`
-        : "All Data";
-    return `jane-retention-${dr.replaceAll(" ", "").replaceAll("/", "-")}`;
-  };
 
   const handleExportRetention = async () => {
     // Title & date
-    const title = `Retention Rate over a Six Week Period`;
+    // const title = `Retention Rate over a Six Week Period`;
     const dr =
       dateRange.startDate && dateRange.endDate
         ? `${formatDate(dateRange.startDate)} - ${formatDate(dateRange.endDate)}`
