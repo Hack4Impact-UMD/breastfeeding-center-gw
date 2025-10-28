@@ -6,6 +6,7 @@ import ClientLostPopup from "./ClientLostPopup.tsx";
 import {
   PieArcSeries,
   PieChart,
+  PieArcLabel,  
   FunnelChart,
   FunnelAxis,
   FunnelAxisLabel,
@@ -114,9 +115,6 @@ const JaneDashboardPage = () => {
     endDate: defaultDateRange.to,
   });
 
-  const [clientsFilter, setClientsFilter] = useState<string>("ALL CLIENTS");
-  const [cliniciansFilter, setCliniciansFilter] =
-    useState<string>("ALL CLINICIANS");
 
   const handleDateRangeChange = (newRange: DateRange | undefined) => {
     if (newRange) {
@@ -125,7 +123,7 @@ const JaneDashboardPage = () => {
           startDate: newRange.from,
           endDate: newRange.to,
         });
-        filterData();
+        // filterData();
       } else {
         setDateRange({
           startDate: null,
@@ -142,30 +140,7 @@ const JaneDashboardPage = () => {
       day: "numeric",
     });
 
-  const filterData = () => {
-    const visitTypeCounts: Record<string, number> = {};
-    const filteredData = janeData.filter((jane) => {
-      if (dateRange.startDate && dateRange.endDate) {
-        const appointmentDate = new Date(jane.date);
-        return (
-          appointmentDate >= dateRange.startDate &&
-          appointmentDate <= dateRange.endDate
-        );
-      }
-      return true;
-    });
-    filteredData.forEach((jane) => {
-      const type = jane.visitType || "Unknown";
-      visitTypeCounts[type] = (visitTypeCounts[type] || 0) + 1;
-    });
-    /*
-    const chartData = Object.entries(visitTypeCounts).map(([key, value]) => ({
-      key,
-      data: value,
-    }));
-    */
-    // setChartData(chartData);
-  };
+  
 
   const chartColors = ["#f4bb47", "#05182a", "#3A8D8E"];
 
@@ -251,15 +226,17 @@ const JaneDashboardPage = () => {
   };
 
   useEffect(() => {
-    const fetchVisits = async () => {
-      const janeAppts = getAllJaneApptsInRange(
-        dateRange.startDate?.toISOString(),
-        dateRange.endDate?.toISOString(),
-      );
-      sortVisitBreakdown(janeAppts ?? []);
-    };
-    fetchVisits();
-  }, [dateRange]);
+  const fetchVisits = async () => {
+    setLoading(true); // Add this
+    const janeAppts = getAllJaneApptsInRange(
+      dateRange.startDate?.toISOString(),
+      dateRange.endDate?.toISOString(),
+    );
+    sortVisitBreakdown(janeAppts ?? []);
+    setLoading(false); // Add this
+  };
+  fetchVisits();
+}, [dateRange]);
 
   const retentionData: RetentionRate[] = [
     {
@@ -335,33 +312,6 @@ const JaneDashboardPage = () => {
     });
   }, []);
 
-  useEffect(() => {
-    filterData();
-  }, [janeData, dateRange]);
-
-  const retentionHeaderExtras = (
-    <div className="w-full flex items-center justify-end gap-3">
-      <select
-        value={clientsFilter}
-        onChange={(e) => setClientsFilter(e.target.value)}
-        className="border border-black rounded-md px-3 py-1 text-sm bg-white h-9"
-      >
-        <option>ALL CLIENTS</option>
-        <option>RECENT CHILDBIRTH</option>
-        <option>POSTPARTUM</option>
-      </select>
-
-      <select
-        value={cliniciansFilter}
-        onChange={(e) => setCliniciansFilter(e.target.value)}
-        className="border border-black rounded-md px-3 py-1 text-sm bg-white h-9"
-      >
-        <option>ALL CLINICIANS</option>
-        <option>Dr. Smith</option>
-        <option>Dr. Jones</option>
-      </select>
-    </div>
-  );
 
   return (
     <>
@@ -395,9 +345,7 @@ const JaneDashboardPage = () => {
             </Link>
           </div>
 
-          {/* IMPORTANT: when either table switches to "table" view we remove the side-by-side flex so they stack */}
           <div className="flex flex-wrap gap-8 pt-3">
-            {/* Visit Breakdown */}
             <div className="flex-[0_0_48%] max-w-[50%] min-w-[560px]">
               <div className={`${centerItemsInDiv} pt-4 mb-6`}>
                 <div className="flex flex-row">
@@ -429,7 +377,7 @@ const JaneDashboardPage = () => {
                   Export
                 </button>
               </div>
-              {/*chart title*/}
+             
               {visitDisplay === "graph" ? (
                 <>
                   <span className="self-start font-semibold text-2xl mb-20">
@@ -441,31 +389,55 @@ const JaneDashboardPage = () => {
                       : "All Data"}
                   </span>
                   <div className={chartDiv} ref={pieChartRef}>
-                    {/*chart*/}
+                  
                     {chartData.length > 0 ? (
-                      <div
-                        className="chartContainer"
-                        style={{ width: "250px", height: "250px" }}
-                      >
-                        {loading ? (
-                          <Loading />
-                        ) : (
-                          <PieChart
-                            data={chartData}
-                            series={
-                              <PieArcSeries
-                                doughnut={true}
-                                colorScheme={chartColors}
-                                label={null}
-                              />
-                            }
-                          />
-                        )}
-                      </div>
+                      <div className="relative" style={{ width: "300px", height: "300px" }}>
+  {loading ? (
+    <Loading />
+  ) : (
+    <>
+      <PieChart
+        data={chartData}
+        series={
+          <PieArcSeries
+            doughnut={true}
+            colorScheme={chartColors}
+            label={null}
+          />
+        }
+        height={300}
+        width={300}
+      />
+      {chartData.map((item, index) => {
+        const total = chartData.reduce((sum, item) => sum + item.data, 0);
+        const percentage = ((item.data / total) * 100).toFixed(0);
+        const angle = chartData.slice(0, index).reduce((sum, d) => sum + (d.data / total) * 360, 0) + ((item.data / total) * 360) / 2;
+        const radians = (angle - 90) * Math.PI / 180;
+        const radius = 122; 
+        const x = 150 + radius * Math.cos(radians);
+        const y = 150 + radius * Math.sin(radians);
+        
+        return (
+          <div
+            key={item.key}
+            className={`absolute font-semibold text-sm ${item.key === "Home Visit" ? "text-black" : "text-white"}`}
+            style={{
+              left: `${x}px`,
+              top: `${y}px`,
+              transform: 'translate(-50%, -50%)'
+            }}
+          >
+            {percentage}%
+          </div>
+        );
+      })}
+    </>
+  )}
+</div>
                     ) : (
                       <div>No data available for selected date range</div>
                     )}
-                    {/*legend*/}
+
                     <div className="mt-4 flex flex-wrap justify-center gap-4">
                       {chartData.map((item, index) => (
                         <div key={item.key} className="flex items-center gap-2">
@@ -501,7 +473,7 @@ const JaneDashboardPage = () => {
               )}
             </div>
 
-            {/* Retention Rate */}
+          
             <div className="flex-[0_0_48%] max-w-[50%] min-w-[560px]">
               <div className={`${centerItemsInDiv} pt-4 mb-6`}>
                 <div className="flex flex-row">
@@ -603,7 +575,7 @@ const JaneDashboardPage = () => {
                         )}
                         data={retentionData}
                         tableType="default"
-                        tableHeaderExtras={retentionHeaderExtras}
+                        //tableHeaderExtras={retentionHeaderExtras}
                       />
                     </div>
 
