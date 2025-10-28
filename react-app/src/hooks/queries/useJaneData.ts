@@ -1,17 +1,44 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllJaneData } from "../../backend/FirestoreCalls";
-import { DateTime } from "luxon";
-import { JaneID } from "@/types/JaneType";
+import { getAllJaneApptsInRange, getClientByPatientId } from "@/backend/JaneFunctions";
+import { JaneTableRow } from "@/types/JaneType";
 
-export function useJaneData() {
-  return useQuery<JaneID[]>({
-    queryKey: ["janeData"],
+export function useJaneData(startDate?: string, endDate?: string) {
+  return useQuery<JaneTableRow[]>({
+    queryKey: ["janeData", startDate, endDate],
     queryFn: async () => {
-      const data = await getAllJaneData();
-      return data.map((entry) => ({
-        ...entry,
-        date: DateTime.fromISO(entry.date).toFormat("f"),
-      }));
+      const appointments = await getAllJaneApptsInRange(startDate, endDate);
+
+      const janeTableRows = await Promise.all(appointments.map(async (appointment) => 
+        {
+          try {
+            const client = await getClientByPatientId(appointment.patientId);
+            const tableRow: JaneTableRow = {
+              apptId: appointment.apptId,
+              patientId: appointment.patientId,
+              startAt: appointment.startAt,
+              endAt: appointment.endAt,
+              visitType: appointment.visitType,
+              service: appointment.service, 
+              clinician: appointment.clinician,
+              firstVisit: appointment.firstVisit, 
+              id: client.id,
+              firstName: client.firstName,
+              middleName: client.middleName,
+              lastName: client.lastName,
+              email: client.email,
+              phone: client.phone,
+              insurance: client.insurance,
+              paysimpleId: client.paysimpleId,
+              baby: client.baby
+            };
+            return tableRow
+          } catch (error) {
+            console.error(`Failed to fetch client for patientId ${appointment.patientId}:`, error);
+            throw error;
+          }
+        }));
+        return janeTableRows;
     },
   });
+  
 }
