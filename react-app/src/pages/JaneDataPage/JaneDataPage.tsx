@@ -9,7 +9,7 @@ import FileUploadPopup from "./FileUploadPopup.tsx";
 import Loading from "@/components/Loading.tsx";
 import NavigationBar from "@/components/NavigationBar/NavigationBar.tsx";
 import Header from "@/components/Header.tsx";
-import { JaneID } from "@/types/JaneType.ts";
+import { JaneID, JaneTableRow } from "@/types/JaneType.ts";
 import { useState } from "react";
 import { DataTable } from "@/components/DataTable/DataTable.tsx";
 import { janeIDDataColumns } from "./JaneDataTableColumns.tsx";
@@ -19,45 +19,13 @@ const JaneDataPage = () => {
   const buttonStyle =
     "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light text-lg border-1 border-black-500 py-2 px-8 rounded-full cursor-pointer";
   const centerItemsInDiv = "flex justify-between items-center";
-  //file upload
-  // const [file, setFile] = useState<File | null>(null);
-  //
-  // const [janeUploadData, setJaneUploadData] = useState<Jane[]>([]);
-  //
-  const [showUploadPopup, setShowUploadPopup] = useState(false);
 
+  const [showUploadPopup, setShowUploadPopup] = useState(false);
   const [navBarOpen, setNavBarOpen] = useState(true);
   const { data: janeConsultations, isPending, error } = useJaneData();
   const deleteJaneRecordMutation = useDeleteJaneRecord();
 
-  // const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const selectedFile = e.target.files ? e.target.files[0] : null;
-  //   if (selectedFile) {
-  //     setFile(selectedFile);
-  //     console.log("Selected file:", selectedFile.name);
-  //
-  //     //translate data into jane types and set local data
-  //     try {
-  //       const parsedJaneData = await getJaneTypes(e);
-  //       console.log("Extracted Jane data:", parsedJaneData);
-  //
-  //       //add data to firebase
-  //       try {
-  //         console.log(parsedJaneData);
-  //         await addJaneSpreadsheet(parsedJaneData);
-  //         console.log("Upload complete!");
-  //       } catch (error) {
-  //         console.error("Upload error:", error);
-  //       }
-  //
-  //       setJaneUploadData(parsedJaneData);
-  //     } catch (error) {
-  //       console.error("Error extracting Jane data:", error);
-  //     }
-  //   }
-  // };
-
-  const handleDelete = (rows: JaneID[]) => {
+  const handleDelete = (rows: JaneTableRow[]) => {
     deleteJaneRecordMutation.mutate(rows);
   };
 

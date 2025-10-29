@@ -1,9 +1,9 @@
-import { Jane, JaneID } from "@/types/JaneType";
+import { JaneTableRow } from "@/types/JaneType";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import ColumnSortButton from "@/components/DataTable/ColumnSortIcon";
 
-export const janeDataColumns: ColumnDef<Jane>[] = [
+export const janeDataColumns: ColumnDef<JaneTableRow>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -51,6 +51,12 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     },
   },
   {
+    accessorKey: "middleName",
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>M.</ColumnSortButton>;
+    },
+  },
+  {
     accessorKey: "lastName",
     header: ({ column }) => {
       return <ColumnSortButton column={column}>L. Name</ColumnSortButton>;
@@ -63,7 +69,7 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     },
   },
   {
-    accessorKey: "visitType",
+    accessorKey: "service",
     header: ({ column }) => {
       return <ColumnSortButton column={column}>Visit Type</ColumnSortButton>;
     },
@@ -76,5 +82,5 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
   },
 ];
 
-export const janeIDDataColumns: ColumnDef<JaneID>[] =
-  janeDataColumns as ColumnDef<JaneID>[];
+export const janeIDDataColumns: ColumnDef<JaneTableRow>[] =
+  janeDataColumns as ColumnDef<JaneTableRow>[];
