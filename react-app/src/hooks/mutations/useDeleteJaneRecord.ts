@@ -1,5 +1,5 @@
 import { deleteJaneByIds } from "@/backend/FirestoreCalls";
-import { JaneID, JaneTableRow } from "@/types/JaneType";
+import { JaneTableRow } from "@/types/JaneType";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function useDeleteJaneRecord() {
@@ -7,7 +7,7 @@ export function useDeleteJaneRecord() {
 
   return useMutation({
     mutationFn: async (rows: JaneTableRow[]) => {
-      const ids = rows.map((entry) => entry.id);
+      const ids = rows.map((entry) => entry.apptId);
       await deleteJaneByIds(ids);
     },
     onMutate: async (rows) => {

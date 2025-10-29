@@ -1,5 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllJaneApptsInRange, getClientByPatientId } from "@/backend/JaneFunctions";
+import {
+  getAllJaneApptsInRange,
+  getClientByPatientId,
+} from "@/backend/JaneFunctions";
 import { JaneTableRow } from "@/types/JaneType";
 
 export function useJaneData(startDate?: string, endDate?: string) {
@@ -8,8 +11,8 @@ export function useJaneData(startDate?: string, endDate?: string) {
     queryFn: async () => {
       const appointments = await getAllJaneApptsInRange(startDate, endDate);
 
-      const janeTableRows = await Promise.all(appointments.map(async (appointment) => 
-        {
+      const janeTableRows = await Promise.all(
+        appointments.map(async (appointment) => {
           try {
             const client = await getClientByPatientId(appointment.patientId);
             const tableRow: JaneTableRow = {
@@ -18,27 +21,31 @@ export function useJaneData(startDate?: string, endDate?: string) {
               startAt: appointment.startAt,
               endAt: appointment.endAt,
               visitType: appointment.visitType,
-              service: appointment.service, 
+              service: appointment.service,
               clinician: appointment.clinician,
-              firstVisit: appointment.firstVisit, 
+              firstVisit: appointment.firstVisit,
               id: client.id,
               firstName: client.firstName,
-              middleName: client.middleName,
+              middleName: client.middleName?.slice(0, 1),
               lastName: client.lastName,
               email: client.email,
               phone: client.phone,
               insurance: client.insurance,
               paysimpleId: client.paysimpleId,
-              baby: client.baby
+              baby: client.baby,
+              dob: "MM-DD-YYYY",
             };
-            return tableRow
+            return tableRow;
           } catch (error) {
-            console.error(`Failed to fetch client for patientId ${appointment.patientId}:`, error);
+            console.error(
+              `Failed to fetch client for patientId ${appointment.patientId}:`,
+              error,
+            );
             throw error;
           }
-        }));
-        return janeTableRows;
+        }),
+      );
+      return janeTableRows;
     },
   });
-  
 }

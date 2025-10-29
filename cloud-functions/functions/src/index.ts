@@ -8,7 +8,7 @@ admin.initializeApp();
 import app from "./app";
 
 
-exports.api = onRequest({ region: "us-east4" }, app);
+exports.api = onRequest({ region: "us-east4", timeoutSeconds: 120 }, app);
 
 //TODO: this package is really old, doesn't have type definitions, and introduces some vulnerabilities.
 //It's best to switch to just making http requestions to the acuity api directly instead of using this.

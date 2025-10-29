@@ -27,7 +27,7 @@ export const janeDataColumns: ColumnDef<JaneTableRow>[] = [
     ),
   },
   {
-    accessorKey: "date",
+    accessorKey: "startAt",
     header: ({ column }) => {
       return <ColumnSortButton column={column}>Visit</ColumnSortButton>;
     },
@@ -53,7 +53,7 @@ export const janeDataColumns: ColumnDef<JaneTableRow>[] = [
   {
     accessorKey: "middleName",
     header: ({ column }) => {
-      return <ColumnSortButton column={column}>M.</ColumnSortButton>;
+      return <ColumnSortButton column={column}>M. Initial</ColumnSortButton>;
     },
   },
   {
@@ -63,7 +63,7 @@ export const janeDataColumns: ColumnDef<JaneTableRow>[] = [
     },
   },
   {
-    accessorKey: "babyDob",
+    accessorKey: "dob",
     header: ({ column }) => {
       return <ColumnSortButton column={column}>DOB</ColumnSortButton>;
     },

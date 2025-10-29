@@ -11,18 +11,18 @@ const LogoutPage = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-grey-200">
       <img
-        className="h-50 w-80 object-contain m-0 p-0"
+        className="h-auto w-[clamp(280px,35vw,10000px)] object-contain m-0 p-0"
         src={Logo}
         alt="BCGW Logo"
       />
-
-      <LuCircleCheck className="text-gray-500 w-38 h-38 mb-4" />
-
-      <h2 className="text-xl font-semibold text-gray-800 mt-[12px]">
+      <LuCircleCheck className="text-gray-500 w-[clamp(100px,12vw,10000px)] h-auto mb-[2vh]" />
+      <h2 className="text-[max(15px,2vw)] font-semibold text-gray-800 mt-[12px]">
         You have been logged out.
       </h2>
-
-      <Link to="/login" className="mt-4 text-sm text-gray-600 underline">
+      <Link
+        to="/login"
+        className="mt-[2vh] text-[max(12px,1.5vw)] text-gray-600 underline"
+      >
         RETURN TO SIGN IN
       </Link>
     </div>

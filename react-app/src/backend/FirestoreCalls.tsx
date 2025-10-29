@@ -51,7 +51,7 @@ export const getAllJaneData = async (): Promise<JaneID[]> => {
 
 export const deleteJaneByIds = async (idList: string[]): Promise<void> => {
   const deletePromises = idList.map(async (entry) => {
-    const apptDocRef = doc(db, "Appointments", entry);
+    const apptDocRef = doc(db, "JaneAppt", entry);
     await deleteDoc(apptDocRef);
   });
 

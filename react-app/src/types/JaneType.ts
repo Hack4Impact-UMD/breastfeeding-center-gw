@@ -27,7 +27,7 @@ export interface JaneAppt {
   firstVisit: boolean;
 }
 
-// combines fields from both JaneAppt and Client type 
+// combines fields from both JaneAppt and Client type
 export interface JaneTableRow {
   apptId: string; // appt_id
   patientId: string; // patient_number
@@ -46,6 +46,7 @@ export interface JaneTableRow {
   insurance?: string;
   paysimpleId?: string; // Paysimple customer id
   baby: Baby[];
+  dob: string;
 }
 
 export type VisitType = "HOMEVISIT" | "OFFICE" | "TELEHEALTH";
