@@ -6,7 +6,6 @@ import ClientLostPopup from "./ClientLostPopup.tsx";
 import {
   PieArcSeries,
   PieChart,
-  PieArcLabel,  
   FunnelChart,
   FunnelAxis,
   FunnelAxisLabel,
@@ -50,7 +49,7 @@ const JaneDashboardPage = () => {
   const chartDiv =
     "flex flex-col items-center justify-start bg-white h-[370px] border-2 border-black p-5 mt-5 rounded-lg";
 
-  const [janeData, setJaneData] = useState<Jane[]>([]);
+  const [, setJaneData] = useState<Jane[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [chartData, setChartData] = useState<{ key: string; data: number }[]>(
     [],
@@ -144,11 +143,10 @@ const JaneDashboardPage = () => {
 
   const chartColors = ["#f4bb47", "#05182a", "#3A8D8E"];
 
-  const getAllJaneApptsInRange = (startDate?: string, endDate?: string) => {
+  const getAllJaneApptsInRange = () => {
     return testJane;
   };
-  // Returns a JaneAppt[]
-  // format parameters to be string
+
   const testJane: JaneAppt[] = [
     {
       apptId: "apptId1", // appt_id
@@ -229,8 +227,6 @@ const JaneDashboardPage = () => {
   const fetchVisits = async () => {
     setLoading(true); // Add this
     const janeAppts = getAllJaneApptsInRange(
-      dateRange.startDate?.toISOString(),
-      dateRange.endDate?.toISOString(),
     );
     sortVisitBreakdown(janeAppts ?? []);
     setLoading(false); // Add this
