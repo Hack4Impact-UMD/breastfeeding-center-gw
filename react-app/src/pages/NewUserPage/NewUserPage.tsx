@@ -12,16 +12,16 @@ import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 const PRONOUN_OPTIONS = ["she/her", "he/him", "they/them", "Other", "None"];
 
 const PASSWORD_REQUIREMENTS = [
-  "At least 8 characters",
-  "At least one uppercase letter",
-  "At least one lowercase letter",
-  "At least one number",
-  "At least one special character",
+  "Must include at least 13 characters",
+  "Must include at least 1 lowercase letter",
+  "Must include at least 1 uppercase letter",
+  "Must include at least 1 digit",
+  "Must include at least 1 special character",
 ];
 
 function validatePassword(password: string) {
   return (
-    password.length >= 8 &&
+    password.length >= 13 &&
     /[A-Z]/.test(password) &&
     /[a-z]/.test(password) &&
     /\d/.test(password) &&
@@ -215,7 +215,7 @@ export default function NewUserPage() {
             >
               {showPassword ? <IoMdEyeOff className="w-5 h-5" /> : <IoMdEye className="w-5 h-5" />}
             </button>
-            
+
           </div>
         </div>
 
@@ -225,7 +225,7 @@ export default function NewUserPage() {
             <span>Confirm Password</span>
           </label>
           <div className="relative">
-             <input
+            <input
               className={`w-full border rounded px-4 py-3 ${confirmPassword && !doPasswordsMatch ? "border-red-500" : ""}`}
               type={showConfirmPassword ? "text" : "password"}
               value={confirmPassword}
@@ -240,18 +240,17 @@ export default function NewUserPage() {
               aria-label={showConfirmPassword ? "Hide password" : "Show password"}
             >
               {showConfirmPassword ? <IoMdEyeOff className="w-5 h-5" /> : <IoMdEye className="w-5 h-5" />}
-           </button>
+            </button>
           </div>
         </div>
 
         <div className="flex justify-center mt-4">
           <button
             type="submit"
-            className={`px-8 py-2 rounded-full text-white font-semibold transition ${
-              allFieldsFilled
-                ? "bg-yellow-500 hover:bg-yellow-600 cursor-pointer"
-                : "bg-gray-300 cursor-not-allowed"
-            }`}
+            className={`px-8 py-2 rounded-full text-white font-semibold transition ${allFieldsFilled
+              ? "bg-yellow-500 hover:bg-yellow-600 cursor-pointer"
+              : "bg-gray-300 cursor-not-allowed"
+              }`}
             disabled={!allFieldsFilled}
           >
             Create Account
