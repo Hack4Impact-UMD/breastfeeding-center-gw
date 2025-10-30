@@ -13,7 +13,7 @@ export function useDeleteJaneRecord() {
     onMutate: async ({ rows, startDate, endDate }) => {
       await queryClient.cancelQueries({ queryKey: ["janeData"] });
 
-      const prevData = queryClient.getQueryData<JaneTableRow[]>(["janeData"]);
+      const prevData = queryClient.getQueryData<JaneTableRow[]>(["janeData", startDate, endDate]);
 
       // optimistic update
       queryClient.setQueryData<JaneTableRow[]>(
