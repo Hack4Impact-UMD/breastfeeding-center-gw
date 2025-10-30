@@ -45,6 +45,7 @@ export function useJaneData(startDate?: string, endDate?: string) {
           }
         }),
       );
+      console.log("TOTAL ROWS: " + janeTableRows.length)
       return janeTableRows;
     },
   });
