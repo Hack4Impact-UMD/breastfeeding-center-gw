@@ -24,7 +24,7 @@ const JaneDataPage = () => {
 
   const [showUploadPopup, setShowUploadPopup] = useState(false);
   const [navBarOpen, setNavBarOpen] = useState(true);
-  const [dateRange, setDateRange] = useState<DateRange>({
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: DateTime.now().minus({ months: 2 }).toJSDate(),
     to: DateTime.now().toJSDate()
   })
@@ -57,7 +57,7 @@ const JaneDataPage = () => {
                 presets={defaultPresets}
                 value={dateRange}
                 className="w-60"
-                onChange={setDateRange}
+                onChange={(dateRange) => setDateRange(dateRange)}
               />
             </div>
           </div>
