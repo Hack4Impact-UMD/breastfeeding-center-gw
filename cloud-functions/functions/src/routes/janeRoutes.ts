@@ -370,4 +370,43 @@ router.get(
   },
 );
 
+// delete a specific appointment
+router.delete("/appointments/:id", [isAuthenticated], async (req: Request, res: Response) => {
+  const { id } = req.params;
+  if (!id) return res.status(400).send();
+
+  const apptsCollection = db.collection("JaneAppt")
+  const doc = apptsCollection.doc(id);
+
+  await doc.delete();
+  return res.status(200).send();
+})
+
+// bulk delete appts
+router.post("/bulk/appointments/delete", [isAuthenticated], async (req: Request, res: Response) => {
+  const { ids } = req.body as { ids: string[] };
+
+  if (!ids || ids.length == 0) {
+    return res.status(400).send("No ids provided");
+  }
+
+  const CHUNK_SIZE = 500;
+
+  const apptsCollection = db.collection("JaneAppt")
+
+  for (let i = 0; i < ids.length; i += CHUNK_SIZE) {
+    const slice = ids.slice(i, i + CHUNK_SIZE);
+    const batch = db.batch();
+
+    slice.forEach(id => {
+      const doc = apptsCollection.doc(id);
+      batch.delete(doc);
+    })
+
+    await batch.commit()
+  }
+
+  return res.status(200).send();
+})
+
 export default router;

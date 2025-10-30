@@ -11,7 +11,7 @@ export async function isAuthenticated(
   res: Response,
   next: NextFunction,
 ) {
-  logger.log("Check if request is authorized with Firebase ID token");
+  // logger.log("Check if request is authorized with Firebase ID token");
 
   if (
     (!req.headers.authorization ||
@@ -48,7 +48,7 @@ export async function isAuthenticated(
 
   try {
     const decodedIdToken = await admin.auth().verifyIdToken(idToken);
-    logger.log("ID Token correctly decoded", { uid: decodedIdToken.uid });
+    // logger.log("ID Token correctly decoded", { uid: decodedIdToken.uid });
 
     // if (!decodedIdToken.email_verified) {
     //   logger.warn(

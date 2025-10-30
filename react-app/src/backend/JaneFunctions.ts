@@ -8,15 +8,15 @@ export async function getAllJaneApptsInRange(
 ): Promise<JaneAppt[]> {
   try {
     const axios = await axiosClient();
-    
+
     // Build query parameters
     const params = new URLSearchParams();
     if (startDate) params.append("startDate", startDate);
     if (endDate) params.append("endDate", endDate);
-    
+
     const queryString = params.toString();
     const url = `/jane/appointments${queryString ? `?${queryString}` : ""}`;
-    
+
     const response = await axios.get(url);
     return response.data as JaneAppt[];
   } catch (error) {
@@ -34,4 +34,14 @@ export async function getClientByPatientId(patientId: string): Promise<Client> {
     console.error("Error fetching client by patient ID:", error);
     throw error;
   }
+}
+
+export async function deleteJaneApptById(id: string) {
+  const axios = await axiosClient()
+  await axios.delete("/jane/appointments/" + id)
+}
+
+export async function deleteJaneApptsByIds(ids: string[]) {
+  const axios = await axiosClient()
+  await axios.post("/jane/bulk/appointments/delete", { ids })
 }

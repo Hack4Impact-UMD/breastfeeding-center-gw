@@ -13,6 +13,7 @@ import { JaneTableRow } from "@/types/JaneType.ts";
 import { useState } from "react";
 import { DataTable } from "@/components/DataTable/DataTable.tsx";
 import { janeIDDataColumns } from "./JaneDataTableColumns.tsx";
+import { DateRange } from "react-day-picker";
 
 const JaneDataPage = () => {
   //styles
@@ -24,9 +25,10 @@ const JaneDataPage = () => {
   const [navBarOpen, setNavBarOpen] = useState(true);
   const { data: janeConsultations, isPending, error } = useJaneData();
   const deleteJaneRecordMutation = useDeleteJaneRecord();
+  const [dateRange, setDateRange] = useState<DateRange>()
 
   const handleDelete = (rows: JaneTableRow[]) => {
-    deleteJaneRecordMutation.mutate(rows);
+    deleteJaneRecordMutation.mutate({ rows, startDate: dateRange?.from?.toISOString(), endDate: dateRange?.to?.toISOString() });
   };
 
   return (
@@ -49,7 +51,9 @@ const JaneDataPage = () => {
                 enableYearNavigation
                 defaultValue={defaultDateRange}
                 presets={defaultPresets}
+                value={dateRange}
                 className="w-60"
+                onChange={setDateRange}
               />
             </div>
           </div>

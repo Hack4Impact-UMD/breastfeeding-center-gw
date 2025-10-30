@@ -14,7 +14,6 @@ import {
   FunnelSeries,
 } from "reaviz";
 import { Jane } from "../../types/JaneType.ts";
-import { getAllJaneData } from "../../backend/FirestoreCalls.tsx";
 import Loading from "../../components/Loading.tsx";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
@@ -49,8 +48,8 @@ const JaneDashboardPage = () => {
   const chartDiv =
     "flex flex-col items-center justify-start bg-white h-[370px] border-2 border-black p-5 mt-5 rounded-lg";
 
-  const [janeData, setJaneData] = useState<Jane[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [janeData] = useState<Jane[]>([]);
+  const [loading] = useState<boolean>(false);
   const [chartData, setChartData] = useState<{ key: string; data: number }[]>(
     [],
   );
@@ -236,13 +235,13 @@ const JaneDashboardPage = () => {
     },
   ];
 
-  useEffect(() => {
-    setLoading(true);
-    getAllJaneData().then((janeData) => {
-      setJaneData(janeData);
-      setLoading(false);
-    });
-  }, []);
+  // useEffect(() => {
+  //   setLoading(true);
+  //   getAllJaneData().then((janeData) => {
+  //     setJaneData(janeData);
+  //     setLoading(false);
+  //   });
+  // }, []);
 
   useEffect(() => {
     filterData();
