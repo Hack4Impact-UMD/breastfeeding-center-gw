@@ -9,7 +9,7 @@ import FileUploadPopup from "./FileUploadPopup.tsx";
 import Loading from "@/components/Loading.tsx";
 import NavigationBar from "@/components/NavigationBar/NavigationBar.tsx";
 import Header from "@/components/Header.tsx";
-import { JaneID, JaneTableRow } from "@/types/JaneType.ts";
+import { JaneTableRow } from "@/types/JaneType.ts";
 import { useState } from "react";
 import { DataTable } from "@/components/DataTable/DataTable.tsx";
 import { janeIDDataColumns } from "./JaneDataTableColumns.tsx";
@@ -33,9 +33,8 @@ const JaneDataPage = () => {
     <>
       <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
       <div
-        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
-          navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-        }`}
+        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
+          }`}
       >
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-20">
