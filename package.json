@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "@radix-ui/react-tooltip": "^1.2.8",
-    "@tanstack/react-query": "^5.90.5",
-    "firebase-functions": "^6.6.0"
-  }
-}
