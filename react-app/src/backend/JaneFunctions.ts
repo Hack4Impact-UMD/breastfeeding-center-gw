@@ -17,6 +17,8 @@ export async function getAllJaneApptsInRange(
     const queryString = params.toString();
     const url = `/jane/appointments${queryString ? `?${queryString}` : ""}`;
 
+    console.log(url)
+
     const response = await axios.get(url);
     return response.data as JaneAppt[];
   } catch (error) {

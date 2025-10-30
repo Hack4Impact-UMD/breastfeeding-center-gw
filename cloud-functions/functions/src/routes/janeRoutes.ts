@@ -308,6 +308,8 @@ router.get(
       const startDate = req.query.startDate as string;
       const endDate = req.query.endDate as string;
 
+      logger.info(`Fetching jane appts between: ${startDate} - ${endDate}`)
+
       // Get all appointments from the Appointments collection
       const snapshot = await db.collection("JaneAppt").get();
 

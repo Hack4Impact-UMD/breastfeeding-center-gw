@@ -33,7 +33,7 @@ export async function isAuthenticated(
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer ")
   ) {
-    logger.log("Found \"Authorization\" header");
+    // logger.log("Found \"Authorization\" header");
     // Read the ID Token from the Authorization header.
     idToken = req.headers.authorization.split("Bearer ")[1];
   } else if (req.cookies) {
