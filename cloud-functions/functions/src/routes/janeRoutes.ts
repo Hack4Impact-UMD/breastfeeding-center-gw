@@ -308,40 +308,40 @@ router.get(
       const startDate = req.query.startDate as string;
       const endDate = req.query.endDate as string;
 
-      logger.info(`Fetching jane appts between: ${startDate} - ${endDate}`)
+      logger.info(`Fetching jane appts between: ${startDate} - ${endDate}`);
 
-      // Get all appointments from the Appointments collection
-      const snapshot = await db.collection("JaneAppt").get();
-
-      // Convert documents to JaneAppt objects
-      const appointments: JaneAppt[] = snapshot.docs.map((doc) => ({
-        ...doc.data(),
-      })) as JaneAppt[];
+      // Start query from JaneAppts collection
+      const collectionRef = db.collection("JaneAppt");
+      let query: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> =
+        collectionRef;
 
       // Filter appointments by date range if provided
-      let filteredAppointments = appointments;
-
-      if (startDate || endDate) {
-        filteredAppointments = appointments.filter((appt) => {
-          const apptStartDate = DateTime.fromISO(appt.startAt);
-
-          if (startDate && endDate) {
-            const start = DateTime.fromISO(startDate);
-            const end = DateTime.fromISO(endDate);
-            return apptStartDate >= start && apptStartDate <= end;
-          } else if (startDate) {
-            const start = DateTime.fromISO(startDate);
-            return apptStartDate >= start;
-          } else if (endDate) {
-            const end = DateTime.fromISO(endDate);
-            return apptStartDate <= end;
-          }
-
-          return true;
-        });
+      if (startDate) {
+        const start = DateTime.fromISO(startDate).startOf("day");
+        if (!start.isValid) {
+          return res.status(400).send("Invalid startDate format");
+        }
+        query = query.where("startAt", ">=", start.toISO());
       }
 
-      return res.status(200).json(filteredAppointments);
+      if (endDate) {
+        const end = DateTime.fromISO(endDate).endOf("day");
+        logger.info("end time: " + end);
+        if (!end.isValid) {
+          return res.status(400).send("Invalid endDate format");
+        }
+        query = query.where("startAt", "<=", end.toISO());
+      }
+
+      // Execute query to get appointments within timeframe
+      const snapshot = await query.get();
+
+      // Convert documents to JaneAppt objects
+      const appointments: JaneAppt[] = snapshot.docs.map((doc) => {
+        return doc.data() as JaneAppt;
+      });
+
+      return res.status(200).json(appointments);
     } catch (e) {
       logger.error("Error fetching appointments:", e);
       return res.status(500).send((e as Error).message);
@@ -373,42 +373,50 @@ router.get(
 );
 
 // delete a specific appointment
-router.delete("/appointments/:id", [isAuthenticated], async (req: Request, res: Response) => {
-  const { id } = req.params;
-  if (!id) return res.status(400).send();
+router.delete(
+  "/appointments/:id",
+  [isAuthenticated],
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    if (!id) return res.status(400).send();
 
-  const apptsCollection = db.collection("JaneAppt")
-  const doc = apptsCollection.doc(id);
+    const apptsCollection = db.collection("JaneAppt");
+    const doc = apptsCollection.doc(id);
 
-  await doc.delete();
-  return res.status(200).send();
-})
+    await doc.delete();
+    return res.status(200).send();
+  },
+);
 
 // bulk delete appts
-router.post("/bulk/appointments/delete", [isAuthenticated], async (req: Request, res: Response) => {
-  const { ids } = req.body as { ids: string[] };
+router.post(
+  "/bulk/appointments/delete",
+  [isAuthenticated],
+  async (req: Request, res: Response) => {
+    const { ids } = req.body as { ids: string[] };
 
-  if (!ids || ids.length == 0) {
-    return res.status(400).send("No ids provided");
-  }
+    if (!ids || ids.length == 0) {
+      return res.status(400).send("No ids provided");
+    }
 
-  const CHUNK_SIZE = 500;
+    const CHUNK_SIZE = 500;
 
-  const apptsCollection = db.collection("JaneAppt")
+    const apptsCollection = db.collection("JaneAppt");
 
-  for (let i = 0; i < ids.length; i += CHUNK_SIZE) {
-    const slice = ids.slice(i, i + CHUNK_SIZE);
-    const batch = db.batch();
+    for (let i = 0; i < ids.length; i += CHUNK_SIZE) {
+      const slice = ids.slice(i, i + CHUNK_SIZE);
+      const batch = db.batch();
 
-    slice.forEach(id => {
-      const doc = apptsCollection.doc(id);
-      batch.delete(doc);
-    })
+      slice.forEach((id) => {
+        const doc = apptsCollection.doc(id);
+        batch.delete(doc);
+      });
 
-    await batch.commit()
-  }
+      await batch.commit();
+    }
 
-  return res.status(200).send();
-})
+    return res.status(200).send();
+  },
+);
 
 export default router;
