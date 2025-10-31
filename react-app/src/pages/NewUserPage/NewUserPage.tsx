@@ -8,26 +8,9 @@ import {
 
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
+import { PASSWORD_REQUIREMENTS, validatePassword } from "@/lib/passwordUtils";
 
 const PRONOUN_OPTIONS = ["she/her", "he/him", "they/them", "Other", "None"];
-
-const PASSWORD_REQUIREMENTS = [
-  "Must include at least 13 characters",
-  "Must include at least 1 lowercase letter",
-  "Must include at least 1 uppercase letter",
-  "Must include at least 1 digit",
-  "Must include at least 1 special character",
-];
-
-function validatePassword(password: string) {
-  return (
-    password.length >= 13 &&
-    /[A-Z]/.test(password) &&
-    /[a-z]/.test(password) &&
-    /\d/.test(password) &&
-    /[^A-Za-z0-9]/.test(password)
-  );
-}
 
 function validatePhone(phone: string) {
   const digits = phone.replace(/\D/g, "");
@@ -188,9 +171,9 @@ export default function NewUserPage() {
                 className="p-0 border-0 bg-transparent rounded text-sm"
               >
                 <div className="bg-[#0F4374] text-white p-3 rounded-lg shadow-md">
-                  <ul className="text-sm">
+                  <ul className="text-sm list-disc list-inside">
                     {PASSWORD_REQUIREMENTS.map((req) => (
-                      <li key={req} className="leading-tight">• {req}</li>
+                      <li key={req} className="leading-tight">{req}</li>
                     ))}
                   </ul>
                 </div>

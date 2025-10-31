@@ -11,13 +11,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import Modal from "../../components/Modal";
+import { PASSWORD_REQUIREMENTS } from "@/lib/passwordUtils";
 
 const ChangePasswordPopup = ({
   open,
   onClose,
 }: {
   open: boolean;
-  onClose: any;
+  onClose: () => void;
 }) => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
@@ -99,7 +100,6 @@ const ChangePasswordPopup = ({
                   <button
                     type="button"
                     className="text-2xl text-gray-500 hover:text-gray-700"
-                    tabIndex={-1}
                     aria-label="Password requirements"
                   >
                     <AiOutlineInfoCircle className="text-[#0F4374]" />
@@ -110,12 +110,10 @@ const ChangePasswordPopup = ({
                   className="p-0 border-0 bg-transparent rounded text-sm"
                 >
                   <div className="bg-[#0F4374] text-white p-2 rounded-lg">
-                    <ul>
-                      <li>• Must include at least 13 characters</li>
-                      <li>• Must include at least 1 lowercase letter</li>
-                      <li>• Must include at least 1 uppercase letter</li>
-                      <li>• Must include at least 1 digit</li>
-                      <li>• Must include at least 1 special character</li>
+                    <ul className="text-sm list-disc list-inside">
+                      {PASSWORD_REQUIREMENTS.map(req => (
+                        <li key={req}>{req}</li>
+                      ))}
                     </ul>
                   </div>
                 </TooltipContent>
@@ -145,7 +143,6 @@ const ChangePasswordPopup = ({
                 type="button"
                 className="absolute right-2 top-2 text-2xl text-gray-500 hover:text-gray-700"
                 onClick={() => setShowNewPwd((v) => !v)}
-                tabIndex={-1}
                 aria-label={showNewPwd ? "Hide password" : "Show password"}
               >
                 {showNewPwd ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
@@ -183,7 +180,6 @@ const ChangePasswordPopup = ({
                 type="button"
                 className="absolute right-2 top-2 text-2xl text-gray-500 hover:text-gray-700"
                 onClick={() => setShowConfirmPwd((v) => !v)}
-                tabIndex={-1}
                 aria-label={showConfirmPwd ? "Hide password" : "Show password"}
               >
                 {showConfirmPwd ? (
