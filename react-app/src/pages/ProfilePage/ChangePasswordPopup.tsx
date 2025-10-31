@@ -11,7 +11,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import Modal from "../../components/Modal";
-import { PASSWORD_REQUIREMENTS } from "@/lib/passwordUtils";
+import { PASSWORD_REQUIREMENTS, validatePassword } from "@/lib/passwordUtils";
 
 const ChangePasswordPopup = ({
   open,
@@ -36,20 +36,6 @@ const ChangePasswordPopup = ({
     setShowConfirmPwd(false);
   };
 
-  const validatePassword = (password: string) => {
-    const lengthCheck = password.length >= 13;
-    const lowercaseCheck = /[a-z]/.test(password);
-    const uppercaseCheck = /[A-Z]/.test(password);
-    const digitCheck = /\d/.test(password);
-    const specialCharCheck = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    return (
-      lengthCheck &&
-      lowercaseCheck &&
-      uppercaseCheck &&
-      digitCheck &&
-      specialCharCheck
-    );
-  };
 
   const handleNewPasswordSubmit = () => {
     const isValid = validatePassword(newPassword);
