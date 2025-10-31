@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import Header from "../../components/Header.tsx";
 import NavigationBar from "../../components/NavigationBar/NavigationBar.tsx";
@@ -16,8 +16,8 @@ import {
 import { Jane } from "../../types/JaneType.ts";
 import { getAllJaneData } from "../../backend/FirestoreCalls.tsx";
 import Loading from "../../components/Loading.tsx";
-import { toPng } from "html-to-image";
-import download from "downloadjs";
+import { exportAsSvg } from "@/components/Exportable";
+
 import {
   DateRangePicker,
   defaultPresets,
@@ -49,59 +49,26 @@ const JaneDashboardPage = () => {
   const chartDiv =
     "flex flex-col items-center justify-start bg-white h-[370px] border-2 border-black p-5 mt-5 rounded-lg";
 
+  const chartColors = ["#4A6B7C", "#F5C842", "#1F3A5F"];
+
+  const defaultVisitChart = [
+    { key: "Telehealth", data: 39 },
+    { key: "In Office", data: 29 },
+    { key: "Home Visit", data: 32 },
+  ];
+
   const [janeData, setJaneData] = useState<Jane[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [chartData, setChartData] = useState<{ key: string; data: number }[]>(
-    [],
-  );
+  const [chartData, setChartData] = useState<{ key: string; data: number }[]>([
+    { key: "Telehealth", data: 39 },
+    { key: "Home Visit", data: 32 },
+    { key: "In Office", data: 29 }
+  ]);
   const [visitDisplay, setVisitDisplay] = useState<string>("graph");
   const [retentionDisplay, setRetentionDisplay] = useState<string>("graph");
   const [openRow, setOpenRow] = useState<RetentionRate | null>(null);
   const pieChartRef = useRef<HTMLDivElement>(null);
   const funnelChartRef = useRef<HTMLDivElement>(null);
-
-  const funnelData = [
-    {
-      data: 50,
-      key: "1st week",
-    },
-    {
-      data: 40,
-      key: "2nd week",
-    },
-    {
-      data: 34,
-      key: "3rd week",
-    },
-    {
-      data: 25,
-      key: "4th week",
-    },
-    {
-      data: 20,
-      key: "5th week",
-    },
-    {
-      data: 18,
-      key: "6th week",
-    },
-  ];
-
-  const handleExport = async (
-    ref: React.RefObject<HTMLDivElement | null>,
-    filename: string,
-  ) => {
-    const element = ref.current;
-    if (!element) {
-      return;
-    }
-    try {
-      const dataUrl = await toPng(element);
-      download(dataUrl, `${filename}.png`);
-    } catch (error) {
-      console.error("Export failed:", error);
-    }
-  };
 
   const [dateRange, setDateRange] = useState<{
     startDate: Date | null;
@@ -132,6 +99,231 @@ const JaneDashboardPage = () => {
     }
   };
 
+
+  const funnelData = [
+    {
+      data: 50,
+      key: "1 visit",
+    },
+    {
+      data: 40,
+      key: "2 visits",
+    },
+    {
+      data: 34,
+      key: "3 visits",
+    },
+    {
+      data: 25,
+      key: "4 visits",
+    },
+    {
+      data: 20,
+      key: "5 visits",
+    },
+    {
+      data: 16,
+      key: "6 visits",
+    },
+  ];
+
+
+  const handleExportRetention = async () => {
+    // Title & date
+    // const title = `Retention Rate over a Six Week Period`;
+    const dr =
+      dateRange.startDate && dateRange.endDate
+        ? `${formatDate(dateRange.startDate)} - ${formatDate(dateRange.endDate)}`
+        : "All Data";
+    // 1) Grab the live SVG that Reaviz rendered
+    const container = funnelChartRef.current;
+    if (!container) {
+      alert("Funnel chart not found.");
+      return;
+    }
+    const svgEl = container.querySelector("svg");
+    if (!svgEl) {
+      alert("Funnel SVG not found.");
+      return;
+    }
+
+    // Normalize so export is consistent
+    const innerW = 960;   // chart drawing area
+    const innerH = 300;   // chart height
+    svgEl.setAttribute("width", String(innerW));
+    svgEl.setAttribute("height", String(innerH));
+
+    // chart SVG (from Reaviz)
+    const rawChartSvg = new XMLSerializer().serializeToString(svgEl);
+    const chartDataUri = `data:image/svg+xml;utf8,${encodeURIComponent(rawChartSvg)}`;
+    const labelCol = 110;
+    const totalW = innerW + labelCol;
+    const totalH = innerH;
+
+    const compositeSvgString = `
+<svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${totalH}" shape-rendering="geometricPrecision">
+  <defs>
+    <style>
+      @font-face {
+        font-family: 'Inter';
+        font-weight: 600;
+        src: local('Inter'), local('Inter-SemiBold');
+      }
+      text { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    </style>
+  </defs>
+
+  <!-- background -->
+  <rect x="0" y="0" width="${totalW}" height="${totalH}" fill="#FFFFFF" />
+
+  <!-- Vertical axis label, centered relative to the CHART area -->
+  <g transform="translate(${Math.round(labelCol * 0.45)} ${totalH / 2}) rotate(-90)">
+    <text
+      text-anchor="middle"
+      dominant-baseline="middle"
+      font-size="18"
+      font-weight="600"
+      fill="#1F2937"
+    >
+      Number of Clients
+    </text>
+  </g>
+
+  <!-- The Reaviz chart itself -->
+  <image href="${chartDataUri}" x="${labelCol}" y="0" width="${innerW}" height="${innerH}" />
+</svg>
+`;
+
+    const compositeDataUri = `data:image/svg+xml;utf8,${encodeURIComponent(compositeSvgString)}`;
+
+    const exportContent = (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          padding: 20,
+          background: "#FFFFFF",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <img
+          src={compositeDataUri}
+          width={totalW}
+          height={totalH}
+          alt="Jane retention funnel"
+          style={{ display: "block" }}
+        />
+
+      </div>
+    );
+
+
+    // export with Satori
+    await exportAsSvg({
+      content: exportContent,
+      title: `Visits Breakdown, ${dr}`,
+      selectedFilters: {},
+      width: 1200,
+      height: 760,
+      filename: `jane-visit-breakdown-${dr.replaceAll(" ", "").replaceAll("/", "-")}`,
+      backgroundColor: "#FFFFFF",
+    });
+  };
+
+  const handleExportPieChart = async () => {
+    const dr = dateRange.startDate && dateRange.endDate
+      ? `${formatDate(dateRange.startDate)} - ${formatDate(dateRange.endDate)}`
+      : "All Data";
+    const title = `Visits Breakdown, ${dr}`;
+
+    const container = pieChartRef.current;
+    const svgEl = container?.querySelector('svg') as SVGSVGElement | null;
+    if (!svgEl) { alert("Pie SVG not found."); return; }
+
+    const pieW = 420, pieH = 420;
+    svgEl.setAttribute('width', String(pieW));
+    svgEl.setAttribute('height', String(pieH));
+
+    const rawPieSvg = new XMLSerializer().serializeToString(svgEl);
+    const pieDataUri = `data:image/svg+xml;utf8,${encodeURIComponent(rawPieSvg)}`;
+
+    const legendData = (pieData.length ? pieData : [
+      { key: "Telehealth", data: 39 },
+      { key: "Home Visit", data: 32 },
+      { key: "In Office", data: 29 },
+    ]).map((d, i) => ({ label: d.key, color: chartColors[i % chartColors.length] }));
+
+    const card = (
+      <div
+        style={{
+          width: 400,
+          background: "#FFFFFF",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 0,
+        }}
+      >
+        <img
+          src={pieDataUri}
+          width={280}
+          height={280}
+          alt="Visits Breakdown"
+          style={{ display: "block" }}
+        />
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 20,
+            flexWrap: "wrap",
+            marginTop: -60,
+          }}
+        >
+          {legendData.map((item) => (
+            <div
+              key={item.label}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              <div
+                style={{
+                  width: 14,
+                  height: 14,
+                  borderRadius: 3,
+                  background: item.color,
+                }}
+              />
+              <span style={{ fontSize: 14, color: "#111827" }}>{item.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+
+
+
+
+    await exportAsSvg({
+      content: card,
+      title,
+      selectedFilters: {},
+      width: 1200,
+      height: 760,
+      filename: `jane-visit-breakdown-${dr.replaceAll(" ", "").replaceAll("/", "-")}`,
+      backgroundColor: '#FFFFFF',
+    });
+  };
+
+
+
   const formatDate = (date: Date) =>
     date.toLocaleDateString("en-US", {
       year: "numeric",
@@ -141,28 +333,27 @@ const JaneDashboardPage = () => {
 
   const filterData = () => {
     const visitTypeCounts: Record<string, number> = {};
-    const filteredData = janeData.filter((jane) => {
+    const filtered = janeData.filter((j) => {
       if (dateRange.startDate && dateRange.endDate) {
-        const appointmentDate = new Date(jane.date);
-        return (
-          appointmentDate >= dateRange.startDate &&
-          appointmentDate <= dateRange.endDate
-        );
+        const d = new Date(j.date);
+        return d >= dateRange.startDate && d <= dateRange.endDate;
       }
       return true;
     });
-    filteredData.forEach((jane) => {
-      const type = jane.visitType || "Unknown";
+    filtered.forEach((j) => {
+      const type = j.visitType || "Unknown";
       visitTypeCounts[type] = (visitTypeCounts[type] || 0) + 1;
     });
-    const chartData = Object.entries(visitTypeCounts).map(([key, value]) => ({
+    const next = Object.entries(visitTypeCounts).map(([key, value]) => ({
       key,
       data: value,
     }));
-    setChartData(chartData);
+    setChartData(next.length ? next : defaultVisitChart);
   };
 
-  const chartColors = ["#f4bb47", "#05182a", "#3A8D8E"];
+
+
+
 
   const visitBreakdownData: VisitBreakdown[] = [
     { visitType: "Home Visit", percent: 16.6, count: 150000 },
@@ -236,13 +427,18 @@ const JaneDashboardPage = () => {
     },
   ];
 
+
+
   useEffect(() => {
+    let mounted = true;
     setLoading(true);
-    getAllJaneData().then((janeData) => {
-      setJaneData(janeData);
-      setLoading(false);
-    });
+    getAllJaneData()
+      .then((d) => { if (mounted) setJaneData(d); })
+      .catch((err) => { console.error(err); })
+      .finally(() => { if (mounted) setLoading(false); });
+    return () => { mounted = false; };
   }, []);
+
 
   useEffect(() => {
     filterData();
@@ -272,11 +468,14 @@ const JaneDashboardPage = () => {
     </div>
   );
 
+  const pieData = chartData.length ? chartData : defaultVisitChart;
+
+
   return (
     <>
       <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
       <div
-        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
+        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]"
           }`}
       >
         <Header />
@@ -303,7 +502,7 @@ const JaneDashboardPage = () => {
             </Link>
           </div>
 
-          {/* IMPORTANT: when either table switches to "table" view we remove the side-by-side flex so they stack */}
+          {/* remove the side by side flex so they stack */}
           <div className="flex flex-wrap gap-8 pt-3">
             {/* Visit Breakdown */}
             <div className="flex-[0_0_48%] max-w-[50%] min-w-[560px]">
@@ -330,12 +529,12 @@ const JaneDashboardPage = () => {
                 </div>
                 <button
                   className={transparentGrayButtonStyle}
-                  onClick={() => handleExport(pieChartRef, "visit_breakdown")}
+                  disabled={visitDisplay !== "graph"} // only export when graph tab is active
+                  onClick={handleExportPieChart}
                 >
                   Export
                 </button>
               </div>
-              {/*chart title*/}
               {visitDisplay === "graph" ? (
                 <>
                   <span className="self-start font-semibold text-2xl mb-20">
@@ -346,47 +545,31 @@ const JaneDashboardPage = () => {
                       formatDate(dateRange.endDate)
                       : "All Data"}
                   </span>
-                  <div className={chartDiv} ref={pieChartRef}>
-                    {/*chart*/}
-                    {chartData.length > 0 ? (
-                      <div
-                        className="chartContainer"
-                        style={{ width: "250px", height: "250px" }}
-                      >
-                        {loading ? (
-                          <Loading />
-                        ) : (
-                          <PieChart
-                            data={chartData}
-                            series={
-                              <PieArcSeries
-                                doughnut={true}
-                                colorScheme={chartColors}
-                                label={null}
-                              />
-                            }
-                          />
-                        )}
-                      </div>
-                    ) : (
-                      <div>No data available for selected date range</div>
-                    )}
-                    {/*legend*/}
+
+                  <div className={chartDiv}>
+                    <div
+                      className="chartContainer"
+                      style={{ width: 350, height: 350 }}
+                      ref={pieChartRef}
+                    >
+                      {loading ? <Loading /> : (
+                        <PieChart
+                          data={pieData}
+                          series={<PieArcSeries doughnut={true} colorScheme={chartColors} label={null} />}
+                        />
+                      )}
+                    </div>
+
                     <div className="mt-4 flex flex-wrap justify-center gap-4">
-                      {chartData.map((item, index) => (
+                      {pieData.map((item, index) => (
                         <div key={item.key} className="flex items-center gap-2">
-                          <div
-                            className="w-10 h-4"
-                            style={{
-                              backgroundColor:
-                                chartColors[index % chartColors.length],
-                            }}
-                          />
+                          <div className="w-10 h-4" style={{ backgroundColor: chartColors[index % chartColors.length] }} />
                           <span>{item.key}</span>
                         </div>
                       ))}
                     </div>
                   </div>
+
                 </>
               ) : (
                 <div className="space-y-2">
@@ -432,7 +615,8 @@ const JaneDashboardPage = () => {
                 </div>
                 <button
                   className={transparentGrayButtonStyle}
-                  onClick={() => handleExport(funnelChartRef, "retention_rate")}
+                  disabled={retentionDisplay !== "graph"} // only export when graph tab is active
+                  onClick={handleExportRetention}
                 >
                   Export
                 </button>
@@ -464,7 +648,7 @@ const JaneDashboardPage = () => {
                     </div>
                     <div className="flex items-center">
                       <span className="text-xl whitespace-nowrap -rotate-90 -mr-15 -ml-15">
-                        Number of Visits
+                        Number of Clients
                       </span>
 
                       <FunnelChart
@@ -473,7 +657,7 @@ const JaneDashboardPage = () => {
                         data={funnelData}
                         series={
                           <FunnelSeries
-                            arc={<FunnelArc colorScheme="#05182A" />}
+                            arc={<FunnelArc colorScheme="#01284dff" />}
                             axis={
                               <FunnelAxis
                                 line={
