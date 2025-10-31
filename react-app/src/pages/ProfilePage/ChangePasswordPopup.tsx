@@ -1,50 +1,48 @@
 import { useState } from "react";
 import { IoIosClose } from "react-icons/io";
+import {
+  AiOutlineEye,
+  AiOutlineEyeInvisible,
+  AiOutlineInfoCircle,
+} from "react-icons/ai";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import Modal from "../../components/Modal";
+import { PASSWORD_REQUIREMENTS, validatePassword } from "@/lib/passwordUtils";
 
 const ChangePasswordPopup = ({
   open,
   onClose,
 }: {
   open: boolean;
-  onClose: any;
+  onClose: () => void;
 }) => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [showPasswordRequirementsError, setShowPasswordRequirementsError] =
     useState(false);
+  const [showNewPwd, setShowNewPwd] = useState(false);
+  const [showConfirmPwd, setShowConfirmPwd] = useState(false);
 
   const handleOnClose = () => {
     onClose();
     setNewPassword("");
     setConfirmNewPassword("");
     setShowPasswordRequirementsError(false);
+    setShowNewPwd(false);
+    setShowConfirmPwd(false);
   };
 
-  const validatePassword = (password: string) => {
-    const lengthCheck = password.length >= 13;
-    const lowercaseCheck = /[a-z]/.test(password);
-    const uppercaseCheck = /[A-Z]/.test(password);
-    const digitCheck = /\d/.test(password);
-    const specialCharCheck = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-
-    return (
-      lengthCheck &&
-      lowercaseCheck &&
-      uppercaseCheck &&
-      digitCheck &&
-      specialCharCheck
-    );
-  };
 
   const handleNewPasswordSubmit = () => {
     const isValid = validatePassword(newPassword);
     const isMatch = newPassword === confirmNewPassword;
-
     setShowPasswordRequirementsError(!isValid);
 
     if (isValid && isMatch) {
-      // TODO: Change password
       console.log("Valid password");
       handleOnClose();
     }
@@ -55,63 +53,89 @@ const ChangePasswordPopup = ({
       <div className="flex justify-between items-center m-2">
         <p className="text-lg">Change Password</p>
         <button
-          onClick={() => {
-            onClose();
-          }}
+          onClick={onClose}
           className="absolute top-0.25 right-0.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
+          aria-label="Close"
         >
           <IoIosClose size={45} />
         </button>
       </div>
-      <div className="w-full h-[1.5px] bg-black my-2" />
+      {/* thinner divider */}
+      <div className="w-full h-px bg-black my-2" />
     </>
   );
 
+  const saveDisabled =
+    !newPassword ||
+    !confirmNewPassword ||
+    newPassword !== confirmNewPassword ||
+    !validatePassword(newPassword);
+
   return (
-    <Modal
-      open={open}
-      onClose={() => {
-        handleOnClose();
-      }}
-      height={450}
-      width={600}
-    >
+    <Modal open={open} onClose={handleOnClose} height={300} width={600}>
       <div className="flex flex-col h-full">
         <div>
-          <ModalHeader
-            onClose={() => {
-              handleOnClose();
-            }}
-          />
+          <ModalHeader onClose={handleOnClose} />
+
           {/* New Password */}
           <div className="grid grid-cols-[190px_1fr] m-8 mb-2 gap-x-2">
-            <label className="text-md font-medium text-nowrap content-center">
-              Enter New Password:
+            <label className="text-md font-medium text-nowrap content-center flex items-center gap-1">
+              <span>Enter New Password:</span>
+              <Tooltip delayDuration={0}>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    className="text-2xl text-gray-500 hover:text-gray-700"
+                    aria-label="Password requirements"
+                  >
+                    <AiOutlineInfoCircle className="text-[#0F4374]" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="bottom"
+                  className="p-0 border-0 bg-transparent rounded text-sm"
+                >
+                  <div className="bg-[#0F4374] text-white p-2 rounded-lg">
+                    <ul className="text-sm list-disc list-inside">
+                      {PASSWORD_REQUIREMENTS.map(req => (
+                        <li key={req}>{req}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
             </label>
-            <input
-              type="password"
-              value={newPassword}
-              onChange={(e) => {
-                setNewPassword(e.target.value);
-                setShowPasswordRequirementsError(
-                  e.target.value !== "" && !validatePassword(e.target.value),
-                );
-              }}
-              className="w-full border-[1.5px] border-black px-2 py-2"
-              placeholder="New password"
-            />
-            <div></div>
-            {/* Requirements Box */}
-            <div className="border border-black p-3 text-sm">
-              <ul className="list-disc ml-4 space-y-1">
-                <li>Must include at least 13 characters</li>
-                <li>Must include at least 1 lowercase letter</li>
-                <li>Must include at least 1 uppercase letter</li>
-                <li>Must include at least 1 digit</li>
-                <li>Must include at least 1 special character</li>
-              </ul>
+
+            {/* New Password Input */}
+            <div className="relative">
+              <input
+                type={showNewPwd ? "text" : "password"}
+                value={newPassword}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setNewPassword(val);
+                  setShowPasswordRequirementsError(
+                    val !== "" && !validatePassword(val)
+                  );
+                }}
+                className={`w-full border rounded px-3 py-2 pr-10 ${showPasswordRequirementsError
+                  ? "border-red-500"
+                  : "border-black"
+                  }`}
+                placeholder="New password"
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                className="absolute right-2 top-2 text-2xl text-gray-500 hover:text-gray-700"
+                onClick={() => setShowNewPwd((v) => !v)}
+                aria-label={showNewPwd ? "Hide password" : "Show password"}
+              >
+                {showNewPwd ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
+              </button>
             </div>
-            <div className="h-[20px]"></div>
+
+            <div className="h-[20px]" />
             {showPasswordRequirementsError && (
               <p className="text-red-600 text-sm">
                 Password does not meet requirements
@@ -119,58 +143,59 @@ const ChangePasswordPopup = ({
             )}
           </div>
 
-          {/* Confirm New Password */}
-          <div className="grid grid-cols-[190px_1fr] mx-8  mb-2 gap-x-2">
+          {/* Confirm Password */}
+          <div className="grid grid-cols-[190px_1fr] mx-8 mb-2 gap-x-2">
             <label className="text-md font-medium content-center text-nowrap">
               Confirm New Password:
             </label>
-            <input
-              type="password"
-              value={confirmNewPassword}
-              onChange={(e) => {
-                setConfirmNewPassword(e.target.value);
-              }}
-              onKeyDown={(event) => {
-                if (
-                  newPassword &&
-                  confirmNewPassword &&
-                  event.key === "Enter"
-                ) {
-                  event.preventDefault();
-                  handleNewPasswordSubmit();
-                }
-              }}
-              className="w-full border-[1.5px] border-black px-2 py-2"
-              placeholder="Confirm password"
-            />
-            <div className="h-[20px]"></div>
+
+            <div className="relative">
+              <input
+                type={showConfirmPwd ? "text" : "password"}
+                value={confirmNewPassword}
+                onChange={(e) => setConfirmNewPassword(e.target.value)}
+                onKeyDown={(event) => {
+                  if (newPassword && confirmNewPassword && event.key === "Enter")
+                    handleNewPasswordSubmit();
+                }}
+                className="w-full border rounded px-3 py-2 pr-10 border-black"
+                placeholder="Confirm password"
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                className="absolute right-2 top-2 text-2xl text-gray-500 hover:text-gray-700"
+                onClick={() => setShowConfirmPwd((v) => !v)}
+                aria-label={showConfirmPwd ? "Hide password" : "Show password"}
+              >
+                {showConfirmPwd ? (
+                  <AiOutlineEye />
+                ) : (
+                  <AiOutlineEyeInvisible />
+                )}
+              </button>
+            </div>
+
+            <div className="h-[20px]" />
+            {/* show only red warning, no green message */}
             {confirmNewPassword &&
-              (newPassword === confirmNewPassword ? (
-                <p className="text-green-600 text-sm">Password matches</p>
-              ) : (
-                <p className="text-red-600 text-sm">Password does not match</p>
-              ))}
+              newPassword !== confirmNewPassword && (
+                <p className="text-red-600 text-sm">
+                  Password does not match
+                </p>
+              )}
           </div>
         </div>
 
         {/* Save Button */}
         <div className="flex justify-end m-8 mt-4">
           <button
-            className={`px-6 py-2 rounded-lg border border-black text-black ${
-              !newPassword ||
-              !confirmNewPassword ||
-              newPassword !== confirmNewPassword ||
-              !validatePassword(newPassword)
-                ? "bg-bcgw-gray-light cursor-not-allowed"
-                : "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light cursor-pointer"
-            }`}
+            className={`px-6 py-2 rounded-lg border border-black text-black ${saveDisabled
+              ? "bg-bcgw-gray-light cursor-not-allowed"
+              : "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light cursor-pointer"
+              }`}
             onClick={handleNewPasswordSubmit}
-            disabled={
-              !newPassword ||
-              !confirmNewPassword ||
-              newPassword !== confirmNewPassword ||
-              !validatePassword(newPassword)
-            }
+            disabled={saveDisabled}
           >
             Save
           </button>
