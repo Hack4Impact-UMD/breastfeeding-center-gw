@@ -9,7 +9,6 @@ import { useUploadJaneData } from "@/hooks/mutations/useUploadJaneData";
 import Loading from "@/components/Loading";
 import { AxiosError } from "axios";
 import { Button } from "@/components/ui/button";
-import { useQueryClient } from "@tanstack/react-query";
 
 type FileUploadPopupProps = {
   isOpen: boolean;
@@ -17,7 +16,6 @@ type FileUploadPopupProps = {
 };
 
 const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
-  const queryClient = useQueryClient();
   const resetState = () => {
     setApptFile(null);
     setClientFile(null);
