@@ -23,6 +23,7 @@ import NewUserPage from "./pages/NewUserPage/NewUserPage";
 import RegisterSuccessPage from "./pages/NewUserPage/RegisterSuccessPage";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { Button } from "./components/ui/button";
+import RequireNoAuth from "./auth/RequireNoAuth";
 // import "@tremor/react/dist/esm/tremor.css";
 
 function App() {
@@ -53,7 +54,14 @@ function App() {
                   </RequireAuth>
                 }
               />
-              <Route path="/login" element={<LoginPage />} />
+              <Route
+                path="/login"
+                element={
+                  <RequireNoAuth>
+                    <LoginPage />
+                  </RequireNoAuth>
+                }
+              />
               <Route path="/logout" element={<LogoutPage />} />
               <Route
                 path="/services/jane"
@@ -123,7 +131,14 @@ function App() {
                 path="/register-success"
                 element={<RegisterSuccessPage />}
               />
-              <Route path="/new-user" element={<NewUserPage />} />
+              <Route
+                path="/register/:inviteId"
+                element={
+                  <RequireNoAuth>
+                    <NewUserPage />
+                  </RequireNoAuth>
+                }
+              />
               <Route
                 path="/*"
                 element={
@@ -153,31 +168,17 @@ function App() {
                         >
                           TEST
                         </Button>
-                        <Button
-                          variant={"yellow"}
-                          size="lg"
-                          disabled
-                        >
+                        <Button variant={"yellow"} size="lg" disabled>
                           TEST
                         </Button>
-                        <Button
-                          variant={"yellow"}
-                          className="rounded-full"
-                        >
+                        <Button variant={"yellow"} className="rounded-full">
                           TEST
                         </Button>
                       </div>
                       <div className="space-x-3">
                         <strong>Outline: </strong>
-                        <Button
-                          variant={"outline"}
-                        >
-                          TEST
-                        </Button>
-                        <Button
-                          variant={"outline"}
-                          className="rounded-full"
-                        >
+                        <Button variant={"outline"}>TEST</Button>
+                        <Button variant={"outline"} className="rounded-full">
                           TEST
                         </Button>
                         <Button
@@ -190,15 +191,8 @@ function App() {
                       </div>
                       <div className="space-x-3">
                         <strong>Gray: </strong>
-                        <Button
-                          variant={"gray"}
-                        >
-                          TEST
-                        </Button>
-                        <Button
-                          variant={"gray"}
-                          className="rounded-full"
-                        >
+                        <Button variant={"gray"}>TEST</Button>
+                        <Button variant={"gray"} className="rounded-full">
                           TEST
                         </Button>
                         <Button

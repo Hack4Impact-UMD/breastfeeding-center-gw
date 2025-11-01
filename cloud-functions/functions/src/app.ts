@@ -3,7 +3,9 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import authRouter from "./routes/authRoutes";
 import acuityRouter from "./routes/acuityRoutes";
+import userRouter from "./routes/userRoutes";
 import janeRouter from "./routes/janeRoutes";
+import inviteRouter from "./routes/inviteRoutes";
 
 const app = express();
 
@@ -16,6 +18,8 @@ app.use(bodyParser.json());
 
 app.use("/auth", authRouter);
 app.use("/acuity", acuityRouter);
+app.use("/users", userRouter);
+app.use("/invites", inviteRouter);
 
 app.get("/", (_, res) => {
   res.status(200).json({

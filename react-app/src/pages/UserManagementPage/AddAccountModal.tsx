@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import Modal from "../../components/Modal";
+import { Button } from "@/components/ui/button";
+import { IoIosClose } from "react-icons/io";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -11,12 +13,14 @@ interface AddAccountModalProps {
     lastName: string;
     email: string;
   }) => void;
+  disabled?: boolean;
 }
 
 const AddAccountModal: React.FC<AddAccountModalProps> = ({
   open,
   onClose,
   onConfirm,
+  disabled = false,
 }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -39,25 +43,25 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({
     <Modal open={open} onClose={onClose} width={500} height={370}>
       <div className="relative flex flex-col h-full">
         <button
-          className="absolute top-4 right-4 text-2xl font-bold text-gray-500 hover:text-black"
+          className="absolute top-2.25 right-2.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
           onClick={onClose}
           aria-label="Close"
         >
-          ×
+          <IoIosClose size={40} />
         </button>
         <h2 className="text-2xl font-bold text-center mb-4 pt-6">
           Add Account
         </h2>
         <div className="flex gap-2 mb-3 px-8">
           <input
-            className="border rounded px-2 py-1 flex-1"
+            className="border rounded px-2 py-1 w-1/2"
             placeholder="First Name"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             onBlur={() => setTouched(true)}
           />
           <input
-            className="border rounded px-2 py-3 flex-1"
+            className="border rounded px-2 py-3 w-1/2"
             placeholder="Last Name"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
@@ -84,15 +88,12 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({
           Are you sure you would like to create a new account?
         </div>
         <div className="flex gap-4 justify-center mb-2">
-          <button
-            className="border px-4 py-1 rounded text-gray-700 hover:bg-gray-100"
-            onClick={onClose}
-          >
+          <Button variant="outline" onClick={onClose} disabled={disabled}>
             CANCEL
-          </button>
-          <button
-            className={`px-4 py-1 rounded text-white ${canConfirm ? "bg-[#F6B21B] hover:bg-yellow-500 cursor-pointer" : "bg-gray-300 cursor-not-allowed"}`}
-            disabled={!canConfirm}
+          </Button>
+          <Button
+            variant="yellow"
+            disabled={!canConfirm || disabled}
             onClick={() => {
               setTouched(true);
               if (canConfirm) {
@@ -106,7 +107,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({
             }}
           >
             CONFIRM
-          </button>
+          </Button>
         </div>
         {error && (
           <div className="text-xs text-red-600 text-center">{error}</div>
