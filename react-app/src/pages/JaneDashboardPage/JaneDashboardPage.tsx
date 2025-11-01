@@ -275,8 +275,9 @@ const JaneDashboardPage = () => {
     <>
       <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
       <div
-        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-          }`}
+        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
+          navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
+        }`}
       >
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-20">
@@ -309,19 +310,21 @@ const JaneDashboardPage = () => {
               <div className={`${centerItemsInDiv} pt-4 mb-6`}>
                 <div className="flex flex-row">
                   <button
-                    className={`${graphTableButtonStyle} ${visitDisplay == "graph"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#CED8E1]"
-                      }`}
+                    className={`${graphTableButtonStyle} ${
+                      visitDisplay == "graph"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#CED8E1]"
+                    }`}
                     onClick={() => setVisitDisplay("graph")}
                   >
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${visitDisplay == "table"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#CED8E1]"
-                      }`}
+                    className={`${graphTableButtonStyle} ${
+                      visitDisplay == "table"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#CED8E1]"
+                    }`}
                     onClick={() => setVisitDisplay("table")}
                   >
                     Table
@@ -341,8 +344,8 @@ const JaneDashboardPage = () => {
                     Visit Breakdown:{" "}
                     {dateRange.startDate && dateRange.endDate
                       ? formatDate(dateRange.startDate) +
-                      " - " +
-                      formatDate(dateRange.endDate)
+                        " - " +
+                        formatDate(dateRange.endDate)
                       : "All Data"}
                   </span>
                   <div className={chartDiv} ref={pieChartRef}>
@@ -393,8 +396,8 @@ const JaneDashboardPage = () => {
                     Visit Breakdown:{" "}
                     {dateRange.startDate && dateRange.endDate
                       ? formatDate(dateRange.startDate) +
-                      " - " +
-                      formatDate(dateRange.endDate)
+                        " - " +
+                        formatDate(dateRange.endDate)
                       : "All Data"}
                   </span>
                   <DataTable
@@ -411,19 +414,21 @@ const JaneDashboardPage = () => {
               <div className={`${centerItemsInDiv} pt-4 mb-6`}>
                 <div className="flex flex-row">
                   <button
-                    className={`${graphTableButtonStyle} ${retentionDisplay == "graph"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#CED8E1]"
-                      }`}
+                    className={`${graphTableButtonStyle} ${
+                      retentionDisplay == "graph"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#CED8E1]"
+                    }`}
                     onClick={() => setRetentionDisplay("graph")}
                   >
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${retentionDisplay == "table"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#CED8E1]"
-                      }`}
+                    className={`${graphTableButtonStyle} ${
+                      retentionDisplay == "table"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#CED8E1]"
+                    }`}
                     onClick={() => setRetentionDisplay("table")}
                   >
                     Table
@@ -440,8 +445,8 @@ const JaneDashboardPage = () => {
                 Retention Rate:{" "}
                 {dateRange.startDate && dateRange.endDate
                   ? formatDate(dateRange.startDate) +
-                  " - " +
-                  formatDate(dateRange.endDate)
+                    " - " +
+                    formatDate(dateRange.endDate)
                   : "All Data"}
               </span>
               <div

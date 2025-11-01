@@ -1,19 +1,33 @@
-import { onIdTokenChanged, type User, type IdTokenResult } from "firebase/auth";
+import {
+  onIdTokenChanged,
+  type User as AuthUser,
+  type IdTokenResult,
+} from "firebase/auth";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { auth } from "../config/firebase";
+import { User as UserProfile } from "@/types/UserType";
+import { getUserById } from "@/backend/UserFunctions";
 
 interface Props {
   children: React.JSX.Element;
 }
 
 interface AuthContextType {
-  user: User | null;
+  authUser: AuthUser | null;
+  profile: UserProfile | null;
   token: IdTokenResult | null;
   loading: boolean;
+  isAuthed: boolean;
 }
 
 // The AuthContext that other components may subscribe to.
-const AuthContext = createContext<AuthContextType>(null!);
+const AuthContext = createContext<AuthContextType>({
+  loading: true,
+  authUser: null,
+  profile: null,
+  token: null,
+  isAuthed: false,
+});
 
 // Updates the AuthContext and re-renders children when the user changes.
 // See onIdTokenChanged for what events trigger a change.
@@ -21,7 +35,9 @@ export const AuthProvider = ({ children }: Props): React.ReactElement => {
   const [authState, setAuthState] = useState<AuthContextType>({
     loading: true,
     token: null,
-    user: null,
+    authUser: null,
+    profile: null,
+    isAuthed: false,
   });
 
   useEffect(() => {
@@ -33,16 +49,22 @@ export const AuthProvider = ({ children }: Props): React.ReactElement => {
           return null;
         });
 
+        const profile = await getUserById(newUser.uid);
+
         setAuthState({
-          user: newUser,
+          authUser: newUser,
           token,
           loading: false,
+          profile,
+          isAuthed: true,
         });
       } else {
         setAuthState({
-          user: null,
+          authUser: null,
           token: null,
           loading: false,
+          profile: null,
+          isAuthed: false,
         });
       }
     });

@@ -1,37 +1,28 @@
 import React from "react";
 import ProfileIcon from "../../components/ProfileIcon";
 import Modal from "../../components/Modal";
-import { User } from "@/types/UserType";
+import { Role, RoleLevels, User } from "@/types/UserType";
+import { Button } from "../../components/ui/button";
+import { IoIosClose } from "react-icons/io";
+import { useAuth } from "@/auth/AuthProvider";
+import { useUpdateUserRole } from "@/hooks/mutations/useUpdateUserRole";
+import { useDeleteUser } from "@/hooks/mutations/useDeleteUser";
 
 const roleChipClass =
-  "px-5 py-1 rounded-full text-base border border-black bg-white flex items-center";
+  "px-5 py-1 rounded-full text-base border border-black bg-background flex items-center";
 
-const ActionButton: React.FC<{
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-}> = ({ children, onClick, className }) => (
-  <button
-    onClick={onClick}
-    className={`text-base px-4 py-2 border border-black rounded transition focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer ${
-      className ?? ""
-    }`}
-  >
-    {children}
-  </button>
-);
+const UserCard: React.FC<{ user: User; singleDirector: boolean }> = ({
+  user,
+  singleDirector,
+}) => {
+  const { profile } = useAuth();
+  const { mutate: updateUserRole } = useUpdateUserRole();
+  const { mutate: deleteUser } = useDeleteUser();
 
-const UserCard: React.FC<{ user: User }> = ({ user }) => {
   const initials =
     `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase();
   const [isChangeAccessOpen, setIsChangeAccessOpen] = React.useState(false);
-  const defaultAccess: "Volunteer" | "Admin" =
-    user.type === "VOLUNTEER" ? "Volunteer" : "Admin";
-  const isDirector = user.type === "DIRECTOR";
-  const [selectedAccess, setSelectedAccess] = React.useState<
-    "Volunteer" | "Admin"
-  >(defaultAccess);
-  const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
+  const [selectedAccess, setSelectedAccess] = React.useState<Role>("VOLUNTEER");
   const [isRemoveConfirmOpen, setIsRemoveConfirmOpen] = React.useState(false);
   const [isDirectorBlockOpen, setIsDirectorBlockOpen] = React.useState(false);
 
@@ -42,7 +33,7 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
       {/* name + contact info */}
       <div>
         <div className="flex items-center">
-          <a className="text-2xl text-blue w-65">
+          <a className="text-2xl text-[#165896] w-65">
             {user.lastName}, {user.firstName}
           </a>
           <span className={roleChipClass}>
@@ -59,28 +50,41 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
       </div>
 
       <div className="flex gap-4 justify-end">
-        <ActionButton
-          onClick={() => {
-            setSelectedAccess(defaultAccess);
-            setIsChangeAccessOpen(true);
-          }}
-          className="hover:bg-[#F5BB47] cursor-pointer"
-        >
-          Change Access
-        </ActionButton>
-        <ActionButton
-          className="hover:bg-[#F5BB47] cursor-pointer"
-          onClick={() => {
-            // Placeholder logic: show director block if this is a director
-            if (isDirector) {
-              setIsDirectorBlockOpen(true);
-            } else {
-              setIsRemoveConfirmOpen(true);
-            }
-          }}
-        >
-          Remove Access
-        </ActionButton>
+        {profile?.auth_id === user.auth_id ||
+        profile?.type === "DIRECTOR" ||
+        (profile?.type === "ADMIN" &&
+          RoleLevels[profile.type] >= RoleLevels[user.type]) ? (
+          <>
+            <Button
+              variant="outline"
+              onClick={() => {
+                if (user.type === "DIRECTOR" && singleDirector) {
+                  setIsDirectorBlockOpen(true);
+                } else {
+                  setIsChangeAccessOpen(true);
+                }
+              }}
+              disabled={profile.type === "VOLUNTEER"}
+            >
+              Change Access
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                // Placeholder logic: show director block if this is a director
+                if (user.type === "DIRECTOR" && singleDirector) {
+                  setIsDirectorBlockOpen(true);
+                } else {
+                  setIsRemoveConfirmOpen(true);
+                }
+              }}
+            >
+              Remove Access
+            </Button>
+          </>
+        ) : (
+          <></>
+        )}
       </div>
 
       {/* Change Access Modal (UI only, no functionality wired) */}
@@ -89,30 +93,16 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
           open={isChangeAccessOpen}
           onClose={() => setIsChangeAccessOpen(false)}
           height={260}
-          width={520}
+          width={475}
         >
           <div className="h-full flex flex-col relative">
             {/* Close icon top-right */}
             <button
               aria-label="Close"
-              className="absolute right-4 top-4 p-1 rounded hover:bg-gray-100"
+              className="absolute top-2.25 right-2.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
               onClick={() => setIsChangeAccessOpen(false)}
             >
-              <svg
-                width="13.5"
-                height="13.5"
-                viewBox="0 0 14 14"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="text-gray-700"
-              >
-                <path
-                  d="M1 1L13 13M13 1L1 13"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
+              <IoIosClose size={40} />
             </button>
 
             {/* Title */}
@@ -124,87 +114,42 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
 
             {/* Real dropdown, defaults to current card role */}
             <div className="px-8 flex flex-col items-center">
-              <div className="w-[140px]">
-                {isDirector ? (
-                  <div className="relative">
-                    <div className="w-full border border-gray-300 rounded-full h-12 px-4 text-sm font-semibold tracking-wide shadow-sm bg-gray-50 text-gray-700 flex items-center justify-center">
-                      DIRECTOR
-                    </div>
-                  </div>
-                ) : (
-                  <div
-                    className="relative"
-                    onKeyDown={(e) => {
-                      if (e.key === "Escape") setIsDropdownOpen(false);
-                    }}
-                  >
-                    <button
-                      type="button"
-                      className="w-full border border-gray-300 rounded-full h-12 pl-4 pr-12 text-sm font-semibold tracking-wide shadow-sm bg-white text-gray-900 flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-blue-400 relative cursor-pointer"
-                      aria-haspopup="listbox"
-                      aria-expanded={isDropdownOpen}
-                      onClick={() => setIsDropdownOpen((v) => !v)}
-                    >
-                      <span>{selectedAccess.toUpperCase()}</span>
-                      <svg
-                        width="25"
-                        height="25"
-                        viewBox="0 0 25 25"
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="text-gray-600 absolute right-3 top-1/2 -translate-y-1/2"
-                        aria-hidden="true"
-                        fill="currentColor"
-                      >
-                        <polygon points="12.5,18 3,7 22,7" />
-                      </svg>
-                    </button>
-                    {isDropdownOpen && (
-                      <ul
-                        role="listbox"
-                        className="absolute left-0 mt-2 z-20 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden min-w-full"
-                      >
-                        {(["Admin", "Volunteer"] as const).map((role) => (
-                          <li
-                            role="option"
-                            aria-selected={selectedAccess === role}
-                            key={role}
-                            className={`px-4 py-2 text-sm font-semibold cursor-pointer select-none ${
-                              selectedAccess === role
-                                ? "bg-gray-100"
-                                : "hover:bg-gray-50"
-                            }`}
-                            onClick={() => {
-                              setSelectedAccess(role);
-                              setIsDropdownOpen(false);
-                            }}
-                          >
-                            {role.toUpperCase()}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
+              <select
+                value={selectedAccess}
+                onChange={(e) => setSelectedAccess(e.target.value as Role)}
+                className="h-9 px-4 w-32 border border-black rounded bg-white text-sm focus:outline-none"
+              >
+                {["DIRECTOR", "ADMIN", "VOLUNTEER"].map((role) =>
+                  profile?.type === "DIRECTOR" ||
+                  RoleLevels[role as Role] <
+                    RoleLevels[profile?.type ?? "VOLUNTEER"] ? (
+                    <option key={role} value={role}>
+                      {role.charAt(0) + role.substring(1).toLocaleLowerCase()}
+                    </option>
+                  ) : (
+                    <></>
+                  ),
                 )}
-              </div>
+              </select>
             </div>
 
             {/* Actions */}
             <div className="px-8 pb-8 pt-4 flex justify-center gap-3">
-              <button
-                className="h-10 px-5 rounded border-2 border-black text-sm font-semibold hover:bg-gray-50 cursor-pointer"
+              <Button
+                variant="outline"
                 onClick={() => setIsChangeAccessOpen(false)}
               >
                 CANCEL
-              </button>
-              <button
-                className="h-10 px-5 rounded border-2 border-black text-sm font-semibold text-black cursor-pointer hover:opacity-90 transition-opacity"
-                style={{ backgroundColor: "#F5BB47" }}
+              </Button>
+              <Button
+                variant="yellow"
                 onClick={() => {
-                  // no-op for now
+                  updateUserRole({ id: user.auth_id, role: selectedAccess });
+                  setIsChangeAccessOpen(false);
                 }}
               >
                 CONFIRM
-              </button>
+              </Button>
             </div>
           </div>
         </Modal>
@@ -220,24 +165,10 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
         <div className="h-full flex flex-col relative">
           <button
             aria-label="Close"
-            className="absolute right-4 top-4 p-1 rounded hover:bg-gray-100"
+            className="absolute top-2.25 right-2.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
             onClick={() => setIsRemoveConfirmOpen(false)}
           >
-            <svg
-              width="13.5"
-              height="13.5"
-              viewBox="0 0 14 14"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="text-gray-700"
-            >
-              <path
-                d="M1 1L13 13M13 1L1 13"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
+            <IoIosClose size={40} />
           </button>
 
           <div className="px-8 pt-8 pb-2">
@@ -249,21 +180,21 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
             Are you sure you would like to remove this user's account?
           </div>
           <div className="px-8 pb-6 pt-6 flex justify-center gap-3">
-            <button
-              className="h-10 px-5 rounded border-2 border-black text-sm font-semibold hover:bg-gray-50 cursor-pointer"
+            <Button
+              variant="outline"
               onClick={() => setIsRemoveConfirmOpen(false)}
             >
               CANCEL
-            </button>
-            <button
-              className="h-10 px-5 rounded border-2 border-black text-sm font-semibold text-black cursor-pointer hover:opacity-90 transition-opacity"
-              style={{ backgroundColor: "#F5BB47" }}
+            </Button>
+            <Button
+              variant="yellow"
               onClick={() => {
-                // no-op for now
+                deleteUser(user.auth_id);
+                setIsRemoveConfirmOpen(false);
               }}
             >
               CONFIRM
-            </button>
+            </Button>
           </div>
         </div>
       </Modal>
@@ -278,24 +209,10 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
         <div className="h-full flex flex-col relative">
           <button
             aria-label="Close"
-            className="absolute right-4 top-4 p-1 rounded hover:bg-gray-100"
+            className="absolute top-2.25 right-2.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
             onClick={() => setIsDirectorBlockOpen(false)}
           >
-            <svg
-              width="13.5"
-              height="13.5"
-              viewBox="0 0 14 14"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="text-gray-700"
-            >
-              <path
-                d="M1 1L13 13M13 1L1 13"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
+            <IoIosClose size={40} />
           </button>
 
           <div className="px-8 pt-8 pb-3">

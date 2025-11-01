@@ -39,29 +39,29 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
 
   const apptFileInputRef = useRef<HTMLInputElement>(null);
   const clientFileInputRef = useRef<HTMLInputElement>(null);
-  const [missingClients, setMissingClients] = useState<string[]>([])
+  const [missingClients, setMissingClients] = useState<string[]>([]);
 
   const uploadMutation = useUploadJaneData({
     onError: (err) => {
-      console.error(err)
+      console.error(err);
 
       if (err instanceof AxiosError) {
-        if (Array.isArray(err.response?.data.details)) { //missing clients
-          setErrorType("missingClients")
-          setMissingClients(err.response.data.details as string[])
+        if (Array.isArray(err.response?.data.details)) {
+          //missing clients
+          setErrorType("missingClients");
+          setMissingClients(err.response.data.details as string[]);
+        } else {
+          setErrorType("other");
         }
       } else {
-        setErrorType("other")
+        setErrorType("other");
       }
     },
     onSuccess: () => {
       console.log("Upload successful!");
       handleClose();
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["janeData"] })
-    }
-  })
+  });
 
   const [errorType, setErrorType] = useState<
     "none" | "invalidType" | "missingClients" | "other"
@@ -118,11 +118,12 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
   ) => {
     uploadMutation.mutate({
       apptFile,
-      clientFile
-    })
+      clientFile,
+    });
   };
 
-  const uploadButtonEnabled = (!!apptFile && errorType === "none") && !uploadMutation.isPending;
+  const uploadButtonEnabled =
+    !!apptFile && errorType === "none" && !uploadMutation.isPending;
 
   return (
     <Modal open={isOpen} onClose={handleClose} height={350} width={500}>
@@ -269,26 +270,27 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
 
             <Tooltip id="missingClientsTip" place="bottom">
               <div className="text-sm text-center">
-                {missingClients.map((client, index) => <p key={index}>{client}</p>)}
+                {missingClients.map((client, index) => (
+                  <p key={index}>{client}</p>
+                ))}
               </div>
             </Tooltip>
           </div>
         )}
 
         <div className="flex flex-col items-center gap-3 justify-center mt-6">
-          {uploadMutation.isPending ?
-            <Loading /> :
-            (
-              <Button
-                variant={"yellow"}
-                className={`px-6 py-2 rounded-lg border border-black cursor-pointer`}
-                disabled={!uploadButtonEnabled}
-                onClick={handleSubmit}
-              >
-                UPLOAD DATA
-              </Button>
-            )
-          }
+          {uploadMutation.isPending ? (
+            <Loading />
+          ) : (
+            <Button
+              variant={"yellow"}
+              className={`px-6 py-2 rounded-lg border border-black cursor-pointer`}
+              disabled={!uploadButtonEnabled}
+              onClick={handleSubmit}
+            >
+              UPLOAD DATA
+            </Button>
+          )}
         </div>
       </div>
     </Modal>

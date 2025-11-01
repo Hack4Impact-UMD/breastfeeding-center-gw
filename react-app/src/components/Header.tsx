@@ -2,10 +2,16 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Logo from "../assets/bcgw-logo.png";
 import editIcon from "../assets/edit.svg";
+import { useAuth } from "@/auth/AuthProvider";
 
 const Header = () => {
-  const name = "Volunteer Tester";
-  const initials = "VT";
+  const { authUser: user } = useAuth();
+  const name = user?.displayName ?? "";
+  const initials =
+    user?.displayName
+      ?.split(" ")
+      .map((s) => s.charAt(0).toUpperCase())
+      .join("") ?? "";
   const [hover, setHover] = useState(false);
   const navigate = useNavigate();
   return (

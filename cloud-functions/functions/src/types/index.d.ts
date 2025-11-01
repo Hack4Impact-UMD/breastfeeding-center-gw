@@ -4,11 +4,11 @@ import { UploadedFile } from "../middleware/filesMiddleware";
 declare global {
   namespace Express {
     export interface Request {
-      rawBody?: Buffer,
+      rawBody?: Buffer;
       token?: DecodedIdToken;
       files?: {
-        [fieldName: string]: UploadedFile[]
-      }
+        [fieldName: string]: UploadedFile[];
+      };
     }
   }
 }

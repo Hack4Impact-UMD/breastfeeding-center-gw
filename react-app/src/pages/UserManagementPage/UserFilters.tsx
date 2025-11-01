@@ -20,10 +20,10 @@ const UserFilters: React.FC<Props> = ({
 }) => {
   return (
     <div className="py-6 border-b border-gray-300">
-      <div className="flex justify-between items-start">
+      <div className="flex justify-between items-end">
         <div className="flex gap-10 items-start">
           <div className="flex flex-col">
-            <label className="text font-semibold text-black mb-2 uppercase">
+            <label className="text font-normal text-black mb-2 uppercase">
               Name
             </label>
             <input
@@ -35,7 +35,7 @@ const UserFilters: React.FC<Props> = ({
           </div>
 
           <div className="flex flex-col">
-            <label className="text font-semibold text-black mb-2 uppercase">
+            <label className="text font-normal text-black mb-2 uppercase">
               Role Type
             </label>
             <select
@@ -51,16 +51,14 @@ const UserFilters: React.FC<Props> = ({
           </div>
         </div>
 
-        <div>
-          <Button
-            type="button"
-            onClick={onAddUserClick}
-            className="flex items-center gap-2 border border-gray-300 rounded px-3 py-1.5 text-sm font-medium bg-white hover:bg-bcgw-yellow-dark transition-colors cursor-pointer"
-          >
-            <img src={addUserIcon} alt="Add user" className="w-4 h-4" />
-            <span>Add User</span>
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          onClick={onAddUserClick}
+          className="flex items-center gap-2"
+        >
+          <img src={addUserIcon} alt="Add user" className="w-4 h-4" />
+          <span>Add User</span>
+        </Button>
       </div>
     </div>
   );
