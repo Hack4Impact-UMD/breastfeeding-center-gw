@@ -1,6 +1,7 @@
 import { JaneTableRow } from "@/types/JaneType";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
+import { DateTime } from "luxon";
 import ColumnSortButton from "@/components/DataTable/ColumnSortIcon";
 
 export const janeDataColumns: ColumnDef<JaneTableRow>[] = [
@@ -30,6 +31,10 @@ export const janeDataColumns: ColumnDef<JaneTableRow>[] = [
     accessorKey: "startAt",
     header: ({ column }) => {
       return <ColumnSortButton column={column}>Visit</ColumnSortButton>;
+    },
+    cell: ({ row }) => {
+      const value = row.getValue<string>("startAt");
+      return DateTime.fromISO(value).toLocaleString(DateTime.DATETIME_SHORT);
     },
   },
   {
