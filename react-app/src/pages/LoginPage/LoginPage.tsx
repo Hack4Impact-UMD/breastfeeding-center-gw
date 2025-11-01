@@ -5,13 +5,11 @@ import Loading from "../../components/Loading";
 import { AuthError } from "firebase/auth";
 import { authenticateUserEmailAndPassword } from "../../backend/AuthFunctions";
 import ForgotPasswordPopup from "./ForgotPasswordPopup";
-import { useNavigate } from "react-router-dom";
 import TwoFAPopup from "../../components/TwoFAPopup";
 import { Button } from "@/components/ui/button";
 
 const LoginPage = () => {
   const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [visibility, setVisibility] = useState(false);
