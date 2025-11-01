@@ -1,24 +1,23 @@
 import React from "react";
 import ProfileIcon from "../../components/ProfileIcon";
 import Modal from "../../components/Modal";
-import { User } from "@/types/UserType";
+import { Role, RoleLevels, User } from "@/types/UserType";
 import { Button } from "../../components/ui/button";
 import { IoIosClose } from "react-icons/io";
+import { useAuth } from "@/auth/AuthProvider";
 
 const roleChipClass =
   "px-5 py-1 rounded-full text-base border border-black bg-background flex items-center";
 
 const UserCard: React.FC<{ user: User }> = ({ user }) => {
+  const { profile } = useAuth()
+
   const initials =
     `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase();
   const [isChangeAccessOpen, setIsChangeAccessOpen] = React.useState(false);
-  const defaultAccess: "Volunteer" | "Admin" =
-    user.type === "VOLUNTEER" ? "Volunteer" : "Admin";
-  const isDirector = user.type === "DIRECTOR";
   const [selectedAccess, setSelectedAccess] = React.useState<
-    "Volunteer" | "Admin"
-  >(defaultAccess);
-  const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
+    Role
+  >(user.type);
   const [isRemoveConfirmOpen, setIsRemoveConfirmOpen] = React.useState(false);
   const [isDirectorBlockOpen, setIsDirectorBlockOpen] = React.useState(false);
 
@@ -46,28 +45,34 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
       </div>
 
       <div className="flex gap-4 justify-end">
-        <Button
-          variant="outline"
-          onClick={() => {
-            setSelectedAccess(defaultAccess);
-            setIsChangeAccessOpen(true);
-          }}
-        >
-          Change Access
-        </Button>
-        <Button
-          variant="outline"
-          onClick={() => {
-            // Placeholder logic: show director block if this is a director
-            if (isDirector) {
-              setIsDirectorBlockOpen(true);
-            } else {
-              setIsRemoveConfirmOpen(true);
-            }
-          }}
-        >
-          Remove Access
-        </Button>
+        {
+          (profile?.auth_id === user.auth_id) ||
+            (profile?.type === "DIRECTOR") ||
+            (profile?.type === "ADMIN" && RoleLevels[profile.type] >= RoleLevels[user.type]) ? <>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsChangeAccessOpen(true);
+              }}
+              disabled={profile.type === "VOLUNTEER"}
+            >
+              Change Access
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                // Placeholder logic: show director block if this is a director
+                // if (isDirector) {
+                // setIsDirectorBlockOpen(true);
+                // } else {
+                setIsRemoveConfirmOpen(true);
+                // }
+              }}
+            >
+              Remove Access
+            </Button>
+          </> : <></>
+        }
       </div>
 
       {/* Change Access Modal (UI only, no functionality wired) */}
@@ -97,68 +102,16 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
 
             {/* Real dropdown, defaults to current card role */}
             <div className="px-8 flex flex-col items-center">
-              <div className="w-[140px]">
-                {isDirector ? (
-                  <div className="relative">
-                    <div className="w-full border border-gray-300 rounded-full h-12 px-4 text-sm font-semibold tracking-wide shadow-sm bg-gray-50 text-gray-700 flex items-center justify-center">
-                      DIRECTOR
-                    </div>
-                  </div>
-                ) : (
-                  <div
-                    className="relative"
-                    onKeyDown={(e) => {
-                      if (e.key === "Escape") setIsDropdownOpen(false);
-                    }}
-                  >
-                    <button
-                      type="button"
-                      className="w-full border border-gray-300 rounded-full h-12 pl-4 pr-12 text-sm font-semibold tracking-wide shadow-sm bg-white text-gray-900 flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-blue-400 relative cursor-pointer"
-                      aria-haspopup="listbox"
-                      aria-expanded={isDropdownOpen}
-                      onClick={() => setIsDropdownOpen((v) => !v)}
-                    >
-                      <span>{selectedAccess.toUpperCase()}</span>
-                      <svg
-                        width="25"
-                        height="25"
-                        viewBox="0 0 25 25"
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="text-gray-600 absolute right-3 top-1/2 -translate-y-1/2"
-                        aria-hidden="true"
-                        fill="currentColor"
-                      >
-                        <polygon points="12.5,18 3,7 22,7" />
-                      </svg>
-                    </button>
-                    {isDropdownOpen && (
-                      <ul
-                        role="listbox"
-                        className="absolute left-0 mt-2 z-20 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden min-w-full"
-                      >
-                        {(["Admin", "Volunteer"] as const).map((role) => (
-                          <li
-                            role="option"
-                            aria-selected={selectedAccess === role}
-                            key={role}
-                            className={`px-4 py-2 text-sm font-semibold cursor-pointer select-none ${
-                              selectedAccess === role
-                                ? "bg-gray-100"
-                                : "hover:bg-gray-50"
-                            }`}
-                            onClick={() => {
-                              setSelectedAccess(role);
-                              setIsDropdownOpen(false);
-                            }}
-                          >
-                            {role.toUpperCase()}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                )}
-              </div>
+              <select
+                value={selectedAccess}
+                onChange={(e) => setSelectedAccess(e.target.value as Role)}
+                className="h-9 px-4 w-32 border border-black rounded bg-white text-sm focus:outline-none"
+              >
+                {["DIRECTOR", "ADMIN", "VOLUNTEER"].map(role => (
+                  RoleLevels[role as Role] < RoleLevels[profile?.type ?? "VOLUNTEER"] ?
+                    (<option value={role}>{role.charAt(0) + role.substring(1).toLocaleLowerCase()}</option>) : <></>
+                ))}
+              </select>
             </div>
 
             {/* Actions */}

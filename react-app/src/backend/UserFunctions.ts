@@ -1,5 +1,5 @@
 import { axiosClient } from "@/lib/utils";
-import { Role, User } from "@/types/UserType";
+import { Role, User, UserRegisterForm } from "@/types/UserType";
 
 export async function getAllUsers(): Promise<User[]> {
   const axios = await axiosClient();
@@ -35,4 +35,10 @@ export async function getUserById(id: string): Promise<User> {
   const res = await axios.get(`/users/id/${id}`);
 
   return res.data as User;
+}
+
+export async function registerUserWithInvite(inviteId: string, form: UserRegisterForm) {
+  const axios = await axiosClient();
+
+  await axios.post(`/auth/register/invite/${inviteId}`, form)
 }

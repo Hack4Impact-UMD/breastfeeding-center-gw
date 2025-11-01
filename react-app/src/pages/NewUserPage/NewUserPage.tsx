@@ -1,5 +1,5 @@
-import { FormEvent, useState } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { FormEvent, useEffect, useState } from "react";
+import { Navigate, useParams } from "react-router-dom";
 import {
   Tooltip,
   TooltipContent,
@@ -11,18 +11,21 @@ import Loading from "@/components/Loading";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { PASSWORD_REQUIREMENTS, validatePassword } from "@/lib/passwordUtils";
+import { useRegisterUser } from "@/hooks/mutations/useRegisterUser";
+import { Button } from "@/components/ui/button";
 
 const PRONOUN_OPTIONS = ["she/her", "he/him", "they/them", "Other", "None"];
 
 function validatePhone(phone: string) {
-  const digits = phone.replace(/\D/g, "");
-  return digits.length === 10;
+  const regex = /^\+?\d{10,14}$/gmi;
+  return regex.test(phone);
 }
 
 export default function NewUserPage() {
   const { inviteId = "" } = useParams();
 
   const { data: invite, isPending, error } = useInvite(inviteId);
+  const { mutate: register, isPending: registerPending, error: registerError } = useRegisterUser()
 
   const prefilledFirstName = invite?.firstName ?? "";
   const prefilledLastName = invite?.lastName ?? "";
@@ -39,11 +42,15 @@ export default function NewUserPage() {
   // const [showPasswordInfo, setShowPasswordInfo] = useState(false);
   const [formError, setError] = useState("");
 
-  const navigate = useNavigate();
-
   const isPhoneValid = phone === "" || validatePhone(phone);
   const isPasswordValid = password === "" || validatePassword(password);
   const doPasswordsMatch = password === confirmPassword;
+
+  // needed to update the state vars after the invite data is fetched
+  useEffect(() => {
+    setFirstName(prefilledFirstName);
+    setLastName(prefilledLastName);
+  }, [prefilledFirstName, prefilledLastName])
 
   const allFieldsFilled =
     !!firstName.trim() &&
@@ -94,8 +101,24 @@ export default function NewUserPage() {
       return;
     }
 
+    if (!invite) {
+      setError("No invite found!");
+      return;
+    }
+
     setError("");
-    navigate("/register-success");
+
+    register({
+      inviteId: invite.id,
+      form: {
+        email: invite.email,
+        firstName: firstName,
+        lastName: lastName,
+        pronouns: pronouns,
+        password: password,
+        phone: phone
+      }
+    })
   }
 
   return (
@@ -114,7 +137,7 @@ export default function NewUserPage() {
       >
         <div className="flex gap-4">
           <div className="flex-1">
-            <label className="block font-medium mb-1 flex items-center">
+            <label className="font-medium mb-1 flex items-center">
               <span className="text-red-500 mr-2">*</span>
               <span>First Name</span>
             </label>
@@ -126,7 +149,7 @@ export default function NewUserPage() {
             />
           </div>
           <div className="flex-1">
-            <label className="block font-medium mb-1 flex items-center">
+            <label className="font-medium mb-1 flex items-center">
               <span className="text-red-500 mr-2">*</span>
               <span>Last Name</span>
             </label>
@@ -138,7 +161,7 @@ export default function NewUserPage() {
             />
           </div>
           <div className="flex-1">
-            <label className="block font-medium mb-1 flex items-center">
+            <label className="font-medium mb-1 flex items-center">
               <span className="invisible mr-2">*</span>
               <span>Pronouns</span>
             </label>
@@ -155,7 +178,7 @@ export default function NewUserPage() {
         </div>
 
         <div>
-          <label className="block font-medium mb-1 flex items-center">
+          <label className="font-medium mb-1 flex items-center">
             <span className="text-red-500 mr-2">*</span>
             <span>Phone Number</span>
           </label>
@@ -170,8 +193,7 @@ export default function NewUserPage() {
         </div>
 
         <div>
-          <label className="block font-medium mb-1 flex items-center">
-            <span className="invisible mr-2">*</span>
+          <label className="font-medium mb-1 flex items-center">
             <span>Email</span>
           </label>
           <input
@@ -182,7 +204,7 @@ export default function NewUserPage() {
         </div>
 
         <div>
-          <label className="block font-medium mb-1 flex items-center">
+          <label className="font-medium mb-1 flex items-center">
             <span className="text-red-500 mr-2">*</span>
             <span className="mr-2">Password</span>
 
@@ -233,7 +255,7 @@ export default function NewUserPage() {
         </div>
 
         <div>
-          <label className="block font-medium mb-1 flex items-center">
+          <label className="font-medium mb-1 flex items-center">
             <span className="text-red-500 mr-2">*</span>
             <span>Confirm Password</span>
           </label>
@@ -258,20 +280,22 @@ export default function NewUserPage() {
         </div>
 
         <div className="flex justify-center mt-4">
-          <button
+          <Button
             type="submit"
-            className={`px-8 py-2 rounded-full text-white font-semibold transition ${allFieldsFilled
-              ? "bg-yellow-500 hover:bg-yellow-600 cursor-pointer"
-              : "bg-gray-300 cursor-not-allowed"
-              }`}
-            disabled={!allFieldsFilled}
+            variant={"yellow"}
+            disabled={!allFieldsFilled || registerPending}
           >
             Create Account
-          </button>
+          </Button>
         </div>
         {formError && (
           <div className="text-red-500 text-center text-sm mt-4">
             {formError}
+          </div>
+        )}
+        {registerError && (
+          <div className="text-red-500 text-center text-sm mt-4">
+            Failed to register user: {registerError.message}
           </div>
         )}
       </form>

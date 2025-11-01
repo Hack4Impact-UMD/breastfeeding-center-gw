@@ -53,7 +53,7 @@ router.delete(
       return res.status(404).send("User does not exist");
     }
 
-    if (RoleLevels[user.type] >= RoleLevels[currentUserRole]) {
+    if (currentUserRole !== "DIRECTOR" && RoleLevels[user.type] >= RoleLevels[currentUserRole]) {
       return res.status(403).send("Insufficient permissions to delete user!");
     }
 
@@ -129,7 +129,10 @@ router.put(
 
     if (
       !userToUpdate ||
-      RoleLevels[userToUpdate.type] >= RoleLevels[currentUserRole]
+      (
+        currentUserRole !== "DIRECTOR" &&
+        RoleLevels[userToUpdate.type] >= RoleLevels[currentUserRole]
+      )
     ) {
       return res.status(403).send("Cannot update user's role!");
     }

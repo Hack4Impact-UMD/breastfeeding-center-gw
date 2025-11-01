@@ -1,4 +1,5 @@
-import { getAllUsers } from "@/backend/UserFunctions";
+import { useAuth } from "@/auth/AuthProvider";
+import { getAllUsers, getUserById } from "@/backend/UserFunctions";
 import queries from "@/queries";
 import { User } from "@/types/UserType";
 import { useQuery } from "@tanstack/react-query";
@@ -8,4 +9,15 @@ export function useAllUsers() {
     ...queries.users.all,
     queryFn: getAllUsers,
   });
+}
+
+export function useCurrentUser() {
+  const { user } = useAuth()
+  return useQuery<User>({
+    ...queries.users.current,
+    queryFn: async () => {
+      if (!user) throw new Error("Not authenticated");
+      return await getUserById(user.uid)
+    }
+  })
 }

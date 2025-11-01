@@ -5,7 +5,7 @@ import editIcon from "../assets/edit.svg";
 import { useAuth } from "@/auth/AuthProvider";
 
 const Header = () => {
-  const { user } = useAuth();
+  const { authUser: user } = useAuth();
   const name = user?.displayName ?? "";
   const initials =
     user?.displayName
