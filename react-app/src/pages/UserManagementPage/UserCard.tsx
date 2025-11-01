@@ -56,7 +56,7 @@ const UserCard: React.FC<{ user: User, singleDirector: boolean }> = ({ user, sin
             <Button
               variant="outline"
               onClick={() => {
-                if (singleDirector) {
+                if (user.type === "DIRECTOR" && singleDirector) {
                   setIsDirectorBlockOpen(true);
                 } else {
                   setIsChangeAccessOpen(true);
@@ -70,7 +70,7 @@ const UserCard: React.FC<{ user: User, singleDirector: boolean }> = ({ user, sin
               variant="outline"
               onClick={() => {
                 // Placeholder logic: show director block if this is a director
-                if (singleDirector) {
+                if (user.type === "DIRECTOR" && singleDirector) {
                   setIsDirectorBlockOpen(true);
                 } else {
                   setIsRemoveConfirmOpen(true);
