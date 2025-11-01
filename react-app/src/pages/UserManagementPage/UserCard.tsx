@@ -5,12 +5,16 @@ import { Role, RoleLevels, User } from "@/types/UserType";
 import { Button } from "../../components/ui/button";
 import { IoIosClose } from "react-icons/io";
 import { useAuth } from "@/auth/AuthProvider";
+import { useUpdateUserRole } from "@/hooks/mutations/useUpdateUserRole";
+import { useDeleteUser } from "@/hooks/mutations/useDeleteUser";
 
 const roleChipClass =
   "px-5 py-1 rounded-full text-base border border-black bg-background flex items-center";
 
 const UserCard: React.FC<{ user: User }> = ({ user }) => {
   const { profile } = useAuth()
+  const { mutate: updateUserRole } = useUpdateUserRole();
+  const { mutate: deleteUser } = useDeleteUser();
 
   const initials =
     `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase();
@@ -108,8 +112,8 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
                 className="h-9 px-4 w-32 border border-black rounded bg-white text-sm focus:outline-none"
               >
                 {["DIRECTOR", "ADMIN", "VOLUNTEER"].map(role => (
-                  RoleLevels[role as Role] < RoleLevels[profile?.type ?? "VOLUNTEER"] ?
-                    (<option value={role}>{role.charAt(0) + role.substring(1).toLocaleLowerCase()}</option>) : <></>
+                  profile?.type === "DIRECTOR" || (RoleLevels[role as Role] < RoleLevels[profile?.type ?? "VOLUNTEER"]) ?
+                    (<option key={role} value={role}>{role.charAt(0) + role.substring(1).toLocaleLowerCase()}</option>) : <></>
                 ))}
               </select>
             </div>
@@ -125,7 +129,8 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
               <Button
                 variant="yellow"
                 onClick={() => {
-                  // TODO: no-op for now
+                  updateUserRole({ id: user.auth_id, role: selectedAccess });
+                  setIsChangeAccessOpen(false);
                 }}
               >
                 CONFIRM
@@ -169,7 +174,8 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
             <Button
               variant="yellow"
               onClick={() => {
-                // TODO: no-op for now
+                deleteUser(user.auth_id);
+                setIsRemoveConfirmOpen(false);
               }}
             >
               CONFIRM

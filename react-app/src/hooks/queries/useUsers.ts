@@ -12,7 +12,7 @@ export function useAllUsers() {
 }
 
 export function useCurrentUser() {
-  const { user } = useAuth()
+  const { authUser: user } = useAuth()
   return useQuery<User>({
     ...queries.users.current,
     queryFn: async () => {
