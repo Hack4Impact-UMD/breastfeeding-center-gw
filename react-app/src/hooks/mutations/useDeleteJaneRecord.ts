@@ -1,4 +1,5 @@
 import { deleteJaneApptsByIds } from "@/backend/JaneFunctions";
+import queries from "@/queries";
 import { JaneTableRow } from "@/types/JaneType";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -11,13 +12,13 @@ export function useDeleteJaneRecord() {
       await deleteJaneApptsByIds(ids);
     },
     onMutate: async ({ rows, startDate, endDate }) => {
-      await queryClient.cancelQueries({ queryKey: ["janeData"] });
+      await queryClient.cancelQueries({ queryKey: queries.janeData.uploadedDataTable._def });
 
-      const prevData = queryClient.getQueryData<JaneTableRow[]>(["janeData", startDate, endDate]);
+      const prevData = queryClient.getQueryData<JaneTableRow[]>(queries.janeData.uploadedDataTable(startDate, endDate).queryKey);
 
       // optimistic update
       queryClient.setQueryData<JaneTableRow[]>(
-        ["janeData", startDate, endDate],
+        queries.janeData.uploadedDataTable(startDate, endDate).queryKey,
         (old) =>
           old?.filter((d) => !rows.map((x) => x.id).includes(d.id)) ?? [],
       );
@@ -26,13 +27,13 @@ export function useDeleteJaneRecord() {
     },
     onError: (err, { startDate, endDate }, ctx) => {
       if (ctx?.prevData) {
-        queryClient.setQueryData(["janeData", startDate, endDate], ctx.prevData);
+        queryClient.setQueryData(queries.janeData.uploadedDataTable(startDate, endDate).queryKey, ctx.prevData);
       }
       console.error("failed to delete jane records:");
       console.error(err);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["janeData"] });
+      queryClient.invalidateQueries({ queryKey: queries.janeData._def });
     },
   });
 }

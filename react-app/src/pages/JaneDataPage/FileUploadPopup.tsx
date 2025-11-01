@@ -9,6 +9,8 @@ import { useUploadJaneData } from "@/hooks/mutations/useUploadJaneData";
 import Loading from "@/components/Loading";
 import { AxiosError } from "axios";
 import { Button } from "@/components/ui/button";
+import { queryClient } from "@/config/query";
+import queries from "@/queries";
 
 type FileUploadPopupProps = {
   isOpen: boolean;
@@ -59,6 +61,11 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
       console.log("Upload successful!");
       handleClose();
     },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: queries.janeData.uploadedDataTable._def
+      })
+    }
   });
 
   const [errorType, setErrorType] = useState<

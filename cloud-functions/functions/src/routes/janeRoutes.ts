@@ -8,6 +8,7 @@ import { Client, Baby } from "../types/clientType";
 import { db } from "../services/firebase";
 import { isAuthenticated } from "../middleware/authMiddleware";
 import { DateTime } from "luxon";
+import { CLIENTS_COLLECTION, JANE_APPT_COLLECTION } from "../types/collections";
 
 const router = Router();
 
@@ -101,14 +102,14 @@ router.post(
       }
 
       async function getAllFirebaseClients() {
-        const clients = db.collection("Client");
+        const clients = db.collection(CLIENTS_COLLECTION);
         return (await clients.get()).docs.map((d) => d.data() as Client);
       }
 
       async function appt_in_firebase(appt: JaneAppt): Promise<boolean> {
         // check if appt in firebase JaneAppt collection
         const querySnapshot = await db
-          .collection("JaneAppt")
+          .collection(JANE_APPT_COLLECTION)
           .where("apptId", "==", appt.apptId)
           .get();
 
@@ -124,7 +125,7 @@ router.post(
       // async function client_in_firebase(patientId: string): Promise<boolean> {
       //   // check patientid in firebase client collection
       //   const querySnapshot = await db
-      //     .collection("Client")
+      //     .collection(CLIENTS_COLLECTION)
       //     .where("id", "==", patientId)
       //     .get();
       //
@@ -141,7 +142,7 @@ router.post(
       //   patientId: string,
       // ): Promise<Client> {
       //   const querySnapshot = await db
-      //     .collection("Client")
+      //     .collection(CLIENTS_COLLECTION)
       //     .where("id", "==", patientId)
       //     .get();
       //
@@ -266,20 +267,20 @@ router.post(
         const chunk = parentsToAdd.slice(i, i + chunkSize);
         const batch = db.batch();
         chunk.forEach((parent) => {
-          const { id, ...parentData } = parent;
-          batch.set(db.collection("Client").doc(id), parentData, {
+          const { id } = parent;
+          batch.set(db.collection(CLIENTS_COLLECTION).doc(id), parent, {
             merge: true,
           });
-      });
-      await batch.commit();
-    }
+        });
+        await batch.commit();
+      }
 
       for (let i = 0; i < apptsToAdd.length; i += chunkSize) {
         const chunk = apptsToAdd.slice(i, i + chunkSize);
         const batch = db.batch();
         chunk.forEach((appt) => {
-          const { apptId, ...apptData } = appt;
-          batch.set(db.collection("JaneAppt").doc(apptId), apptData, {
+          const { apptId } = appt;
+          batch.set(db.collection(JANE_APPT_COLLECTION).doc(apptId), appt, {
             merge: true,
           });
         });
@@ -317,7 +318,7 @@ router.get(
       logger.info(`Fetching jane appts between: ${startDate} - ${endDate}`);
 
       // Start query from JaneAppts collection
-      const collectionRef = db.collection("JaneAppt");
+      const collectionRef = db.collection(JANE_APPT_COLLECTION);
       let query: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> =
         collectionRef;
 
@@ -344,7 +345,7 @@ router.get(
 
       // Convert documents to JaneAppt objects
       const appointments: JaneAppt[] = snapshot.docs.map((doc) => {
-        return { ...(doc.data() as Omit<JaneAppt, "id">), apptId: doc.id } as JaneAppt;
+        return doc.data() as JaneAppt;
       });
 
       return res.status(200).json(appointments);
@@ -363,13 +364,13 @@ router.get(
       const patientId = req.params.patient_id;
 
       // Get client document by patient_id
-      const doc = await db.collection("Client").doc(patientId).get();
+      const doc = await db.collection(CLIENTS_COLLECTION).doc(patientId).get();
 
       if (!doc.exists) {
         return res.status(404).send("Client not found");
       }
 
-      const clientData: Client = { ...(doc.data() as Omit<Client, "id">), id: doc.id };
+      const clientData: Client = doc.data() as Client;
       return res.status(200).json(clientData);
     } catch (e) {
       logger.error("Error fetching client:", e);
@@ -386,7 +387,7 @@ router.delete(
     const { id } = req.params;
     if (!id) return res.status(400).send();
 
-    const apptsCollection = db.collection("JaneAppt");
+    const apptsCollection = db.collection(JANE_APPT_COLLECTION);
     const doc = apptsCollection.doc(id);
 
     await doc.delete();
@@ -407,7 +408,7 @@ router.post(
 
     const CHUNK_SIZE = 500;
 
-    const apptsCollection = db.collection("JaneAppt");
+    const apptsCollection = db.collection(JANE_APPT_COLLECTION);
 
     for (let i = 0; i < ids.length; i += CHUNK_SIZE) {
       const slice = ids.slice(i, i + CHUNK_SIZE);

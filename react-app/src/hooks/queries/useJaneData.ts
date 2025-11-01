@@ -4,10 +4,11 @@ import {
   getClientByPatientId,
 } from "@/backend/JaneFunctions";
 import { JaneTableRow } from "@/types/JaneType";
+import queries from "@/queries";
 
 export function useJaneData(startDate?: string, endDate?: string) {
   return useQuery<JaneTableRow[]>({
-    queryKey: ["janeData", startDate, endDate],
+    ...queries.janeData.uploadedDataTable(startDate, endDate),
     queryFn: async () => {
       const appointments = await getAllJaneApptsInRange(startDate, endDate);
 
@@ -41,7 +42,7 @@ export function useJaneData(startDate?: string, endDate?: string) {
               `Failed to fetch client for patientId ${appointment.patientId}:`,
               error,
             );
-             return null;
+            return null;
           }
         }),
       );
