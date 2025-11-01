@@ -2,7 +2,7 @@ import { Request, Response, Router } from "express";
 import { hasRoles, isAuthenticated } from "../middleware/authMiddleware";
 import { auth, db } from "../services/firebase";
 import { USERS_COLLECTION } from "../types/collections";
-import { Role, RoleLevels, User } from "../types/userTypes";
+import { Role, RoleLevels, User } from "../types/userType";
 import { logger } from "firebase-functions";
 import { CollectionReference } from "firebase-admin/firestore";
 

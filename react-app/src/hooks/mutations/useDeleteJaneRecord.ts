@@ -1,32 +1,32 @@
-import { deleteJaneByIds } from "@/backend/FirestoreCalls";
-import { JaneID } from "@/types/JaneType";
+import { deleteJaneApptsByIds } from "@/backend/JaneFunctions";
+import { JaneTableRow } from "@/types/JaneType";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function useDeleteJaneRecord() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (rows: JaneID[]) => {
-      const ids = rows.map((entry) => entry.id);
-      await deleteJaneByIds(ids);
+    mutationFn: async ({ rows }: { startDate?: string, endDate?: string, rows: JaneTableRow[] }) => {
+      const ids = rows.map((entry) => entry.apptId);
+      await deleteJaneApptsByIds(ids);
     },
-    onMutate: async (rows) => {
+    onMutate: async ({ rows, startDate, endDate }) => {
       await queryClient.cancelQueries({ queryKey: ["janeData"] });
 
-      const prevData = queryClient.getQueryData<JaneID[]>(["janeData"]);
+      const prevData = queryClient.getQueryData<JaneTableRow[]>(["janeData", startDate, endDate]);
 
       // optimistic update
-      queryClient.setQueryData<JaneID[]>(
-        ["janeData"],
+      queryClient.setQueryData<JaneTableRow[]>(
+        ["janeData", startDate, endDate],
         (old) =>
           old?.filter((d) => !rows.map((x) => x.id).includes(d.id)) ?? [],
       );
 
       return { prevData };
     },
-    onError: (err, _, ctx) => {
+    onError: (err, { startDate, endDate }, ctx) => {
       if (ctx?.prevData) {
-        queryClient.setQueryData(["janeData"], ctx.prevData);
+        queryClient.setQueryData(["janeData", startDate, endDate], ctx.prevData);
       }
       console.error("failed to delete jane records:");
       console.error(err);

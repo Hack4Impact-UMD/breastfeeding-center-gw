@@ -18,6 +18,7 @@ app.use(bodyParser.json());
 
 app.use("/auth", authRouter);
 app.use("/acuity", acuityRouter);
+app.use("/jane", janeRouter);
 app.use("/users", userRouter);
 app.use("/invites", inviteRouter);
 

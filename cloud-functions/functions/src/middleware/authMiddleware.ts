@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { logger } from "firebase-functions";
 import * as admin from "firebase-admin";
-import { Role } from "../types/userTypes";
+import { Role } from "../types/userType";
 
 // from the code sample here: https://github.com/firebase/functions-samples/blob/main/Node-1st-gen/authorized-https-endpoint/functions/index.js
 // NOTE: When a request is successfully authenticated, this middleware will set the `req.token` property
@@ -11,7 +11,7 @@ export async function isAuthenticated(
   res: Response,
   next: NextFunction,
 ) {
-  logger.log("Check if request is authorized with Firebase ID token");
+  // logger.log("Check if request is authorized with Firebase ID token");
 
   if (
     (!req.headers.authorization ||
@@ -48,7 +48,7 @@ export async function isAuthenticated(
 
   try {
     const decodedIdToken = await admin.auth().verifyIdToken(idToken);
-    logger.log("ID Token correctly decoded", { uid: decodedIdToken.uid });
+    // logger.log("ID Token correctly decoded", { uid: decodedIdToken.uid });
 
     // if (!decodedIdToken.email_verified) {
     //   logger.warn(

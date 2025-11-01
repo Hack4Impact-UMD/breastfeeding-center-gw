@@ -3,7 +3,7 @@ import { hasRoles, isAuthenticated } from "../middleware/authMiddleware";
 import { auth, db } from "../services/firebase";
 import { INVITES_COLLECTION, USERS_COLLECTION } from "../types/collections";
 import { CollectionReference, Timestamp } from "firebase-admin/firestore";
-import { Role, RoleLevels, User } from "../types/userTypes";
+import { Role, RoleLevels, User } from "../types/userType";
 import { isInviteValid, UserInvite } from "../types/inviteType";
 import { v7 as uuidv7 } from "uuid";
 import { logger } from "firebase-functions";

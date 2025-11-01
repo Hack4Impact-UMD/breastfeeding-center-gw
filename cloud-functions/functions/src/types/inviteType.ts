@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase-admin/firestore";
-import { Role } from "./userTypes";
+import { Role } from "./userType";
 
 export type UserInvite = {
   id: string;

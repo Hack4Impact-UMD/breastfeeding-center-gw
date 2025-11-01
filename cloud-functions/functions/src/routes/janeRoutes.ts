@@ -4,10 +4,10 @@ import { logger } from "firebase-functions";
 import { parseAppointmentSheet } from "../utils/janeUploadAppts";
 import { parseClientSheet } from "../utils/janeUploadClients";
 import { JaneAppt } from "../types/janeType";
-import { Client, Baby } from "../types/clientTypes";
+import { Client, Baby } from "../types/clientType";
 import { db } from "../services/firebase";
 import { isAuthenticated } from "../middleware/authMiddleware";
-// import { isAuthenticated } from "../middleware/authMiddleware";
+import { DateTime } from "luxon";
 
 const router = Router();
 
@@ -265,22 +265,24 @@ router.post(
       for (let i = 0; i < parentsToAdd.length; i += chunkSize) {
         const chunk = parentsToAdd.slice(i, i + chunkSize);
         const batch = db.batch();
-        chunk.forEach((parent) =>
-          batch.set(db.collection("Client").doc(parent.id), parent, {
+        chunk.forEach((parent) => {
+          const { id, ...parentData } = parent;
+          batch.set(db.collection("Client").doc(id), parentData, {
             merge: true,
-          }),
-        );
-        await batch.commit();
-      }
+          });
+      });
+      await batch.commit();
+    }
 
       for (let i = 0; i < apptsToAdd.length; i += chunkSize) {
         const chunk = apptsToAdd.slice(i, i + chunkSize);
         const batch = db.batch();
-        chunk.forEach((appt) =>
-          batch.set(db.collection("JaneAppt").doc(appt.apptId), appt, {
+        chunk.forEach((appt) => {
+          const { apptId, ...apptData } = appt;
+          batch.set(db.collection("JaneAppt").doc(apptId), apptData, {
             merge: true,
-          }),
-        );
+          });
+        });
         await batch.commit();
       }
 
@@ -301,6 +303,125 @@ router.post(
     } catch (e) {
       return res.status(400).send((e as Error).message);
     }
+  },
+);
+
+router.get(
+  "/appointments",
+  [isAuthenticated],
+  async (req: Request, res: Response) => {
+    try {
+      const startDate = req.query.startDate as string;
+      const endDate = req.query.endDate as string;
+
+      logger.info(`Fetching jane appts between: ${startDate} - ${endDate}`);
+
+      // Start query from JaneAppts collection
+      const collectionRef = db.collection("JaneAppt");
+      let query: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> =
+        collectionRef;
+
+      // Filter appointments by date range if provided
+      if (startDate) {
+        const start = DateTime.fromISO(startDate).startOf("day");
+        if (!start.isValid) {
+          return res.status(400).send("Invalid startDate format");
+        }
+        query = query.where("startAt", ">=", start.toISO());
+      }
+
+      if (endDate) {
+        const end = DateTime.fromISO(endDate).endOf("day");
+        logger.info("end time: " + end);
+        if (!end.isValid) {
+          return res.status(400).send("Invalid endDate format");
+        }
+        query = query.where("startAt", "<=", end.toISO());
+      }
+
+      // Execute query to get appointments within timeframe
+      const snapshot = await query.get();
+
+      // Convert documents to JaneAppt objects
+      const appointments: JaneAppt[] = snapshot.docs.map((doc) => {
+        return { ...(doc.data() as Omit<JaneAppt, "id">), apptId: doc.id } as JaneAppt;
+      });
+
+      return res.status(200).json(appointments);
+    } catch (e) {
+      logger.error("Error fetching appointments:", e);
+      return res.status(500).send((e as Error).message);
+    }
+  },
+);
+
+router.get(
+  "/client/:patient_id",
+  [isAuthenticated],
+  async (req: Request, res: Response) => {
+    try {
+      const patientId = req.params.patient_id;
+
+      // Get client document by patient_id
+      const doc = await db.collection("Client").doc(patientId).get();
+
+      if (!doc.exists) {
+        return res.status(404).send("Client not found");
+      }
+
+      const clientData: Client = { ...(doc.data() as Omit<Client, "id">), id: doc.id };
+      return res.status(200).json(clientData);
+    } catch (e) {
+      logger.error("Error fetching client:", e);
+      return res.status(500).send((e as Error).message);
+    }
+  },
+);
+
+// delete a specific appointment
+router.delete(
+  "/appointments/:id",
+  [isAuthenticated],
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    if (!id) return res.status(400).send();
+
+    const apptsCollection = db.collection("JaneAppt");
+    const doc = apptsCollection.doc(id);
+
+    await doc.delete();
+    return res.status(200).send();
+  },
+);
+
+// bulk delete appts
+router.post(
+  "/bulk/appointments/delete",
+  [isAuthenticated],
+  async (req: Request, res: Response) => {
+    const { ids } = req.body as { ids: string[] };
+
+    if (!ids || ids.length == 0) {
+      return res.status(400).send("No ids provided");
+    }
+
+    const CHUNK_SIZE = 500;
+
+    const apptsCollection = db.collection("JaneAppt");
+
+    for (let i = 0; i < ids.length; i += CHUNK_SIZE) {
+      const slice = ids.slice(i, i + CHUNK_SIZE);
+      const batch = db.batch();
+
+      slice.forEach((id) => {
+        const doc = apptsCollection.doc(id);
+        batch.delete(doc);
+      });
+
+      await batch.commit();
+    }
+
+    return res.status(200).send();
   },
 );
 

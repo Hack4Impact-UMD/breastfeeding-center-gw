@@ -1,5 +1,5 @@
 import { Request, Response, Router } from "express";
-import { Role, User } from "../types/userTypes";
+import { Role, User } from "../types/userType";
 import { logger } from "firebase-functions";
 import { auth, db } from "../services/firebase";
 import { config } from "../config";
