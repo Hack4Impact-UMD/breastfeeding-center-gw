@@ -38,7 +38,7 @@ router.get(
 // TODO: The restrictions in this function need to be double checked.
 router.delete(
   "/id/:auth_id",
-  [isAuthenticated, hasRoles(["DIRECTOR", "ADMIN"])],
+  [isAuthenticated],
   async (req: Request, res: Response) => {
     const userId = req.params.auth_id;
     const currentUserRole = (await auth.getUser(req.token!.uid)).customClaims
@@ -64,6 +64,7 @@ router.delete(
 
     if (
       currentUserRole !== "DIRECTOR" &&
+      req.token?.uid !== userId &&
       RoleLevels[user.type] >= RoleLevels[currentUserRole]
     ) {
       return res.status(403).send("Insufficient permissions to delete user!");
@@ -143,6 +144,7 @@ router.put(
       !userToUpdate ||
       (
         currentUserRole !== "DIRECTOR" &&
+        userToUpdate.auth_id !== req.token?.uid &&
         RoleLevels[userToUpdate.type] >= RoleLevels[currentUserRole]
       )
     ) {

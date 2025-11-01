@@ -21,7 +21,7 @@ const UserCard: React.FC<{ user: User, singleDirector: boolean }> = ({ user, sin
   const [isChangeAccessOpen, setIsChangeAccessOpen] = React.useState(false);
   const [selectedAccess, setSelectedAccess] = React.useState<
     Role
-  >(user.type);
+  >("VOLUNTEER");
   const [isRemoveConfirmOpen, setIsRemoveConfirmOpen] = React.useState(false);
   const [isDirectorBlockOpen, setIsDirectorBlockOpen] = React.useState(false);
 
