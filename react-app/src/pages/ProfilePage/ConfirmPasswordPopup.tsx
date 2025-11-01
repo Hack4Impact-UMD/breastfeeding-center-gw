@@ -103,10 +103,11 @@ const ConfirmPasswordPopup = ({
           </div>
           <div className="flex justify-end m-8 mt-0">
             <button
-              className={`px-6 py-2 rounded-lg border border-black text-black ${!currentPasswordInput
+              className={`px-6 py-2 rounded-lg border border-black text-black ${
+                !currentPasswordInput
                   ? "bg-bcgw-gray-light cursor-not-allowed"
                   : "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light cursor-pointer"
-                }`}
+              }`}
               onClick={handleNextFromCurrent}
               disabled={!currentPasswordInput}
             >

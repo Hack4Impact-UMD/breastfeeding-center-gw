@@ -20,7 +20,7 @@ export function useDeleteUser() {
       // force refresh auth
       if (authUser?.uid === userId) {
         await logOut();
-        navigate("/login")
+        navigate("/login");
       }
     },
   });

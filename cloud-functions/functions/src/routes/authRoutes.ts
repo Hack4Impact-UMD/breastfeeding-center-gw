@@ -191,7 +191,7 @@ router.post(
 
 async function userExists(email: string) {
   const user = await auth.getUserByEmail(email).catch(() => undefined);
-  return user !== undefined
+  return user !== undefined;
 }
 
 export default router;

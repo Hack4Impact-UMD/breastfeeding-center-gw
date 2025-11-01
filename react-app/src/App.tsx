@@ -44,8 +44,9 @@ function App() {
                         setNavBarOpen={setNavBarOpen}
                       />
                       <div
-                        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-                          }`}
+                        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
+                          navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
+                        }`}
                       >
                         <Header />
                       </div>
@@ -53,11 +54,14 @@ function App() {
                   </RequireAuth>
                 }
               />
-              <Route path="/login" element={
-                <RequireNoAuth>
-                  <LoginPage />
-                </RequireNoAuth>
-              } />
+              <Route
+                path="/login"
+                element={
+                  <RequireNoAuth>
+                    <LoginPage />
+                  </RequireNoAuth>
+                }
+              />
               <Route path="/logout" element={<LogoutPage />} />
               <Route
                 path="/services/jane"
@@ -127,11 +131,14 @@ function App() {
                 path="/register-success"
                 element={<RegisterSuccessPage />}
               />
-              <Route path="/register/:inviteId" element={
-                <RequireNoAuth>
-                  <NewUserPage />
-                </RequireNoAuth>
-              } />
+              <Route
+                path="/register/:inviteId"
+                element={
+                  <RequireNoAuth>
+                    <NewUserPage />
+                  </RequireNoAuth>
+                }
+              />
               <Route
                 path="/*"
                 element={

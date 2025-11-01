@@ -1,4 +1,8 @@
-import { onIdTokenChanged, type User as AuthUser, type IdTokenResult } from "firebase/auth";
+import {
+  onIdTokenChanged,
+  type User as AuthUser,
+  type IdTokenResult,
+} from "firebase/auth";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { auth } from "../config/firebase";
 import { User as UserProfile } from "@/types/UserType";
@@ -10,7 +14,7 @@ interface Props {
 
 interface AuthContextType {
   authUser: AuthUser | null;
-  profile: UserProfile | null,
+  profile: UserProfile | null;
   token: IdTokenResult | null;
   loading: boolean;
   isAuthed: boolean;
@@ -60,7 +64,7 @@ export const AuthProvider = ({ children }: Props): React.ReactElement => {
           token: null,
           loading: false,
           profile: null,
-          isAuthed: false
+          isAuthed: false,
         });
       }
     });

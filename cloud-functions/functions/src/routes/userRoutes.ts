@@ -58,7 +58,11 @@ router.delete(
         .where("type", "==", "DIRECTOR")
         .get();
       if (directorUsers.size <= 1) {
-        return res.status(400).send("There must be one active user with the DIRECTOR role at all times!");
+        return res
+          .status(400)
+          .send(
+            "There must be one active user with the DIRECTOR role at all times!",
+          );
       }
     }
 
@@ -142,11 +146,9 @@ router.put(
 
     if (
       !userToUpdate ||
-      (
-        currentUserRole !== "DIRECTOR" &&
+      (currentUserRole !== "DIRECTOR" &&
         userToUpdate.auth_id !== req.token?.uid &&
-        RoleLevels[userToUpdate.type] >= RoleLevels[currentUserRole]
-      )
+        RoleLevels[userToUpdate.type] >= RoleLevels[currentUserRole])
     ) {
       return res.status(403).send("Cannot update user's role!");
     }

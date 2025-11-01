@@ -37,8 +37,11 @@ export async function getUserById(id: string): Promise<User> {
   return res.data as User;
 }
 
-export async function registerUserWithInvite(inviteId: string, form: UserRegisterForm) {
+export async function registerUserWithInvite(
+  inviteId: string,
+  form: UserRegisterForm,
+) {
   const axios = await axiosClient();
 
-  await axios.post(`/auth/register/invite/${inviteId}`, form)
+  await axios.post(`/auth/register/invite/${inviteId}`, form);
 }

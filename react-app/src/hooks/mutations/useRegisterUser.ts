@@ -4,24 +4,24 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 
 export function useRegisterUser() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   return useMutation({
     mutationFn: async ({
       inviteId,
-      form
+      form,
     }: {
-      inviteId: string,
-      form: UserRegisterForm
+      inviteId: string;
+      form: UserRegisterForm;
     }) => {
-      await registerUserWithInvite(inviteId, form)
+      await registerUserWithInvite(inviteId, form);
     },
     onSuccess: () => {
-      console.log("Registration successful!")
-      navigate("/login")
+      console.log("Registration successful!");
+      navigate("/login");
     },
     onError: (err) => {
       console.error("Registration failed!");
       console.error(err);
-    }
-  })
+    },
+  });
 }

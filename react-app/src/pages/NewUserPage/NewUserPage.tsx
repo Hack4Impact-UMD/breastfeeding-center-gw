@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 const PRONOUN_OPTIONS = ["she/her", "he/him", "they/them", "Other", "None"];
 
 function validatePhone(phone: string) {
-  const regex = /^\+?\d{10,14}$/gmi;
+  const regex = /^\+?\d{10,14}$/gim;
   return regex.test(phone);
 }
 
@@ -25,7 +25,11 @@ export default function NewUserPage() {
   const { inviteId = "" } = useParams();
 
   const { data: invite, isPending, error } = useInvite(inviteId);
-  const { mutate: register, isPending: registerPending, error: registerError } = useRegisterUser()
+  const {
+    mutate: register,
+    isPending: registerPending,
+    error: registerError,
+  } = useRegisterUser();
 
   const prefilledFirstName = invite?.firstName ?? "";
   const prefilledLastName = invite?.lastName ?? "";
@@ -50,7 +54,7 @@ export default function NewUserPage() {
   useEffect(() => {
     setFirstName(prefilledFirstName);
     setLastName(prefilledLastName);
-  }, [prefilledFirstName, prefilledLastName])
+  }, [prefilledFirstName, prefilledLastName]);
 
   const allFieldsFilled =
     !!firstName.trim() &&
@@ -116,9 +120,9 @@ export default function NewUserPage() {
         lastName: lastName,
         pronouns: pronouns,
         password: password,
-        phone: phone
-      }
-    })
+        phone: phone,
+      },
+    });
   }
 
   return (
@@ -225,7 +229,9 @@ export default function NewUserPage() {
                 <div className="bg-[#0F4374] text-white p-3 rounded-lg shadow-md">
                   <ul className="text-sm list-disc list-inside">
                     {PASSWORD_REQUIREMENTS.map((req) => (
-                      <li key={req} className="leading-tight">{req}</li>
+                      <li key={req} className="leading-tight">
+                        {req}
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -248,9 +254,12 @@ export default function NewUserPage() {
               onClick={() => setShowPassword((v) => !v)}
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
-              {showPassword ? <IoMdEyeOff className="w-5 h-5" /> : <IoMdEye className="w-5 h-5" />}
+              {showPassword ? (
+                <IoMdEyeOff className="w-5 h-5" />
+              ) : (
+                <IoMdEye className="w-5 h-5" />
+              )}
             </button>
-
           </div>
         </div>
 
@@ -272,9 +281,15 @@ export default function NewUserPage() {
               type="button"
               className="absolute right-3 top-4 text-gray-500 hover:text-gray-700 cursor-pointer"
               onClick={() => setShowConfirmPassword((v) => !v)}
-              aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+              aria-label={
+                showConfirmPassword ? "Hide password" : "Show password"
+              }
             >
-              {showConfirmPassword ? <IoMdEyeOff className="w-5 h-5" /> : <IoMdEye className="w-5 h-5" />}
+              {showConfirmPassword ? (
+                <IoMdEyeOff className="w-5 h-5" />
+              ) : (
+                <IoMdEye className="w-5 h-5" />
+              )}
             </button>
           </div>
         </div>

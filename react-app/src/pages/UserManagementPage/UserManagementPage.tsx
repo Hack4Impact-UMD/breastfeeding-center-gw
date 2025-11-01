@@ -18,7 +18,10 @@ const UserManagementPage: React.FC = () => {
 
   const { data: users, isPending, error } = useAllUsers();
 
-  const singleDirector = useMemo(() => (users?.filter(u => u.type === "DIRECTOR").length ?? 0) <= 1, [users])
+  const singleDirector = useMemo(
+    () => (users?.filter((u) => u.type === "DIRECTOR").length ?? 0) <= 1,
+    [users],
+  );
 
   const filteredUsers = useMemo(
     () =>
@@ -60,8 +63,9 @@ const UserManagementPage: React.FC = () => {
     <>
       <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
       <div
-        className={`transition-all duration-200 ease-in-out bg-gray-100 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]"
-          }`}
+        className={`transition-all duration-200 ease-in-out bg-gray-100 min-h-screen overflow-x-hidden flex flex-col ${
+          navBarOpen ? "ml-[250px]" : "ml-[60px]"
+        }`}
       >
         <Header />
 
@@ -86,7 +90,13 @@ const UserManagementPage: React.FC = () => {
             ) : error ? (
               <p>Something went wrong: {error.message}</p>
             ) : (
-              filteredUsers?.map((u) => <UserCard singleDirector={singleDirector} key={u.auth_id} user={u} />)
+              filteredUsers?.map((u) => (
+                <UserCard
+                  singleDirector={singleDirector}
+                  key={u.auth_id}
+                  user={u}
+                />
+              ))
             )}
           </div>
           <AddAccountModal

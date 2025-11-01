@@ -11,17 +11,18 @@ import { useDeleteUser } from "@/hooks/mutations/useDeleteUser";
 const roleChipClass =
   "px-5 py-1 rounded-full text-base border border-black bg-background flex items-center";
 
-const UserCard: React.FC<{ user: User, singleDirector: boolean }> = ({ user, singleDirector }) => {
-  const { profile } = useAuth()
+const UserCard: React.FC<{ user: User; singleDirector: boolean }> = ({
+  user,
+  singleDirector,
+}) => {
+  const { profile } = useAuth();
   const { mutate: updateUserRole } = useUpdateUserRole();
   const { mutate: deleteUser } = useDeleteUser();
 
   const initials =
     `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase();
   const [isChangeAccessOpen, setIsChangeAccessOpen] = React.useState(false);
-  const [selectedAccess, setSelectedAccess] = React.useState<
-    Role
-  >("VOLUNTEER");
+  const [selectedAccess, setSelectedAccess] = React.useState<Role>("VOLUNTEER");
   const [isRemoveConfirmOpen, setIsRemoveConfirmOpen] = React.useState(false);
   const [isDirectorBlockOpen, setIsDirectorBlockOpen] = React.useState(false);
 
@@ -49,10 +50,11 @@ const UserCard: React.FC<{ user: User, singleDirector: boolean }> = ({ user, sin
       </div>
 
       <div className="flex gap-4 justify-end">
-        {
-          (profile?.auth_id === user.auth_id) ||
-            (profile?.type === "DIRECTOR") ||
-            (profile?.type === "ADMIN" && RoleLevels[profile.type] >= RoleLevels[user.type]) ? <>
+        {profile?.auth_id === user.auth_id ||
+        profile?.type === "DIRECTOR" ||
+        (profile?.type === "ADMIN" &&
+          RoleLevels[profile.type] >= RoleLevels[user.type]) ? (
+          <>
             <Button
               variant="outline"
               onClick={() => {
@@ -79,8 +81,10 @@ const UserCard: React.FC<{ user: User, singleDirector: boolean }> = ({ user, sin
             >
               Remove Access
             </Button>
-          </> : <></>
-        }
+          </>
+        ) : (
+          <></>
+        )}
       </div>
 
       {/* Change Access Modal (UI only, no functionality wired) */}
@@ -115,10 +119,17 @@ const UserCard: React.FC<{ user: User, singleDirector: boolean }> = ({ user, sin
                 onChange={(e) => setSelectedAccess(e.target.value as Role)}
                 className="h-9 px-4 w-32 border border-black rounded bg-white text-sm focus:outline-none"
               >
-                {["DIRECTOR", "ADMIN", "VOLUNTEER"].map(role => (
-                  profile?.type === "DIRECTOR" || (RoleLevels[role as Role] < RoleLevels[profile?.type ?? "VOLUNTEER"]) ?
-                    (<option key={role} value={role}>{role.charAt(0) + role.substring(1).toLocaleLowerCase()}</option>) : <></>
-                ))}
+                {["DIRECTOR", "ADMIN", "VOLUNTEER"].map((role) =>
+                  profile?.type === "DIRECTOR" ||
+                  RoleLevels[role as Role] <
+                    RoleLevels[profile?.type ?? "VOLUNTEER"] ? (
+                    <option key={role} value={role}>
+                      {role.charAt(0) + role.substring(1).toLocaleLowerCase()}
+                    </option>
+                  ) : (
+                    <></>
+                  ),
+                )}
               </select>
             </div>
 

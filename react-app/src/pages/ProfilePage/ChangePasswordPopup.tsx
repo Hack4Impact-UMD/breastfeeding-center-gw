@@ -36,7 +36,6 @@ const ChangePasswordPopup = ({
     setShowConfirmPwd(false);
   };
 
-
   const handleNewPasswordSubmit = () => {
     const isValid = validatePassword(newPassword);
     const isMatch = newPassword === confirmNewPassword;
@@ -97,7 +96,7 @@ const ChangePasswordPopup = ({
                 >
                   <div className="bg-[#0F4374] text-white p-2 rounded-lg">
                     <ul className="text-sm list-disc list-inside">
-                      {PASSWORD_REQUIREMENTS.map(req => (
+                      {PASSWORD_REQUIREMENTS.map((req) => (
                         <li key={req}>{req}</li>
                       ))}
                     </ul>
@@ -115,13 +114,14 @@ const ChangePasswordPopup = ({
                   const val = e.target.value;
                   setNewPassword(val);
                   setShowPasswordRequirementsError(
-                    val !== "" && !validatePassword(val)
+                    val !== "" && !validatePassword(val),
                   );
                 }}
-                className={`w-full border rounded px-3 py-2 pr-10 ${showPasswordRequirementsError
-                  ? "border-red-500"
-                  : "border-black"
-                  }`}
+                className={`w-full border rounded px-3 py-2 pr-10 ${
+                  showPasswordRequirementsError
+                    ? "border-red-500"
+                    : "border-black"
+                }`}
                 placeholder="New password"
                 autoComplete="new-password"
               />
@@ -155,7 +155,11 @@ const ChangePasswordPopup = ({
                 value={confirmNewPassword}
                 onChange={(e) => setConfirmNewPassword(e.target.value)}
                 onKeyDown={(event) => {
-                  if (newPassword && confirmNewPassword && event.key === "Enter")
+                  if (
+                    newPassword &&
+                    confirmNewPassword &&
+                    event.key === "Enter"
+                  )
                     handleNewPasswordSubmit();
                 }}
                 className="w-full border rounded px-3 py-2 pr-10 border-black"
@@ -168,32 +172,26 @@ const ChangePasswordPopup = ({
                 onClick={() => setShowConfirmPwd((v) => !v)}
                 aria-label={showConfirmPwd ? "Hide password" : "Show password"}
               >
-                {showConfirmPwd ? (
-                  <AiOutlineEye />
-                ) : (
-                  <AiOutlineEyeInvisible />
-                )}
+                {showConfirmPwd ? <AiOutlineEye /> : <AiOutlineEyeInvisible />}
               </button>
             </div>
 
             <div className="h-[20px]" />
             {/* show only red warning, no green message */}
-            {confirmNewPassword &&
-              newPassword !== confirmNewPassword && (
-                <p className="text-red-600 text-sm">
-                  Password does not match
-                </p>
-              )}
+            {confirmNewPassword && newPassword !== confirmNewPassword && (
+              <p className="text-red-600 text-sm">Password does not match</p>
+            )}
           </div>
         </div>
 
         {/* Save Button */}
         <div className="flex justify-end m-8 mt-4">
           <button
-            className={`px-6 py-2 rounded-lg border border-black text-black ${saveDisabled
-              ? "bg-bcgw-gray-light cursor-not-allowed"
-              : "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light cursor-pointer"
-              }`}
+            className={`px-6 py-2 rounded-lg border border-black text-black ${
+              saveDisabled
+                ? "bg-bcgw-gray-light cursor-not-allowed"
+                : "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light cursor-pointer"
+            }`}
             onClick={handleNewPasswordSubmit}
             disabled={saveDisabled}
           >

@@ -12,12 +12,12 @@ export function useAllUsers() {
 }
 
 export function useCurrentUser() {
-  const { authUser: user } = useAuth()
+  const { authUser: user } = useAuth();
   return useQuery<User>({
     ...queries.users.current,
     queryFn: async () => {
       if (!user) throw new Error("Not authenticated");
-      return await getUserById(user.uid)
-    }
-  })
+      return await getUserById(user.uid);
+    },
+  });
 }

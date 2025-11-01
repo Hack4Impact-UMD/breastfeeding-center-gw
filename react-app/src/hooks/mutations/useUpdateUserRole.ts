@@ -7,7 +7,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function useUpdateUserRole() {
   const queryClient = useQueryClient();
-  const { authUser } = useAuth()
+  const { authUser } = useAuth();
 
   return useMutation({
     mutationFn: (variables: { id: string; role: Role }) =>
@@ -18,7 +18,7 @@ export function useUpdateUserRole() {
 
       // force refresh auth
       if (authUser?.uid === id) {
-        await auth.currentUser?.getIdToken(true)
+        await auth.currentUser?.getIdToken(true);
       }
     },
   });
