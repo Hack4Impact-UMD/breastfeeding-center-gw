@@ -147,7 +147,7 @@ export default function NewUserPage() {
             </label>
             <input
               className="w-full border rounded px-3 py-2"
-              defaultValue={prefilledFirstName}
+              value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               required
             />
@@ -159,7 +159,7 @@ export default function NewUserPage() {
             </label>
             <input
               className="w-full border rounded px-3 py-2"
-              defaultValue={prefilledLastName}
+              value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               required
             />

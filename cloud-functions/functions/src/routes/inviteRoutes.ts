@@ -97,12 +97,10 @@ router.get("/id/:inviteId", async (req: Request, res: Response) => {
   const invite = inviteDoc.data() as UserInvite;
   const expire = config.inviteExpirationDays.value();
 
-  return res
-    .json({
-      ...invite,
-      valid: isInviteValid(invite, expire),
-    })
-    .send();
+  return res.json({
+    ...invite,
+    valid: isInviteValid(invite, expire),
+  });
 });
 
 export default router;

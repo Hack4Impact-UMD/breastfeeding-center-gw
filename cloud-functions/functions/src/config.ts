@@ -1,4 +1,5 @@
 import { defineInt, defineString } from "firebase-functions/params";
+import { randomUUID } from "crypto";
 
 const rootUserEmail = defineString("ROOT_USER_EMAIL", {
   description:
@@ -7,7 +8,7 @@ const rootUserEmail = defineString("ROOT_USER_EMAIL", {
 
 const rootUserSecret = defineString("ROOT_USER_SECRET", {
   description: "The secret to verify root user registration requests",
-  default: crypto.randomUUID(),
+  default: randomUUID(),
 });
 
 const inviteExpirationDays = defineInt("INVITE_EXPIRE_DAYS", {

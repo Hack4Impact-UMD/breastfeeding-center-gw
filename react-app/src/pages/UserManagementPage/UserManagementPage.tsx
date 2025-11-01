@@ -19,7 +19,7 @@ const UserManagementPage: React.FC = () => {
   const { data: users, isPending, error } = useAllUsers();
 
   const singleDirector = useMemo(
-    () => (users?.filter((u) => u.type === "DIRECTOR").length ?? 0) <= 1,
+    () => (users?.filter((u) => u.type === "DIRECTOR")?.length ?? 0) <= 1,
     [users],
   );
 

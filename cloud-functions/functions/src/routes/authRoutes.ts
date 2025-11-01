@@ -123,7 +123,6 @@ router.post(
 
     if (!invite) {
       logger.warn("Register request attempted without invite!");
-      logger.warn(req.body);
       return res.status(404).send("Invite not found or has already been used!");
     }
 

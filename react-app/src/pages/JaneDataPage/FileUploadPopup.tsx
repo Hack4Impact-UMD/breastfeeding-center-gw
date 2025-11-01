@@ -48,6 +48,8 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
           //missing clients
           setErrorType("missingClients");
           setMissingClients(err.response.data.details as string[]);
+        } else {
+          setErrorType("other");
         }
       } else {
         setErrorType("other");

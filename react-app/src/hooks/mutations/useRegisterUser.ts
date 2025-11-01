@@ -17,7 +17,7 @@ export function useRegisterUser() {
     },
     onSuccess: () => {
       console.log("Registration successful!");
-      navigate("/login");
+      navigate("/register-success");
     },
     onError: (err) => {
       console.error("Registration failed!");

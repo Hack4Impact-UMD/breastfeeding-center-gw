@@ -74,8 +74,8 @@ router.delete(
       return res.status(403).send("Insufficient permissions to delete user!");
     }
 
-    await userDoc.delete();
     await auth.deleteUser(userId);
+    await userDoc.delete();
 
     logger.info(`User with ID ${userId} deleted`);
     return res.status(200).send();

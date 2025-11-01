@@ -12,7 +12,7 @@ import { logger, onInit } from "firebase-functions";
 onInit(() => {
   logger.info("====CONFIG DETAILS BELOW====");
   logger.info(`INIT: USING ROOT USER EMAIL: ${config.rootUserEmail.value()}`);
-  logger.info(`INIT: USING ROOT USER SECRET: ${config.rootUserSecret.value()}`);
+  // logger.info(`INIT: USING ROOT USER SECRET: ${config.rootUserSecret.value()}`);
   logger.info("====CONFIG DETAILS END====");
 });
 
