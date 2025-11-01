@@ -18,6 +18,8 @@ const UserManagementPage: React.FC = () => {
 
   const { data: users, isPending, error } = useAllUsers();
 
+  const singleDirector = useMemo(() => users?.filter(u => u.type === "DIRECTOR").length ?? 0 <= 1, [users])
+
   const filteredUsers = useMemo(
     () =>
       users?.filter((u) => {
@@ -84,7 +86,7 @@ const UserManagementPage: React.FC = () => {
             ) : error ? (
               <p>Something went wrong: {error.message}</p>
             ) : (
-              filteredUsers?.map((u) => <UserCard key={u.auth_id} user={u} />)
+              filteredUsers?.map((u) => <UserCard singleDirector={singleDirector} key={u.auth_id} user={u} />)
             )}
           </div>
           <AddAccountModal

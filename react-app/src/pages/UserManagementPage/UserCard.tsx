@@ -11,7 +11,7 @@ import { useDeleteUser } from "@/hooks/mutations/useDeleteUser";
 const roleChipClass =
   "px-5 py-1 rounded-full text-base border border-black bg-background flex items-center";
 
-const UserCard: React.FC<{ user: User }> = ({ user }) => {
+const UserCard: React.FC<{ user: User, singleDirector: boolean }> = ({ user, singleDirector }) => {
   const { profile } = useAuth()
   const { mutate: updateUserRole } = useUpdateUserRole();
   const { mutate: deleteUser } = useDeleteUser();
@@ -56,7 +56,11 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
             <Button
               variant="outline"
               onClick={() => {
-                setIsChangeAccessOpen(true);
+                if (singleDirector) {
+                  setIsDirectorBlockOpen(true);
+                } else {
+                  setIsChangeAccessOpen(true);
+                }
               }}
               disabled={profile.type === "VOLUNTEER"}
             >
@@ -66,11 +70,11 @@ const UserCard: React.FC<{ user: User }> = ({ user }) => {
               variant="outline"
               onClick={() => {
                 // Placeholder logic: show director block if this is a director
-                // if (isDirector) {
-                // setIsDirectorBlockOpen(true);
-                // } else {
-                setIsRemoveConfirmOpen(true);
-                // }
+                if (singleDirector) {
+                  setIsDirectorBlockOpen(true);
+                } else {
+                  setIsRemoveConfirmOpen(true);
+                }
               }}
             >
               Remove Access

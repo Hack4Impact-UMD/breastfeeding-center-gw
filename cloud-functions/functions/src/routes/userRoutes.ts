@@ -36,7 +36,6 @@ router.get(
 
 // deletes user with the specified auth_id
 // TODO: The restrictions in this function need to be double checked.
-// TODO: Implement a check to ensure there is always 1 director after deletion.
 router.delete(
   "/id/:auth_id",
   [isAuthenticated, hasRoles(["DIRECTOR", "ADMIN"])],
@@ -53,7 +52,20 @@ router.delete(
       return res.status(404).send("User does not exist");
     }
 
-    if (currentUserRole !== "DIRECTOR" && RoleLevels[user.type] >= RoleLevels[currentUserRole]) {
+    if (user.type === "DIRECTOR") {
+      const usersCollection = db.collection(USERS_COLLECTION);
+      const directorUsers = await usersCollection
+        .where("type", "==", "DIRECTOR")
+        .get();
+      if (directorUsers.size <= 1) {
+        return res.status(400).send("There must be one active user with the DIRECTOR role at all times!");
+      }
+    }
+
+    if (
+      currentUserRole !== "DIRECTOR" &&
+      RoleLevels[user.type] >= RoleLevels[currentUserRole]
+    ) {
       return res.status(403).send("Insufficient permissions to delete user!");
     }
 
@@ -140,6 +152,15 @@ router.put(
     // trying to give a user a role that is higher than the current user's role
     if (RoleLevels[newRole] > RoleLevels[currentUserRole]) {
       return res.status(403).send("Forbidden");
+    }
+
+    if (userToUpdate.type === "DIRECTOR" && newRole !== "DIRECTOR") {
+      const directorUsers = await usersCollection
+        .where("type", "==", "DIRECTOR")
+        .get();
+      if (directorUsers.size <= 1) {
+        return res.status(400).send("There must always be one DIRECTOR user");
+      }
     }
 
     await userDoc.update({
