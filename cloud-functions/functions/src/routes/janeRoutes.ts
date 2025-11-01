@@ -219,22 +219,24 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
     for (let i = 0; i < parentsToAdd.length; i += chunkSize) {
       const chunk = parentsToAdd.slice(i, i + chunkSize);
       const batch = db.batch();
-      chunk.forEach((parent) =>
-        batch.set(db.collection("Client").doc(parent.id), parent, {
+      chunk.forEach((parent) => {
+        const { id, ...parentData } = parent;
+        batch.set(db.collection("Client").doc(id), parentData, {
           merge: true,
-        }),
-      );
+        });
+      });
       await batch.commit();
     }
 
     for (let i = 0; i < apptsToAdd.length; i += chunkSize) {
       const chunk = apptsToAdd.slice(i, i + chunkSize);
       const batch = db.batch();
-      chunk.forEach((appt) =>
-        batch.set(db.collection("JaneAppt").doc(appt.apptId), appt, {
+      chunk.forEach((appt) => {
+        const { apptId, ...apptData } = appt;
+        batch.set(db.collection("JaneAppt").doc(apptId), apptData, {
           merge: true,
-        }),
-      );
+        });
+      });
       await batch.commit();
     }
 
@@ -295,7 +297,7 @@ router.get(
 
       // Convert documents to JaneAppt objects
       const appointments: JaneAppt[] = snapshot.docs.map((doc) => {
-        return doc.data() as JaneAppt;
+        return { ...(doc.data() as Omit<JaneAppt, "id">), apptId: doc.id } as JaneAppt;
       });
 
       return res.status(200).json(appointments);
@@ -320,7 +322,7 @@ router.get(
         return res.status(404).send("Client not found");
       }
 
-      const clientData = doc.data() as Client;
+      const clientData: Client = { ...(doc.data() as Omit<Client, "id">), id: doc.id };
       return res.status(200).json(clientData);
     } catch (e) {
       logger.error("Error fetching client:", e);

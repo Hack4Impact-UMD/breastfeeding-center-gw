@@ -106,9 +106,7 @@ function parseClient(clientRawData: Record<string, string>) {
   const birthDateStr = String(clientRawData["Birth Date"])?.trim();
   if (birthDateStr) {
     const date = new Date(birthDateStr);
-    if (!isNaN(date.getTime())) {
-      client.dob = date.toISOString();
-    }
+    client.dob = isNaN(date.getTime()) ? "N/A" : date.toISOString();
   } else {
     client.dob = "N/A";
   }
@@ -144,9 +142,7 @@ function parseBaby(babyRawData: Record<string, string>) {
   const birthDateStr = String(babyRawData["Birth Date"])?.trim();
   if (birthDateStr) {
     const date = new Date(birthDateStr);
-    if (!isNaN(date.getTime())) {
-      baby.dob = date.toISOString();
-    }
+    baby.dob = isNaN(date.getTime()) ? "N/A" : date.toISOString();
   } else {
     baby.dob = "N/A";
   }

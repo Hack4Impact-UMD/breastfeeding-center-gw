@@ -34,7 +34,8 @@ export const janeDataColumns: ColumnDef<JaneTableRow>[] = [
     },
     cell: ({ row }) => {
       const value = row.getValue<string>("startAt");
-      return DateTime.fromISO(value).toLocaleString(DateTime.DATETIME_SHORT);
+      const dt = DateTime.fromISO(value);
+      return dt.isValid ? dt.toLocaleString(DateTime.DATETIME_SHORT) : value;
     },
   },
   {

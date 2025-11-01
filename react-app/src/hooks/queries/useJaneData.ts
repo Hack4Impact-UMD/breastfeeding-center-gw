@@ -41,12 +41,13 @@ export function useJaneData(startDate?: string, endDate?: string) {
               `Failed to fetch client for patientId ${appointment.patientId}:`,
               error,
             );
-            throw error;
+             return null;
           }
         }),
       );
-      console.log("TOTAL ROWS: " + janeTableRows.length);
-      return janeTableRows;
+      const validRows = janeTableRows.filter((row) => row !== null);
+      console.log("TOTAL ROWS: " + validRows.length);
+      return validRows;
     },
   });
 }
