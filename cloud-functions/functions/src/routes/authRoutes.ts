@@ -38,9 +38,7 @@ router.post("/register/root/:secret", async (req: Request, res: Response) => {
   logger.info("Root user register request received!");
 
   if (secret !== config.rootUserSecret.value()) {
-    logger.warn(
-      `Root user register request attempted with bad secret: ${secret}!`,
-    );
+    logger.warn("Root user register request attempted with bad secret.");
     return res.status(403).send("Unauthorized");
   }
 
