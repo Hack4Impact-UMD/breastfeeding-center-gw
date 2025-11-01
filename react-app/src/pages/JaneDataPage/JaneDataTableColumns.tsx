@@ -72,6 +72,12 @@ export const janeDataColumns: ColumnDef<JaneTableRow>[] = [
     header: ({ column }) => {
       return <ColumnSortButton column={column}>DOB</ColumnSortButton>;
     },
+    cell: ({ row }) => {
+      const value = row.getValue<string>("dob");
+      return value === "N/A"
+        ? ""
+        : DateTime.fromISO(value).toLocaleString(DateTime.DATE_SHORT);
+    },
   },
   {
     accessorKey: "service",

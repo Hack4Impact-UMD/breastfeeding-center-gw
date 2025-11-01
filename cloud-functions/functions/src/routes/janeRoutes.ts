@@ -4,7 +4,7 @@ import { logger } from "firebase-functions";
 import { parseAppointmentSheet } from "../utils/janeUploadAppts";
 import { parseClientSheet } from "../utils/janeUploadClients";
 import { JaneAppt } from "../types/janeType";
-import { Client, Baby } from "../types/clientTypes";
+import { Client, Baby } from "../types/clientType";
 import { db } from "../services/firebase";
 import { isAuthenticated } from "../middleware/authMiddleware";
 import { DateTime } from "luxon";
@@ -118,49 +118,6 @@ router.post("/upload", [upload], async (req: Request, res: Response) => {
       return true;
     }
 
-    // async function client_in_firebase(patientId: string): Promise<boolean> {
-    //   // check patientid in firebase client collection
-    //   const querySnapshot = await db
-    //     .collection("Client")
-    //     .where("id", "==", patientId)
-    //     .get();
-    //
-    //   if (querySnapshot.docs.length == 0) {
-    //     // logger.info(
-    //     //   `No matching client in Client collection for client ID: ${patientId}`,
-    //     // );
-    //     return false;
-    //   }
-    //   return true;
-    // }
-    //
-    // async function get_client_from_firebase(
-    //   patientId: string,
-    // ): Promise<Client> {
-    //   const querySnapshot = await db
-    //     .collection("Client")
-    //     .where("id", "==", patientId)
-    //     .get();
-    //
-    //   // querySnapshot is guaranteed to not be empty
-    //   const doc = querySnapshot.docs[0];
-    //   const data = doc.data();
-    //
-    //   const client: Client = {
-    //     id: data.id,
-    //     firstName: data.firstName,
-    //     ...(data.middleName && { middleName: data.middleName }),
-    //     lastName: data.lastName,
-    //     email: data.email,
-    //     ...(data.phone && { phone: data.phone }),
-    //     ...(data.insurance && { insurance: data.insurance }),
-    //     ...(data.paysimpleId && { paysimpleId: data.paysimpleId }),
-    //     baby: data.baby,
-    //   };
-    //
-    //   return client;
-    // }
-    //
     function clientExists(patientId: string): boolean {
       return clientMap.has(patientId);
     }

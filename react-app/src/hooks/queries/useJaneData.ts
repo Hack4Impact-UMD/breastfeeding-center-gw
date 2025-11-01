@@ -29,11 +29,11 @@ export function useJaneData(startDate?: string, endDate?: string) {
               middleName: client.middleName?.slice(0, 1),
               lastName: client.lastName,
               email: client.email,
+              dob: client.dob,
               phone: client.phone,
               insurance: client.insurance,
               paysimpleId: client.paysimpleId,
               baby: client.baby,
-              dob: "MM-DD-YYYY",
             };
             return tableRow;
           } catch (error) {
@@ -45,7 +45,7 @@ export function useJaneData(startDate?: string, endDate?: string) {
           }
         }),
       );
-      console.log("TOTAL ROWS: " + janeTableRows.length)
+      console.log("TOTAL ROWS: " + janeTableRows.length);
       return janeTableRows;
     },
   });
