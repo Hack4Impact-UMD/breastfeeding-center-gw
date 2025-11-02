@@ -23,13 +23,21 @@ const JaneDataPage = () => {
   const [showUploadPopup, setShowUploadPopup] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: DateTime.now().minus({ months: 2 }).toJSDate(),
-    to: DateTime.now().toJSDate()
-  })
-  const { data: janeConsultations, isPending, error } = useJaneData(dateRange?.from?.toISOString(), dateRange?.to?.toISOString());
+    to: DateTime.now().toJSDate(),
+  });
+  const {
+    data: janeConsultations,
+    isPending,
+    error,
+  } = useJaneData(dateRange?.from?.toISOString(), dateRange?.to?.toISOString());
   const deleteJaneRecordMutation = useDeleteJaneRecord();
 
   const handleDelete = (rows: JaneTableRow[]) => {
-    deleteJaneRecordMutation.mutate({ rows, startDate: dateRange?.from?.toISOString(), endDate: dateRange?.to?.toISOString() });
+    deleteJaneRecordMutation.mutate({
+      rows,
+      startDate: dateRange?.from?.toISOString(),
+      endDate: dateRange?.to?.toISOString(),
+    });
   };
 
   return (

@@ -55,12 +55,7 @@ function App() {
               />
 
               <Route element={<LayoutShell />}>
-                <Route
-                  path="/"
-                  element={
-                    <p>Home</p>
-                  }
-                />
+                <Route path="/" element={<p>Home</p>} />
                 <Route
                   path="/services/jane"
                   element={
@@ -127,7 +122,6 @@ function App() {
                 />
               </Route>
 
-
               <Route
                 path="/testfunctions"
                 element={
@@ -138,7 +132,7 @@ function App() {
                         <Button
                           variant={"yellow"}
                           onClick={async () => {
-                            await getAllJaneApptsInRange()
+                            await getAllJaneApptsInRange();
                           }}
                         >
                           TEST

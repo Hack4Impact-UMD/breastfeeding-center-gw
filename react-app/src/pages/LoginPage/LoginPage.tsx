@@ -24,7 +24,9 @@ const LoginPage = () => {
 
   // Email and Password inputs have required, so handleSubmit
   // only handles validity of email
-  const handleSubmit = (e: FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement, MouseEvent>): void => {
+  const handleSubmit = (
+    e: FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement, MouseEvent>,
+  ): void => {
     e.preventDefault();
     setShowLoading(true);
 

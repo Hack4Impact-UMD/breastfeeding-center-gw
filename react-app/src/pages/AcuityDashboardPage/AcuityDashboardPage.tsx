@@ -508,19 +508,21 @@ export default function AcuityDashboardPage() {
         <div className={`${centerItemsInDiv} pt-4`}>
           <div className="flex flex-row">
             <button
-              className={`${graphTableButtonStyle} ${attendanceDisplay == "graph"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#f5f5f5]"
-                }`}
+              className={`${graphTableButtonStyle} ${
+                attendanceDisplay == "graph"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
+              }`}
               onClick={() => setAttendanceDisplay("graph")}
             >
               Graph
             </button>
             <button
-              className={`${graphTableButtonStyle} ${attendanceDisplay == "table"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#f5f5f5]"
-                }`}
+              className={`${graphTableButtonStyle} ${
+                attendanceDisplay == "table"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
+              }`}
               onClick={() => setAttendanceDisplay("table")}
             >
               Table
@@ -528,9 +530,7 @@ export default function AcuityDashboardPage() {
           </div>
           <button
             className={transparentGrayButtonStyle}
-            onClick={() =>
-              handleExport(attendanceChartRef, "class_attendance")
-            }
+            onClick={() => handleExport(attendanceChartRef, "class_attendance")}
           >
             Export
           </button>
@@ -548,8 +548,7 @@ export default function AcuityDashboardPage() {
           <div className="flex justify-between items-center space-x-4">
             <div className="text-2xl font-semibold">
               Class Attendance By Trimester,{" "}
-              {attendanceDisplay === "graph" ? <br /> : <></>}2/19/25 -
-              3/19/25
+              {attendanceDisplay === "graph" ? <br /> : <></>}2/19/25 - 3/19/25
             </div>
             {attendanceDisplay === "graph" ? (
               // Class dropdown
@@ -645,19 +644,21 @@ export default function AcuityDashboardPage() {
         <div className={`${centerItemsInDiv} pt-8`}>
           <div className="flex flex-row">
             <button
-              className={`${graphTableButtonStyle} ${classPopularityDisplay == "graph"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#f5f5f5]"
-                }`}
+              className={`${graphTableButtonStyle} ${
+                classPopularityDisplay == "graph"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
+              }`}
               onClick={() => setClassPopularityDisplay("graph")}
             >
               Graph
             </button>
             <button
-              className={`${graphTableButtonStyle} ${classPopularityDisplay == "table"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#f5f5f5]"
-                }`}
+              className={`${graphTableButtonStyle} ${
+                classPopularityDisplay == "table"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
+              }`}
               onClick={() => setClassPopularityDisplay("table")}
             >
               Table
@@ -747,19 +748,21 @@ export default function AcuityDashboardPage() {
         <div className={`${centerItemsInDiv} pt-8`}>
           <div className="flex flex-row">
             <button
-              className={`${graphTableButtonStyle} ${instructorPopularityDisplay == "graph"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#f5f5f5]"
-                }`}
+              className={`${graphTableButtonStyle} ${
+                instructorPopularityDisplay == "graph"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
+              }`}
               onClick={() => setInstructorPopularityDisplay("graph")}
             >
               Graph
             </button>
             <button
-              className={`${graphTableButtonStyle} ${instructorPopularityDisplay == "table"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#f5f5f5]"
-                }`}
+              className={`${graphTableButtonStyle} ${
+                instructorPopularityDisplay == "table"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
+              }`}
               onClick={() => setInstructorPopularityDisplay("table")}
             >
               Table
@@ -794,8 +797,8 @@ export default function AcuityDashboardPage() {
               ) : (
                 <span>Class Attendance by Instructor</span>
               )}
-              {instructorPopularityDisplay === "graph" ? <br /> : <></>}{" "}
-              2/19/25 - 3/19/25
+              {instructorPopularityDisplay === "graph" ? <br /> : <></>} 2/19/25
+              - 3/19/25
             </div>
 
             {/* Instructor dropdown */}

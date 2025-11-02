@@ -34,9 +34,9 @@ const ProfilePage = () => {
             <div className="bg-white border border-gray-300 p-6 rounded-md shadow-sm">
               <h5 className="font-bold mb-4">E-MAIL AND PHONE NUMBER</h5>
               <p className="text-xs text-gray-600 mb-4">
-                The linked email and phone number below will be used for
-                signing in and for two-factor authentication to help keep your
-                account secure.
+                The linked email and phone number below will be used for signing
+                in and for two-factor authentication to help keep your account
+                secure.
               </p>
 
               <div className="flex justify-between items-center mb-2">
@@ -62,9 +62,9 @@ const ProfilePage = () => {
             <div className="bg-white border border-gray-300 p-6 rounded-md shadow-sm">
               <h5 className="font-bold mb-4">PASSWORD</h5>
               <p className="text-xs text-gray-600 mb-4">
-                Heads up! You will be asked to log in to dashboard again
-                before and after making any changes to your email address or
-                password to ensure a secure and complete update.
+                Heads up! You will be asked to log in to dashboard again before
+                and after making any changes to your email address or password
+                to ensure a secure and complete update.
               </p>
 
               <div className="flex justify-between items-center">

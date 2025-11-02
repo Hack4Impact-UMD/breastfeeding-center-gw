@@ -30,7 +30,6 @@ import {
 import { DataTable } from "@/components/DataTable/DataTable";
 
 const JaneDashboardPage = () => {
-
   //dropdown
   const [selectedDropdown, setSelectedDropdown] = useState("ALL CLIENTS");
 
@@ -300,19 +299,21 @@ const JaneDashboardPage = () => {
             <div className={`${centerItemsInDiv} pt-4 mb-6`}>
               <div className="flex flex-row">
                 <button
-                  className={`${graphTableButtonStyle} ${visitDisplay == "graph"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#CED8E1]"
-                    }`}
+                  className={`${graphTableButtonStyle} ${
+                    visitDisplay == "graph"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#CED8E1]"
+                  }`}
                   onClick={() => setVisitDisplay("graph")}
                 >
                   Graph
                 </button>
                 <button
-                  className={`${graphTableButtonStyle} ${visitDisplay == "table"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#CED8E1]"
-                    }`}
+                  className={`${graphTableButtonStyle} ${
+                    visitDisplay == "table"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#CED8E1]"
+                  }`}
                   onClick={() => setVisitDisplay("table")}
                 >
                   Table
@@ -332,8 +333,8 @@ const JaneDashboardPage = () => {
                   Visit Breakdown:{" "}
                   {dateRange.startDate && dateRange.endDate
                     ? formatDate(dateRange.startDate) +
-                    " - " +
-                    formatDate(dateRange.endDate)
+                      " - " +
+                      formatDate(dateRange.endDate)
                     : "All Data"}
                 </span>
                 <div className={chartDiv} ref={pieChartRef}>
@@ -384,8 +385,8 @@ const JaneDashboardPage = () => {
                   Visit Breakdown:{" "}
                   {dateRange.startDate && dateRange.endDate
                     ? formatDate(dateRange.startDate) +
-                    " - " +
-                    formatDate(dateRange.endDate)
+                      " - " +
+                      formatDate(dateRange.endDate)
                     : "All Data"}
                 </span>
                 <DataTable
@@ -402,19 +403,21 @@ const JaneDashboardPage = () => {
             <div className={`${centerItemsInDiv} pt-4 mb-6`}>
               <div className="flex flex-row">
                 <button
-                  className={`${graphTableButtonStyle} ${retentionDisplay == "graph"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#CED8E1]"
-                    }`}
+                  className={`${graphTableButtonStyle} ${
+                    retentionDisplay == "graph"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#CED8E1]"
+                  }`}
                   onClick={() => setRetentionDisplay("graph")}
                 >
                   Graph
                 </button>
                 <button
-                  className={`${graphTableButtonStyle} ${retentionDisplay == "table"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#CED8E1]"
-                    }`}
+                  className={`${graphTableButtonStyle} ${
+                    retentionDisplay == "table"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#CED8E1]"
+                  }`}
                   onClick={() => setRetentionDisplay("table")}
                 >
                   Table
@@ -431,8 +434,8 @@ const JaneDashboardPage = () => {
               Retention Rate:{" "}
               {dateRange.startDate && dateRange.endDate
                 ? formatDate(dateRange.startDate) +
-                " - " +
-                formatDate(dateRange.endDate)
+                  " - " +
+                  formatDate(dateRange.endDate)
                 : "All Data"}
             </span>
             <div
