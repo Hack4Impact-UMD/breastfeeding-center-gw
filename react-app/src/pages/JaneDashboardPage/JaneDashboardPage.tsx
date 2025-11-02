@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import { Link } from "react-router-dom";
 import Header from "../../components/Header.tsx";
 import NavigationBar from "../../components/NavigationBar/NavigationBar.tsx";
@@ -13,7 +13,7 @@ import {
   FunnelAxisLine,
   FunnelSeries,
 } from "reaviz";
-import { Jane } from "../../types/JaneType.ts";
+import { JaneAppt } from "../../types/JaneType.ts";
 import Loading from "../../components/Loading.tsx";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
@@ -30,9 +30,40 @@ import {
   makeRetentionRateColumns,
 } from "./JaneTableColumns";
 import { DataTable } from "@/components/DataTable/DataTable";
+import { useJaneAppts } from "@/hooks/queries/useJaneData.ts";
+
+function BreakdownPieChartLabels(chartData: { key: string, data: number }[]) {
+  if (chartData.length === 0) return <></>
+  const total = chartData.reduce((sum, item) => sum + item.data, 0);
+  return chartData.map((item, index) => {
+    if (total === 0) return <></>
+
+    const percentage = ((item.data / total) * 100).toFixed(0);
+    const angle = chartData.slice(0, index).reduce((sum, d) => sum + (d.data / total) * 360, 0) + ((item.data / total) * 360) / 2;
+    const radians = (angle - 90) * Math.PI / 180;
+    const radius = 122;
+    const x = 150 + radius * Math.cos(radians);
+    const y = 150 + radius * Math.sin(radians);
+
+    return (
+      <div
+        key={item.key}
+        className={`absolute font-semibold text-sm text-white`}
+        style={{
+          left: `${x}px`,
+          top: `${y}px`,
+          transform: 'translate(-50%, -50%)'
+        }}
+      >
+        {percentage}%
+      </div>
+    );
+  })
+}
 
 const JaneDashboardPage = () => {
   const [navBarOpen, setNavBarOpen] = useState(true);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(defaultDateRange)
 
   //dropdown
   const [selectedDropdown, setSelectedDropdown] = useState("ALL CLIENTS");
@@ -48,11 +79,8 @@ const JaneDashboardPage = () => {
   const chartDiv =
     "flex flex-col items-center justify-start bg-white h-[370px] border-2 border-black p-5 mt-5 rounded-lg";
 
-  const [janeData] = useState<Jane[]>([]);
-  const [loading] = useState<boolean>(false);
-  const [chartData, setChartData] = useState<{ key: string; data: number }[]>(
-    [],
-  );
+  const { data: janeAppts, isLoading, error } = useJaneAppts(dateRange?.from?.toISOString(), dateRange?.to?.toISOString())
+
   const [visitDisplay, setVisitDisplay] = useState<string>("graph");
   const [retentionDisplay, setRetentionDisplay] = useState<string>("graph");
   const [openRow, setOpenRow] = useState<RetentionRate | null>(null);
@@ -102,34 +130,7 @@ const JaneDashboardPage = () => {
     }
   };
 
-  const [dateRange, setDateRange] = useState<{
-    startDate: Date | null;
-    endDate: Date | null;
-  }>({
-    startDate: null,
-    endDate: null,
-  });
 
-  const [clientsFilter, setClientsFilter] = useState<string>("ALL CLIENTS");
-  const [cliniciansFilter, setCliniciansFilter] =
-    useState<string>("ALL CLINICIANS");
-
-  const handleDateRangeChange = (newRange: DateRange | undefined) => {
-    if (newRange) {
-      if (newRange.from && newRange.to) {
-        setDateRange({
-          startDate: newRange.from,
-          endDate: newRange.to,
-        });
-        filterData();
-      } else {
-        setDateRange({
-          startDate: null,
-          endDate: null,
-        });
-      }
-    }
-  };
 
   const formatDate = (date: Date) =>
     date.toLocaleDateString("en-US", {
@@ -138,37 +139,64 @@ const JaneDashboardPage = () => {
       day: "numeric",
     });
 
-  const filterData = () => {
-    const visitTypeCounts: Record<string, number> = {};
-    const filteredData = janeData.filter((jane) => {
-      if (dateRange.startDate && dateRange.endDate) {
-        const appointmentDate = new Date(jane.date);
-        return (
-          appointmentDate >= dateRange.startDate &&
-          appointmentDate <= dateRange.endDate
-        );
-      }
-      return true;
-    });
-    filteredData.forEach((jane) => {
-      const type = jane.visitType || "Unknown";
-      visitTypeCounts[type] = (visitTypeCounts[type] || 0) + 1;
-    });
-    const chartData = Object.entries(visitTypeCounts).map(([key, value]) => ({
-      key,
-      data: value,
-    }));
-    setChartData(chartData);
-  };
+
 
   const chartColors = ["#f4bb47", "#05182a", "#3A8D8E"];
 
-  const visitBreakdownData: VisitBreakdown[] = [
-    { visitType: "Home Visit", percent: 16.6, count: 150000 },
-    { visitType: "In Office", percent: 16.6, count: 150000 },
-    { visitType: "Telehealth", percent: 66.6, count: 600000 },
-    { visitType: "Total", percent: 100, count: 900000 },
-  ];
+
+  const visitTypeMap = useMemo(() => new Map<string, string>([
+    ["HOMEVISIT", "Home Visit"],
+    ["OFFICE", "In Office"],
+    ["TELEHEALTH", "Telehealth"],
+    ["TOTAL", "Total"],
+  ]), []);
+
+  const { chartBreakdownData: chartData, visitBreakdownData } = useMemo(() => {
+    if (!janeAppts || janeAppts.length === 0) return {
+      chartBreakdownData: [],
+      visitBreakdownData: []
+    }
+
+    const breakdown = new Map<string, number>();
+    janeAppts.forEach((janeAppt: JaneAppt) => {
+      const mappedType = visitTypeMap.get(janeAppt.visitType);
+      if (mappedType) {
+        const current = breakdown.get(mappedType) ?? 0;
+        breakdown.set(mappedType, current + 1);
+      }
+    });
+
+    const chartBreakdownData = Array.from(breakdown, ([key, data]) => ({
+      key,
+      data,
+    }));
+
+    const visitBreakdown: VisitBreakdown[] = [];
+    for (const visitType of visitTypeMap.values()) {
+      if (visitType === "Total") {
+        const visitData = {
+          visitType: visitType,
+          percent: 100,
+          count: janeAppts.length,
+        };
+        visitBreakdown.push(visitData);
+      } else {
+        const visitData = {
+          visitType: visitType,
+          percent: Number(
+            (
+              ((breakdown.get(visitType) ?? 0) * 100) /
+              janeAppts.length
+            ).toFixed(1),
+          ),
+          count: breakdown.get(visitType) ?? 0,
+        };
+        visitBreakdown.push(visitData);
+      }
+    }
+    return { chartBreakdownData: chartBreakdownData ?? [], visitBreakdownData: visitBreakdown ?? [] };
+  }, [janeAppts, visitTypeMap]);
+
   const retentionData: RetentionRate[] = [
     {
       visit: "1 Visit",
@@ -235,49 +263,16 @@ const JaneDashboardPage = () => {
     },
   ];
 
-  // useEffect(() => {
-  //   setLoading(true);
-  //   getAllJaneData().then((janeData) => {
-  //     setJaneData(janeData);
-  //     setLoading(false);
-  //   });
-  // }, []);
+  const visitBreakdownPieChartLabels = useMemo(() => BreakdownPieChartLabels(chartData), [chartData])
 
-  useEffect(() => {
-    filterData();
-  }, [janeData, dateRange]);
-
-  const retentionHeaderExtras = (
-    <div className="w-full flex items-center justify-end gap-3">
-      <select
-        value={clientsFilter}
-        onChange={(e) => setClientsFilter(e.target.value)}
-        className="border border-black rounded-md px-3 py-1 text-sm bg-white h-9"
-      >
-        <option>ALL CLIENTS</option>
-        <option>RECENT CHILDBIRTH</option>
-        <option>POSTPARTUM</option>
-      </select>
-
-      <select
-        value={cliniciansFilter}
-        onChange={(e) => setCliniciansFilter(e.target.value)}
-        className="border border-black rounded-md px-3 py-1 text-sm bg-white h-9"
-      >
-        <option>ALL CLINICIANS</option>
-        <option>Dr. Smith</option>
-        <option>Dr. Jones</option>
-      </select>
-    </div>
-  );
+  if (error) return <p className="text-center text-red-500">Failed to fetch Jane appointments: {error.message}</p>
 
   return (
     <>
       <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
       <div
-        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
-          navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-        }`}
+        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
+          }`}
       >
         <Header />
         <div className="flex flex-col p-8 pr-20 pl-20">
@@ -287,8 +282,8 @@ const JaneDashboardPage = () => {
             <div className="w-60">
               <DateRangePicker
                 enableYearNavigation
-                defaultValue={defaultDateRange}
-                onChange={handleDateRangeChange}
+                value={dateRange}
+                onChange={(range) => setDateRange(range)}
                 presets={defaultPresets}
                 className="w-60"
               />
@@ -303,28 +298,24 @@ const JaneDashboardPage = () => {
             </Link>
           </div>
 
-          {/* IMPORTANT: when either table switches to "table" view we remove the side-by-side flex so they stack */}
           <div className="flex flex-wrap gap-8 pt-3">
-            {/* Visit Breakdown */}
             <div className="flex-[0_0_48%] max-w-[50%] min-w-[560px]">
               <div className={`${centerItemsInDiv} pt-4 mb-6`}>
                 <div className="flex flex-row">
                   <button
-                    className={`${graphTableButtonStyle} ${
-                      visitDisplay == "graph"
-                        ? "bg-bcgw-gray-light"
-                        : "bg-[#CED8E1]"
-                    }`}
+                    className={`${graphTableButtonStyle} ${visitDisplay === "graph"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#CED8E1]"
+                      }`}
                     onClick={() => setVisitDisplay("graph")}
                   >
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${
-                      visitDisplay == "table"
-                        ? "bg-bcgw-gray-light"
-                        : "bg-[#CED8E1]"
-                    }`}
+                    className={`${graphTableButtonStyle} ${visitDisplay === "table"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#CED8E1]"
+                      }`}
                     onClick={() => setVisitDisplay("table")}
                   >
                     Table
@@ -337,27 +328,24 @@ const JaneDashboardPage = () => {
                   Export
                 </button>
               </div>
-              {/*chart title*/}
+
               {visitDisplay === "graph" ? (
                 <>
                   <span className="self-start font-semibold text-2xl mb-20">
                     Visit Breakdown:{" "}
-                    {dateRange.startDate && dateRange.endDate
-                      ? formatDate(dateRange.startDate) +
-                        " - " +
-                        formatDate(dateRange.endDate)
+                    {dateRange?.from && dateRange?.to
+                      ? formatDate(dateRange.from) +
+                      " - " +
+                      formatDate(dateRange.to)
                       : "All Data"}
                   </span>
                   <div className={chartDiv} ref={pieChartRef}>
-                    {/*chart*/}
-                    {chartData.length > 0 ? (
-                      <div
-                        className="chartContainer"
-                        style={{ width: "250px", height: "250px" }}
-                      >
-                        {loading ? (
-                          <Loading />
-                        ) : (
+
+                    <div className="relative" style={{ width: "300px", height: "300px" }}>
+                      {isLoading ? (
+                        <Loading />
+                      ) : (
+                        <>
                           <PieChart
                             data={chartData}
                             series={
@@ -367,13 +355,13 @@ const JaneDashboardPage = () => {
                                 label={null}
                               />
                             }
+                            height={300}
+                            width={300}
                           />
-                        )}
-                      </div>
-                    ) : (
-                      <div>No data available for selected date range</div>
-                    )}
-                    {/*legend*/}
+                          {visitBreakdownPieChartLabels}
+                        </>
+                      )}
+                    </div>
                     <div className="mt-4 flex flex-wrap justify-center gap-4">
                       {chartData.map((item, index) => (
                         <div key={item.key} className="flex items-center gap-2">
@@ -394,10 +382,10 @@ const JaneDashboardPage = () => {
                 <div className="space-y-2">
                   <span className="font-semibold text-2xl">
                     Visit Breakdown:{" "}
-                    {dateRange.startDate && dateRange.endDate
-                      ? formatDate(dateRange.startDate) +
-                        " - " +
-                        formatDate(dateRange.endDate)
+                    {dateRange?.from && dateRange?.to
+                      ? formatDate(dateRange.from) +
+                      " - " +
+                      formatDate(dateRange.to)
                       : "All Data"}
                   </span>
                   <DataTable
@@ -409,26 +397,24 @@ const JaneDashboardPage = () => {
               )}
             </div>
 
-            {/* Retention Rate */}
+
             <div className="flex-[0_0_48%] max-w-[50%] min-w-[560px]">
               <div className={`${centerItemsInDiv} pt-4 mb-6`}>
                 <div className="flex flex-row">
                   <button
-                    className={`${graphTableButtonStyle} ${
-                      retentionDisplay == "graph"
-                        ? "bg-bcgw-gray-light"
-                        : "bg-[#CED8E1]"
-                    }`}
+                    className={`${graphTableButtonStyle} ${retentionDisplay === "graph"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#CED8E1]"
+                      }`}
                     onClick={() => setRetentionDisplay("graph")}
                   >
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${
-                      retentionDisplay == "table"
-                        ? "bg-bcgw-gray-light"
-                        : "bg-[#CED8E1]"
-                    }`}
+                    className={`${graphTableButtonStyle} ${retentionDisplay === "table"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#CED8E1]"
+                      }`}
                     onClick={() => setRetentionDisplay("table")}
                   >
                     Table
@@ -443,10 +429,10 @@ const JaneDashboardPage = () => {
               </div>
               <span className="self-start font-semibold text-2xl">
                 Retention Rate:{" "}
-                {dateRange.startDate && dateRange.endDate
-                  ? formatDate(dateRange.startDate) +
-                    " - " +
-                    formatDate(dateRange.endDate)
+                {dateRange?.from && dateRange?.to
+                  ? formatDate(dateRange.from) +
+                  " - " +
+                  formatDate(dateRange.to)
                   : "All Data"}
               </span>
               <div
@@ -511,7 +497,7 @@ const JaneDashboardPage = () => {
                         )}
                         data={retentionData}
                         tableType="default"
-                        tableHeaderExtras={retentionHeaderExtras}
+                      //tableHeaderExtras={retentionHeaderExtras}
                       />
                     </div>
 

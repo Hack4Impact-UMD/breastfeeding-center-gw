@@ -3,8 +3,15 @@ import {
   getAllJaneApptsInRange,
   getClientByPatientId,
 } from "@/backend/JaneFunctions";
-import { JaneTableRow } from "@/types/JaneType";
+import { JaneAppt, JaneTableRow } from "@/types/JaneType";
 import queries from "@/queries";
+
+export function useJaneAppts(startDate?: string, endDate?: string) {
+  return useQuery<JaneAppt[]>({
+    ...queries.janeData.appts(startDate, endDate),
+    queryFn: () => getAllJaneApptsInRange(startDate, endDate)
+  })
+}
 
 export function useJaneData(startDate?: string, endDate?: string) {
   return useQuery<JaneTableRow[]>({

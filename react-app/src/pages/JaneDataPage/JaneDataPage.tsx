@@ -14,7 +14,6 @@ import { useState } from "react";
 import { DataTable } from "@/components/DataTable/DataTable.tsx";
 import { janeIDDataColumns } from "./JaneDataTableColumns.tsx";
 import { DateRange } from "react-day-picker";
-import { DateTime } from "luxon";
 
 const JaneDataPage = () => {
   //styles
@@ -24,10 +23,7 @@ const JaneDataPage = () => {
 
   const [showUploadPopup, setShowUploadPopup] = useState(false);
   const [navBarOpen, setNavBarOpen] = useState(true);
-  const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: DateTime.now().minus({ months: 2 }).toJSDate(),
-    to: DateTime.now().toJSDate()
-  })
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(defaultDateRange)
   const { data: janeConsultations, isPending, error } = useJaneData(dateRange?.from?.toISOString(), dateRange?.to?.toISOString());
   const deleteJaneRecordMutation = useDeleteJaneRecord();
 
