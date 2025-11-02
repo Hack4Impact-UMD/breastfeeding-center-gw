@@ -167,7 +167,7 @@ const JaneDashboardPage = () => {
 
     const visitBreakdown: VisitBreakdown[] = [];
     for (const visitType of visitTypeMap.values()) {
-      if (visitType == "Total") {
+      if (visitType === "Total") {
         const visitData = {
           visitType: visitType,
           percent: 100,
@@ -297,7 +297,7 @@ const JaneDashboardPage = () => {
               <div className={`${centerItemsInDiv} pt-4 mb-6`}>
                 <div className="flex flex-row">
                   <button
-                    className={`${graphTableButtonStyle} ${visitDisplay == "graph"
+                    className={`${graphTableButtonStyle} ${visitDisplay === "graph"
                       ? "bg-bcgw-gray-light"
                       : "bg-[#CED8E1]"
                       }`}
@@ -306,7 +306,7 @@ const JaneDashboardPage = () => {
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${visitDisplay == "table"
+                    className={`${graphTableButtonStyle} ${visitDisplay === "table"
                       ? "bg-bcgw-gray-light"
                       : "bg-[#CED8E1]"
                       }`}
@@ -396,7 +396,7 @@ const JaneDashboardPage = () => {
               <div className={`${centerItemsInDiv} pt-4 mb-6`}>
                 <div className="flex flex-row">
                   <button
-                    className={`${graphTableButtonStyle} ${retentionDisplay == "graph"
+                    className={`${graphTableButtonStyle} ${retentionDisplay === "graph"
                       ? "bg-bcgw-gray-light"
                       : "bg-[#CED8E1]"
                       }`}
@@ -405,7 +405,7 @@ const JaneDashboardPage = () => {
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${retentionDisplay == "table"
+                    className={`${graphTableButtonStyle} ${retentionDisplay === "table"
                       ? "bg-bcgw-gray-light"
                       : "bg-[#CED8E1]"
                       }`}

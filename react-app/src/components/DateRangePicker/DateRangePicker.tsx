@@ -1134,7 +1134,7 @@ const validatePresets = (
 
           if (presetDay && presetDay < fromDay.getDate()) {
             throw new Error(
-              `Preset ${preset.dateRange.from
+              `Preset ${preset.label
               }'s 'from' is before fromDay ${format(fromDay, "MMM dd, yyyy")}.`,
             );
           }
