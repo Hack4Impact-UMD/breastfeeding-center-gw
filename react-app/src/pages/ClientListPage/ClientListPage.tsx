@@ -1,13 +1,7 @@
-import { useState } from "react";
-import Header from "../../components/Header.tsx";
-import NavigationBar from "../../components/NavigationBar/NavigationBar.tsx";
 import { Client, clientListColumns } from "./ClientListTableColumns.tsx";
 import { DataTable } from "@/components/DataTable/DataTable.tsx";
 
 const ClientList = () => {
-  //nav bar
-  const [navBarOpen, setNavBarOpen] = useState(true);
-
   //styles
   const centerItemsInDiv = "flex justify-between items-center";
 
@@ -106,29 +100,21 @@ const ClientList = () => {
 
   return (
     <>
-      <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
-      <div
-        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
-          navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-        }`}
-      >
-        <Header />
-        <div className="flex flex-col p-8 pr-20 pl-20">
-          {/*headings*/}
-          <div className={centerItemsInDiv}>
-            <div>
-              <h1 className="font-bold">Client List</h1>
-            </div>
+      <div className="flex flex-col p-8 pr-20 pl-20">
+        {/*headings*/}
+        <div className={centerItemsInDiv}>
+          <div>
+            <h1 className="font-bold">Client List</h1>
           </div>
+        </div>
 
-          {/*table section*/}
-          <div className="mt-5">
-            <DataTable
-              columns={clientListColumns}
-              data={sampleClientData}
-              tableType="clientList"
-            />
-          </div>
+        {/*table section*/}
+        <div className="mt-5">
+          <DataTable
+            columns={clientListColumns}
+            data={sampleClientData}
+            tableType="clientList"
+          />
         </div>
       </div>
     </>
