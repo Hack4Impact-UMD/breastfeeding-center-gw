@@ -45,12 +45,12 @@ export const hasErrorInput = [
 ];
 
 export const axiosClient = async () => {
-  if (!auth.currentUser) throw new Error("Not authenticated!");
-
   return axios.create({
     baseURL: API_URL,
-    headers: {
-      Authorization: `Bearer ${await auth.currentUser?.getIdToken()}`,
-    },
+    headers: auth.currentUser
+      ? {
+          Authorization: `Bearer ${await auth.currentUser.getIdToken()}`,
+        }
+      : {},
   });
 };

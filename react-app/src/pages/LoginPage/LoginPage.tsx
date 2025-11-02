@@ -1,16 +1,15 @@
-import { useState } from "react";
+import { FormEvent, MouseEvent, useState } from "react";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import Logo from "../../assets/bcgw-logo.png";
 import Loading from "../../components/Loading";
 import { AuthError } from "firebase/auth";
 import { authenticateUserEmailAndPassword } from "../../backend/AuthFunctions";
 import ForgotPasswordPopup from "./ForgotPasswordPopup";
-import { useNavigate } from "react-router-dom";
 import TwoFAPopup from "../../components/TwoFAPopup";
+import { Button } from "@/components/ui/button";
 
 const LoginPage = () => {
   const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [visibility, setVisibility] = useState(false);
@@ -25,7 +24,7 @@ const LoginPage = () => {
 
   // Email and Password inputs have required, so handleSubmit
   // only handles validity of email
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement, MouseEvent>): void => {
     e.preventDefault();
     setShowLoading(true);
 
@@ -48,8 +47,6 @@ const LoginPage = () => {
         .then(() => {
           setShowLoading(false);
           setOpen2FAModal(true);
-          // TODO: SET 2FA LOGIC
-          navigate("/");
         })
         .catch((error) => {
           setShowLoading(false);
@@ -122,13 +119,13 @@ const LoginPage = () => {
         </button>
 
         <div className="flex justify-center mt-6">
-          <button
+          <Button
+            variant="yellow"
             type="submit"
-            onClick={(e) => handleSubmit(e)}
-            className="bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light font-bold text-lg py-4 px-18 rounded-full cursor-pointer"
+            className="font-bold text-lg py-6 px-18 rounded-full cursor-pointer"
           >
             {showLoading ? <Loading /> : "Sign In"}
-          </button>
+          </Button>
         </div>
 
         {/* error message */}

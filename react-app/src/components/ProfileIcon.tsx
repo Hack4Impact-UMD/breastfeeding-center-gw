@@ -12,7 +12,11 @@ const ProfileIcon: React.FC<ProfileIconProps> = ({
 }) => {
   return (
     <div
-      className={`size-[${size}px] border-[3px] rounded-full flex items-center justify-center bg-bcgw-yellow-dark border-black`}
+      style={{
+        width: `${size}px`,
+        height: `${size}px`,
+      }}
+      className={`border-[3px] rounded-full flex items-center justify-center bg-bcgw-yellow-dark border-black`}
     >
       {initials ? (
         <span

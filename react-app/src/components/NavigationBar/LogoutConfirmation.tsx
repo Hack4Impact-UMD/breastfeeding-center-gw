@@ -14,7 +14,7 @@ export default function LogoutConfirmation({
 
   function handleLogOut() {
     navigate("/logout", { state: { fromApp: true } });
-    logOut()
+    logOut();
   }
 
   return (

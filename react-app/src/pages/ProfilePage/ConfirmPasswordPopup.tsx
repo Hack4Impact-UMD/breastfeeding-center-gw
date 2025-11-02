@@ -124,7 +124,7 @@ const ConfirmPasswordPopup = ({
       />
       <ChangePasswordPopup
         open={openPasswordModal}
-        onClose={setOpenPasswordModal}
+        onClose={() => setOpenPasswordModal(false)}
       />
     </>
   );

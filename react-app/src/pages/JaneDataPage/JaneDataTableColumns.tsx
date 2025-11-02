@@ -1,9 +1,10 @@
-import { Jane, JaneID } from "@/types/JaneType";
+import { JaneTableRow } from "@/types/JaneType";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
+import { DateTime } from "luxon";
 import ColumnSortButton from "@/components/DataTable/ColumnSortIcon";
 
-export const janeDataColumns: ColumnDef<Jane>[] = [
+export const janeDataColumns: ColumnDef<JaneTableRow>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -27,9 +28,14 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     ),
   },
   {
-    accessorKey: "date",
+    accessorKey: "startAt",
     header: ({ column }) => {
       return <ColumnSortButton column={column}>Visit</ColumnSortButton>;
+    },
+    cell: ({ row }) => {
+      const value = row.getValue<string>("startAt");
+      const dt = DateTime.fromISO(value);
+      return dt.isValid ? dt.toLocaleString(DateTime.DATETIME_SHORT) : value;
     },
   },
   {
@@ -51,19 +57,31 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
     },
   },
   {
+    accessorKey: "middleName",
+    header: ({ column }) => {
+      return <ColumnSortButton column={column}>M. Initial</ColumnSortButton>;
+    },
+  },
+  {
     accessorKey: "lastName",
     header: ({ column }) => {
       return <ColumnSortButton column={column}>L. Name</ColumnSortButton>;
     },
   },
   {
-    accessorKey: "babyDob",
+    accessorKey: "dob",
     header: ({ column }) => {
       return <ColumnSortButton column={column}>DOB</ColumnSortButton>;
     },
+    cell: ({ row }) => {
+      const value = row.getValue<string>("dob");
+      return value === "N/A"
+        ? ""
+        : DateTime.fromISO(value).toLocaleString(DateTime.DATE_SHORT);
+    },
   },
   {
-    accessorKey: "visitType",
+    accessorKey: "service",
     header: ({ column }) => {
       return <ColumnSortButton column={column}>Visit Type</ColumnSortButton>;
     },
@@ -76,5 +94,5 @@ export const janeDataColumns: ColumnDef<Jane>[] = [
   },
 ];
 
-export const janeIDDataColumns: ColumnDef<JaneID>[] =
-  janeDataColumns as ColumnDef<JaneID>[];
+export const janeIDDataColumns: ColumnDef<JaneTableRow>[] =
+  janeDataColumns as ColumnDef<JaneTableRow>[];

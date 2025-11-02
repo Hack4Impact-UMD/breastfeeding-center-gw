@@ -1,12 +1,9 @@
 import csv from "csvtojson";
 import * as XLSX from "xlsx";
-import { Baby, Client } from "../types/clientTypes";
+import { Baby, Client } from "../types/clientType";
 import { logger } from "firebase-functions";
 
-export async function parseClientSheet(
-  fileType: string,
-  fileAsBuffer: Buffer,
-) {
+export async function parseClientSheet(fileType: string, fileAsBuffer: Buffer) {
   const requiredHeaders = [
     "Patient Number",
     "First Name",
@@ -90,20 +87,29 @@ function parseClient(clientRawData: Record<string, string>) {
   client.id = clientRawData["Patient Number"].trim();
 
   client.email =
-    clientRawData.Email === undefined || String(clientRawData.Email).trim() === ""
+    clientRawData.Email === undefined ||
+    String(clientRawData.Email).trim() === ""
       ? "N/A"
       : String(clientRawData.Email).trim();
 
   client.firstName =
     clientRawData["First Name"] === undefined ||
-      String(clientRawData["First Name"]).trim() === ""
+    String(clientRawData["First Name"]).trim() === ""
       ? "N/A"
       : String(clientRawData["First Name"]).trim();
   client.lastName =
     clientRawData["Last Name"] === undefined ||
-      String(clientRawData["Last Name"]).trim() === ""
+    String(clientRawData["Last Name"]).trim() === ""
       ? "N/A"
       : String(clientRawData["Last Name"]).trim();
+
+  const birthDateStr = String(clientRawData["Birth Date"])?.trim();
+  if (birthDateStr) {
+    const date = new Date(birthDateStr);
+    client.dob = isNaN(date.getTime()) ? "N/A" : date.toISOString();
+  } else {
+    client.dob = "N/A";
+  }
 
   client.baby = [];
 
@@ -136,15 +142,13 @@ function parseBaby(babyRawData: Record<string, string>) {
   const birthDateStr = String(babyRawData["Birth Date"])?.trim();
   if (birthDateStr) {
     const date = new Date(birthDateStr);
-    if (!isNaN(date.getTime())) {
-      baby.dob = date.toISOString();
-    }
+    baby.dob = isNaN(date.getTime()) ? "N/A" : date.toISOString();
   } else {
     baby.dob = "N/A";
   }
   baby.firstName =
     babyRawData["First Name"] === undefined ||
-      String(babyRawData["First Name"]).trim() === ""
+    String(babyRawData["First Name"]).trim() === ""
       ? "N/A"
       : String(babyRawData["First Name"]).trim();
   // "baby" or "twin" may be in first name
@@ -152,7 +156,7 @@ function parseBaby(babyRawData: Record<string, string>) {
 
   baby.lastName =
     babyRawData["Last Name"] === undefined ||
-      String(babyRawData["Last Name"]).trim() === ""
+    String(babyRawData["Last Name"]).trim() === ""
       ? "N/A"
       : String(babyRawData["Last Name"]).trim();
 

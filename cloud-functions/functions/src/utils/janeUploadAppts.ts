@@ -43,7 +43,8 @@ export async function parseAppointmentSheet(
       raw: false,
     });
 
-    if (!xlsxDataArray || xlsxDataArray.length == 0) throw new Error("Empty file")
+    if (!xlsxDataArray || xlsxDataArray.length == 0)
+      throw new Error("Empty file");
 
     const headers: string[] = xlsxDataArray[0] as string[];
     const columnIndices = requiredHeaders.map((col) => headers.indexOf(col));
@@ -70,14 +71,13 @@ export async function parseAppointmentSheet(
   // initializing the objects to return
   const patientNames: { [id: string]: PatientInfo } = {};
   const appointments: JaneAppt[] = [];
-  const babyAppts: JaneAppt[] = []
+  const babyAppts: JaneAppt[] = [];
 
   // looping through each element in jsonArray to turn into JaneAppt obj
   for (const rawAppt of jsonArray) {
     // parsing rawAppt data in jsonArray and adding it to appointments list
 
     const appt = parseAppointment(rawAppt);
-
 
     // only push if appt is not null (ids not found)
     if (appt) {
@@ -88,8 +88,8 @@ export async function parseAppointmentSheet(
       appointments.push(appt);
       // parsing rawAppt data in jsonArray and adding it to patientNames list
       patientNames[String(rawAppt.patient_number)] = {
-        firstName: (String(rawAppt.patient_first_name ?? "").trim() || "N/A"),
-        lastName: (String(rawAppt.patient_last_name ?? "").trim() || "N/A"),
+        firstName: String(rawAppt.patient_first_name ?? "").trim() || "N/A",
+        lastName: String(rawAppt.patient_last_name ?? "").trim() || "N/A",
       };
     }
   }
@@ -102,7 +102,10 @@ function isBabyAppt(appt: Record<string, string>) {
   const preferredName = appt.patient_preferred_name ?? "";
   const lastName = appt.patient_last_name ?? "";
 
-  return ((firstName + lastName + preferredName).toLowerCase().includes("baby") || (firstName + lastName + preferredName).toLowerCase().includes("twin"))
+  return (
+    (firstName + lastName + preferredName).toLowerCase().includes("baby") ||
+    (firstName + lastName + preferredName).toLowerCase().includes("twin")
+  );
 }
 
 function parseAppointment(appt: Record<string, string>) {
@@ -122,7 +125,8 @@ function parseAppointment(appt: Record<string, string>) {
   janeAppt.patientId = appt.patient_number.trim();
 
   janeAppt.clinician =
-    appt.staff_member_name === undefined || String(appt.staff_member_name).trim() === ""
+    appt.staff_member_name === undefined ||
+    String(appt.staff_member_name).trim() === ""
       ? "N/A"
       : String(appt.staff_member_name).trim();
   janeAppt.firstVisit =

@@ -65,8 +65,8 @@ Authentication, Database, and Hosting: [Firebase](https://firebase.google.com/)
 
 For inquiries about the project, contact
 
-| Name        | Contact                  |
-| ----------- | ---------------------- |
-| Sophie Tsai | sophietsai31@gmail.com |
-| Ramy Kaddouri | [slack](https://app.slack.com/client/T6VL1BSEA) |
-| Prakhar Gupta | pg12@terpmail.umd.edu|
+| Name          | Contact                   |
+| ------------- | ------------------------- |
+| Sophie Tsai   | sophietsai31@gmail.com    |
+| Ramy Kaddouri | rkaddour@terpmail.umd.edu |
+| Prakhar Gupta | pg12@terpmail.umd.edu     |

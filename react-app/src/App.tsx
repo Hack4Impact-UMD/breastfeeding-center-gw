@@ -9,7 +9,6 @@ import Header from "./components/Header";
 import RequireAuth from "./auth/RequireAuth";
 import PaysimpleDashboard from "./pages/PaysimpleDashboardPage";
 import { AuthProvider } from "./auth/AuthProvider";
-import { getBabyInfo, getClientAppointments } from "./backend/AcuityCalls";
 import AcuityDashboard from "./pages/AcuityDashboardPage/AcuityDashboardPage";
 import JaneDashboard from "./pages/JaneDashboardPage/JaneDashboardPage";
 import { useState } from "react";
@@ -23,6 +22,9 @@ import NewUserPage from "./pages/NewUserPage/NewUserPage";
 import RegisterSuccessPage from "./pages/NewUserPage/RegisterSuccessPage";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { Button } from "./components/ui/button";
+import RequireNoAuth from "./auth/RequireNoAuth";
+import { axiosClient } from "./lib/utils";
+import { getAllJaneApptsInRange } from "./backend/JaneFunctions";
 // import "@tremor/react/dist/esm/tremor.css";
 
 function App() {
@@ -53,7 +55,14 @@ function App() {
                   </RequireAuth>
                 }
               />
-              <Route path="/login" element={<LoginPage />} />
+              <Route
+                path="/login"
+                element={
+                  <RequireNoAuth>
+                    <LoginPage />
+                  </RequireNoAuth>
+                }
+              />
               <Route path="/logout" element={<LogoutPage />} />
               <Route
                 path="/services/jane"
@@ -123,7 +132,14 @@ function App() {
                 path="/register-success"
                 element={<RegisterSuccessPage />}
               />
-              <Route path="/new-user" element={<NewUserPage />} />
+              <Route
+                path="/register/:inviteId"
+                element={
+                  <RequireNoAuth>
+                    <NewUserPage />
+                  </RequireNoAuth>
+                }
+              />
               <Route
                 path="/*"
                 element={
@@ -142,42 +158,22 @@ function App() {
                         <Button
                           variant={"yellow"}
                           onClick={async () => {
-                            getBabyInfo()
-                              .then(() => console.log("Success"))
-                              .catch();
-
-                            getClientAppointments()
-                              .then(() => console.log("Success"))
-                              .catch();
+                           await getAllJaneApptsInRange()
                           }}
                         >
                           TEST
                         </Button>
-                        <Button
-                          variant={"yellow"}
-                          size="lg"
-                          disabled
-                        >
+                        <Button variant={"yellow"} size="lg" disabled>
                           TEST
                         </Button>
-                        <Button
-                          variant={"yellow"}
-                          className="rounded-full"
-                        >
+                        <Button variant={"yellow"} className="rounded-full">
                           TEST
                         </Button>
                       </div>
                       <div className="space-x-3">
                         <strong>Outline: </strong>
-                        <Button
-                          variant={"outline"}
-                        >
-                          TEST
-                        </Button>
-                        <Button
-                          variant={"outline"}
-                          className="rounded-full"
-                        >
+                        <Button variant={"outline"}>TEST</Button>
+                        <Button variant={"outline"} className="rounded-full">
                           TEST
                         </Button>
                         <Button
@@ -190,23 +186,23 @@ function App() {
                       </div>
                       <div className="space-x-3">
                         <strong>Gray: </strong>
-                        <Button
-                          variant={"gray"}
-                        >
-                          TEST
-                        </Button>
-                        <Button
-                          variant={"gray"}
-                          className="rounded-full"
-                        >
+                        <Button variant={"gray"}>TEST</Button>
+                        <Button variant={"gray"} className="rounded-full">
                           TEST
                         </Button>
                         <Button
                           variant={"gray"}
                           disabled
                           className="rounded-full"
+                          onClick={async () => {
+                            const axiosInstance = await axiosClient();
+                            await axiosInstance
+                              .get("/jane/appointments")
+                              .then((response) => console.log(response))
+                              .catch((error) => console.log(error));
+                          }}
                         >
-                          TEST
+                          TEST HERE
                         </Button>
                       </div>
                     </div>
