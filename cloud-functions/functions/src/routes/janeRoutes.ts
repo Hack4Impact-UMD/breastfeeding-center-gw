@@ -364,7 +364,7 @@ router.get(
             }),
           );
 
-        return res.status(200).send(appointmentsWithClient);
+        return res.status(200).json(appointmentsWithClient);
       } else {
         // Convert documents to JaneAppt objects
         const appointments: JaneAppt[] = snapshot.docs.map((doc) => {
