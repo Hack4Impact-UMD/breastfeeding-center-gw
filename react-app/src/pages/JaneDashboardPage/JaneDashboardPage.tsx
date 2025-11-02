@@ -33,8 +33,11 @@ import { DataTable } from "@/components/DataTable/DataTable";
 import { useJaneAppts } from "@/hooks/queries/useJaneData.ts";
 
 function BreakdownPieChartLabels(chartData: { key: string, data: number }[]) {
+  if (chartData.length === 0) return <></>
+  const total = chartData.reduce((sum, item) => sum + item.data, 0);
   return chartData.map((item, index) => {
-    const total = chartData.reduce((sum, item) => sum + item.data, 0);
+    if (total === 0) return <></>
+
     const percentage = ((item.data / total) * 100).toFixed(0);
     const angle = chartData.slice(0, index).reduce((sum, d) => sum + (d.data / total) * 360, 0) + ((item.data / total) * 360) / 2;
     const radians = (angle - 90) * Math.PI / 180;
@@ -45,7 +48,7 @@ function BreakdownPieChartLabels(chartData: { key: string, data: number }[]) {
     return (
       <div
         key={item.key}
-        className={`absolute font-semibold text-sm ${item.key === "Home Visit" ? "text-black" : "text-white"}`}
+        className={`absolute font-semibold text-sm text-white`}
         style={{
           left: `${x}px`,
           top: `${y}px`,
@@ -149,15 +152,18 @@ const JaneDashboardPage = () => {
   ]), []);
 
   const { chartBreakdownData: chartData, visitBreakdownData } = useMemo(() => {
-    if (!janeAppts) return {
+    if (!janeAppts || janeAppts.length === 0) return {
       chartBreakdownData: [],
       visitBreakdownData: []
     }
 
     const breakdown = new Map<string, number>();
     janeAppts.forEach((janeAppt: JaneAppt) => {
-      const current = breakdown.get(visitTypeMap.get(janeAppt.visitType)!) ?? 0;
-      breakdown.set(visitTypeMap.get(janeAppt.visitType)!, current + 1);
+      const mappedType = visitTypeMap.get(janeAppt.visitType);
+      if (mappedType) {
+        const current = breakdown.get(mappedType) ?? 0;
+        breakdown.set(mappedType, current + 1);
+      }
     });
 
     const chartBreakdownData = Array.from(breakdown, ([key, data]) => ({
