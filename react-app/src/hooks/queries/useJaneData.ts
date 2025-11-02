@@ -9,8 +9,8 @@ import queries from "@/queries";
 export function useJaneAppts(startDate?: string, endDate?: string) {
   return useQuery<JaneAppt[]>({
     ...queries.janeData.appts(startDate, endDate),
-    queryFn: () => getAllJaneApptsInRange(startDate, endDate)
-  })
+    queryFn: () => getAllJaneApptsInRange(startDate, endDate),
+  });
 }
 
 export function useJaneData(startDate?: string, endDate?: string) {

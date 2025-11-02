@@ -17,7 +17,7 @@ export async function getAllJaneApptsInRange(
     const queryString = params.toString();
     const url = `/jane/appointments${queryString ? `?${queryString}` : ""}`;
 
-    console.log(url)
+    console.log(url);
 
     const response = await axios.get(url);
     return response.data as JaneAppt[];
@@ -39,11 +39,11 @@ export async function getClientByPatientId(patientId: string): Promise<Client> {
 }
 
 export async function deleteJaneApptById(id: string) {
-  const axios = await axiosClient()
-  await axios.delete("/jane/appointments/" + id)
+  const axios = await axiosClient();
+  await axios.delete("/jane/appointments/" + id);
 }
 
 export async function deleteJaneApptsByIds(ids: string[]) {
-  const axios = await axiosClient()
-  await axios.post("/jane/bulk/appointments/delete", { ids })
+  const axios = await axiosClient();
+  await axios.post("/jane/bulk/appointments/delete", { ids });
 }

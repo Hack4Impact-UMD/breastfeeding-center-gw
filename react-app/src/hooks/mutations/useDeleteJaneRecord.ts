@@ -7,14 +7,24 @@ export function useDeleteJaneRecord() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ rows }: { startDate?: string, endDate?: string, rows: JaneTableRow[] }) => {
+    mutationFn: async ({
+      rows,
+    }: {
+      startDate?: string;
+      endDate?: string;
+      rows: JaneTableRow[];
+    }) => {
       const ids = rows.map((entry) => entry.apptId);
       await deleteJaneApptsByIds(ids);
     },
     onMutate: async ({ rows, startDate, endDate }) => {
-      await queryClient.cancelQueries({ queryKey: queries.janeData.uploadedDataTable._def });
+      await queryClient.cancelQueries({
+        queryKey: queries.janeData.uploadedDataTable._def,
+      });
 
-      const prevData = queryClient.getQueryData<JaneTableRow[]>(queries.janeData.uploadedDataTable(startDate, endDate).queryKey);
+      const prevData = queryClient.getQueryData<JaneTableRow[]>(
+        queries.janeData.uploadedDataTable(startDate, endDate).queryKey,
+      );
 
       // optimistic update
       queryClient.setQueryData<JaneTableRow[]>(
@@ -27,7 +37,10 @@ export function useDeleteJaneRecord() {
     },
     onError: (err, { startDate, endDate }, ctx) => {
       if (ctx?.prevData) {
-        queryClient.setQueryData(queries.janeData.uploadedDataTable(startDate, endDate).queryKey, ctx.prevData);
+        queryClient.setQueryData(
+          queries.janeData.uploadedDataTable(startDate, endDate).queryKey,
+          ctx.prevData,
+        );
       }
       console.error("failed to delete jane records:");
       console.error(err);

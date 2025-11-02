@@ -63,9 +63,9 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: queries.janeData.uploadedDataTable._def
-      })
-    }
+        queryKey: queries.janeData.uploadedDataTable._def,
+      });
+    },
   });
 
   const [errorType, setErrorType] = useState<

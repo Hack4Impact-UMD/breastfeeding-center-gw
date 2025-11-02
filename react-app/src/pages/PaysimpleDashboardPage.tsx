@@ -1,7 +1,5 @@
 import { useState, useRef } from "react";
 import { BarChart, BarSeries, Bar, BarProps } from "reaviz";
-import NavigationBar from "../components/NavigationBar/NavigationBar";
-import Header from "../components/Header";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
 import {
@@ -57,7 +55,6 @@ function formatDate(date: Date) {
 }
 
 export default function PaysimpleDashboardPage() {
-  const [navBarOpen, setNavBarOpen] = useState(true);
   // use state for toggles/buttons/changing of information
   const [rentalDisplay, setRentalDisplay] = useState("graph");
   //@ts-expect-error
@@ -138,97 +135,83 @@ export default function PaysimpleDashboardPage() {
 
   return (
     <>
-      <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
-
-      <div
-        className={`transition-all duration-200 ease-in-out bg-gray-200 min-h-screen overflow-x-hidden flex flex-col ${
-          navBarOpen ? "ml-[250px]" : "ml-[60px]" //set margin of content to 250px when nav bar is open and 60px when closed
-        }`}
-      >
-        <Header />
-
-        <div className="flex flex-col p-8 pr-20 pl-20 space-y-5">
-          {/* Page Title */}
-          <div className={centerItemsInDiv}>
-            <div>
-              <h1 className="font-bold">Paysimple</h1>
-            </div>
-            {/*date picker*/}
-            <div className="w-60">
-              <DateRangePicker
-                enableYearNavigation
-                defaultValue={defaultDateRange}
-                presets={defaultPresets}
-                className="w-60"
-              />
-            </div>
+      <div className="flex flex-col p-8 pr-20 pl-20 space-y-5">
+        {/* Page Title */}
+        <div className={centerItemsInDiv}>
+          <div>
+            <h1 className="font-bold">Paysimple</h1>
           </div>
+          {/*date picker*/}
+          <div className="w-60">
+            <DateRangePicker
+              enableYearNavigation
+              defaultValue={defaultDateRange}
+              presets={defaultPresets}
+              className="w-60"
+            />
+          </div>
+        </div>
 
-          {/* Graph/Table & Export Selection */}
-          <div className={`${centerItemsInDiv} pt-4`}>
-            <div className="flex flex-row">
-              <button
-                className={`${graphTableButtonStyle} ${
-                  rentalDisplay == "graph"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
-                }`}
-                onClick={() => setRentalDisplay("graph")}
-              >
-                Graph
-              </button>
-              <button
-                className={`${graphTableButtonStyle} ${
-                  rentalDisplay == "table"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
-                }`}
-                onClick={() => setRentalDisplay("table")}
-              >
-                Table
-              </button>
-            </div>
+        {/* Graph/Table & Export Selection */}
+        <div className={`${centerItemsInDiv} pt-4`}>
+          <div className="flex flex-row">
             <button
-              className={transparentGrayButtonStyle}
-              onClick={() => handleExport(rentalChartRef, "rental_duration")}
+              className={`${graphTableButtonStyle} ${
+                rentalDisplay == "graph" ? "bg-bcgw-gray-light" : "bg-[#f5f5f5]"
+              }`}
+              onClick={() => setRentalDisplay("graph")}
             >
-              Export
+              Graph
+            </button>
+            <button
+              className={`${graphTableButtonStyle} ${
+                rentalDisplay == "table" ? "bg-bcgw-gray-light" : "bg-[#f5f5f5]"
+              }`}
+              onClick={() => setRentalDisplay("table")}
+            >
+              Table
             </button>
           </div>
-
-          {/* white card to put graph inside */}
-          <div
-            className={
-              rentalDisplay === "graph"
-                ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
-                : ""
-            }
-            ref={rentalChartRef}
+          <button
+            className={transparentGrayButtonStyle}
+            onClick={() => handleExport(rentalChartRef, "rental_duration")}
           >
-            <div className="flex justify-between items-center">
-              <div className="text-2xl font-semibold">
-                Average Rental Duration By Item, {formattedRange}
-              </div>
-            </div>
+            Export
+          </button>
+        </div>
 
-            {/* the different elements rendered depending on the toggle buttons */}
-            <div className="mt-1">
-              {rentalDisplay === "graph" ? (
-                <div className="w-full h-[500px] flex">
-                  <BarChart
-                    height={500}
-                    data={dataMonths}
-                    series={<BarSeries layout="vertical" bar={<CustomBar />} />}
-                  />
-                </div>
-              ) : (
-                <DataTable
-                  columns={columns}
-                  data={mockData}
-                  tableType="default"
-                />
-              )}
+        {/* white card to put graph inside */}
+        <div
+          className={
+            rentalDisplay === "graph"
+              ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
+              : ""
+          }
+          ref={rentalChartRef}
+        >
+          <div className="flex justify-between items-center">
+            <div className="text-2xl font-semibold">
+              Average Rental Duration By Item, {formattedRange}
             </div>
+          </div>
+
+          {/* the different elements rendered depending on the toggle buttons */}
+          <div className="mt-1">
+            {rentalDisplay === "graph" ? (
+              <div className="w-full h-[500px] flex">
+                <BarChart
+                  height={500}
+                  data={dataMonths}
+                  series={<BarSeries layout="vertical" bar={<CustomBar />} />}
+                />
+              </div>
+            ) : (
+              <DataTable
+                columns={columns}
+                data={mockData}
+                tableType="default"
+              />
+            )}
           </div>
         </div>
       </div>
