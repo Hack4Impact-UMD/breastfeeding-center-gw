@@ -27,6 +27,32 @@ export async function getAllJaneApptsInRange(
   }
 }
 
+export async function getAllJaneApptsInRangeWithClient(
+  startDate?: string,
+  endDate?: string,
+): Promise<(JaneAppt & { client?: Client })[]> {
+  try {
+    const axios = await axiosClient();
+
+    // Build query parameters
+    const params = new URLSearchParams();
+    if (startDate) params.append("startDate", startDate);
+    if (endDate) params.append("endDate", endDate);
+    params.append("includeClient", "true");
+
+    const queryString = params.toString();
+    const url = `/jane/appointments${queryString ? `?${queryString}` : ""}`;
+
+    console.log(url);
+
+    const response = await axios.get(url);
+    return response.data as (JaneAppt & { client: Client })[];
+  } catch (error) {
+    console.error("Error fetching Jane appointments:", error);
+    throw error;
+  }
+}
+
 export async function getClientByPatientId(patientId: string): Promise<Client> {
   try {
     const axios = await axiosClient();
