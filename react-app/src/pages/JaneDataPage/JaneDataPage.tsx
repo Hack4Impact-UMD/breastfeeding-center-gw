@@ -20,12 +20,22 @@ const JaneDataPage = () => {
   const centerItemsInDiv = "flex justify-between items-center";
 
   const [showUploadPopup, setShowUploadPopup] = useState(false);
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(defaultDateRange)
-  const { data: janeConsultations, isPending, error } = useJaneData(dateRange?.from?.toISOString(), dateRange?.to?.toISOString());
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(
+    defaultDateRange,
+  );
+  const {
+    data: janeConsultations,
+    isPending,
+    error,
+  } = useJaneData(dateRange?.from?.toISOString(), dateRange?.to?.toISOString());
   const deleteJaneRecordMutation = useDeleteJaneRecord();
 
   const handleDelete = (rows: JaneTableRow[]) => {
-    deleteJaneRecordMutation.mutate({ rows, startDate: dateRange?.from?.toISOString(), endDate: dateRange?.to?.toISOString() });
+    deleteJaneRecordMutation.mutate({
+      rows,
+      startDate: dateRange?.from?.toISOString(),
+      endDate: dateRange?.to?.toISOString(),
+    });
   };
 
   return (

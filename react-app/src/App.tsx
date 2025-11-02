@@ -54,71 +54,30 @@ function App() {
                 }
               />
 
-              <Route element={<LayoutShell />}>
+              <Route
+                element={
+                  <RequireAuth>
+                    <LayoutShell />
+                  </RequireAuth>
+                }
+              >
                 <Route path="/" element={<p>Home</p>} />
-                <Route
-                  path="/services/jane"
-                  element={
-                    <RequireAuth>
-                      <JaneDashboard />
-                    </RequireAuth>
-                  }
-                />
-                <Route
-                  path="/services/jane/data"
-                  element={
-                    <RequireAuth>
-                      <JaneDataPage />
-                    </RequireAuth>
-                  }
-                />
-                <Route
-                  path="/services/acuity"
-                  element={
-                    <RequireAuth>
-                      <AcuityDashboard />
-                    </RequireAuth>
-                  }
-                />
+                <Route path="/services/jane" element={<JaneDashboard />} />
+                <Route path="/services/jane/data" element={<JaneDataPage />} />
+                <Route path="/services/acuity" element={<AcuityDashboard />} />
                 <Route
                   path="/services/paysimple"
-                  element={
-                    <RequireAuth>
-                      <PaysimpleDashboard />
-                    </RequireAuth>
-                  }
+                  element={<PaysimpleDashboard />}
                 />
-                <Route
-                  path="/clients"
-                  element={
-                    <RequireAuth>
-                      <ClientListPage />
-                    </RequireAuth>
-                  }
-                />
+                <Route path="/clients" element={<ClientListPage />} />
                 <Route
                   path="/clients/journey"
-                  element={
-                    <RequireAuth>
-                      <ClientJourneyPage />
-                    </RequireAuth>
-                  }
+                  element={<ClientJourneyPage />}
                 />
-                <Route
-                  path="/profile"
-                  element={
-                    <RequireAuth>
-                      <ProfilePage />
-                    </RequireAuth>
-                  }
-                />
+                <Route path="/profile" element={<ProfilePage />} />
                 <Route
                   path="/user-management"
-                  element={
-                    <RequireAuth>
-                      <UserManagementPage />
-                    </RequireAuth>
-                  }
+                  element={<UserManagementPage />}
                 />
               </Route>
 
