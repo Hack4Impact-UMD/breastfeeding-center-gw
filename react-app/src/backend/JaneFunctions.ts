@@ -46,7 +46,7 @@ export async function getAllJaneApptsInRangeWithClient(
     console.log(url);
 
     const response = await axios.get(url);
-    return response.data as (JaneAppt & { client: Client })[];
+    return response.data as (JaneAppt & { client?: Client })[];
   } catch (error) {
     console.error("Error fetching Jane appointments:", error);
     throw error;

@@ -345,24 +345,29 @@ router.get(
       const snapshot = await query.get();
 
       if (includeClient) {
-        // Convert documents to JaneAppt objects with client
-        const appointmentsWithClient: (JaneAppt & { client?: Client })[] =
-          await Promise.all(
-            snapshot.docs.map(async (doc) => {
-              const appt = doc.data() as JaneAppt;
-              const clientDoc = db
-                .collection(CLIENTS_COLLECTION)
-                .doc(appt.patientId);
-              const snapshot = await clientDoc.get();
+        // bulk fetch clients, then join them with their appts
+        const clientIds = snapshot.docs.map(apptDoc => (apptDoc.data() as JaneAppt).patientId);
 
-              if (snapshot.exists) {
-                const client = snapshot.data() as Client;
-                return { ...appt, client };
-              } else {
-                return appt;
-              }
-            }),
-          );
+        const clients = await db.getAll(...clientIds.map(id => db.collection(CLIENTS_COLLECTION).doc(id)))
+        const clientsMap = new Map<string, Client>();
+
+        clients.forEach(c => {
+          const client = c.data() as Client;
+          clientsMap.set(client.id, client);
+        })
+
+
+        const appointmentsWithClient: (JaneAppt & { client?: Client })[] =
+          snapshot.docs.map((doc) => {
+            const appt = doc.data() as JaneAppt;
+            const client = clientsMap.get(appt.patientId);
+
+            if (client) {
+              return { ...appt, client };
+            } else {
+              return appt;
+            }
+          })
 
         return res.status(200).json(appointmentsWithClient);
       } else {
