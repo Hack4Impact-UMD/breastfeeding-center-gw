@@ -45,6 +45,12 @@ jobs:
       - name: Create GAC File
         run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_BREASTFEEDING_CENTER_GW }}' > $GOOGLE_APPLICATION_CREDENTIALS
 
+      - name: Create .env file for Cloud Functions
+        run: |
+          echo "ROOT_USER_EMAIL=${ROOT_USER_EMAIL}" > cloud-functions/functions/.env
+          echo "ROOT_USER_SECRET=${ROOT_USER_SECRET}" >> cloud-functions/functions/.env
+          echo "INVITE_EXPIRE_DAYS=${INVITE_EXPIRE_DAYS}" >> cloud-functions/functions/.env
+
       - name: Deploy to Firebase
         run: firebase deploy
 
