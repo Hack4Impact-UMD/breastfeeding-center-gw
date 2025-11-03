@@ -314,6 +314,7 @@ router.get(
     try {
       const startDate = req.query.startDate as string;
       const endDate = req.query.endDate as string;
+      const includeClient = req.query.includeClient === "true";
 
       logger.info(`Fetching jane appts between: ${startDate} - ${endDate}`);
 
@@ -343,12 +344,40 @@ router.get(
       // Execute query to get appointments within timeframe
       const snapshot = await query.get();
 
-      // Convert documents to JaneAppt objects
-      const appointments: JaneAppt[] = snapshot.docs.map((doc) => {
-        return doc.data() as JaneAppt;
-      });
+      if (includeClient) {
+        // bulk fetch clients, then join them with their appts
+        const clientIds = snapshot.docs.map(apptDoc => (apptDoc.data() as JaneAppt).patientId);
 
-      return res.status(200).json(appointments);
+        const clients = await db.getAll(...clientIds.map(id => db.collection(CLIENTS_COLLECTION).doc(id)))
+        const clientsMap = new Map<string, Client>();
+
+        clients.forEach(c => {
+          const client = c.data() as Client;
+          clientsMap.set(client.id, client);
+        })
+
+
+        const appointmentsWithClient: (JaneAppt & { client?: Client })[] =
+          snapshot.docs.map((doc) => {
+            const appt = doc.data() as JaneAppt;
+            const client = clientsMap.get(appt.patientId);
+
+            if (client) {
+              return { ...appt, client };
+            } else {
+              return appt;
+            }
+          })
+
+        return res.status(200).json(appointmentsWithClient);
+      } else {
+        // Convert documents to JaneAppt objects
+        const appointments: JaneAppt[] = snapshot.docs.map((doc) => {
+          return doc.data() as JaneAppt;
+        });
+
+        return res.status(200).json(appointments);
+      }
     } catch (e) {
       logger.error("Error fetching appointments:", e);
       return res.status(500).send((e as Error).message);
