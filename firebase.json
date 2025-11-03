@@ -15,7 +15,7 @@
         "*.local"
       ],
       "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" ci",
+        "npm --prefix \"$RESOURCE_DIR\" install",
         "npm --prefix \"$RESOURCE_DIR\" run lint",
         "npm --prefix \"$RESOURCE_DIR\" run build"
       ]
@@ -28,7 +28,7 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "predeploy": "cd react-app && npm ci && npm run build",
+    "predeploy": "cd react-app && npm install && npm run build",
     "rewrites": [
       {
         "source": "**",
