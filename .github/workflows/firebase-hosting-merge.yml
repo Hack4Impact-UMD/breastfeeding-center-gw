@@ -7,15 +7,53 @@ on:
     branches:
       - main
 jobs:
-  build_and_deploy:
+  deploy_firebase:
+    name: Deploy to Firebase Project
     runs-on: ubuntu-latest
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: /tmp/credentials.json
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          persist-credentials: false
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+          node-version: 22
+
+      - name: Cache npm dependencies for functions
+        uses: actions/cache@v4
         with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BREASTFEEDING_CENTER_GW }}
-          channelId: live
-          projectId: breastfeeding-center-gw
+          path: cloud-functions/functions/node_modules
+          key: ${{ runner.os }}-npm-functions-${{ hashFiles('cloud-functions/functions/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-functions-
+      
+      - name: Cache npm dependencies for react-app
+        uses: actions/cache@v4
+        with:
+          path: react-app/node_modules
+          key: ${{ runner.os }}-npm-react-app-${{ hashFiles('react-app/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-react-app-
+
+      - name: Install Firebase CLI
+        run: npm i -g firebase-tools
+
+      - name: Create GAC File
+        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_BREASTFEEDING_CENTER_GW }}' > $GOOGLE_APPLICATION_CREDENTIALS
+
+      - name: Deploy to Firebase
+        run: firebase deploy
+
+  # build_and_deploy:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         persist-credentials: false
+  #     - uses: FirebaseExtended/action-hosting-deploy@v0
+  #       with:
+  #         repoToken: ${{ secrets.GITHUB_TOKEN }}
+  #         firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BREASTFEEDING_CENTER_GW }}
+  #         channelId: live
+  #         projectId: breastfeeding-center-gw
