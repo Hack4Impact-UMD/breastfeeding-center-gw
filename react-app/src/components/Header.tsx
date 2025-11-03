@@ -5,13 +5,9 @@ import editIcon from "../assets/edit.svg";
 import { useAuth } from "@/auth/AuthProvider";
 
 const Header = () => {
-  const { authUser: user } = useAuth();
-  const name = user?.displayName ?? "";
-  const initials =
-    user?.displayName
-      ?.split(" ")
-      .map((s) => s.charAt(0).toUpperCase())
-      .join("") ?? "";
+  const { profile: user } = useAuth();
+  const name = `${user?.firstName} ${user?.lastName}`
+  const initials = (user?.firstName.charAt(0).toUpperCase() ?? "") + (user?.lastName.charAt(0).toUpperCase() ?? "");
   const [hover, setHover] = useState(false);
   const navigate = useNavigate();
   return (
