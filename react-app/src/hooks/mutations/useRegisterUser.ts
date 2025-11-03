@@ -1,4 +1,4 @@
-import { registerUserWithInvite } from "@/backend/UserFunctions";
+import { registerUserWithInvite } from "@/services/userService";
 import { UserRegisterForm } from "@/types/UserType";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router";

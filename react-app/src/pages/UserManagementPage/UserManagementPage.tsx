@@ -6,7 +6,7 @@ import AddAccountModal from "./AddAccountModal";
 import { useAllUsers } from "@/hooks/queries/useUsers";
 import Loading from "@/components/Loading";
 import { useMutation } from "@tanstack/react-query";
-import { sendUserInvite } from "@/backend/InviteFunctions";
+import { sendUserInvite } from "@/services/inviteService";
 
 const UserManagementPage: React.FC = () => {
   const [search, setSearch] = useState("");

@@ -1,5 +1,5 @@
 import { useAuth } from "@/auth/AuthProvider";
-import { updateUserRole } from "@/backend/UserFunctions";
+import { updateUserRole } from "@/services/userService";
 import { auth } from "@/config/firebase";
 import queries from "@/queries";
 import { Role } from "@/types/UserType";

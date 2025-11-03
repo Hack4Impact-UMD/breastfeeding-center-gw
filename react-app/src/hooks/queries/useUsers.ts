@@ -1,5 +1,5 @@
 import { useAuth } from "@/auth/AuthProvider";
-import { getAllUsers, getUserById } from "@/backend/UserFunctions";
+import { getAllUsers, getUserById } from "@/services/userService";
 import queries from "@/queries";
 import { User } from "@/types/UserType";
 import { useQuery } from "@tanstack/react-query";

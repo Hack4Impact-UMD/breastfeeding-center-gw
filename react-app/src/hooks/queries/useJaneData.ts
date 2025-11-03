@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   getAllJaneApptsInRange,
   getAllJaneApptsInRangeWithClient,
-} from "@/backend/JaneFunctions";
+} from "@/services/janeService";
 import { JaneAppt, JaneTableRow } from "@/types/JaneType";
 import queries from "@/queries";
 

@@ -1,4 +1,4 @@
-import { deleteJaneApptsByIds } from "@/backend/JaneFunctions";
+import { deleteJaneApptsByIds } from "@/services/janeService";
 import queries from "@/queries";
 import { JaneTableRow } from "@/types/JaneType";
 import { useMutation, useQueryClient } from "@tanstack/react-query";

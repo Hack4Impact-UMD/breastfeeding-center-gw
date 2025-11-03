@@ -6,7 +6,7 @@ import {
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { auth } from "../config/firebase";
 import { User as UserProfile } from "@/types/UserType";
-import { getUserById } from "@/backend/UserFunctions";
+import { getUserById } from "@/services/userService";
 
 interface Props {
   children: React.JSX.Element;

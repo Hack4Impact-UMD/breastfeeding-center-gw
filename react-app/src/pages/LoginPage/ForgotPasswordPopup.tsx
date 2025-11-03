@@ -2,7 +2,7 @@ import Modal from "../../components/Modal";
 import { BiArrowBack } from "react-icons/bi";
 import { IoIosClose } from "react-icons/io";
 import { useState } from "react";
-import { sendResetEmail } from "../../backend/AuthFunctions";
+import { sendResetEmail } from "../../services/authService";
 import Loading from "../../components/Loading";
 
 const ForgotPasswordPopup = ({

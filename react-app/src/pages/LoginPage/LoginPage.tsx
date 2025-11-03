@@ -3,7 +3,7 @@ import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import Logo from "../../assets/bcgw-logo.png";
 import Loading from "../../components/Loading";
 import { AuthError } from "firebase/auth";
-import { authenticateUserEmailAndPassword } from "../../backend/AuthFunctions";
+import { authenticateUserEmailAndPassword } from "../../services/authService";
 import ForgotPasswordPopup from "./ForgotPasswordPopup";
 import TwoFAPopup from "../../components/TwoFAPopup";
 import { Button } from "@/components/ui/button";

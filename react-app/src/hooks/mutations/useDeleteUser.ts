@@ -1,6 +1,6 @@
 import { useAuth } from "@/auth/AuthProvider";
-import { logOut } from "@/backend/AuthFunctions";
-import { deleteUserById } from "@/backend/UserFunctions";
+import { logOut } from "@/services/authService";
+import { deleteUserById } from "@/services/userService";
 // import { auth } from "@/config/firebase";
 import queries from "@/queries";
 import { useMutation, useQueryClient } from "@tanstack/react-query";

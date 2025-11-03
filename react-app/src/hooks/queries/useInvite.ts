@@ -1,4 +1,4 @@
-import { getInviteById } from "@/backend/InviteFunctions";
+import { getInviteById } from "@/services/inviteService";
 import queries from "@/queries";
 import { UserInvite } from "@/types/InviteType";
 import { useQuery } from "@tanstack/react-query";
