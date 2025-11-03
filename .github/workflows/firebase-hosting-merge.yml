@@ -12,6 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GOOGLE_APPLICATION_CREDENTIALS: /tmp/credentials.json
+      ROOT_USER_EMAIL: ${{ secrets.ROOT_USER_EMAIL }}
+      ROOT_USER_SECRET: ${{ secrets.ROOT_USER_SECRET }}
+      INVITE_EXPIRE_DAYS: 7
     steps:
       - uses: actions/checkout@v4
 
