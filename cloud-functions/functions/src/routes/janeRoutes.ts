@@ -1,4 +1,4 @@
-import { Request, Router, Response, query } from "express";
+import { Request, Router, Response } from "express";
 import { upload } from "../middleware/filesMiddleware";
 import { logger } from "firebase-functions";
 import { parseAppointmentSheet } from "../utils/janeUploadAppts";
