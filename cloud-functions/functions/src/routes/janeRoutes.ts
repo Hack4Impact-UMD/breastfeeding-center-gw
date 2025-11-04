@@ -7,8 +7,8 @@ import { JaneAppt } from "../types/janeType";
 import { Client, Baby } from "../types/clientType";
 import { db } from "../services/firebase";
 import { isAuthenticated } from "../middleware/authMiddleware";
-import { DateTime } from "luxon";
 import { CLIENTS_COLLECTION, JANE_APPT_COLLECTION } from "../types/collections";
+import { getAllJaneApptsInRange } from "../services/jane";
 
 const router = Router();
 
@@ -318,48 +318,38 @@ router.get(
 
       logger.info(`Fetching jane appts between: ${startDate} - ${endDate}`);
 
-      // Start query from JaneAppts collection
-      const collectionRef = db.collection(JANE_APPT_COLLECTION);
-      let query: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> =
-        collectionRef;
+      let appts: JaneAppt[] = [];
+      try {
+        appts = await getAllJaneApptsInRange(startDate, endDate);
+      } catch (err) {
+        logger.error("Failed to fetch jane appts in range");
+        logger.error(err);
 
-      // Filter appointments by date range if provided
-      if (startDate) {
-        const start = DateTime.fromISO(startDate).startOf("day");
-        if (!start.isValid) {
-          return res.status(400).send("Invalid startDate format");
+        if (err instanceof Error) {
+          return res.status(400).send(err.message);
+        } else {
+          return res.status(400).send();
         }
-        query = query.where("startAt", ">=", start.toISO());
       }
 
-      if (endDate) {
-        const end = DateTime.fromISO(endDate).endOf("day");
-        logger.info("end time: " + end);
-        if (!end.isValid) {
-          return res.status(400).send("Invalid endDate format");
-        }
-        query = query.where("startAt", "<=", end.toISO());
-      }
-
-      // Execute query to get appointments within timeframe
-      const snapshot = await query.get();
+      if (appts.length === 0) return res.status(200).json([]);
 
       if (includeClient) {
         // bulk fetch clients, then join them with their appts
-        const clientIds = snapshot.docs.map(apptDoc => (apptDoc.data() as JaneAppt).patientId);
+        const clientIds = appts.map((appt) => appt.patientId);
 
-        const clients = await db.getAll(...clientIds.map(id => db.collection(CLIENTS_COLLECTION).doc(id)))
+        const clients = await db.getAll(
+          ...clientIds.map((id) => db.collection(CLIENTS_COLLECTION).doc(id)),
+        );
         const clientsMap = new Map<string, Client>();
 
-        clients.forEach(c => {
+        clients.forEach((c) => {
           const client = c.data() as Client;
           clientsMap.set(client.id, client);
-        })
-
+        });
 
         const appointmentsWithClient: (JaneAppt & { client?: Client })[] =
-          snapshot.docs.map((doc) => {
-            const appt = doc.data() as JaneAppt;
+          appts.map((appt) => {
             const client = clientsMap.get(appt.patientId);
 
             if (client) {
@@ -367,16 +357,12 @@ router.get(
             } else {
               return appt;
             }
-          })
+          });
 
         return res.status(200).json(appointmentsWithClient);
       } else {
         // Convert documents to JaneAppt objects
-        const appointments: JaneAppt[] = snapshot.docs.map((doc) => {
-          return doc.data() as JaneAppt;
-        });
-
-        return res.status(200).json(appointments);
+        return res.status(200).json(appts);
       }
     } catch (e) {
       logger.error("Error fetching appointments:", e);
