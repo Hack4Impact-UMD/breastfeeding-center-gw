@@ -515,7 +515,11 @@ router.get(
           ...clientDict[client.id],
           ...new Set(matchingAppts),
         ]);
-        clientsByNumVisits[clientDict[client.id].size].push(client);
+        if (clientDict[client.id].size >= 6) {
+          clientsByNumVisits[6].push(client);
+        } else {
+          clientsByNumVisits[clientDict[client.id].size].push(client);
+        }
       });
 
       return res.status(200).send(clientsByNumVisits);
