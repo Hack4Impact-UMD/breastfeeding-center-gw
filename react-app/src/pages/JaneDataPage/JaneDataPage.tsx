@@ -14,9 +14,8 @@ import { DataTable } from "@/components/DataTable/DataTable.tsx";
 import { janeIDDataColumns } from "./JaneDataTableColumns.tsx";
 import { DateRange } from "react-day-picker";
 import { useEffect, useState } from "react";
-
 const JaneDataPage = () => {
-  //styles
+  // styles
   const buttonStyle =
     "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light text-lg border-1 border-black-500 py-2 px-8 rounded-full cursor-pointer";
   const centerItemsInDiv = "flex justify-between items-center";
@@ -26,11 +25,13 @@ const JaneDataPage = () => {
   const [dateRange, setDateRange] = useState<DateRange | undefined>(
     defaultDateRange,
   );
+
   const {
     data: janeConsultations,
     isPending,
     error,
   } = useJaneData(dateRange?.from?.toISOString(), dateRange?.to?.toISOString());
+
   const deleteJaneRecordMutation = useDeleteJaneRecord();
 
   const handleDelete = (rows: JaneTableRow[]) => {
@@ -40,61 +41,77 @@ const JaneDataPage = () => {
       endDate: dateRange?.to?.toISOString(),
     });
   };
+
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768); // adjust breakpoint as needed
+      setIsMobile(window.innerWidth < 768);
     };
-
-    handleResize(); // check immediately
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-  
 
   return (
     <>
-      <div className="flex flex-col p-8 pr-20 pl-20">
-        {/*headings*/}
-        <div className={centerItemsInDiv}>
-          <div>
-            <h1 className="font-bold">JANE Uploaded Data</h1>
+      <div className="flex flex-col px-0 pr-[0px] ml-8 md:ml-0 py-6 md:p-8 md:pr-20 md:pl-20 w-full max-w-[365px] md:max-w-none">
+        {/* MOBILE HEADER (≤ md): title + floating date picker */}
+        <div className="relative block md:hidden">
+          <h1 className="mt-15 font-bold text-[30px] leading-tight">
+            JANE Uploaded Data
+          </h1>
+          <div className="absolute top-0 right-[12px]">
+            <div className="w-[220px] h-[45px]">
+              <DateRangePicker
+                enableYearNavigation
+                value={dateRange}
+                onChange={(range) => setDateRange(range)}
+                presets={defaultPresets}
+                className="w-[220px] h-[45px]"
+              />
+            </div>
           </div>
-          {/*date picker*/}
+        </div>
+
+        {/* DESKTOP HEADER (md+): inline title + picker, no absolute positioning */}
+        <div className="hidden md:flex items-center justify-between mb-4">
+          <h1 className="font-bold text-[60px] leading-tight">
+            JANE Uploaded Data
+          </h1>
           <div className="w-60">
             <DateRangePicker
               enableYearNavigation
-              defaultValue={defaultDateRange}
-              presets={defaultPresets}
               value={dateRange}
+              onChange={(range) => setDateRange(range)}
+              presets={defaultPresets}
               className="w-60"
-              onChange={(dateRange) => setDateRange(dateRange)}
             />
           </div>
         </div>
 
-        {/*upload section*/}
-        <div className={`${centerItemsInDiv} basis-20xs mt-6 mb-4`}>
-          <div className={centerItemsInDiv}>
-            <button
-              className={`${buttonStyle} mr-5 text-nowrap`}
-              onClick={() => setShowUploadPopup(true)}
-            >
-              UPLOAD NEW SPREADSHEETS
-            </button>
-            {/* popup — switch based on screen size */}
-      {isMobile ? (
-        <FileUploadPopupMobile
-          isOpen={showUploadPopup}
-          onClose={() => setShowUploadPopup(false)}
-        />
-      ) : (
-        <FileUploadPopup
-          isOpen={showUploadPopup}
-          onClose={() => setShowUploadPopup(false)}
-        />
-      )}
-          </div>
+        {/* UPLOAD BUTTON */}
+        <div className={`${centerItemsInDiv} basis-20xs mt-4 mb-4`}>
+          <button
+            className={`${buttonStyle} mr-5 text-nowrap`}
+            onClick={() => setShowUploadPopup(true)}
+          >
+            UPLOAD NEW SPREADSHEETS
+          </button>
         </div>
+
+        {/* CONDITIONAL POPUP */}
+        {isMobile ? (
+          <FileUploadPopupMobile
+            isOpen={showUploadPopup}
+            onClose={() => setShowUploadPopup(false)}
+          />
+        ) : (
+          <FileUploadPopup
+            isOpen={showUploadPopup}
+            onClose={() => setShowUploadPopup(false)}
+          />
+        )}
+
+        {/* DATA TABLE OR LOADING */}
         {isPending ? (
           <div className="flex justify-center items-center">
             <Loading />
@@ -113,10 +130,6 @@ const JaneDataPage = () => {
             tableType="janeData"
           />
         )}
-        {/* <FileUploadPopup
-          isOpen={showUploadPopup}
-          onClose={() => setShowUploadPopup(false)}
-        /> */}
       </div>
     </>
   );
