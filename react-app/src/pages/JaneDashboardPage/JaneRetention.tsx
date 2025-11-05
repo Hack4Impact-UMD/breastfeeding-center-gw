@@ -11,6 +11,8 @@ import {
 import { toPng } from "html-to-image";
 import download from "downloadjs";
 import { RetentionRate, makeRetentionRateColumns } from "./JaneTableColumns";
+import { useRetentionData } from "@/hooks/queries/useRetentionData.ts";
+import { processRetentionData } from "@/backend/JaneFunctions.ts";
 import { DataTable } from "@/components/DataTable/DataTable";
 
 type JaneRetentionProps = {
@@ -55,99 +57,121 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
       month: "numeric",
       day: "numeric",
     });
+    
+  const { data: rawRetentionData, isLoading: isRetentionLoading, error: retentionError } = 
+    useRetentionData(startDate, endDate);
+  
+  const processedData = rawRetentionData ? processRetentionData(rawRetentionData) : [];
 
-  const funnelData = [
-    {
-      data: 50,
-      key: "1st week",
-    },
-    {
-      data: 40,
-      key: "2nd week",
-    },
-    {
-      data: 34,
-      key: "3rd week",
-    },
-    {
-      data: 25,
-      key: "4th week",
-    },
-    {
-      data: 20,
-      key: "5th week",
-    },
-    {
-      data: 18,
-      key: "6th week",
-    },
-  ];
+  const funnelData = processedData.map((row) => ({
+    data: row.numberVisited,
+    key: row.visit
+  }));
 
-  const retentionData: RetentionRate[] = [
-    {
-      visit: "1 Visit",
-      numberVisited: 12,
-      percent: 16.6,
-      loss: 0,
-      clientsLostNames: "",
-      clients: [],
-    },
-    {
-      visit: "2 Visits",
-      numberVisited: 14,
-      percent: 4.23,
-      loss: 5,
-      clientsLostNames: "Jane Doe, Jane Doe, Jane Doe, Jane Doe, Jane Doe",
-      clients: [
-        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
-        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
-        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
-        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
-        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
-      ],
-    },
-    {
-      visit: "3 Visits",
-      numberVisited: 10,
-      percent: 16.6,
-      loss: 2,
-      clientsLostNames: "Jane Doe, Jane Doe",
-      clients: [
-        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
-        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
-      ],
-    },
-    {
-      visit: "4 Visits",
-      numberVisited: 9,
-      percent: 16.6,
-      loss: 1,
-      clientsLostNames: "Jane Doe",
-      clients: [{ first: "Jane", last: "Doe", email: "jdoe@gmail.com" }],
-    },
-    {
-      visit: "5 Visits",
-      numberVisited: 8,
-      percent: 28.88,
-      loss: 9,
-      clientsLostNames: "Jane Doe, Jane Doe, Jane Doe, Jane Doe, Jane Doe",
-      clients: [
-        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
-        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
-        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
-        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
-        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
-      ],
-    },
-    {
-      visit: "6+ Visits",
-      numberVisited: 7,
-      percent: 16.6,
-      loss: 1,
-      clientsLostNames: "Jane Doe",
-      clients: [{ first: "Jane", last: "Doe", email: "jdoe@gmail.com" }],
-    },
-  ];
+  const retentionData = processedData.map((row) => ({
+    visit: `${row.visit} Visit${row.visit > 1 ? 's' : ''}`,
+    numberVisited: row.numberVisited, 
+    percent: row.percentTotal,
+    loss: typeof row.numberLost === 'number' ? row.numberLost : 0,
+    clientLostNames:  row.clientsLost.map(client => `${client.firstName} ${client.lastName}`).join(", "),
+    clients: row.clientsLost
+  }));
+
+   // const funnelData = [
+  //   {
+  //     data: 50,
+  //     key: "1st week",
+  //   },
+  //   {
+  //     data: 40,
+  //     key: "2nd week",
+  //   },
+  //   {
+  //     data: 34,
+  //     key: "3rd week",
+  //   },
+  //   {
+  //     data: 25,
+  //     key: "4th week",
+  //   },
+  //   {
+  //     data: 20,
+  //     key: "5th week",
+  //   },
+  //   {
+  //     data: 18,
+  //     key: "6th week",
+  //   },
+  // ];
+
+  //  const retentionData: RetentionRate[] = [
+  //   {
+  //     visit: "1 Visit",
+  //     numberVisited: 12,
+  //     percent: 16.6,
+  //     loss: 0,
+  //     clientsLostNames: "",
+  //     clients: [],
+  //   },
+  //   {
+  //     visit: "2 Visits",
+  //     numberVisited: 14,
+  //     percent: 4.23,
+  //     loss: 5,
+  //     clientsLostNames: "Jane Doe, Jane Doe, Jane Doe, Jane Doe, Jane Doe",
+  //     clients: [
+  //       { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+  //       { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+  //       { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+  //       { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+  //       { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+  //     ],
+  //   },
+  //   {
+  //     visit: "3 Visits",
+  //     numberVisited: 10,
+  //     percent: 16.6,
+  //     loss: 2,
+  //     clientsLostNames: "Jane Doe, Jane Doe",
+  //     clients: [
+  //       { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+  //       { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+  //     ],
+  //   },
+  //   {
+  //     visit: "4 Visits",
+  //     numberVisited: 9,
+  //     percent: 16.6,
+  //     loss: 1,
+  //     clientsLostNames: "Jane Doe",
+  //     clients: [{ first: "Jane", last: "Doe", email: "jdoe@gmail.com" }],
+  //   },
+  //   {
+  //     visit: "5 Visits",
+  //     numberVisited: 8,
+  //     percent: 28.88,
+  //     loss: 9,
+  //     clientsLostNames: "Jane Doe, Jane Doe, Jane Doe, Jane Doe, Jane Doe",
+  //     clients: [
+  //       { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+  //       { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+  //       { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+  //       { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+  //       { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
+  //     ],
+  //   },
+  //   {
+  //     visit: "6+ Visits",
+  //     numberVisited: 7,
+  //     percent: 16.6,
+  //     loss: 1,
+  //     clientsLostNames: "Jane Doe",
+  //     clients: [{ first: "Jane", last: "Doe", email: "jdoe@gmail.com" }],
+  //   },
+  // ];
+
+  if (isRetentionLoading) return <div> Loading retention data... </div>;
+  if (retentionError) return <div>Error loading retention data</div>;
 
   return (
     <div className="flex-[0_0_48%] max-w-[50%] min-w-[560px]">

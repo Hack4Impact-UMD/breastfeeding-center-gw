@@ -501,6 +501,9 @@ router.get(
         const matchingClient = await getMatchingClients(appt.patientId);
         if (matchingClient) {
           firstVisitClients.push(matchingClient);
+          if (!clientDict[appt.patientId]) {
+            clientDict[appt.patientId] = new Set();
+          }
           clientDict[appt.patientId].add(appt.apptId);
         }
       }

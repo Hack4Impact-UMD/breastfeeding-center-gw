@@ -49,7 +49,10 @@ export const AuthProvider = ({ children }: Props): React.ReactElement => {
           return null;
         });
 
-        const profile = await getUserById(newUser.uid);
+        const profile = await getUserById(newUser.uid).catch((err) => {
+          console.warn("User profile is not found");
+          return null;
+        });
 
         setAuthState({
           authUser: newUser,
