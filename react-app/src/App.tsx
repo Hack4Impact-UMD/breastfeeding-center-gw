@@ -71,7 +71,7 @@ function App() {
                 />
                 <Route path="/clients" element={<ClientListPage />} />
                 <Route
-                  path="/clients/journey"
+                  path="/clients/journey/:id"
                   element={<ClientJourneyPage />}
                 />
                 <Route path="/profile" element={<ProfilePage />} />

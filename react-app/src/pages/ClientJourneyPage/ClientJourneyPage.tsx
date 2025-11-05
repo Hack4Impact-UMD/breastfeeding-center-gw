@@ -9,17 +9,31 @@ import {
   PaySimpleRentals,
 } from "./ClientJourneyTableColumns.tsx";
 import { DataTable } from "../../components/DataTable/DataTable.tsx";
+import { useNavigate, useParams } from "react-router";
+import { useClientByPatientId } from "@/hooks/queries/useClientById.ts";
 
 const ClientJourney = () => {
   //styles
   const centerItemsInDiv = "flex justify-between items-center";
   const dividingLine = "w-full h-1 border-t border-black-500 mt-3 mb-3";
   const tableSection = "py-3 space-y-3";
+  const navigate = useNavigate();
+
+  const clientId = useParams().id;
+  if (!clientId) {
+    navigate("/*");
+  }
+  const {
+    data: clientInfo,
+    isPending,
+    error,
+  } = useClientByPatientId(clientId!);
+
+  // get client info
 
   //client basic info
   const name = "Jane Doe";
   const children = "James Doe";
-  const partners = "John Doe";
 
   const sampleAcuityData: AcuityData[] = [
     {
@@ -102,13 +116,11 @@ const ClientJourney = () => {
           {/* Information in between lines */}
           <div className="text-left space-y-2 px-3 py-2 w-full max-w-md">
             <div>
-              <strong>NAME:</strong> {name}
+              <strong>NAME:</strong> {clientInfo?.firstName}{" "}
+              {clientInfo?.lastName}
             </div>
             <div>
               <strong>CHILDREN:</strong> {children}
-            </div>
-            <div>
-              <strong>PARTNER(S):</strong> {partners}
             </div>
           </div>
           <div className={dividingLine}></div> {/* dividing line */}

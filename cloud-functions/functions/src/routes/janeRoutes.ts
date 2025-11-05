@@ -315,6 +315,7 @@ router.get(
       const startDate = req.query.startDate as string;
       const endDate = req.query.endDate as string;
       const includeClient = req.query.includeClient === "true";
+      const clientId = req.query.clientId as string;
 
       logger.info(`Fetching jane appts between: ${startDate} - ${endDate}`);
 
