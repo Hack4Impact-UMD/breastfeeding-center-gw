@@ -76,7 +76,7 @@ const JaneDashboardPage = () => {
   const buttonStyle =
     "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light text-lg border-1 border-black-500 py-2 px-8 rounded-full cursor-pointer";
   const transparentGrayButtonStyle =
-    "bg-transparent hover:bg-bcgw-gray-light text-gray border-2 border-gray py-1 px-6 rounded-full cursor-pointer";
+    "flex items-center justify-center bg-transparent hover:bg-bcgw-gray-light text-gray border-2 border-gray py-1 px-6 rounded-full cursor-pointer";
   const graphTableButtonStyle =
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer border border-gray-300";
   const centerItemsInDiv = "flex justify-between items-center";
@@ -292,10 +292,26 @@ const JaneDashboardPage = () => {
 
   return (
     <>
-      <div className="flex flex-col p-8 pr-20 pl-20">
-        <div className={centerItemsInDiv}>
-          <h1 className="font-bold">JANE</h1>
-          {/* date picker */}
+      <div className="flex flex-col px-0 pr-[0px] ml-8 md:ml-0 py-6 md:p-8 md:pr-20 md:pl-20 w-full max-w-[365px] md:max-w-none">
+        {/* Date picker: top-right */}
+        <div className="relative block md:hidden">
+          <h1 className="mt-5 font-bold text-[30px] md:text-[60px] leading-tight">
+            Jane
+          </h1>
+          <div className="absolute top-0 right-[12px]">
+            <div className="w-[220px] h-[45px]">
+              <DateRangePicker
+                enableYearNavigation
+                value={dateRange}
+                onChange={(range) => setDateRange(range)}
+                presets={defaultPresets}
+                className="w-[220px] h-[45px]"
+              />
+            </div>
+          </div>
+        </div>
+        <div className="hidden md:flex items-center justify-between mb-4">
+          <h1 className="font-bold text-2xl">Jane</h1>
           <div className="w-60">
             <DateRangePicker
               enableYearNavigation
@@ -307,7 +323,9 @@ const JaneDashboardPage = () => {
           </div>
         </div>
 
-        <div className={`${centerItemsInDiv} basis-20xs mt-6`}>
+
+
+        <div className={`${centerItemsInDiv} basis-20xs mt-3`}>
           <Link to="/services/jane/data">
             <button className={`${buttonStyle} mr-5 text-nowrap`}>
               VIEW UPLOADED DATA
@@ -316,37 +334,30 @@ const JaneDashboardPage = () => {
         </div>
 
         <div className="flex flex-wrap gap-8 pt-3">
-          <div className="flex-[0_0_48%] max-w-[50%] min-w-[560px]">
-            <div className={`${centerItemsInDiv} pt-4 mb-6`}>
-              <div className="flex flex-row">
+          <div className="flex-[0_0_100%] max-w-full min-w-0 md:flex-[0_0_48%] md:max-w-[50%] md:min-w-[560px]">
+            <div className="flex items-center justify-between w-full pt-4 mb-6">
+              <div className="flex w-[175px] h-10 overflow-hidden ">
                 <button
-                  className={`${graphTableButtonStyle} ${
-                    visitDisplay === "graph"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#CED8E1]"
-                  }`}
+                  className={`flex-1 h-full ${graphTableButtonStyle} ${visitDisplay === "graph" ? "bg-bcgw-gray-light" : "bg-[#CED8E1]"}`}
                   onClick={() => setVisitDisplay("graph")}
                 >
                   Graph
                 </button>
                 <button
-                  className={`${graphTableButtonStyle} ${
-                    visitDisplay === "table"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#CED8E1]"
-                  }`}
+                  className={`flex-1 h-full ${graphTableButtonStyle} ${visitDisplay === "table" ? "bg-bcgw-gray-light" : "bg-[#CED8E1]"}`}
                   onClick={() => setVisitDisplay("table")}
                 >
                   Table
                 </button>
               </div>
               <button
-                className={transparentGrayButtonStyle}
+                className={`${transparentGrayButtonStyle} w-[90px] h-10 md:w-auto md:mr-0`}
                 onClick={() => handleExport(pieChartRef, "visit_breakdown")}
               >
                 Export
               </button>
             </div>
+
 
             {visitDisplay === "graph" ? (
               <>
@@ -354,8 +365,8 @@ const JaneDashboardPage = () => {
                   Visit Breakdown:{" "}
                   {dateRange?.from && dateRange?.to
                     ? formatDate(dateRange.from) +
-                      " - " +
-                      formatDate(dateRange.to)
+                    " - " +
+                    formatDate(dateRange.to)
                     : "All Data"}
                 </span>
                 <div className={chartDiv} ref={pieChartRef}>
@@ -405,8 +416,8 @@ const JaneDashboardPage = () => {
                   Visit Breakdown:{" "}
                   {dateRange?.from && dateRange?.to
                     ? formatDate(dateRange.from) +
-                      " - " +
-                      formatDate(dateRange.to)
+                    " - " +
+                    formatDate(dateRange.to)
                     : "All Data"}
                 </span>
                 <DataTable
@@ -418,51 +429,46 @@ const JaneDashboardPage = () => {
             )}
           </div>
 
-          <div className="flex-[0_0_48%] max-w-[50%] min-w-[560px]">
-            <div className={`${centerItemsInDiv} pt-4 mb-6`}>
-              <div className="flex flex-row">
+          <div className="flex-[0_0_100%] max-w-full min-w-0 md:flex-[0_0_48%] md:max-w-[50%] md:min-w-[560px]">
+            <div className="flex items-center justify-between w-full pt-4 mb-6">
+              {/* same 175×40 toggle group */}
+              <div className="flex w-[175px] h-10 overflow-hidden">
                 <button
-                  className={`${graphTableButtonStyle} ${
-                    retentionDisplay === "graph"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#CED8E1]"
-                  }`}
+                  className={`flex-1 h-full ${graphTableButtonStyle} ${retentionDisplay === "graph" ? "bg-bcgw-gray-light" : "bg-[#CED8E1]"}`}
                   onClick={() => setRetentionDisplay("graph")}
                 >
                   Graph
                 </button>
                 <button
-                  className={`${graphTableButtonStyle} ${
-                    retentionDisplay === "table"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#CED8E1]"
-                  }`}
+                  className={`flex-1 h-full ${graphTableButtonStyle} ${retentionDisplay === "table" ? "bg-bcgw-gray-light" : "bg-[#CED8E1]"}`}
                   onClick={() => setRetentionDisplay("table")}
                 >
                   Table
                 </button>
               </div>
+
               <button
-                className={transparentGrayButtonStyle}
+                className={`${transparentGrayButtonStyle} w-[90px] h-10 md:w-auto`}
                 onClick={() => handleExport(funnelChartRef, "retention_rate")}
               >
                 Export
               </button>
             </div>
+
+
             <span className="self-start font-semibold text-2xl">
               Retention Rate:{" "}
               {dateRange?.from && dateRange?.to
                 ? formatDate(dateRange.from) + " - " + formatDate(dateRange.to)
                 : "All Data"}
             </span>
-            <div
-              className={retentionDisplay === "graph" ? chartDiv : ""}
-              ref={funnelChartRef}
-            >
+
+            <div className="w-full pr-[12px] md:pr-0" ref={funnelChartRef}>
               {retentionDisplay === "graph" ? (
-                <>
-                  <div className="self-end">
-                    <label className="text-sm font-medium"></label>
+                /* same bordered card as the first graph */
+                <div className={chartDiv}>
+                  {/* dropdown aligned right inside the card */}
+                  <div className="w-full flex justify-end">
                     <select
                       className="border rounded-md px-2 py-1 text-sm"
                       value={selectedDropdown}
@@ -472,26 +478,26 @@ const JaneDashboardPage = () => {
                       <option>RECENT CHILDBIRTH</option>
                     </select>
                   </div>
+
+                  {/* chart row; tighten the rotated label margins so it doesn't shove the chart left */}
                   <div className="flex items-center">
-                    <span className="text-xl whitespace-nowrap -rotate-90 -mr-15 -ml-15">
+                    <span className="text-xl whitespace-nowrap -rotate-90 -mr-12 -ml-17">
                       Number of Visits
                     </span>
 
                     <FunnelChart
                       height={290}
-                      width={400}
+                      /* 300 on mobile (to match the pie), 400 on md+ */
+                      width={
+                        typeof window !== "undefined" && window.innerWidth >= 768 ? 400 : 295
+                      }
                       data={funnelData}
                       series={
                         <FunnelSeries
                           arc={<FunnelArc colorScheme="#05182A" />}
                           axis={
                             <FunnelAxis
-                              line={
-                                <FunnelAxisLine
-                                  strokeColor="#FFFFFF"
-                                  strokeWidth={5}
-                                ></FunnelAxisLine>
-                              }
+                              line={<FunnelAxisLine strokeColor="#FFFFFF" strokeWidth={5} />}
                               label={
                                 <FunnelAxisLabel
                                   className=""
@@ -507,33 +513,30 @@ const JaneDashboardPage = () => {
                       }
                     />
                   </div>
-                </>
+                </div>
               ) : (
                 <>
                   <div className="[&_td]:py-3 [&_th]:py-3">
                     <DataTable
-                      columns={makeRetentionRateColumns((row) =>
-                        setOpenRow(row),
-                      )}
+                      columns={makeRetentionRateColumns((row) => setOpenRow(row))}
                       data={retentionData}
                       tableType="default"
-                      //tableHeaderExtras={retentionHeaderExtras}
                     />
                   </div>
 
                   {openRow && (
-  <>
-    {window.innerWidth < 768 ? (
-      <ClientLostPopupMobile openRow={openRow} setOpenRow={setOpenRow} />
-    ) : (
-      <ClientLostPopup openRow={openRow} setOpenRow={setOpenRow} />
-    )}
-  </>
-)}
-
+                    <>
+                      {window.innerWidth < 768 ? (
+                        <ClientLostPopupMobile openRow={openRow} setOpenRow={setOpenRow} />
+                      ) : (
+                        <ClientLostPopup openRow={openRow} setOpenRow={setOpenRow} />
+                      )}
+                    </>
+                  )}
                 </>
               )}
             </div>
+
           </div>
         </div>
       </div>
