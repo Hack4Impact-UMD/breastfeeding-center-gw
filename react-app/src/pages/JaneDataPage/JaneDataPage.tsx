@@ -6,12 +6,14 @@ import {
 import { useJaneData } from "@/hooks/queries/useJaneData.ts";
 import { useDeleteJaneRecord } from "@/hooks/mutations/useDeleteJaneRecord.ts";
 import FileUploadPopup from "./FileUploadPopup.tsx";
+import FileUploadPopupMobile from "./FileUploadPopupMobile";
 import Loading from "@/components/Loading.tsx";
 import { JaneTableRow } from "@/types/JaneType.ts";
-import { useState } from "react";
+//import { useState } from "react";
 import { DataTable } from "@/components/DataTable/DataTable.tsx";
 import { janeIDDataColumns } from "./JaneDataTableColumns.tsx";
 import { DateRange } from "react-day-picker";
+import { useEffect, useState } from "react";
 
 const JaneDataPage = () => {
   //styles
@@ -20,6 +22,7 @@ const JaneDataPage = () => {
   const centerItemsInDiv = "flex justify-between items-center";
 
   const [showUploadPopup, setShowUploadPopup] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange | undefined>(
     defaultDateRange,
   );
@@ -37,6 +40,16 @@ const JaneDataPage = () => {
       endDate: dateRange?.to?.toISOString(),
     });
   };
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768); // adjust breakpoint as needed
+    };
+
+    handleResize(); // check immediately
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  
 
   return (
     <>
@@ -68,6 +81,18 @@ const JaneDataPage = () => {
             >
               UPLOAD NEW SPREADSHEETS
             </button>
+            {/* popup — switch based on screen size */}
+      {isMobile ? (
+        <FileUploadPopupMobile
+          isOpen={showUploadPopup}
+          onClose={() => setShowUploadPopup(false)}
+        />
+      ) : (
+        <FileUploadPopup
+          isOpen={showUploadPopup}
+          onClose={() => setShowUploadPopup(false)}
+        />
+      )}
           </div>
         </div>
         {isPending ? (
@@ -88,10 +113,10 @@ const JaneDataPage = () => {
             tableType="janeData"
           />
         )}
-        <FileUploadPopup
+        {/* <FileUploadPopup
           isOpen={showUploadPopup}
           onClose={() => setShowUploadPopup(false)}
-        />
+        /> */}
       </div>
     </>
   );
