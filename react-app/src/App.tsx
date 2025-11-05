@@ -21,7 +21,10 @@ import { TooltipProvider } from "./components/ui/tooltip";
 import { Button } from "./components/ui/button";
 import RequireNoAuth from "./auth/RequireNoAuth";
 import { axiosClient } from "./lib/utils";
-import { getAllJaneApptsInRange } from "./services/janeService";
+import {
+  getAllJaneApptsInRange,
+  getClientByPatientId,
+} from "./services/janeService";
 import LayoutShell from "./pages/LayoutShell";
 // import "@tremor/react/dist/esm/tremor.css";
 
@@ -91,7 +94,7 @@ function App() {
                         <Button
                           variant={"yellow"}
                           onClick={async () => {
-                            await getAllJaneApptsInRange();
+                            await getClientByPatientId("100");
                           }}
                         >
                           TEST

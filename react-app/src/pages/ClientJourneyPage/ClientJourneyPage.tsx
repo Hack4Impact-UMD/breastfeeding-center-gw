@@ -9,27 +9,32 @@ import {
   PaySimpleRentals,
 } from "./ClientJourneyTableColumns.tsx";
 import { DataTable } from "../../components/DataTable/DataTable.tsx";
-import { useNavigate, useParams } from "react-router";
+import { Navigate, useParams } from "react-router";
 import { useClientByPatientId } from "@/hooks/queries/useClientById.ts";
 import Loading from "@/components/Loading.tsx";
+import { useJaneApptsForClient } from "@/hooks/queries/useJaneApptsForClient.ts";
 
 const ClientJourney = () => {
   //styles
   const centerItemsInDiv = "flex justify-between items-center";
   const dividingLine = "w-full h-1 border-t border-black-500 mt-3 mb-3";
   const tableSection = "py-3 space-y-3";
-  const navigate = useNavigate();
 
   const clientId = useParams().id;
 
   // get client info
   const {
     data: clientInfo,
-    isPending,
-    error,
+    isPending: isClientInfoPending,
+    error: clientInfoError,
   } = useClientByPatientId(clientId!);
 
-  console.log(clientInfo);
+  // get appointments for the specific client
+  const {
+    data: clientApptData,
+    isPending,
+    error,
+  } = useJaneApptsForClient(clientId!);
 
   const sampleAcuityData: AcuityData[] = [
     {
@@ -41,30 +46,6 @@ const ClientJourney = () => {
       class: "Class B",
       instructor: "A. Smith",
       date: "3/01/23",
-    },
-  ];
-
-  const sampleJaneConsults: JaneConsults[] = [
-    {
-      clinician: "B. Green",
-      date: "2/01/24",
-      service: "TELEHEALTH Postpartum",
-      visitType: "TELEHEALTH",
-      insurance: "Insurance Name",
-    },
-    {
-      clinician: "B. Green",
-      date: "1/12/24",
-      service: "DC Office: Postpartum Lac",
-      visitType: "HOMEVISIT",
-      insurance: "Insurance Name",
-    },
-    {
-      clinician: "C. Johnson",
-      date: "3/23/23",
-      service: "DC Office: Postpartum Lac",
-      visitType: "HOMEVISIT",
-      insurance: "Insurance Name",
     },
   ];
 
@@ -96,6 +77,24 @@ const ClientJourney = () => {
     },
   ];
 
+  const janeConsultsData: JaneConsults[] =
+    clientApptData?.map((appt) => ({
+      clinician: appt.clinician,
+      date: appt.startAt,
+      service: appt.service,
+      visitType: appt.visitType,
+      insurance: clientInfo?.insurance || "",
+    })) ?? [];
+
+  const formattedJaneConsultsData: JaneConsults[] =
+    janeConsultsData?.map((consult) => {
+      const [firstName, lastName] = consult.clinician.split(" ");
+      return {
+        ...consult,
+        clinician: `${firstName[0]}. ${lastName}`,
+      };
+    }) ?? [];
+
   return (
     <>
       <div className="flex flex-col p-8 pr-20 pl-20">
@@ -106,8 +105,10 @@ const ClientJourney = () => {
           </div>
         </div>
 
-        {isPending ? (
+        {isClientInfoPending || isPending ? (
           <Loading />
+        ) : clientInfoError || error ? (
+          <Navigate to="/*" />
         ) : (
           <>
             {/*info section*/}
@@ -120,7 +121,7 @@ const ClientJourney = () => {
                   {clientInfo?.lastName}
                 </div>
                 <div>
-                  <strong>CHILDREN:</strong>{" "}
+                  <strong>CHILDREN:</strong>
                   {clientInfo?.baby.map((child, index) => (
                     <span key={index}>
                       {child.firstName} {child.lastName}
@@ -147,7 +148,7 @@ const ClientJourney = () => {
                 <h2 className="font-bold">JANE Consults</h2>
                 <DataTable
                   columns={janeConsultsColumns}
-                  data={sampleJaneConsults}
+                  data={formattedJaneConsultsData}
                   tableType="default"
                 />
               </div>

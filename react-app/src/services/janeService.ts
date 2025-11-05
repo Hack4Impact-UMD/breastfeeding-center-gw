@@ -2,6 +2,29 @@ import { axiosClient } from "@/lib/utils";
 import { JaneAppt } from "../types/JaneType";
 import { Client } from "../types/ClientType";
 
+export async function getAllJaneApptsForClient(
+  clientId?: string,
+): Promise<JaneAppt[]> {
+  try {
+    const axios = await axiosClient();
+
+    // Build query parameters
+    const params = new URLSearchParams();
+    if (clientId) params.append("clientId", clientId);
+
+    const queryString = params.toString();
+    const url = `/jane/appointments${queryString ? `?${queryString}` : ""}`;
+
+    console.log(url);
+
+    const response = await axios.get(url);
+    return response.data as JaneAppt[];
+  } catch (error) {
+    console.error("Error fetching Jane appointments:", error);
+    throw error;
+  }
+}
+
 export async function getAllJaneApptsInRange(
   startDate?: string,
   endDate?: string,
