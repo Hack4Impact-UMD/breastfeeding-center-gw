@@ -12,6 +12,8 @@ jobs:
       GOOGLE_APPLICATION_CREDENTIALS: /tmp/credentials.json
       ROOT_USER_EMAIL: ${{ secrets.ROOT_USER_EMAIL }}
       ROOT_USER_SECRET: ${{ secrets.ROOT_USER_SECRET }}
+      ACUITY_API_KEY: ${{ secrets.ACUITY_API_KEY }}
+      ACUITY_USER_ID: ${{ secrets.ACUITY_USER_ID }}
       INVITE_EXPIRE_DAYS: 7
     steps:
       - uses: actions/checkout@v4
@@ -48,6 +50,8 @@ jobs:
           echo "ROOT_USER_EMAIL=${ROOT_USER_EMAIL}" > cloud-functions/functions/.env
           echo "ROOT_USER_SECRET=${ROOT_USER_SECRET}" >> cloud-functions/functions/.env
           echo "INVITE_EXPIRE_DAYS=${INVITE_EXPIRE_DAYS}" >> cloud-functions/functions/.env
+          echo "ACUITY_API_KEY=${ACUITY_API_KEY}" >> cloud-functions/functions/.env
+          echo "ACUITY_USER_ID=${ACUITY_USER_ID}" >> cloud-functions/functions/.env
 
       - name: Deploy to Firebase
         run: firebase deploy
