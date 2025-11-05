@@ -125,17 +125,16 @@ function App() {
                         </Button>
                         <Button
                           variant={"gray"}
-                          disabled
                           className="rounded-full"
                           onClick={async () => {
                             const axiosInstance = await axiosClient();
                             await axiosInstance
-                              .get("/jane/appointments")
+                              .get("/jane/appointments?clientId=14806")
                               .then((response) => console.log(response))
                               .catch((error) => console.log(error));
                           }}
                         >
-                          TEST HERE
+                          TEST HERE!!
                         </Button>
                       </div>
                     </div>

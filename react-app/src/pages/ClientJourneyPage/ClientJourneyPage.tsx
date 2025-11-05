@@ -11,6 +11,7 @@ import {
 import { DataTable } from "../../components/DataTable/DataTable.tsx";
 import { useNavigate, useParams } from "react-router";
 import { useClientByPatientId } from "@/hooks/queries/useClientById.ts";
+import Loading from "@/components/Loading.tsx";
 
 const ClientJourney = () => {
   //styles
@@ -20,20 +21,15 @@ const ClientJourney = () => {
   const navigate = useNavigate();
 
   const clientId = useParams().id;
-  if (!clientId) {
-    navigate("/*");
-  }
+
+  // get client info
   const {
     data: clientInfo,
     isPending,
     error,
   } = useClientByPatientId(clientId!);
 
-  // get client info
-
-  //client basic info
-  const name = "Jane Doe";
-  const children = "James Doe";
+  console.log(clientInfo);
 
   const sampleAcuityData: AcuityData[] = [
     {
@@ -110,60 +106,72 @@ const ClientJourney = () => {
           </div>
         </div>
 
-        {/*info section*/}
-        <div className="flex flex-col space-y-1">
-          <div className={dividingLine}></div> {/* dividing line */}
-          {/* Information in between lines */}
-          <div className="text-left space-y-2 px-3 py-2 w-full max-w-md">
-            <div>
-              <strong>NAME:</strong> {clientInfo?.firstName}{" "}
-              {clientInfo?.lastName}
+        {isPending ? (
+          <Loading />
+        ) : (
+          <>
+            {/*info section*/}
+            <div className="flex flex-col space-y-1">
+              <div className={dividingLine}></div> {/* dividing line */}
+              {/* Information in between lines */}
+              <div className="text-left space-y-2 px-3 py-2 w-full max-w-md">
+                <div>
+                  <strong>NAME:</strong> {clientInfo?.firstName}{" "}
+                  {clientInfo?.lastName}
+                </div>
+                <div>
+                  <strong>CHILDREN:</strong>{" "}
+                  {clientInfo?.baby.map((child, index) => (
+                    <span key={index}>
+                      {child.firstName} {child.lastName}
+                      {index < clientInfo.baby.length - 1 ? ", " : ""}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className={dividingLine}></div> {/* dividing line */}
             </div>
+
+            {/*tables section*/}
             <div>
-              <strong>CHILDREN:</strong> {children}
+              <div className={tableSection}>
+                <h2 className="font-bold">Acuity Classes</h2>
+                <DataTable
+                  columns={acuityColumns}
+                  data={sampleAcuityData}
+                  tableType="default"
+                />
+              </div>
+
+              <div className={tableSection}>
+                <h2 className="font-bold">JANE Consults</h2>
+                <DataTable
+                  columns={janeConsultsColumns}
+                  data={sampleJaneConsults}
+                  tableType="default"
+                />
+              </div>
+
+              <div className={tableSection}>
+                <h2 className="font-bold">Paysimple Rentals</h2>
+                <DataTable
+                  columns={paysimpleColumns}
+                  data={samplePaysimple}
+                  tableType="default"
+                />
+              </div>
+
+              <div className={tableSection}>
+                <h2 className="font-bold">One-Time Purchases</h2>
+                <DataTable
+                  columns={oneTimePurchaseColumns}
+                  data={sampleOTPs}
+                  tableType="default"
+                />
+              </div>
             </div>
-          </div>
-          <div className={dividingLine}></div> {/* dividing line */}
-        </div>
-
-        {/*tables section*/}
-        <div>
-          <div className={tableSection}>
-            <h2 className="font-bold">Acuity Classes</h2>
-            <DataTable
-              columns={acuityColumns}
-              data={sampleAcuityData}
-              tableType="default"
-            />
-          </div>
-
-          <div className={tableSection}>
-            <h2 className="font-bold">JANE Consults</h2>
-            <DataTable
-              columns={janeConsultsColumns}
-              data={sampleJaneConsults}
-              tableType="default"
-            />
-          </div>
-
-          <div className={tableSection}>
-            <h2 className="font-bold">Paysimple Rentals</h2>
-            <DataTable
-              columns={paysimpleColumns}
-              data={samplePaysimple}
-              tableType="default"
-            />
-          </div>
-
-          <div className={tableSection}>
-            <h2 className="font-bold">One-Time Purchases</h2>
-            <DataTable
-              columns={oneTimePurchaseColumns}
-              data={sampleOTPs}
-              tableType="default"
-            />
-          </div>
-        </div>
+          </>
+        )}
       </div>
     </>
   );

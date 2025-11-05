@@ -363,6 +363,9 @@ router.get(
         return res.status(200).json(appointmentsWithClient);
       } else {
         // Convert documents to JaneAppt objects
+        if (clientId) {
+          appts = appts.filter((a) => a.patientId === clientId);
+        }
         return res.status(200).json(appts);
       }
     } catch (e) {
