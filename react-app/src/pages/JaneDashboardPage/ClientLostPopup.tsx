@@ -45,14 +45,12 @@ const ClientLostPopup = ({ openRow, setOpenRow }: ClientLostPopupProps) => {
       height={425}
       width={800}
     >
-      <div className="flex flex-col h-full">
-        <div className="flex justify-between items-center m-2">
-          <p className="text-lg">Clients Lost After {openRow.visit}</p>
+      <div className="flex flex-col h-full relative">
+        <div className="flex justify-between items-center px-4 py-3">
+          <p className="text-lg font-medium">Clients Lost After {openRow.visit}</p>
           <button
-            onClick={() => {
-              handleClose();
-            }}
-            className="absolute top-0.25 right-0.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
+            onClick={handleClose}
+            className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
           >
             <IoIosClose size={40} />
           </button>
@@ -61,7 +59,6 @@ const ClientLostPopup = ({ openRow, setOpenRow }: ClientLostPopupProps) => {
         <div className="w-full h-[1.5px] bg-black" />
 
         <div className="p-4">
-          {/* Export button row */}
           <div className="flex justify-end mb-0">
             <button className="bg-transparent hover:bg-bcgw-gray-lighter text-gray border-2 border-gray py-1 px-6 rounded-full cursor-pointer">
               Export

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useMemo } from "react";
 import { Link } from "react-router-dom";
 import ClientLostPopup from "./ClientLostPopup.tsx";
+import ClientLostPopupMobile from "./ClientLostPopupMobile.tsx";
 import {
   PieArcSeries,
   PieChart,
@@ -224,8 +225,9 @@ const JaneDashboardPage = () => {
       numberVisited: 14,
       percent: 4.23,
       loss: 5,
-      clientsLostNames: "Jane Doe, Jane Doe, Jane Doe, Jane Doe, Jane Doe",
+      clientsLostNames: "Jane Doe, Jane Doe, Jane Doe, Jane Doe, Jane Doe, Jane Doe",
       clients: [
+        { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
         { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
         { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
         { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
@@ -520,11 +522,15 @@ const JaneDashboardPage = () => {
                   </div>
 
                   {openRow && (
-                    <ClientLostPopup
-                      openRow={openRow!}
-                      setOpenRow={setOpenRow}
-                    />
-                  )}
+  <>
+    {window.innerWidth < 768 ? (
+      <ClientLostPopupMobile openRow={openRow} setOpenRow={setOpenRow} />
+    ) : (
+      <ClientLostPopup openRow={openRow} setOpenRow={setOpenRow} />
+    )}
+  </>
+)}
+
                 </>
               )}
             </div>

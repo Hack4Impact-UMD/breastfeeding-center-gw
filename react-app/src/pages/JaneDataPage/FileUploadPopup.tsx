@@ -144,6 +144,7 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
             <IoIosClose size={40} />
           </button>
         </div>
+        
         <div className="w-full h-[1.5px] bg-black" />
 
         <p className="text-gray-500 m-3">
