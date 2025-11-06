@@ -60,7 +60,7 @@ const MobileNavigationBar = () => {
     );
   };
 
-  const activeStyle = "bg-bcgw-yellow-dark";
+  const activeStyle = "bg-bcgw-yellow-dark rounded-none -my-2 -mx-3 py-4 px-4";
 
   return (
     <>
@@ -149,8 +149,7 @@ const MobileNavigationBar = () => {
                 <NavLink
                   to="/services/jane"
                   className={({ isActive }) =>
-                    `block px-6 py-3 text-base font-medium ${
-                      isActive ? "bg-bcgw-yellow-dark" : "bg-white hover:bg-gray-100"
+                    `block px-6 py-3 text-base font-medium ${isActive ? "bg-bcgw-yellow-dark" : "bg-white hover:bg-gray-100"
                     }`
                   }
                 >
@@ -159,8 +158,7 @@ const MobileNavigationBar = () => {
                 <NavLink
                   to="/services/acuity"
                   className={({ isActive }) =>
-                    `block px-6 py-3 text-base font-medium ${
-                      isActive ? "bg-bcgw-yellow-dark" : "bg-white hover:bg-gray-100"
+                    `block px-6 py-3 text-base font-medium ${isActive ? "bg-bcgw-yellow-dark" : "bg-white hover:bg-gray-100"
                     }`
                   }
                 >
@@ -169,8 +167,7 @@ const MobileNavigationBar = () => {
                 <NavLink
                   to="/services/paysimple"
                   className={({ isActive }) =>
-                    `block px-6 py-3 text-base font-medium ${
-                      isActive ? "bg-bcgw-yellow-dark" : "bg-white hover:bg-gray-100"
+                    `block px-6 py-3 text-base font-medium ${isActive ? "bg-bcgw-yellow-dark" : "bg-white hover:bg-gray-100"
                     }`
                   }
                 >
