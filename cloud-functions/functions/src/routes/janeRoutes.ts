@@ -80,7 +80,7 @@ router.post(
       const clientMap: Map<string, Client> = new Map();
 
       clientsList.forEach((client) => {
-        clientMap.set(client.id, client);
+        clientMap.set(client.janeId, client);
       });
 
       const appointments_map = new Map<string, JaneAppt[]>();
@@ -267,7 +267,7 @@ router.post(
         const chunk = parentsToAdd.slice(i, i + chunkSize);
         const batch = db.batch();
         chunk.forEach((parent) => {
-          const { id } = parent;
+          const { janeId: id } = parent;
           batch.set(db.collection(CLIENTS_COLLECTION).doc(id), parent, {
             merge: true,
           });
@@ -345,7 +345,7 @@ router.get(
 
         clients.forEach((c) => {
           const client = c.data() as Client;
-          clientsMap.set(client.id, client);
+          clientsMap.set(client.janeId, client);
         });
 
         const appointmentsWithClient: (JaneAppt & { client?: Client })[] =

@@ -84,7 +84,7 @@ export async function parseClientSheet(fileType: string, fileAsBuffer: Buffer) {
 
 function parseClient(clientRawData: Record<string, string>) {
   const client = {} as Client;
-  client.id = clientRawData["Patient Number"].trim();
+  client.janeId = clientRawData["Patient Number"].trim();
 
   client.email =
     clientRawData.Email === undefined ||
