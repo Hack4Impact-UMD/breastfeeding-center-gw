@@ -482,13 +482,13 @@ router.get(
       if (appts_filtered.length === 0)
         return res.status(200).send(clientsByNumVisits);
 
-      async function getMatchingClients(patientId: string) {
+      async function getMatchingClients(id: string) {
         const querySnapshot = await db
           .collection(CLIENTS_COLLECTION)
-          .where("patientId", "==", patientId)
+          .where("id", "==", id)
           .get();
         if (querySnapshot.empty) {
-          throw new Error(`No client found with id: ${patientId}`);
+          throw new Error(`No client found with id: ${id}`);
         }
         const clientData = querySnapshot.docs[0].data();
         return clientData as Client;
