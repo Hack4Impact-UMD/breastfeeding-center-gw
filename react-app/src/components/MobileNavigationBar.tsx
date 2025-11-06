@@ -178,7 +178,6 @@ const MobileNavigationBar = () => {
           </div>
         )}
 
-        {/* Toggle button - attached to bottom of navbar */}
         <div className="relative">
           <button
             onClick={handleToggle}

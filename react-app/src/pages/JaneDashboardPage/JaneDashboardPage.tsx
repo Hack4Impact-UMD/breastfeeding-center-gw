@@ -69,10 +69,8 @@ const JaneDashboardPage = () => {
     defaultDateRange,
   );
 
-  //dropdown
   const [selectedDropdown, setSelectedDropdown] = useState("ALL CLIENTS");
 
-  //styles
   const buttonStyle =
     "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light text-lg border-1 border-black-500 py-2 px-8 rounded-full cursor-pointer";
   const transparentGrayButtonStyle =
@@ -293,7 +291,6 @@ const JaneDashboardPage = () => {
   return (
     <>
       <div className="flex flex-col px-0 pr-[0px] ml-8 md:ml-0 py-6 md:p-8 md:pr-20 md:pl-20 w-full max-w-[365px] md:max-w-none">
-        {/* Date picker: top-right */}
         <div className="relative block md:hidden">
           <h1 className="mt-5 font-bold text-[30px] md:text-[60px] leading-tight">
             Jane
@@ -465,9 +462,8 @@ const JaneDashboardPage = () => {
 
             <div className="w-full pr-[12px] md:pr-0" ref={funnelChartRef}>
               {retentionDisplay === "graph" ? (
-                /* same bordered card as the first graph */
+
                 <div className={chartDiv}>
-                  {/* dropdown aligned right inside the card */}
                   <div className="w-full flex justify-end">
                     <select
                       className="border rounded-md px-2 py-1 text-sm"
@@ -479,7 +475,7 @@ const JaneDashboardPage = () => {
                     </select>
                   </div>
 
-                  {/* chart row; tighten the rotated label margins so it doesn't shove the chart left */}
+
                   <div className="flex items-center">
                     <span className="text-xl whitespace-nowrap -rotate-90 -mr-12 -ml-17">
                       Number of Visits
@@ -487,7 +483,6 @@ const JaneDashboardPage = () => {
 
                     <FunnelChart
                       height={290}
-                      /* 300 on mobile (to match the pie), 400 on md+ */
                       width={
                         typeof window !== "undefined" && window.innerWidth >= 768 ? 400 : 295
                       }
