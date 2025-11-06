@@ -1,6 +1,6 @@
 export interface Client {
   id: string;
-  janeId?: string; // Jane patient_number, same as document id
+  janeId?: string; // Jane patient_number
   firstName: string;
   middleName?: string;
   lastName: string;
