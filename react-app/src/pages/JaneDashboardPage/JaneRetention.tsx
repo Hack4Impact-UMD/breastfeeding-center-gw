@@ -10,7 +10,11 @@ import {
 } from "reaviz";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
-import { RetentionRate, makeRetentionRateColumns } from "./JaneTableColumns";
+import {
+  LostClient,
+  RetentionRate,
+  makeRetentionRateColumns,
+} from "./JaneTableColumns";
 import { useRetentionData } from "@/hooks/queries/useRetentionData.ts";
 import { processRetentionData } from "@/backend/JaneFunctions.ts";
 import { DataTable } from "@/components/DataTable/DataTable";
@@ -57,24 +61,37 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
       month: "numeric",
       day: "numeric",
     });
-    
-  const { data: rawRetentionData, isLoading: isRetentionLoading, error: retentionError } = 
-    useRetentionData(startDate, endDate);
-  
-  const processedData = rawRetentionData ? processRetentionData(rawRetentionData) : [];
+
+  const {
+    data: rawRetentionData,
+    isLoading: isRetentionLoading,
+    error: retentionError,
+  } = useRetentionData(startDate, endDate);
+
+  const processedData = rawRetentionData
+    ? processRetentionData(rawRetentionData)
+    : [];
 
   const funnelData = processedData.map((row) => ({
     data: row.numberVisited,
-    key: row.visit
+    key: row.visit,
   }));
 
   const retentionData = processedData.map((row) => ({
-    visit: `${row.visit} Visit${row.visit > 1 ? 's' : ''}`,
-    numberVisited: row.numberVisited, 
-    percent: row.percentTotal,
-    loss: typeof row.numberLost === 'number' ? row.numberLost : 0,
-    clientLostNames:  row.clientsLost.map(client => `${client.firstName} ${client.lastName}`).join(", "),
-    clients: row.clientsLost
+    visit: `${row.visit} Visit${row.visit > 1 ? "s" : ""}`,
+    numberVisited: row.numberVisited,
+    percent: Number(row.percentTotal.toFixed(2)),
+    loss: typeof row.numberLost === "number" ? row.numberLost : 0,
+    clientsLostNames: row.clientsLost
+      .map((client) => `${client.firstName} ${client.lastName}`)
+      .join(", "),
+    clients: row.clientsLost.map(
+      (client): LostClient => ({
+        first: client.firstName,
+        last: client.lastName,
+        email: client.email,
+      }),
+    ),
   }));
 
   if (isRetentionLoading) return <div> Loading retention data... </div>;

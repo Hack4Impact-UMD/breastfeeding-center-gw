@@ -51,6 +51,7 @@ export const AuthProvider = ({ children }: Props): React.ReactElement => {
 
         const profile = await getUserById(newUser.uid).catch((err) => {
           console.warn("User profile is not found");
+          console.warn(err);
           return null;
         });
 
