@@ -320,6 +320,7 @@ router.get(
       const startDate = req.query.startDate as string;
       const endDate = req.query.endDate as string;
       const includeClient = req.query.includeClient === "true";
+      const clientId = req.query.clientId as string;
 
       logger.info(`Fetching jane appts between: ${startDate} - ${endDate}`);
 
@@ -370,6 +371,9 @@ router.get(
         return res.status(200).json(appointmentsWithClient);
       } else {
         // Convert documents to JaneAppt objects
+        if (clientId) {
+          appts = appts.filter((a) => a.patientId === clientId);
+        }
         return res.status(200).json(appts);
       }
     } catch (e) {

@@ -9,6 +9,10 @@ import {
   PaySimpleRentals,
 } from "./ClientJourneyTableColumns.tsx";
 import { DataTable } from "../../components/DataTable/DataTable.tsx";
+import { Navigate, useParams } from "react-router";
+import { useClientByPatientId } from "@/hooks/queries/useClientById.ts";
+import Loading from "@/components/Loading.tsx";
+import { useJaneApptsForClient } from "@/hooks/queries/useJaneApptsForClient.ts";
 
 const ClientJourney = () => {
   //styles
@@ -16,10 +20,22 @@ const ClientJourney = () => {
   const dividingLine = "w-full h-1 border-t border-black-500 mt-3 mb-3";
   const tableSection = "py-3 space-y-3";
 
-  //client basic info
-  const name = "Jane Doe";
-  const children = "James Doe";
-  const partners = "John Doe";
+  const { id: clientId } = useParams();
+
+
+  // get client info
+  const {
+    data: clientInfo,
+    isPending: isClientInfoPending,
+    error: clientInfoError,
+  } = useClientByPatientId(clientId ?? "");
+
+  // get appointments for the specific client
+  const {
+    data: clientApptData,
+    isPending,
+    error,
+  } = useJaneApptsForClient(clientId ?? "");
 
   const sampleAcuityData: AcuityData[] = [
     {
@@ -31,30 +47,6 @@ const ClientJourney = () => {
       class: "Class B",
       instructor: "A. Smith",
       date: "3/01/23",
-    },
-  ];
-
-  const sampleJaneConsults: JaneConsults[] = [
-    {
-      clinician: "B. Green",
-      date: "2/01/24",
-      service: "TELEHEALTH Postpartum",
-      visitType: "TELEHEALTH",
-      insurance: "Insurance Name",
-    },
-    {
-      clinician: "B. Green",
-      date: "1/12/24",
-      service: "DC Office: Postpartum Lac",
-      visitType: "HOMEVISIT",
-      insurance: "Insurance Name",
-    },
-    {
-      clinician: "C. Johnson",
-      date: "3/23/23",
-      service: "DC Office: Postpartum Lac",
-      visitType: "HOMEVISIT",
-      insurance: "Insurance Name",
     },
   ];
 
@@ -86,6 +78,26 @@ const ClientJourney = () => {
     },
   ];
 
+  const janeConsultsData: JaneConsults[] =
+    clientApptData?.map((appt) => ({
+      clinician: appt.clinician,
+      date: appt.startAt,
+      service: appt.service,
+      visitType: appt.visitType,
+      insurance: clientInfo?.insurance || "",
+    })) ?? [];
+
+  const formattedJaneConsultsData: JaneConsults[] =
+    janeConsultsData?.map((consult) => {
+      const [firstName, lastName] = consult.clinician.split(" ");
+      return {
+        ...consult,
+        clinician: (firstName && lastName) ? `${firstName[0]}. ${lastName}` : "N/A",
+      };
+    }) ?? [];
+
+  if (!clientId) return <Navigate to="/" />
+
   return (
     <>
       <div className="flex flex-col p-8 pr-20 pl-20">
@@ -96,62 +108,74 @@ const ClientJourney = () => {
           </div>
         </div>
 
-        {/*info section*/}
-        <div className="flex flex-col space-y-1">
-          <div className={dividingLine}></div> {/* dividing line */}
-          {/* Information in between lines */}
-          <div className="text-left space-y-2 px-3 py-2 w-full max-w-md">
-            <div>
-              <strong>NAME:</strong> {name}
+        {isClientInfoPending || isPending ? (
+          <Loading />
+        ) : clientInfoError || error ? (
+          <Navigate to="/*" />
+        ) : (
+          <>
+            {/*info section*/}
+            <div className="flex flex-col space-y-1">
+              <div className={dividingLine}></div> {/* dividing line */}
+              {/* Information in between lines */}
+              <div className="text-left space-y-2 px-3 py-2 w-full max-w-md">
+                <div>
+                  <strong>NAME:</strong> {clientInfo?.firstName}{" "}
+                  {clientInfo?.lastName}
+                </div>
+                <div>
+                  <strong>CHILDREN:</strong>
+                  {clientInfo?.baby.map((child, index) => (
+                    <span key={index}>
+                      {child.firstName} {child.lastName}
+                      {index < clientInfo.baby.length - 1 ? ", " : ""}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className={dividingLine}></div> {/* dividing line */}
             </div>
+
+            {/*tables section*/}
             <div>
-              <strong>CHILDREN:</strong> {children}
+              <div className={tableSection}>
+                <h2 className="font-bold">Acuity Classes</h2>
+                <DataTable
+                  columns={acuityColumns}
+                  data={sampleAcuityData}
+                  tableType="default"
+                />
+              </div>
+
+              <div className={tableSection}>
+                <h2 className="font-bold">JANE Consults</h2>
+                <DataTable
+                  columns={janeConsultsColumns}
+                  data={formattedJaneConsultsData}
+                  tableType="default"
+                />
+              </div>
+
+              <div className={tableSection}>
+                <h2 className="font-bold">Paysimple Rentals</h2>
+                <DataTable
+                  columns={paysimpleColumns}
+                  data={samplePaysimple}
+                  tableType="default"
+                />
+              </div>
+
+              <div className={tableSection}>
+                <h2 className="font-bold">One-Time Purchases</h2>
+                <DataTable
+                  columns={oneTimePurchaseColumns}
+                  data={sampleOTPs}
+                  tableType="default"
+                />
+              </div>
             </div>
-            <div>
-              <strong>PARTNER(S):</strong> {partners}
-            </div>
-          </div>
-          <div className={dividingLine}></div> {/* dividing line */}
-        </div>
-
-        {/*tables section*/}
-        <div>
-          <div className={tableSection}>
-            <h2 className="font-bold">Acuity Classes</h2>
-            <DataTable
-              columns={acuityColumns}
-              data={sampleAcuityData}
-              tableType="default"
-            />
-          </div>
-
-          <div className={tableSection}>
-            <h2 className="font-bold">JANE Consults</h2>
-            <DataTable
-              columns={janeConsultsColumns}
-              data={sampleJaneConsults}
-              tableType="default"
-            />
-          </div>
-
-          <div className={tableSection}>
-            <h2 className="font-bold">Paysimple Rentals</h2>
-            <DataTable
-              columns={paysimpleColumns}
-              data={samplePaysimple}
-              tableType="default"
-            />
-          </div>
-
-          <div className={tableSection}>
-            <h2 className="font-bold">One-Time Purchases</h2>
-            <DataTable
-              columns={oneTimePurchaseColumns}
-              data={sampleOTPs}
-              tableType="default"
-            />
-          </div>
-        </div>
+          </>
+        )}
       </div>
     </>
   );
