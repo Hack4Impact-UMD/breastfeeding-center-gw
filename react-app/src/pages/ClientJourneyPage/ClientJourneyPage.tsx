@@ -124,7 +124,7 @@ const ClientJourney = () => {
                   {clientInfo?.lastName}
                 </div>
                 <div>
-                  <strong>CHILDREN:</strong>
+                  <strong>CHILDREN: </strong>
                   {clientInfo?.baby.map((child, index) => (
                     <span key={index}>
                       {child.firstName} {child.lastName}
