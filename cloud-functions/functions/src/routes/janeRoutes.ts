@@ -205,7 +205,7 @@ router.post(
             if (clientExists(appt.patientId)) {
               const client = clientMap.get(appt.patientId);
               parent = client;
-              appt.patientId = client!.id; // set patientId to the  doc id
+              // appt.patientId = client!.id; // set patientId to the  doc id
             } else {
               // if the client is not in firebase or the clients sheet, we cannot add this appointment
               // get the patient's first and last name and add them to the missing clients list
@@ -264,13 +264,15 @@ router.post(
         });
       }
 
+      const janeToDocIdMap = new Map<string, string>();
       // batch transaction for performace, limit is 500 per batch
       const chunkSize = 500;
       for (let i = 0; i < parentsToAdd.length; i += chunkSize) {
         const chunk = parentsToAdd.slice(i, i + chunkSize);
         const batch = db.batch();
         chunk.forEach((parent) => {
-          batch.set(db.collection(CLIENTS_COLLECTION).doc(), parent, {
+          janeToDocIdMap.set(parent.janeId!, parent.id);
+          batch.set(db.collection(CLIENTS_COLLECTION).doc(parent.id), parent, {
             merge: true,
           });
         });
@@ -282,7 +284,8 @@ router.post(
         const batch = db.batch();
         chunk.forEach((appt) => {
           const { apptId } = appt;
-          batch.set(db.collection(JANE_APPT_COLLECTION).doc(apptId), appt, {
+          const parentId = janeToDocIdMap.get(appt.patientId);
+          batch.set(db.collection(JANE_APPT_COLLECTION).doc(apptId), { ...appt, patientId: parentId } as JaneAppt, {
             merge: true,
           });
         });
@@ -339,6 +342,7 @@ router.get(
       if (includeClient) {
         // bulk fetch clients, then join them with their appts
         const clientIds = appts.map((appt) => appt.patientId);
+        // logger.info(clientIds);
 
         const clients = await db.getAll(
           ...clientIds.map((id) => db.collection(CLIENTS_COLLECTION).doc(id)),
@@ -347,8 +351,8 @@ router.get(
 
         clients.forEach((c) => {
           const client = c.data() as Client;
-          if (client && client.janeId) {
-            clientsMap.set(client.janeId, client);
+          if (client && client.id) {
+            clientsMap.set(client.id, client);
           }
         });
 
