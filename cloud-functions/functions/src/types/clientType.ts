@@ -1,5 +1,5 @@
 export interface Client {
-  id: string; // Jane patient_number, same as document id
+  id: string; // firestore document id
   firstName: string;
   middleName?: string;
   lastName: string;
@@ -7,6 +7,7 @@ export interface Client {
   dob: string; // ISO
   phone?: string;
   insurance?: string;
+  janeId?: string; // Jane patient_number
   paysimpleId?: string; // Paysimple customer id
   baby: Baby[];
 }
