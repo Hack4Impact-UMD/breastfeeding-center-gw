@@ -55,13 +55,24 @@ export const AuthProvider = ({ children }: Props): React.ReactElement => {
           return null;
         });
 
-        setAuthState({
-          authUser: newUser,
-          token,
-          loading: false,
-          profile,
-          isAuthed: true,
-        });
+
+        if (profile === null) {
+          setAuthState({
+            authUser: null,
+            token: null,
+            loading: false,
+            profile: null,
+            isAuthed: false,
+          });
+        } else {
+          setAuthState({
+            authUser: newUser,
+            token,
+            loading: false,
+            profile,
+            isAuthed: true,
+          });
+        }
       } else {
         setAuthState({
           authUser: null,

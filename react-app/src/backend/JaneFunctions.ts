@@ -1,17 +1,16 @@
 import { Client } from "@/types/ClientType";
 
-export function processRetentionData(clientsByNumVisits: { [key: number]: Client[] }):
-{
+export function processRetentionData(clientsByNumVisits: { [key: number]: Client[] }): {
   visit: number;
   numberVisited: number;
-  numberLost: number | "N/A";
+  numberLost: number;
   percentTotal: number;
   clientsLost: Client[];
 }[] {
   const result: {
     visit: number;
     numberVisited: number;
-    numberLost: number | "N/A";
+    numberLost: number;
     percentTotal: number;
     clientsLost: Client[];
   }[] = [];
@@ -41,7 +40,7 @@ export function processRetentionData(clientsByNumVisits: { [key: number]: Client
     } else {
       const previousVisitClients = clientsByNumVisits[visit - 1] || [];
       numberLost = previousVisitClients.length;
-      
+
       clientsLost = [...previousVisitClients];
     }
 

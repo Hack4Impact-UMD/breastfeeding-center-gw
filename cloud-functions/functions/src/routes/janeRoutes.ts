@@ -482,29 +482,33 @@ router.get(
       if (appts_filtered.length === 0)
         return res.status(200).send(clientsByNumVisits);
 
-      async function getMatchingClients(id: string) {
-        const querySnapshot = await db
-          .collection(CLIENTS_COLLECTION)
-          .where("id", "==", id)
-          .get();
-        if (querySnapshot.empty) {
-          throw new Error(`No client found with id: ${id}`);
-        }
-        const clientData = querySnapshot.docs[0].data();
-        return clientData as Client;
-      }
-
       const firstVisitClients: Client[] = [];
       const clientDict: { [key: string]: Set<string> } = {};
 
+      const uniquePatientIds = [...new Set(appts_filtered.map(a => a.patientId))];
+
+      const clientDocs = await db.getAll(
+        ...uniquePatientIds.map(id => db.collection(CLIENTS_COLLECTION).doc(id))
+      );
+
+      const clientsMap = new Map<string, Client>();
+      clientDocs.forEach(doc => {
+        if (doc.exists) {
+          const client = doc.data() as Client;
+          clientsMap.set(client.id, client);
+        }
+      });
+
       for (const appt of appts_filtered) {
-        const matchingClient = await getMatchingClients(appt.patientId);
+        const matchingClient = clientsMap.get(appt.patientId);
         if (matchingClient) {
           firstVisitClients.push(matchingClient);
           if (!clientDict[appt.patientId]) {
             clientDict[appt.patientId] = new Set();
           }
           clientDict[appt.patientId].add(appt.apptId);
+        } else {
+          logger.warn(`No client found with id ${appt.patientId}`);
         }
       }
       // For each client in the firstVisitClients list, get the list of all

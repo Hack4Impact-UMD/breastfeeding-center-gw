@@ -102,21 +102,19 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
       <div className={`${centerItemsInDiv} pt-4 mb-6`}>
         <div className="flex flex-row">
           <button
-            className={`${graphTableButtonStyle} ${
-              retentionDisplay === "graph"
+            className={`${graphTableButtonStyle} ${retentionDisplay === "graph"
                 ? "bg-bcgw-gray-light"
                 : "bg-[#CED8E1]"
-            }`}
+              }`}
             onClick={() => setRetentionDisplay("graph")}
           >
             Graph
           </button>
           <button
-            className={`${graphTableButtonStyle} ${
-              retentionDisplay === "table"
+            className={`${graphTableButtonStyle} ${retentionDisplay === "table"
                 ? "bg-bcgw-gray-light"
                 : "bg-[#CED8E1]"
-            }`}
+              }`}
             onClick={() => setRetentionDisplay("table")}
           >
             Table
@@ -142,7 +140,6 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
         {retentionDisplay === "graph" ? (
           <>
             <div className="self-end">
-              <label className="text-sm font-medium"></label>
               <select
                 className="border rounded-md px-2 py-1 text-sm"
                 value={selectedDropdown}
@@ -195,7 +192,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
                 columns={makeRetentionRateColumns((row) => setOpenRow(row))}
                 data={retentionData}
                 tableType="default"
-                //tableHeaderExtras={retentionHeaderExtras}
+              //tableHeaderExtras={retentionHeaderExtras}
               />
             </div>
 
