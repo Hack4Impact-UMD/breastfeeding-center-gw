@@ -9,7 +9,7 @@ import {
 } from "@/components/DateRangePicker/DateRangePicker";
 import { DataTable } from "@/components/DataTable/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
-import ColumnSortButton from "@/components/DataTable/ColumnSortIcon";
+import ColumnSortButton from "@/components/DataTable/ColumnSortButton";
 
 // record of colors to use for each rental item
 const colors: Record<string, string> = {
@@ -156,17 +156,15 @@ export default function PaysimpleDashboardPage() {
         <div className={`${centerItemsInDiv} pt-4`}>
           <div className="flex flex-row">
             <button
-              className={`${graphTableButtonStyle} ${
-                rentalDisplay == "graph" ? "bg-bcgw-gray-light" : "bg-[#f5f5f5]"
-              }`}
+              className={`${graphTableButtonStyle} ${rentalDisplay == "graph" ? "bg-bcgw-gray-light" : "bg-[#f5f5f5]"
+                }`}
               onClick={() => setRentalDisplay("graph")}
             >
               Graph
             </button>
             <button
-              className={`${graphTableButtonStyle} ${
-                rentalDisplay == "table" ? "bg-bcgw-gray-light" : "bg-[#f5f5f5]"
-              }`}
+              className={`${graphTableButtonStyle} ${rentalDisplay == "table" ? "bg-bcgw-gray-light" : "bg-[#f5f5f5]"
+                }`}
               onClick={() => setRentalDisplay("table")}
             >
               Table
