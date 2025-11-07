@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import ClientLostPopup from "./ClientLostPopup.tsx";
 import {
   FunnelChart,
@@ -18,6 +18,7 @@ import {
 import { useRetentionData } from "@/hooks/queries/useRetentionData.ts";
 import { processRetentionData } from "@/backend/JaneFunctions.ts";
 import { DataTable } from "@/components/DataTable/DataTable";
+import Loading from "@/components/Loading.tsx";
 
 type JaneRetentionProps = {
   startDate?: Date | undefined;
@@ -68,16 +69,16 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
     error: retentionError,
   } = useRetentionData(startDate, endDate);
 
-  const processedData = rawRetentionData
+  const processedData = useMemo(() => rawRetentionData
     ? processRetentionData(rawRetentionData)
-    : [];
+    : [], [rawRetentionData]);
 
-  const funnelData = processedData.map((row) => ({
+  const funnelData = useMemo(() => processedData.map((row) => ({
     data: row.numberVisited,
     key: row.visit,
-  }));
+  })), [processedData]);
 
-  const retentionData = processedData.map((row) => ({
+  const retentionData = useMemo(() => processedData.map((row) => ({
     visit: `${row.visit} Visit${row.visit > 1 ? "s" : ""}`,
     numberVisited: row.numberVisited,
     percent: Number(row.percentTotal.toFixed(2)),
@@ -92,9 +93,8 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
         email: client.email,
       }),
     ),
-  }));
+  })), [processedData]);
 
-  if (isRetentionLoading) return <div> Loading retention data... </div>;
   if (retentionError) return <div>Error loading retention data</div>;
 
   return (
@@ -103,8 +103,8 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
         <div className="flex flex-row">
           <button
             className={`${graphTableButtonStyle} ${retentionDisplay === "graph"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#CED8E1]"
+              ? "bg-bcgw-gray-light"
+              : "bg-[#CED8E1]"
               }`}
             onClick={() => setRetentionDisplay("graph")}
           >
@@ -112,8 +112,8 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
           </button>
           <button
             className={`${graphTableButtonStyle} ${retentionDisplay === "table"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#CED8E1]"
+              ? "bg-bcgw-gray-light"
+              : "bg-[#CED8E1]"
               }`}
             onClick={() => setRetentionDisplay("table")}
           >
@@ -137,7 +137,9 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
         className={retentionDisplay === "graph" ? chartDiv : ""}
         ref={funnelChartRef}
       >
-        {retentionDisplay === "graph" ? (
+        {isRetentionLoading ? (
+          <Loading />
+        ) : retentionDisplay === "graph" ? (
           <>
             <div className="self-end">
               <select

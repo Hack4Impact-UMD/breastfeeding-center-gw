@@ -1,6 +1,8 @@
 import { Client } from "@/types/ClientType";
 
-export function processRetentionData(clientsByNumVisits: { [key: number]: Client[] }): {
+export function processRetentionData(clientsByNumVisits: {
+  [key: number]: Client[];
+}): {
   visit: number;
   numberVisited: number;
   numberLost: number;
@@ -58,4 +60,3 @@ export function processRetentionData(clientsByNumVisits: { [key: number]: Client
 
   return result;
 }
-

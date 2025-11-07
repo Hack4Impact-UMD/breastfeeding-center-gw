@@ -5,7 +5,7 @@ import { Client } from "../types/ClientType";
 export async function getAllJaneApptsForClient(
   clientId?: string,
   startDate?: string,
-  endDate?: string
+  endDate?: string,
 ): Promise<JaneAppt[]> {
   try {
     const axios = await axiosClient();

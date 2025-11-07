@@ -43,7 +43,7 @@ const ClientLostPopup = ({ openRow, setOpenRow }: ClientLostPopupProps) => {
       open={openRow !== null}
       onClose={handleClose}
       height={425}
-      width={800}
+      width={500}
     >
       <div className="flex flex-col h-full">
         <div className="flex justify-between items-center m-2">

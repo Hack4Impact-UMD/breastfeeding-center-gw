@@ -285,9 +285,13 @@ router.post(
         chunk.forEach((appt) => {
           const { apptId } = appt;
           const parentId = janeToDocIdMap.get(appt.patientId);
-          batch.set(db.collection(JANE_APPT_COLLECTION).doc(apptId), { ...appt, patientId: parentId } as JaneAppt, {
-            merge: true,
-          });
+          batch.set(
+            db.collection(JANE_APPT_COLLECTION).doc(apptId),
+            { ...appt, patientId: parentId } as JaneAppt,
+            {
+              merge: true,
+            },
+          );
         });
         await batch.commit();
       }
@@ -497,14 +501,18 @@ router.get(
       const firstVisitClients: Client[] = [];
       const clientDict: { [key: string]: Set<string> } = {};
 
-      const uniquePatientIds = [...new Set(appts_filtered.map(a => a.patientId))];
+      const uniquePatientIds = [
+        ...new Set(appts_filtered.map((a) => a.patientId)),
+      ];
 
       const clientDocs = await db.getAll(
-        ...uniquePatientIds.map(id => db.collection(CLIENTS_COLLECTION).doc(id))
+        ...uniquePatientIds.map((id) =>
+          db.collection(CLIENTS_COLLECTION).doc(id),
+        ),
       );
 
       const clientsMap = new Map<string, Client>();
-      clientDocs.forEach(doc => {
+      clientDocs.forEach((doc) => {
         if (doc.exists) {
           const client = doc.data() as Client;
           clientsMap.set(client.id, client);

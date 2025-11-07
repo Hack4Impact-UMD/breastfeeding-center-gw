@@ -22,7 +22,6 @@ const ClientJourney = () => {
 
   const { id: clientId } = useParams();
 
-
   // get client info
   const {
     data: clientInfo,
@@ -92,11 +91,12 @@ const ClientJourney = () => {
       const [firstName, lastName] = consult.clinician.split(" ");
       return {
         ...consult,
-        clinician: (firstName && lastName) ? `${firstName[0]}. ${lastName}` : "N/A",
+        clinician:
+          firstName && lastName ? `${firstName[0]}. ${lastName}` : "N/A",
       };
     }) ?? [];
 
-  if (!clientId) return <Navigate to="/" />
+  if (!clientId) return <Navigate to="/" />;
 
   return (
     <>

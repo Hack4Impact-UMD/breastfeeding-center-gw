@@ -55,7 +55,6 @@ export const AuthProvider = ({ children }: Props): React.ReactElement => {
           return null;
         });
 
-
         if (profile === null) {
           setAuthState({
             authUser: null,

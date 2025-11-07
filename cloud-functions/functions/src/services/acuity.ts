@@ -13,4 +13,4 @@ export const acuityClient = () => {
       Authorization: `Basic ${Buffer.from(`${creds.userId}:${creds.apiKey}`).toString("base64")}`,
     },
   });
-}
+};

@@ -21,9 +21,7 @@ import { TooltipProvider } from "./components/ui/tooltip";
 import { Button } from "./components/ui/button";
 import RequireNoAuth from "./auth/RequireNoAuth";
 import { axiosClient } from "./lib/utils";
-import {
-  getClientByPatientId,
-} from "./services/janeService";
+import { getClientByPatientId } from "./services/janeService";
 import LayoutShell from "./pages/LayoutShell";
 // import "@tremor/react/dist/esm/tremor.css";
 
