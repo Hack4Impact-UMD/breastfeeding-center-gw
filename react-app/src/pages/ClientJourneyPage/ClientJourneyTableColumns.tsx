@@ -2,6 +2,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { VisitType } from "@/types/JaneType";
 import { Button } from "@/components/ui/button";
 import { LuArrowUpDown } from "react-icons/lu";
+import { DateTime } from "luxon";
 
 export type AcuityData = {
   class: string;
@@ -120,6 +121,12 @@ export const janeConsultsColumns: ColumnDef<JaneConsults>[] = [
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
       );
+    },
+    cell: ({ row }) => {
+      const value = row.getValue<string>("date");
+      return value === "N/A"
+        ? ""
+        : DateTime.fromISO(value).toLocaleString(DateTime.DATETIME_SHORT);
     },
   },
   {

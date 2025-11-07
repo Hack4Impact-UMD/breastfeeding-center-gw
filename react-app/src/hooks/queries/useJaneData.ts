@@ -33,7 +33,7 @@ export function useJaneData(startDate?: string, endDate?: string) {
           service: appointment.service,
           clinician: appointment.clinician,
           firstVisit: appointment.firstVisit,
-          id: client?.id || "N/A",
+          id: client?.janeId || "N/A",
           firstName: client?.firstName ?? "N/A",
           middleName: client?.middleName?.slice(0, 1),
           lastName: client?.lastName ?? "N/A",
