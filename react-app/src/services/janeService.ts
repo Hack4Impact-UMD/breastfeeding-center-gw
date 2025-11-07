@@ -4,6 +4,8 @@ import { Client } from "../types/ClientType";
 
 export async function getAllJaneApptsForClient(
   clientId?: string,
+  startDate?: string,
+  endDate?: string
 ): Promise<JaneAppt[]> {
   try {
     const axios = await axiosClient();
@@ -11,6 +13,8 @@ export async function getAllJaneApptsForClient(
     // Build query parameters
     const params = new URLSearchParams();
     if (clientId) params.append("clientId", clientId);
+    if (startDate) params.append("startDate", startDate);
+    if (endDate) params.append("endDate", endDate);
 
     const queryString = params.toString();
     const url = `/jane/appointments${queryString ? `?${queryString}` : ""}`;

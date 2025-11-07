@@ -20,21 +20,22 @@ const ClientJourney = () => {
   const dividingLine = "w-full h-1 border-t border-black-500 mt-3 mb-3";
   const tableSection = "py-3 space-y-3";
 
-  const clientId = useParams().id;
+  const { id: clientId } = useParams();
+
 
   // get client info
   const {
     data: clientInfo,
     isPending: isClientInfoPending,
     error: clientInfoError,
-  } = useClientByPatientId(clientId!);
+  } = useClientByPatientId(clientId ?? "");
 
   // get appointments for the specific client
   const {
     data: clientApptData,
     isPending,
     error,
-  } = useJaneApptsForClient(clientId!);
+  } = useJaneApptsForClient(clientId ?? "");
 
   const sampleAcuityData: AcuityData[] = [
     {
@@ -91,9 +92,11 @@ const ClientJourney = () => {
       const [firstName, lastName] = consult.clinician.split(" ");
       return {
         ...consult,
-        clinician: `${firstName[0]}. ${lastName}`,
+        clinician: (firstName && lastName) ? `${firstName[0]}. ${lastName}` : "N/A",
       };
     }) ?? [];
+
+  if (!clientId) return <Navigate to="/" />
 
   return (
     <>
