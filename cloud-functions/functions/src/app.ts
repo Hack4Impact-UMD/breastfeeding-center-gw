@@ -10,9 +10,6 @@ const app = express();
 
 //TODO: Enforce stricter cors rules when this is deployed, currently all origins are allowed
 app.use(cors());
-
-app.use("/jane", janeRouter);
-
 app.use(bodyParser.json());
 
 app.use("/auth", authRouter);

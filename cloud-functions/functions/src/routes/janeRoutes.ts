@@ -453,4 +453,100 @@ router.post(
   },
 );
 
+router.get(
+  "/retention",
+  [isAuthenticated],
+  async (req: Request, res: Response) => {
+    try {
+      const startDate = req.query.startDate as string;
+      const endDate = req.query.endDate as string;
+
+      logger.info(`Fetching jane appts between: ${startDate} - ${endDate}`);
+
+      let appts: JaneAppt[] = [];
+      try {
+        appts = await getAllJaneApptsInRange(startDate, endDate);
+      } catch (err) {
+        logger.error("Failed to fetch jane appts in range");
+        logger.error(err);
+
+        if (err instanceof Error) {
+          return res.status(400).send(err.message);
+        } else {
+          return res.status(400).send();
+        }
+      }
+      const clientsByNumVisits: { [key: number]: Client[] } = {};
+
+      for (let i = 1; i <= 6; i++) {
+        clientsByNumVisits[i] = [];
+      }
+
+      const apptsToRemove = ["bra fitting", "pump check"];
+
+      const appts_filtered = appts.filter(
+        (appt) =>
+          !apptsToRemove.some((phrase) =>
+            appt.service.toLowerCase().includes(phrase),
+          ) && appt.firstVisit,
+      );
+
+      if (appts_filtered.length === 0)
+        return res.status(200).send(clientsByNumVisits);
+
+      const firstVisitClients: Client[] = [];
+      const clientDict: { [key: string]: Set<string> } = {};
+
+      const uniquePatientIds = [...new Set(appts_filtered.map(a => a.patientId))];
+
+      const clientDocs = await db.getAll(
+        ...uniquePatientIds.map(id => db.collection(CLIENTS_COLLECTION).doc(id))
+      );
+
+      const clientsMap = new Map<string, Client>();
+      clientDocs.forEach(doc => {
+        if (doc.exists) {
+          const client = doc.data() as Client;
+          clientsMap.set(client.id, client);
+        }
+      });
+
+      for (const appt of appts_filtered) {
+        const matchingClient = clientsMap.get(appt.patientId);
+        if (matchingClient) {
+          firstVisitClients.push(matchingClient);
+          if (!clientDict[appt.patientId]) {
+            clientDict[appt.patientId] = new Set();
+          }
+          clientDict[appt.patientId].add(appt.apptId);
+        } else {
+          logger.warn(`No client found with id ${appt.patientId}`);
+        }
+      }
+      // For each client in the firstVisitClients list, get the list of all
+      // their appointments within date range (use the original list of returned appointments to filter)
+      // ?
+      firstVisitClients.forEach((client: Client) => {
+        const matchingAppts = appts
+          .filter((appt) => client.id === appt.patientId)
+          .map((appt) => appt.apptId);
+        clientDict[client.id] = new Set([
+          ...clientDict[client.id],
+          ...new Set(matchingAppts),
+        ]);
+        if (clientDict[client.id].size >= 6) {
+          clientsByNumVisits[6].push(client);
+        } else {
+          clientsByNumVisits[clientDict[client.id].size].push(client);
+        }
+      });
+
+      return res.status(200).send(clientsByNumVisits);
+    } catch (e) {
+      logger.error("Error fetching retention data:", e);
+      return res.status(500).send((e as Error).message);
+    }
+  },
+);
+
 export default router;

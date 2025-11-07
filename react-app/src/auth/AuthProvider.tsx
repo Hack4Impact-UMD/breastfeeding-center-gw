@@ -49,15 +49,30 @@ export const AuthProvider = ({ children }: Props): React.ReactElement => {
           return null;
         });
 
-        const profile = await getUserById(newUser.uid);
-
-        setAuthState({
-          authUser: newUser,
-          token,
-          loading: false,
-          profile,
-          isAuthed: true,
+        const profile = await getUserById(newUser.uid).catch((err) => {
+          console.warn("User profile is not found");
+          console.warn(err);
+          return null;
         });
+
+
+        if (profile === null) {
+          setAuthState({
+            authUser: null,
+            token: null,
+            loading: false,
+            profile: null,
+            isAuthed: false,
+          });
+        } else {
+          setAuthState({
+            authUser: newUser,
+            token,
+            loading: false,
+            profile,
+            isAuthed: true,
+          });
+        }
       } else {
         setAuthState({
           authUser: null,
