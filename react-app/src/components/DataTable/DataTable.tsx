@@ -31,6 +31,7 @@ interface DataTableProps<TData, TValue> {
   handleDelete?: (selectedRows: TData[]) => void;
   tableType: string;
   tableHeaderExtras?: React.ReactNode;
+  pageSize?: number;
 }
 
 export function DataTable<TData, TValue>({
@@ -39,6 +40,7 @@ export function DataTable<TData, TValue>({
   handleDelete,
   tableType,
   tableHeaderExtras,
+  pageSize = 10
 }: DataTableProps<TData, TValue>) {
   const [globalFilter, setGlobalFilter] = useState("");
   const [rowSelection, setRowSelection] = useState({});
@@ -59,7 +61,14 @@ export function DataTable<TData, TValue>({
     onGlobalFilterChange: setGlobalFilter,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
-    state: { globalFilter, rowSelection, sorting },
+    state: {
+      globalFilter, rowSelection, sorting,
+    },
+    initialState: {
+      pagination: {
+        pageSize
+      }
+    }
   });
 
   useEffect(() => {
@@ -68,7 +77,7 @@ export function DataTable<TData, TValue>({
         (item) => item.original,
       ),
     );
-  }, [rowSelection]);
+  }, [rowSelection, table]);
 
   return (
     <>
@@ -76,11 +85,10 @@ export function DataTable<TData, TValue>({
         <div className="flex items-center gap-4">
           {tableType === "janeData" && (
             <button
-              className={`${
-                rowsSelected.length === 0
-                  ? "bg-bcgw-gray-light cursor-not-allowed"
-                  : "bg-bcgw-yellow-dark cursor-pointer hover:bg-bcgw-yellow-light"
-              } text-base border border-black py-1.5 font-bold px-6 rounded-[10px]`}
+              className={`${rowsSelected.length === 0
+                ? "bg-bcgw-gray-light cursor-not-allowed"
+                : "bg-bcgw-yellow-dark cursor-pointer hover:bg-bcgw-yellow-light"
+                } text-base border border-black py-1.5 font-bold px-6 rounded-[10px]`}
               disabled={rowsSelected.length === 0}
               onClick={openModal}
             >
@@ -118,13 +126,12 @@ export function DataTable<TData, TValue>({
 
         <Table>
           <TableHeader
-            className={`${
-              tableType === "janeData" ||
+            className={`${tableType === "janeData" ||
               tableType === "default" ||
               tableType === "clientsLost"
-                ? "bg-[#0C3D6B33]"
-                : "bg-[#B9C4CE]"
-            }`}
+              ? "bg-[#0C3D6B33]"
+              : "bg-[#B9C4CE]"
+              }`}
           >
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -134,9 +141,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </TableHead>
                   );
                 })}
@@ -160,12 +167,11 @@ export function DataTable<TData, TValue>({
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className={`${
-                        tableType === "clientList" ||
+                      className={`${tableType === "clientList" ||
                         tableType === "clientsLost"
-                          ? "cursor-pointer group-hover:bg-gray-300 transition-colors"
-                          : ""
-                      }`}
+                        ? "cursor-pointer group-hover:bg-gray-300 transition-colors"
+                        : ""
+                        }`}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
@@ -190,26 +196,24 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* pagination (unchanged) */}
-      {table.getCoreRowModel().rows.length >= 10 && (
+      {table.getCoreRowModel().rows.length >= pageSize && (
         <div className="flex items-center justify-end space-x-2 py-3">
           <div className="flex items-center gap-2">
             <button
-              className={`border border-black w-8 h-8 flex items-center justify-center pb-1 ${
-                table.getCanPreviousPage()
-                  ? "cursor-pointer hover:bg-bcgw-gray-light"
-                  : "cursor-not-allowed opacity-50"
-              }`}
+              className={`border border-black w-8 h-8 flex items-center justify-center pb-1 ${table.getCanPreviousPage()
+                ? "cursor-pointer hover:bg-bcgw-gray-light"
+                : "cursor-not-allowed opacity-50"
+                }`}
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
               {"<"}
             </button>
             <button
-              className={`border border-black w-8 h-8 flex items-center justify-center pb-1 ${
-                table.getCanNextPage()
-                  ? "cursor-pointer hover:bg-bcgw-gray-light"
-                  : "cursor-not-allowed opacity-50"
-              }`}
+              className={`border border-black w-8 h-8 flex items-center justify-center pb-1 ${table.getCanNextPage()
+                ? "cursor-pointer hover:bg-bcgw-gray-light"
+                : "cursor-not-allowed opacity-50"
+                }`}
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
