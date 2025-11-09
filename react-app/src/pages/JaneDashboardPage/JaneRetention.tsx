@@ -16,7 +16,7 @@ import {
   makeRetentionRateColumns,
 } from "./JaneTableColumns";
 import { useRetentionData } from "@/hooks/queries/useRetentionData.ts";
-import { processRetentionData } from "@/backend/JaneFunctions.ts";
+import { processRetentionData } from "@/services/janeService.ts";
 import { DataTable } from "@/components/DataTable/DataTable";
 import Loading from "@/components/Loading.tsx";
 
