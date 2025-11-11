@@ -20,8 +20,8 @@ const Modal = ({
     <div
       className="z-20"
       onClick={(e) => {
-            e.stopPropagation();
-          }}
+        e.stopPropagation();
+      }}
     >
       {open ? (
         <>

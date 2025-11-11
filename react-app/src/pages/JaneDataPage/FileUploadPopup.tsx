@@ -10,7 +10,11 @@ import { AxiosError } from "axios";
 import { Button } from "@/components/ui/button";
 import { queryClient } from "@/config/query";
 import queries from "@/queries";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type FileUploadPopupProps = {
   isOpen: boolean;
@@ -131,20 +135,28 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
     !!apptFile && errorType === "none" && !uploadMutation.isPending;
 
   return (
-    <Modal open={isOpen} onClose={handleClose} height={350} width={500} disabled={uploadMutation.isPending}>
-      <div className="flex flex-col h-full py-2">
+    <Modal
+      open={isOpen}
+      onClose={handleClose}
+      height={350}
+      width={500}
+      disabled={uploadMutation.isPending}
+    >
+      <div className="flex flex-col h-full">
         <div className="flex justify-between items-center m-2">
-          <p className="text-lg">Jane File Upload</p>
-          <button
+          <p className="text-lg grow">Jane File Upload</p>
+          <Button
+            variant="ghost"
             onClick={() => {
               if (!uploadMutation.isPending) {
                 handleClose();
               }
             }}
-            className="absolute top-0.25 right-0.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
+            disabled={uploadMutation.isPending}
+            className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer p-0"
           >
-            <IoIosClose size={40} />
-          </button>
+            <IoIosClose className="size-7" />
+          </Button>
         </div>
         <div className="w-full h-[1.5px] bg-black" />
 

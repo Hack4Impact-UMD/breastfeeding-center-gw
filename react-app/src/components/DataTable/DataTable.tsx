@@ -24,6 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "../ui/button";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -211,7 +212,7 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* pagination */}
-  {paginate && table.getPageCount() > 1 && (
+      {paginate && table.getPageCount() > 1 && (
         <div className="flex items-center justify-end py-3">
           <div className="flex items-center mr-6">
             <span className="mr-4 text-base font-medium">Page</span>
@@ -236,7 +237,9 @@ export function DataTable<TData, TValue>({
                     ) {
                       table.setPageIndex(requested - 1);
                     } else {
-                      setPageInput(String(table.getState().pagination.pageIndex + 1));
+                      setPageInput(
+                        String(table.getState().pagination.pageIndex + 1),
+                      );
                     }
                   }
                 }}
@@ -250,20 +253,25 @@ export function DataTable<TData, TValue>({
                   ) {
                     table.setPageIndex(requested - 1);
                   } else {
-                    setPageInput(String(table.getState().pagination.pageIndex + 1));
+                    setPageInput(
+                      String(table.getState().pagination.pageIndex + 1),
+                    );
                   }
                 }}
                 className={`border-2 border-black w-8 h-8 text-center focus:outline-none focus:ring-2 focus:ring-[#0C3D6B] ${
-                  table.getPageCount() <= 1 ? "opacity-50 cursor-not-allowed" : ""
+                  table.getPageCount() <= 1
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
                 }`}
               />
             </div>
             <span className="text-base">of {table.getPageCount()}</span>
-            </div>
+          </div>
 
           <div className="flex items-center gap-2">
-            <button
-              className={`w-8 h-8 flex items-center justify-center border-2 ${
+            <Button
+              variant="ghost"
+              className={`rounded-none w-8 h-8 flex items-center justify-center border-2 ${
                 table.getCanPreviousPage()
                   ? "border-black text-[#222] cursor-pointer"
                   : "border-gray-300 text-gray-300 cursor-not-allowed"
@@ -272,10 +280,16 @@ export function DataTable<TData, TValue>({
               disabled={!table.getCanPreviousPage()}
               aria-label="Previous page"
             >
-              <ChevronLeft size={14} className={table.getCanPreviousPage() ? "text-[#222]" : "text-gray-300"} />
-            </button>
-            <button
-              className={`w-8 h-8 flex items-center justify-center border-2 ${
+              <ChevronLeft
+                size={14}
+                className={
+                  table.getCanPreviousPage() ? "text-[#222]" : "text-gray-300"
+                }
+              />
+            </Button>
+            <Button
+              variant="ghost"
+              className={`rounded-none w-8 h-8 flex items-center justify-center border-2 ${
                 table.getCanNextPage()
                   ? "border-black text-[#222] cursor-pointer"
                   : "border-gray-300 text-gray-300 cursor-not-allowed"
@@ -284,8 +298,13 @@ export function DataTable<TData, TValue>({
               disabled={!table.getCanNextPage()}
               aria-label="Next page"
             >
-              <ChevronRight size={14} className={table.getCanNextPage() ? "text-[#222]" : "text-gray-300"} />
-            </button>
+              <ChevronRight
+                size={14}
+                className={
+                  table.getCanNextPage() ? "text-[#222]" : "text-gray-300"
+                }
+              />
+            </Button>
           </div>
         </div>
       )}

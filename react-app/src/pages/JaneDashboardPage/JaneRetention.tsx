@@ -69,31 +69,40 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
     error: retentionError,
   } = useRetentionData(startDate, endDate);
 
-  const processedData = useMemo(() => rawRetentionData
-    ? processRetentionData(rawRetentionData)
-    : [], [rawRetentionData]);
+  const processedData = useMemo(
+    () => (rawRetentionData ? processRetentionData(rawRetentionData) : []),
+    [rawRetentionData],
+  );
 
-  const funnelData = useMemo(() => processedData.map((row) => ({
-    data: row.numberVisited,
-    key: row.visit,
-  })), [processedData]);
+  const funnelData = useMemo(
+    () =>
+      processedData.map((row) => ({
+        data: row.numberVisited,
+        key: row.visit,
+      })),
+    [processedData],
+  );
 
-  const retentionData = useMemo(() => processedData.map((row) => ({
-    visit: `${row.visit} Visit${row.visit > 1 ? "s" : ""}`,
-    numberVisited: row.numberVisited,
-    percent: Number(row.percentTotal.toFixed(2)),
-    loss: typeof row.numberLost === "number" ? row.numberLost : 0,
-    clientsLostNames: row.clientsLost
-      .map((client) => `${client.firstName} ${client.lastName}`)
-      .join(", "),
-    clients: row.clientsLost.map(
-      (client): LostClient => ({
-        first: client.firstName,
-        last: client.lastName,
-        email: client.email,
-      }),
-    ),
-  })), [processedData]);
+  const retentionData = useMemo(
+    () =>
+      processedData.map((row) => ({
+        visit: `${row.visit} Visit${row.visit > 1 ? "s" : ""}`,
+        numberVisited: row.numberVisited,
+        percent: Number(row.percentTotal.toFixed(2)),
+        loss: typeof row.numberLost === "number" ? row.numberLost : 0,
+        clientsLostNames: row.clientsLost
+          .map((client) => `${client.firstName} ${client.lastName}`)
+          .join(", "),
+        clients: row.clientsLost.map(
+          (client): LostClient => ({
+            first: client.firstName,
+            last: client.lastName,
+            email: client.email,
+          }),
+        ),
+      })),
+    [processedData],
+  );
 
   if (retentionError) return <div>Error loading retention data</div>;
 
@@ -102,19 +111,21 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
       <div className={`${centerItemsInDiv} pt-4 mb-6`}>
         <div className="flex flex-row">
           <button
-            className={`${graphTableButtonStyle} ${retentionDisplay === "graph"
-              ? "bg-bcgw-gray-light"
-              : "bg-[#CED8E1]"
-              }`}
+            className={`${graphTableButtonStyle} ${
+              retentionDisplay === "graph"
+                ? "bg-bcgw-gray-light"
+                : "bg-[#CED8E1]"
+            }`}
             onClick={() => setRetentionDisplay("graph")}
           >
             Graph
           </button>
           <button
-            className={`${graphTableButtonStyle} ${retentionDisplay === "table"
-              ? "bg-bcgw-gray-light"
-              : "bg-[#CED8E1]"
-              }`}
+            className={`${graphTableButtonStyle} ${
+              retentionDisplay === "table"
+                ? "bg-bcgw-gray-light"
+                : "bg-[#CED8E1]"
+            }`}
             onClick={() => setRetentionDisplay("table")}
           >
             Table
@@ -194,7 +205,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
                 columns={makeRetentionRateColumns((row) => setOpenRow(row))}
                 data={retentionData}
                 tableType="default"
-              //tableHeaderExtras={retentionHeaderExtras}
+                //tableHeaderExtras={retentionHeaderExtras}
               />
             </div>
 
