@@ -193,7 +193,7 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
                       {apptFileName}
                     </p>
                   </TooltipTrigger>
-                  <TooltipContent className="bg-neutral-200 text-neutral-950 [&_svg]:bg-neutral-200 [&_svg]:fill-neutral-200" side="bottom">
+                  <TooltipContent side="bottom">
                     <span className="text-sm">{apptFileName}</span>
                   </TooltipContent>
                 </Tooltip>
@@ -248,7 +248,7 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
                       {clientFileName}
                     </p>
                   </TooltipTrigger>
-                  <TooltipContent className="bg-neutral-200 text-neutral-950 [&_svg]:bg-neutral-200 [&_svg]:fill-neutral-200" side="bottom">
+                  <TooltipContent side="bottom">
                     <span className="text-sm">{clientFileName}</span>
                   </TooltipContent>
                 </Tooltip>
@@ -281,21 +281,24 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
             <p className="text-sm text-center mx-4 text-red-600">
               Some clients in the uploaded appointment sheet are not in the
               system. Please upload client sheet with new clients.{" "}
-              <span
-                data-tooltip-id="missingClientsTip"
-                className="underline cursor-pointer"
-              >
-                View missing clients
-              </span>
+              <Tooltip>
+                <TooltipTrigger>
+                  <span
+                    data-tooltip-id="missingClientsTip"
+                    className="underline cursor-pointer"
+                  >
+                    View missing clients
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <div className="text-sm text-center">
+                    {missingClients.map((client, index) => (
+                      <p key={index}>{client}</p>
+                    ))}
+                  </div>
+                </TooltipContent>
+              </Tooltip>
             </p>
-
-            <Tooltip id="missingClientsTip" place="bottom">
-              <div className="text-sm text-center">
-                {missingClients.map((client, index) => (
-                  <p key={index}>{client}</p>
-                ))}
-              </div>
-            </Tooltip>
           </div>
         )}
 
