@@ -11,6 +11,8 @@ import { AxiosError } from "axios";
 import { Button } from "@/components/ui/button";
 import { queryClient } from "@/config/query";
 import queries from "@/queries";
+// testing bruh
+import { useEffect } from "react";
 
 type FileUploadPopupProps = {
   isOpen: boolean;
@@ -71,6 +73,33 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
   const [errorType, setErrorType] = useState<
     "none" | "invalidType" | "missingClients" | "other"
   >("none");
+  // testing bruh 
+
+  const DEV_FORCE = true;
+  const injectedOnceRef = useRef(false);
+
+  useEffect(() => {
+    if (!DEV_FORCE) return;
+
+    if (isOpen && !injectedOnceRef.current) {
+      injectedOnceRef.current = true; // guard so we only inject once per open
+      setErrorType("missingClients");
+      setMissingClients([
+        "Client A",
+        "Client B",
+        "Client C",
+        "Client D",
+        "Client E",
+        "Client F",
+        "Client G",
+      ]);
+    }
+    if (!isOpen) {
+      // reset guard when popup closes so it will inject next time it opens
+      injectedOnceRef.current = false;
+    }
+  }, [isOpen]);
+
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -130,6 +159,10 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
   const uploadButtonEnabled =
     !!apptFile && errorType === "none" && !uploadMutation.isPending;
 
+
+  // testing bruh
+  const DEV_FORCE_MISSING = true;
+
   return (
     <Modal open={isOpen} onClose={handleClose} height={350} width={500}>
       <div className="flex flex-col h-full py-2">
@@ -144,7 +177,7 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
             <IoIosClose size={40} />
           </button>
         </div>
-        
+
         <div className="w-full h-[1.5px] bg-black" />
 
         <p className="text-gray-500 m-3">
@@ -251,12 +284,12 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
         </div>
 
         {/* Errors */}
-        {errorType === "other" && (
+        {!DEV_FORCE_MISSING && errorType === "other" && (
           <p className="text-sm text-center mx-4 text-red-600">
             Something went wrong: {uploadMutation.error?.message}
           </p>
         )}
-        {errorType === "invalidType" && (
+        {!DEV_FORCE_MISSING && errorType === "invalidType" && (
           <p className="text-sm text-center mx-4 text-red-600">
             The file(s) you uploaded does not match upload type
           </p>
@@ -274,15 +307,34 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
               </span>
             </p>
 
-            <Tooltip id="missingClientsTip" place="bottom">
-              <div className="text-sm text-center">
-                {missingClients.map((client, index) => (
-                  <p key={index}>{client}</p>
-                ))}
+            {/* Tooltip & Triangle Pointer */}
+            <style>{`
+              #missingClientsTip.react-tooltip::before {
+                content: "";
+                position: absolute;
+                top: -7px;                              
+                left: 50%;
+                border-left: 8px solid transparent;
+                border-right: 8px solid transparent;
+                border-bottom: 8px solid #3A3A3A;
+              }
+            `}</style>
+
+            <Tooltip
+              id="missingClientsTip"
+              place="bottom"
+              noArrow
+              className="!bg-[#3A3A3A] !text-white !border-0 !rounded-xl !px-4 !py-3 !shadow-lg"
+            >
+              <div className="text-sm leading-6 text-center min-w-[150px]">
+                {missingClients.slice(0, 5).map((c, i) => <p key={i}>{c}</p>)}
+                {missingClients.length > 5 && <p>…</p>}
               </div>
             </Tooltip>
           </div>
         )}
+
+
 
         <div className="flex flex-col items-center gap-3 justify-center mt-6">
           {uploadMutation.isPending ? (
