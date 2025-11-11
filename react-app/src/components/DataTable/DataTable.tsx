@@ -211,7 +211,7 @@ export function DataTable<TData, TValue>({
       </div>
 
       {/* pagination */}
-  {paginate && table.getPageCount() >= 1 && (
+  {paginate && table.getPageCount() > 1 && (
         <div className="flex items-center justify-end py-3">
           <div className="flex items-center mr-6">
             <span className="mr-4 text-base font-medium">Page</span>
@@ -222,7 +222,6 @@ export function DataTable<TData, TValue>({
                 value={pageInput}
                 disabled={table.getPageCount() <= 1}
                 onChange={(e) => {
-                  // allow only digits
                   const v = e.target.value.replace(/[^0-9]/g, "");
                   setPageInput(v);
                 }}
@@ -237,7 +236,6 @@ export function DataTable<TData, TValue>({
                     ) {
                       table.setPageIndex(requested - 1);
                     } else {
-                      // reset to current page
                       setPageInput(String(table.getState().pagination.pageIndex + 1));
                     }
                   }
