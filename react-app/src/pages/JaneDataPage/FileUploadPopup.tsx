@@ -2,7 +2,6 @@ import { useState, useRef } from "react";
 import Modal from "../../components/Modal";
 import { FiCheckCircle } from "react-icons/fi";
 import { IoIosClose } from "react-icons/io";
-import { Tooltip } from "react-tooltip";
 import apptUploadIcon from "../../assets/apptUpload.svg";
 import clientUploadIcon from "../../assets/clientUpload.svg";
 import { useUploadJaneData } from "@/hooks/mutations/useUploadJaneData";
@@ -11,6 +10,7 @@ import { AxiosError } from "axios";
 import { Button } from "@/components/ui/button";
 import { queryClient } from "@/config/query";
 import queries from "@/queries";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 type FileUploadPopupProps = {
   isOpen: boolean;
@@ -187,12 +187,16 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
             />
             <div className={apptFileName ? "block" : "invisible"}>
               <div className="flex text-sm font-bold items-center mt-1">
-                <Tooltip id={`apptFileTip`} place="bottom">
-                  <div className="text-sm">{apptFileName}</div>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <p className="truncate text-[#1264B1] max-w-[7rem]">
+                      {apptFileName}
+                    </p>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-neutral-200 text-neutral-950 [&_svg]:bg-neutral-200 [&_svg]:fill-neutral-200" side="bottom">
+                    <span className="text-sm">{apptFileName}</span>
+                  </TooltipContent>
                 </Tooltip>
-                <p data-tooltip-id={`apptFileTip`} className="truncate text-[#1264B1] max-w-[7rem]">
-                  {apptFileName}
-                </p>
                 <button
                   onClick={() => {
                     handleApptFile();
@@ -238,12 +242,16 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
             />
             <div className={clientFileName ? "block" : "invisible"}>
               <div className="flex text-sm font-bold items-center mt-1">
-                <Tooltip id={`clientFileTip`} place="bottom">
-                  <div className="text-sm">{clientFileName}</div>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <p className="truncate text-[#1264B1] max-w-[7rem]">
+                      {clientFileName}
+                    </p>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-neutral-200 text-neutral-950 [&_svg]:bg-neutral-200 [&_svg]:fill-neutral-200" side="bottom">
+                    <span className="text-sm">{clientFileName}</span>
+                  </TooltipContent>
                 </Tooltip>
-                <p data-tooltip-id={`clientFileTip`} className="truncate text-[#1264B1] max-w-[7rem]">
-                  {clientFileName}
-                </p>
                 <button
                   onClick={() => {
                     handleClientFile();
