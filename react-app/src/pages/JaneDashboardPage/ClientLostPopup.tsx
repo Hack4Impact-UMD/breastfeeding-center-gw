@@ -80,7 +80,7 @@ const ClientLostPopup = ({ openRow, setOpenRow }: ClientLostPopupProps) => {
               tableType="clientsLost"
               columns={lostClientColumns}
               data={openRow?.clients ?? []}
-              pageSize={5}
+              pageSize={4}
             />
           </div>
         </div>

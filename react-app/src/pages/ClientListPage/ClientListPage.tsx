@@ -114,6 +114,7 @@ const ClientList = () => {
             columns={clientListColumns}
             data={sampleClientData}
             tableType="clientList"
+            pageSize={10}
           />
         </div>
       </div>

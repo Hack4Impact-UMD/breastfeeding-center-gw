@@ -86,6 +86,7 @@ const JaneDataPage = () => {
             data={janeConsultations}
             handleDelete={handleDelete}
             tableType="janeData"
+            pageSize={10}
           />
         )}
         <FileUploadPopup

@@ -144,6 +144,7 @@ const ClientJourney = () => {
                   columns={acuityColumns}
                   data={sampleAcuityData}
                   tableType="default"
+                  pageSize={5}
                 />
               </div>
 
@@ -153,6 +154,7 @@ const ClientJourney = () => {
                   columns={janeConsultsColumns}
                   data={formattedJaneConsultsData}
                   tableType="default"
+                  pageSize={5}
                 />
               </div>
 
@@ -162,6 +164,7 @@ const ClientJourney = () => {
                   columns={paysimpleColumns}
                   data={samplePaysimple}
                   tableType="default"
+                  pageSize={5}
                 />
               </div>
 
@@ -171,6 +174,7 @@ const ClientJourney = () => {
                   columns={oneTimePurchaseColumns}
                   data={sampleOTPs}
                   tableType="default"
+                  pageSize={5}
                 />
               </div>
             </div>
