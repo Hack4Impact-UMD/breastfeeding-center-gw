@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import primaryLogo from "../assets/bcgw-logo.png";
 import home from "../assets/home.svg";
@@ -15,6 +15,7 @@ const MobileNavigationBar = () => {
   const [servicesOpen, setServicesOpen] = useState(false);
   const [openLogoutConfirmation, setOpenLogoutConfirmation] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Auto-collapse on scroll
   useEffect(() => {
@@ -51,6 +52,10 @@ const MobileNavigationBar = () => {
     setOpenLogoutConfirmation(true);
   };
 
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
+
   // Check if any service page is active
   const isServiceActive = () => {
     return (
@@ -64,7 +69,6 @@ const MobileNavigationBar = () => {
 
   return (
     <>
-      {/* Fixed header bar */}
       <div className="fixed top-0 left-0 right-0 bg-[#05182a] z-50 h-[60px]">
         <div className="flex items-center justify-between h-full px-4">
           {/* Logo */}
@@ -76,16 +80,18 @@ const MobileNavigationBar = () => {
             />
           </div>
 
-          {/* User initials */}
-          <div className="w-10 h-10 bg-bcgw-yellow-dark rounded-full flex items-center justify-center">
+          {/* User initials - now clickable */}
+          <button
+            onClick={handleProfileClick}
+            className="w-10 h-10 bg-bcgw-yellow-dark rounded-full flex items-center justify-center hover:bg-[#9A762C] active:bg-[#9A762C] transition-colors"
+            aria-label="Go to profile"
+          >
             <span className="text-[#05182a] font-bold text-sm">KL</span>
-          </div>
+          </button>
         </div>
       </div>
 
-      {/* Navigation menu container */}
       <div className="fixed top-[60px] left-0 right-0 z-40">
-        {/* Navigation menu - shows when open */}
         {isOpen && (
           <div className="bg-white border-b border-gray-300">
             <div className="flex items-center justify-between px-4 py-2">

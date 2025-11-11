@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { VisitType } from "@/types/JaneType";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/original-button";
 import { LuArrowUpDown } from "react-icons/lu";
 
 export type AcuityData = {

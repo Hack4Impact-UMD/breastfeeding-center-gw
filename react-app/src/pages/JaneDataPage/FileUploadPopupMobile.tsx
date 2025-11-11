@@ -8,7 +8,7 @@ import clientUploadIcon from "../../assets/clientUpload.svg";
 import { useUploadJaneData } from "@/hooks/mutations/useUploadJaneData";
 import Loading from "@/components/Loading";
 import { AxiosError } from "axios";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/original-button";
 import { queryClient } from "@/config/query";
 import queries from "@/queries";
 

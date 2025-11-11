@@ -18,7 +18,7 @@ import JaneDataPage from "./pages/JaneDataPage/JaneDataPage";
 import NewUserPage from "./pages/NewUserPage/NewUserPage";
 import RegisterSuccessPage from "./pages/NewUserPage/RegisterSuccessPage";
 import { TooltipProvider } from "./components/ui/tooltip";
-import { Button } from "./components/ui/button";
+import { Button } from "./components/ui/original-button";
 import RequireNoAuth from "./auth/RequireNoAuth";
 import { axiosClient } from "./lib/utils";
 import { getAllJaneApptsInRange } from "./services/janeService";

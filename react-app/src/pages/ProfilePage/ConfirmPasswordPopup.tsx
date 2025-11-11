@@ -2,6 +2,7 @@ import { useState } from "react";
 import { IoIosClose } from "react-icons/io";
 import Modal from "../../components/Modal";
 import ChangeEmailPopup from "./ChangeEmailPopup";
+import ChangePhoneNumberPopup from "./ChangePhoneNumberPopup";
 import ChangePasswordPopup from "./ChangePasswordPopup";
 
 const ConfirmPasswordPopup = ({
@@ -9,17 +10,20 @@ const ConfirmPasswordPopup = ({
   onClose,
   editType,
   email,
+  phone,
 }: {
   open: boolean;
   onClose: any;
   editType: string;
   email: string;
+  phone: string;
 }) => {
   const [currentPasswordInput, setCurrentPasswordInput] = useState("");
   //@ts-expect-error
   const [currentPassword, setCurrentPassword] = useState("abc");
   const [showIncorrectPassword, setShowIncorrectPassword] = useState(false);
   const [openEmailModal, setOpenEmailModal] = useState(false);
+  const [openPhoneModal, setOpenPhoneModal] = useState(false);
   const [openPasswordModal, setOpenPasswordModal] = useState(false);
 
   const handleOnClose = () => {
@@ -32,6 +36,8 @@ const ConfirmPasswordPopup = ({
     if (currentPasswordInput === currentPassword) {
       if (editType == "Email") {
         setOpenEmailModal(true);
+      } else if (editType == "Phone") {
+        setOpenPhoneModal(true);
       } else {
         setOpenPasswordModal(true);
       }
@@ -46,7 +52,7 @@ const ConfirmPasswordPopup = ({
     <>
       <div className="flex justify-between items-center m-2">
         <p className="text-lg">
-          {editType == "Email" ? "Change Email" : "Change Password"}
+          {editType == "Email" ? "Change Email" : editType == "Phone" ? "Change Phone Number" : "Change Password"}
         </p>
         <button
           onClick={() => {
@@ -117,9 +123,14 @@ const ConfirmPasswordPopup = ({
         </div>
       </Modal>
 
+      <ChangePhoneNumberPopup
+        open={openPhoneModal}
+        onClose={() => setOpenPhoneModal(false)}
+        initialPhone={phone}
+      />
       <ChangeEmailPopup
         open={openEmailModal}
-        onClose={setOpenEmailModal}
+        onClose={() => setOpenEmailModal(false)}
         initialEmail={email}
       />
       <ChangePasswordPopup
