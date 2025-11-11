@@ -6,7 +6,6 @@ import {
 import { useJaneData } from "@/hooks/queries/useJaneData.ts";
 import { useDeleteJaneRecord } from "@/hooks/mutations/useDeleteJaneRecord.ts";
 import FileUploadPopup from "./FileUploadPopup.tsx";
-import FileUploadPopupMobile from "./FileUploadPopupMobile";
 import Loading from "@/components/Loading.tsx";
 import { JaneTableRow } from "@/types/JaneType.ts";
 //import { useState } from "react";
@@ -21,7 +20,6 @@ const JaneDataPage = () => {
   const centerItemsInDiv = "flex justify-between items-center";
 
   const [showUploadPopup, setShowUploadPopup] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange | undefined>(
     defaultDateRange,
   );
@@ -42,19 +40,10 @@ const JaneDataPage = () => {
     });
   };
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   return (
     <>
       <div className="flex flex-col px-0 pr-[0px] ml-8 md:ml-0 py-6 md:p-8 md:pr-20 md:pl-20 w-full max-w-[365px] md:max-w-none">
-        {/* MOBILE HEADER (≤ md): title + floating date picker */}
         <div className="relative block md:hidden">
           <h1 className="mt-15 font-bold text-[30px] leading-tight">
             JANE Uploaded Data
@@ -98,18 +87,12 @@ const JaneDataPage = () => {
           </button>
         </div>
 
-        {/* CONDITIONAL POPUP */}
-        {isMobile ? (
-          <FileUploadPopupMobile
-            isOpen={showUploadPopup}
-            onClose={() => setShowUploadPopup(false)}
-          />
-        ) : (
+        
           <FileUploadPopup
             isOpen={showUploadPopup}
             onClose={() => setShowUploadPopup(false)}
           />
-        )}
+      
 
         {/* DATA TABLE OR LOADING */}
         {isPending ? (
