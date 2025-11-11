@@ -4,8 +4,9 @@ import ConfirmPasswordPopup from "./ConfirmPasswordPopup";
 import ProfileIcon from "../../components/ProfileIcon";
 
 const ProfilePage = () => {
-  const [initials] = useState("VT");
+  const [initials] = useState("KL");
   const [name] = useState("Volunteer Tester");
+  const [pronouns] = useState("She/Her/Hers");
   const [email] = useState("kim@gmail.com");
   const [phone] = useState("585-105-6915");
   const [editType, setEditType] = useState("Email"); // email or password
@@ -23,7 +24,12 @@ const ProfilePage = () => {
           {/* Right: Info content */}
           <div className="flex flex-col gap-8 w-[300px] sm:w-[500px] md:w-[600px] lg:w-[600px] items-center lg:items-start text-center sm:text-left">
             <div>
-              <h1 className="mb-0">{name}</h1>
+              <h1 className="mb-0 flex flex-wrap items-center justify-center lg:justify-start gap-4">
+                {name}
+                <span className="text-sm text-gray-700">  ({pronouns})</span>
+                <FaEdit className="cursor-pointer text-gray-600 text-sm" />
+              </h1>
+
               <h4 className="font-semibold font-Montserrat text-lg mb-1 text-center lg:text-left">
                 Personal Information
               </h4>
