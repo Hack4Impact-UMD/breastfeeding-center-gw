@@ -131,13 +131,15 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
     !!apptFile && errorType === "none" && !uploadMutation.isPending;
 
   return (
-    <Modal open={isOpen} onClose={handleClose} height={350} width={500}>
+    <Modal open={isOpen} onClose={handleClose} height={350} width={500} disabled={uploadMutation.isPending}>
       <div className="flex flex-col h-full py-2">
         <div className="flex justify-between items-center m-2">
           <p className="text-lg">Jane File Upload</p>
           <button
             onClick={() => {
-              handleClose();
+              if (!uploadMutation.isPending) {
+                handleClose();
+              }
             }}
             className="absolute top-0.25 right-0.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
           >
@@ -185,7 +187,10 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
             />
             <div className={apptFileName ? "block" : "invisible"}>
               <div className="flex text-sm font-bold items-center mt-1">
-                <p className="truncate text-[#1264B1] max-w-[7rem]">
+                <Tooltip id={`apptFileTip`} place="bottom">
+                  <div className="text-sm">{apptFileName}</div>
+                </Tooltip>
+                <p data-tooltip-id={`apptFileTip`} className="truncate text-[#1264B1] max-w-[7rem]">
                   {apptFileName}
                 </p>
                 <button
@@ -233,7 +238,10 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
             />
             <div className={clientFileName ? "block" : "invisible"}>
               <div className="flex text-sm font-bold items-center mt-1">
-                <p className="truncate text-[#1264B1] max-w-[7rem]">
+                <Tooltip id={`clientFileTip`} place="bottom">
+                  <div className="text-sm">{clientFileName}</div>
+                </Tooltip>
+                <p data-tooltip-id={`clientFileTip`} className="truncate text-[#1264B1] max-w-[7rem]">
                   {clientFileName}
                 </p>
                 <button
