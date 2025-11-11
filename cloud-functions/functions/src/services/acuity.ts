@@ -20,31 +20,47 @@ export async function getAllAcuityApptsInRange(
   startDate: string,
   endDate: string,
 ) {
-  const startDateLuxon = DateTime.fromISO(startDate);
-  const endDateLuxon = DateTime.fromISO(endDate);
+  const startDateLuxon = DateTime.fromISO(startDate, { zone: "utc" });
+  const endDateLuxon = DateTime.fromISO(endDate, { zone: "utc" });
 
-  let current = startDateLuxon;
-  const dates: DateTime[] = [];
-
-  while (current <= endDateLuxon) {
-    dates.push(current);
-    current = current.plus({ months: 1 });
+  if (!startDateLuxon.isValid || !endDateLuxon.isValid) {
+    throw new Error("Invalid date format provided");
   }
-  dates.push(endDateLuxon);
+
   const api = acuityClient();
+  let acuityApptsInRange: any[] = [];
+  const diffInMonths = endDateLuxon.diff(startDateLuxon, "months").months;
 
-  let acuityApptsInRange = [];
-
-  for (let i = 0; i < dates.length - 1; i++) {
-    // need to verify the type of response this is
+  if (diffInMonths <= 1) {
+    // make a single request
     const response = await api.get("/appointments", {
       params: {
         max: -1,
-        maxDate: dates[i + 1].toISO(),
-        minDate: dates[i].toISO(),
+        minDate: startDateLuxon.toISO(),
+        maxDate: endDateLuxon.toISO(),
       },
     });
-    acuityApptsInRange = [...acuityApptsInRange, ...response];
+    return response.data;
+  }
+
+  // split into chunks
+  let currentStart = startDateLuxon.setZone("utc");
+
+  while (currentStart < endDateLuxon) {
+    const chunkEnd = currentStart.plus({ months: 1 }).setZone("utc");
+    const actualChunkEnd = chunkEnd > endDateLuxon ? endDateLuxon.setZone("utc") : chunkEnd;
+
+    // make request for this chunk
+    const response = await api.get("/appointments", {
+      params: {
+        max: -1,
+        minDate: currentStart.toISO(),
+        maxDate: actualChunkEnd.toISO(),
+      },
+    });
+
+    acuityApptsInRange = [...acuityApptsInRange, ...response.data];
+    currentStart = chunkEnd;
   }
 
   return acuityApptsInRange;
