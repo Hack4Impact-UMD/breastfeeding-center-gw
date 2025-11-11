@@ -2,7 +2,6 @@ import { useState, useRef } from "react";
 import Modal from "../../components/Modal";
 import { FiCheckCircle } from "react-icons/fi";
 import { IoIosClose } from "react-icons/io";
-import { Tooltip } from "react-tooltip";
 import apptUploadIcon from "../../assets/apptUpload.svg";
 import clientUploadIcon from "../../assets/clientUpload.svg";
 import { useUploadJaneData } from "@/hooks/mutations/useUploadJaneData";
@@ -11,6 +10,7 @@ import { AxiosError } from "axios";
 import { Button } from "@/components/ui/button";
 import { queryClient } from "@/config/query";
 import queries from "@/queries";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 type FileUploadPopupProps = {
   isOpen: boolean;
@@ -131,13 +131,15 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
     !!apptFile && errorType === "none" && !uploadMutation.isPending;
 
   return (
-    <Modal open={isOpen} onClose={handleClose} height={350} width={500}>
+    <Modal open={isOpen} onClose={handleClose} height={350} width={500} disabled={uploadMutation.isPending}>
       <div className="flex flex-col h-full py-2">
         <div className="flex justify-between items-center m-2">
           <p className="text-lg">Jane File Upload</p>
           <button
             onClick={() => {
-              handleClose();
+              if (!uploadMutation.isPending) {
+                handleClose();
+              }
             }}
             className="absolute top-0.25 right-0.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
           >
@@ -185,9 +187,16 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
             />
             <div className={apptFileName ? "block" : "invisible"}>
               <div className="flex text-sm font-bold items-center mt-1">
-                <p className="truncate text-[#1264B1] max-w-[7rem]">
-                  {apptFileName}
-                </p>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <p className="truncate text-[#1264B1] max-w-[7rem]">
+                      {apptFileName}
+                    </p>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <span className="text-sm">{apptFileName}</span>
+                  </TooltipContent>
+                </Tooltip>
                 <button
                   onClick={() => {
                     handleApptFile();
@@ -233,9 +242,16 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
             />
             <div className={clientFileName ? "block" : "invisible"}>
               <div className="flex text-sm font-bold items-center mt-1">
-                <p className="truncate text-[#1264B1] max-w-[7rem]">
-                  {clientFileName}
-                </p>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <p className="truncate text-[#1264B1] max-w-[7rem]">
+                      {clientFileName}
+                    </p>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <span className="text-sm">{clientFileName}</span>
+                  </TooltipContent>
+                </Tooltip>
                 <button
                   onClick={() => {
                     handleClientFile();
@@ -265,21 +281,24 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
             <p className="text-sm text-center mx-4 text-red-600">
               Some clients in the uploaded appointment sheet are not in the
               system. Please upload client sheet with new clients.{" "}
-              <span
-                data-tooltip-id="missingClientsTip"
-                className="underline cursor-pointer"
-              >
-                View missing clients
-              </span>
+              <Tooltip>
+                <TooltipTrigger>
+                  <span
+                    data-tooltip-id="missingClientsTip"
+                    className="underline cursor-pointer"
+                  >
+                    View missing clients
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">
+                  <div className="text-sm text-center">
+                    {missingClients.map((client, index) => (
+                      <p key={index}>{client}</p>
+                    ))}
+                  </div>
+                </TooltipContent>
+              </Tooltip>
             </p>
-
-            <Tooltip id="missingClientsTip" place="bottom">
-              <div className="text-sm text-center">
-                {missingClients.map((client, index) => (
-                  <p key={index}>{client}</p>
-                ))}
-              </div>
-            </Tooltip>
           </div>
         )}
 
