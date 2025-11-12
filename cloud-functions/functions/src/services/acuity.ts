@@ -1,6 +1,7 @@
 import axios from "axios";
 import { config } from "../config";
 import { DateTime } from "luxon";
+import { AcuityAppointment } from "../types/acuityType";
 
 export const acuityClient = () => {
   const creds = {
@@ -19,7 +20,7 @@ export const acuityClient = () => {
 export async function getAllAcuityApptsInRange(
   startDate: string,
   endDate: string,
-) {
+): Promise<AcuityAppointment[]> {
   const startDateLuxon = DateTime.fromISO(startDate, { zone: "utc" });
   const endDateLuxon = DateTime.fromISO(endDate, { zone: "utc" });
 
@@ -28,7 +29,7 @@ export async function getAllAcuityApptsInRange(
   }
 
   const api = acuityClient();
-  let acuityApptsInRange: any[] = [];
+  let acuityApptsInRange: AcuityAppointment[] = [];
   const diffInMonths = endDateLuxon.diff(startDateLuxon, "months").months;
 
   if (diffInMonths <= 1) {
