@@ -38,7 +38,7 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
           className={cn("flex", className)}
           flagComponent={FlagComponent}
           countrySelectComponent={CountrySelect}
-          inputComponent={InputComponent}
+          //inputComponent={InputComponent}
           smartCaret={false}
           value={value || undefined}
           /**
@@ -117,7 +117,7 @@ const CountrySelect = ({
           />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0">
+      <PopoverContent className="w-[300px] p-0 bg-white">
         <Command>
           <CommandInput
             value={searchValue}
