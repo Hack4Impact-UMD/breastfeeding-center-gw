@@ -2,7 +2,7 @@ import { useState } from "react";
 import { IoIosClose } from "react-icons/io";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import Modal from "../../components/Modal";
-import PhoneInput from "@/components/ui/phone-input";
+import {PhoneInput} from "@/components/ui/phone-input";
 
 const ChangePhoneNumberPopup = ({
   open,

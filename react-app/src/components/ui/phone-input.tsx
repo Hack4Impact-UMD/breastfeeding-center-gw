@@ -1,317 +1,204 @@
-import { FormEvent, useEffect, useState } from "react";
-import { Navigate, useParams } from "react-router-dom";
+import * as React from "react";
+import { CheckIcon, ChevronsUpDown } from "lucide-react";
+import * as RPNInput from "react-phone-number-input";
+import flags from "react-phone-number-input/flags";
+
+import { Button } from "@/components/ui/shad-button";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { useInvite } from "@/hooks/queries/useInvite";
-import Loading from "@/components/Loading";
-import PhoneInput from "@/components/ui/phone-input";
-import { isValidPhoneNumber } from "react-phone-number-input";
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
-import { AiOutlineInfoCircle } from "react-icons/ai";
-import { IoMdEye, IoMdEyeOff } from "react-icons/io";
-import { PASSWORD_REQUIREMENTS, validatePassword } from "@/lib/passwordUtils";
-import { useRegisterUser } from "@/hooks/mutations/useRegisterUser";
-import { Button } from "@/components/ui/original-button";
+type PhoneInputProps = Omit<
+  React.ComponentProps<"input">,
+  "onChange" | "value" | "ref"
+> &
+  Omit<RPNInput.Props<typeof RPNInput.default>, "onChange"> & {
+    onChange?: (value: RPNInput.Value) => void;
+  };
 
-const PRONOUN_OPTIONS = ["she/her", "he/him", "they/them", "Other", "None"];
+const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
+  React.forwardRef<React.ElementRef<typeof RPNInput.default>, PhoneInputProps>(
+    ({ className, onChange, value, ...props }, ref) => {
+      return (
+        <RPNInput.default
+          ref={ref}
+          className={cn("flex", className)}
+          flagComponent={FlagComponent}
+          countrySelectComponent={CountrySelect}
+          inputComponent={InputComponent}
+          smartCaret={false}
+          value={value || undefined}
+          /**
+           * Handles the onChange event.
+           *
+           * react-phone-number-input might trigger the onChange event as undefined
+           * when a valid phone number is not entered. To prevent this,
+           * the value is coerced to an empty string.
+           *
+           * @param {E164Number | undefined} value - The entered value
+           */
+          onChange={(value) => onChange?.(value || ("" as RPNInput.Value))}
+          {...props}
+        />
+      );
+    },
+  );
+PhoneInput.displayName = "PhoneInput";
 
-export default function NewUserPage() {
-  const { inviteId = "" } = useParams();
+const InputComponent = React.forwardRef<
+  HTMLInputElement,
+  React.ComponentProps<"input">
+>(({ className, ...props }, ref) => (
+  <Input
+    className={cn("rounded-e-lg rounded-s-none", className)}
+    {...props}
+    ref={ref}
+  />
+));
+InputComponent.displayName = "InputComponent";
 
-  const { data: invite, isPending, error } = useInvite(inviteId);
-  const {
-    mutate: register,
-    isPending: registerPending,
-    error: registerError,
-  } = useRegisterUser();
+type CountryEntry = { label: string; value: RPNInput.Country | undefined };
 
-  const prefilledFirstName = invite?.firstName ?? "";
-  const prefilledLastName = invite?.lastName ?? "";
-  const prefilledEmail = invite?.email ?? "";
+type CountrySelectProps = {
+  disabled?: boolean;
+  value: RPNInput.Country;
+  options: CountryEntry[];
+  onChange: (country: RPNInput.Country) => void;
+};
 
-  const [firstName, setFirstName] = useState(prefilledFirstName);
-  const [lastName, setLastName] = useState(prefilledLastName);
-  const [pronouns, setPronouns] = useState(PRONOUN_OPTIONS[0]);
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [formError, setError] = useState("");
-
-  const isPhoneValid = phone ? isValidPhoneNumber(phone) : true;
-  const isPasswordValid = password === "" || validatePassword(password);
-  const doPasswordsMatch = password === confirmPassword;
-
-  // needed to update the state vars after the invite data is fetched
-  useEffect(() => {
-    setFirstName(prefilledFirstName);
-    setLastName(prefilledLastName);
-  }, [prefilledFirstName, prefilledLastName]);
-
-  const allFieldsFilled =
-    !!firstName.trim() &&
-    !!lastName.trim() &&
-    !!phone.trim() &&
-    !!password &&
-    !!confirmPassword;
-
-  const INVALID_MESSAGE =
-    "One or more fields is invalid. Please re-enter phone or password fields to create an account.";
-
-  if (isPending)
-    return (
-      <div className="p-2 w-full h-full flex items-center justify-center">
-        <Loading />
-      </div>
-    );
-
-  if (error) return <Navigate to="/" />;
-
-  if (!invite.valid) {
-    return (
-      <div className="w-full h-full flex flex-col items-center justify-center">
-        <img src="/bcgw-logo.png" alt="logo" className="size-32 mb-4" />
-        <h1 className="text-4xl font-semibold mb-2 text-center">
-          Invalid Invite
-        </h1>
-        <p className="text-center text-lg">
-          This invite has either expired or been used.
-        </p>
-      </div>
-    );
-  }
-
-  function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-
-    if (!isValidPhoneNumber(phone)) {
-      setError(INVALID_MESSAGE);
-      return;
-    }
-    if (!validatePassword(password)) {
-      setError(INVALID_MESSAGE);
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError(INVALID_MESSAGE);
-      return;
-    }
-
-    if (!invite) {
-      setError("No invite found!");
-      return;
-    }
-
-    setError("");
-
-    register({
-      inviteId: invite.id,
-      form: {
-        email: invite.email,
-        firstName: firstName,
-        lastName: lastName,
-        pronouns: pronouns,
-        password: password,
-        phone: phone,
-      },
-    });
-  }
+const CountrySelect = ({
+  disabled,
+  value: selectedCountry,
+  options: countryList,
+  onChange,
+}: CountrySelectProps) => {
+  const scrollAreaRef = React.useRef<HTMLDivElement>(null);
+  const [searchValue, setSearchValue] = React.useState("");
+  const [isOpen, setIsOpen] = React.useState(false);
 
   return (
-    <div className="flex flex-col items-center min-h-screen justify-center bg-white">
-      <img src="/bcgw-logo.png" alt="logo" className="w-16 mb-4" />
-      <h1
-        className="font-semibold mb-6 text-center"
-        style={{ fontSize: "28px" }}
-      >
-        Welcome new user!
-      </h1>
-      <form
-        className="w-full max-w-lg flex flex-col gap-4"
-        onSubmit={handleSubmit}
-        autoComplete="off"
-      >
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <label className="font-medium mb-1 flex items-center">
-              <span className="text-red-500 mr-2">*</span>
-              <span>First Name</span>
-            </label>
-            <input
-              className="w-full border rounded px-3 py-2"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
-            />
-          </div>
-          <div className="flex-1">
-            <label className="font-medium mb-1 flex items-center">
-              <span className="text-red-500 mr-2">*</span>
-              <span>Last Name</span>
-            </label>
-            <input
-              className="w-full border rounded px-3 py-2"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              required
-            />
-          </div>
-          <div className="flex-1">
-            <label className="font-medium mb-1 flex items-center">
-              <span className="invisible mr-2">*</span>
-              <span>Pronouns</span>
-            </label>
-            <select
-              className="w-full border rounded px-3 py-2"
-              value={pronouns}
-              onChange={(e) => setPronouns(e.target.value)}
-            >
-              {PRONOUN_OPTIONS.map((option) => (
-                <option key={option}>{option}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label className="font-medium mb-1 flex items-center">
-            <span className="text-red-500 mr-2">*</span>
-            <span>Phone Number</span>
-          </label>
-          <PhoneInput
-            value={phone}
-            onChange={(value) => setPhone(value || "")}
-            defaultCountry="US"
-            placeholder="Enter phone number"
-            className="border-[1.5px] border-black"
+    <Popover
+      open={isOpen}
+      modal
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        open && setSearchValue("");
+      }}
+    >
+      <PopoverTrigger asChild>
+        <Button
+          type="button"
+          variant="outline"
+          className="flex gap-1 rounded-e-none rounded-s-lg border-r-0 px-3 focus:z-10"
+          disabled={disabled}
+        >
+          <FlagComponent
+            country={selectedCountry}
+            countryName={selectedCountry}
           />
-          {phone && !isPhoneValid && (
-            <p className="text-red-600 text-sm mt-1">Phone number is invalid</p>
-          )}
-        </div>
-
-        <div>
-          <label className="font-medium mb-1 flex items-center">
-            <span>Email</span>
-          </label>
-          <input
-            className="w-full border rounded px-3 py-2 bg-gray-100 text-gray-400 cursor-not-allowed"
-            value={prefilledEmail}
-            disabled
+          <ChevronsUpDown
+            className={cn(
+              "-mr-2 size-4 opacity-50",
+              disabled ? "hidden" : "opacity-100",
+            )}
           />
-        </div>
-
-        <div>
-          <label className="font-medium mb-1 flex items-center">
-            <span className="text-red-500 mr-2">*</span>
-            <span className="mr-2">Password</span>
-
-            <Tooltip delayDuration={0}>
-              <TooltipTrigger asChild>
-                <button
-                  type="button"
-                  className="text-lg text-[#0F4374] hover:opacity-90"
-                  aria-label="Password requirements"
-                >
-                  <AiOutlineInfoCircle />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent
-                side="bottom"
-                className="p-0 border-0 bg-transparent rounded text-sm"
-              >
-                <div className="bg-[#0F4374] text-white p-3 rounded-lg shadow-md">
-                  <ul className="text-sm list-disc list-inside">
-                    {PASSWORD_REQUIREMENTS.map((req) => (
-                      <li key={req} className="leading-tight">
-                        {req}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </TooltipContent>
-            </Tooltip>
-          </label>
-
-          <div className="relative">
-            <input
-              className={`w-full border rounded px-4 py-3 ${password && !isPasswordValid ? "border-red-500" : ""}`}
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              autoComplete="new-password"
-            />
-            <button
-              type="button"
-              className="absolute right-3 top-4 text-gray-500 hover:text-gray-700 cursor-pointer"
-              onClick={() => setShowPassword((v) => !v)}
-              aria-label={showPassword ? "Hide password" : "Show password"}
-            >
-              {showPassword ? (
-                <IoMdEyeOff className="w-5 h-5" />
-              ) : (
-                <IoMdEye className="w-5 h-5" />
-              )}
-            </button>
-          </div>
-        </div>
-
-        <div>
-          <label className="font-medium mb-1 flex items-center">
-            <span className="text-red-500 mr-2">*</span>
-            <span>Confirm Password</span>
-          </label>
-          <div className="relative">
-            <input
-              className={`w-full border rounded px-4 py-3 ${confirmPassword && !doPasswordsMatch ? "border-red-500" : ""}`}
-              type={showConfirmPassword ? "text" : "password"}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              autoComplete="new-password"
-            />
-            <button
-              type="button"
-              className="absolute right-3 top-4 text-gray-500 hover:text-gray-700 cursor-pointer"
-              onClick={() => setShowConfirmPassword((v) => !v)}
-              aria-label={
-                showConfirmPassword ? "Hide password" : "Show password"
-              }
-            >
-              {showConfirmPassword ? (
-                <IoMdEyeOff className="w-5 h-5" />
-              ) : (
-                <IoMdEye className="w-5 h-5" />
-              )}
-            </button>
-          </div>
-        </div>
-
-        <div className="flex justify-center mt-4">
-          <Button
-            type="submit"
-            variant={"yellow"}
-            disabled={!allFieldsFilled || registerPending}
-          >
-            Create Account
-          </Button>
-        </div>
-        {formError && (
-          <div className="text-red-500 text-center text-sm mt-4">
-            {formError}
-          </div>
-        )}
-        {registerError && (
-          <div className="text-red-500 text-center text-sm mt-4">
-            Failed to register user: {registerError.message}
-          </div>
-        )}
-      </form>
-    </div>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[300px] p-0">
+        <Command>
+          <CommandInput
+            value={searchValue}
+            onValueChange={(value) => {
+              setSearchValue(value);
+              setTimeout(() => {
+                if (scrollAreaRef.current) {
+                  const viewportElement = scrollAreaRef.current.querySelector(
+                    "[data-radix-scroll-area-viewport]",
+                  );
+                  if (viewportElement) {
+                    viewportElement.scrollTop = 0;
+                  }
+                }
+              }, 0);
+            }}
+            placeholder="Search country..."
+          />
+          <CommandList>
+            <ScrollArea ref={scrollAreaRef} className="h-72">
+              <CommandEmpty>No country found.</CommandEmpty>
+              <CommandGroup>
+                {countryList.map(({ value, label }) =>
+                  value ? (
+                    <CountrySelectOption
+                      key={value}
+                      country={value}
+                      countryName={label}
+                      selectedCountry={selectedCountry}
+                      onChange={onChange}
+                      onSelectComplete={() => setIsOpen(false)}
+                    />
+                  ) : null,
+                )}
+              </CommandGroup>
+            </ScrollArea>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
+};
+
+interface CountrySelectOptionProps extends RPNInput.FlagProps {
+  selectedCountry: RPNInput.Country;
+  onChange: (country: RPNInput.Country) => void;
+  onSelectComplete: () => void;
 }
+
+const CountrySelectOption = ({
+  country,
+  countryName,
+  selectedCountry,
+  onChange,
+  onSelectComplete,
+}: CountrySelectOptionProps) => {
+  const handleSelect = () => {
+    onChange(country);
+    onSelectComplete();
+  };
+
+  return (
+    <CommandItem className="gap-2" onSelect={handleSelect}>
+      <FlagComponent country={country} countryName={countryName} />
+      <span className="flex-1 text-sm">{countryName}</span>
+      <span className="text-sm text-foreground/50">{`+${RPNInput.getCountryCallingCode(country)}`}</span>
+      <CheckIcon
+        className={`ml-auto size-4 ${country === selectedCountry ? "opacity-100" : "opacity-0"}`}
+      />
+    </CommandItem>
+  );
+};
+
+const FlagComponent = ({ country, countryName }: RPNInput.FlagProps) => {
+  const Flag = flags[country];
+
+  return (
+    <span className="flex h-4 w-6 overflow-hidden rounded-sm bg-foreground/20 [&_svg:not([class*='size-'])]:size-full">
+      {Flag && <Flag title={countryName} />}
+    </span>
+  );
+};
+
+export { PhoneInput };

@@ -198,10 +198,10 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
                   </span>
                   {apptFile && (
                     <FiCheckCircle
-                      className="inline-block ml-1 align-middle"
+                      className="inline-block ml-1 align-middle sm:w-[18px] sm:h-[18px]"
                       size={16}
                       color="#04BB22"
-                      className="sm:w-[18px] sm:h-[18px]"
+                
                     />
                   )}
                 </span>
@@ -246,10 +246,10 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
                   </span>
                   {clientFile && (
                     <FiCheckCircle
-                      className="inline-block align-middle ml-1"
+                      className="inline-block align-middle ml-1 sm:w-[18px] sm:h-[18px]"
                       size={16}
                       color="#04BB22"
-                      className="sm:w-[18px] sm:h-[18px]"
+       
                     />
                   )}
                 </span>

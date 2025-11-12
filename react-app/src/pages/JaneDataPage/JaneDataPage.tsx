@@ -12,7 +12,7 @@ import { JaneTableRow } from "@/types/JaneType.ts";
 import { DataTable } from "@/components/DataTable/DataTable.tsx";
 import { janeIDDataColumns } from "./JaneDataTableColumns.tsx";
 import { DateRange } from "react-day-picker";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 const JaneDataPage = () => {
   // styles
   const buttonStyle =
