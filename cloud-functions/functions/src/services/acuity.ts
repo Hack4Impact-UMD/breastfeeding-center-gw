@@ -32,6 +32,10 @@ export async function getAllAcuityApptsInRange(
   let acuityApptsInRange: AcuityAppointment[] = [];
   const diffInMonths = endDateLuxon.diff(startDateLuxon, "months").months;
 
+  if (startDateLuxon.toMillis() > endDateLuxon.toMillis()) {
+    throw new Error("startDate must be on or before endDate");
+  }
+
   if (diffInMonths <= 1) {
     // make a single request
     const response = await api.get("/appointments", {
@@ -61,7 +65,7 @@ export async function getAllAcuityApptsInRange(
     });
 
     acuityApptsInRange = [...acuityApptsInRange, ...response.data];
-    currentStart = chunkEnd;
+    currentStart = actualChunkEnd.plus({ milliseconds: 1 });
   }
 
   return acuityApptsInRange;
