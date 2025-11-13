@@ -1,5 +1,7 @@
 import axios from "axios";
 import { config } from "../config";
+import { DateTime } from "luxon";
+import { AcuityAppointment } from "../types/acuityType";
 
 export const acuityClient = () => {
   const creds = {
@@ -14,3 +16,57 @@ export const acuityClient = () => {
     },
   });
 };
+
+export async function getAllAcuityApptsInRange(
+  startDate: string,
+  endDate: string,
+): Promise<AcuityAppointment[]> {
+  const startDateLuxon = DateTime.fromISO(startDate, { zone: "utc" });
+  const endDateLuxon = DateTime.fromISO(endDate, { zone: "utc" });
+
+  if (!startDateLuxon.isValid || !endDateLuxon.isValid) {
+    throw new Error("Invalid date format provided");
+  }
+
+  const api = acuityClient();
+  let acuityApptsInRange: AcuityAppointment[] = [];
+  const diffInMonths = endDateLuxon.diff(startDateLuxon, "months").months;
+
+  if (startDateLuxon.toMillis() > endDateLuxon.toMillis()) {
+    throw new Error("startDate must be on or before endDate");
+  }
+
+  if (diffInMonths <= 1) {
+    // make a single request
+    const response = await api.get("/appointments", {
+      params: {
+        max: -1,
+        minDate: startDateLuxon.toISO(),
+        maxDate: endDateLuxon.toISO(),
+      },
+    });
+    return response.data;
+  }
+
+  // split into chunks
+  let currentStart = startDateLuxon.setZone("utc");
+
+  while (currentStart < endDateLuxon) {
+    const chunkEnd = currentStart.plus({ months: 1 }).setZone("utc");
+    const actualChunkEnd = chunkEnd > endDateLuxon ? endDateLuxon.setZone("utc") : chunkEnd;
+
+    // make request for this chunk
+    const response = await api.get("/appointments", {
+      params: {
+        max: -1,
+        minDate: currentStart.toISO(),
+        maxDate: actualChunkEnd.toISO(),
+      },
+    });
+
+    acuityApptsInRange = [...acuityApptsInRange, ...response.data];
+    currentStart = actualChunkEnd.plus({ milliseconds: 1 });
+  }
+
+  return acuityApptsInRange;
+}
