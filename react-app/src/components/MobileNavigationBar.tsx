@@ -74,7 +74,7 @@ const MobileNavigationBar = () => {
 
   return (
     <>
-      <div className="fixed top-0 left-0 right-0 bg-bcgw-blue-dark text-bcgw-yellow-dark pr-2 h-[60px] shadow-md">
+      <div className="fixed top-0 left-0 right-0 bg-bcgw-blue-dark text-bcgw-yellow-dark pr-2 z-40 h-[60px] shadow-md">
         <div className="flex items-center justify-between h-full px-4">
           {/* Logo */}
           <div className="flex items-center">

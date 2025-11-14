@@ -2,6 +2,7 @@ import { IoIosClose } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import Modal from "../Modal.tsx";
 import { logOut } from "@/services/authService.ts";
+import { Button } from "../ui/button.tsx";
 
 export default function LogoutConfirmation({
   open,
@@ -29,29 +30,31 @@ export default function LogoutConfirmation({
         onClick={() => {
           onClose();
         }}
-        className="absolute top-4 right-4 text-bcgw-blue-dark hover:text-gray-600 z-10 cursor-pointer"
+        className="w-full flex justify-end p-2 text-bcgw-blue-dark hover:text-gray-600 z-10 cursor-pointer"
       >
-        <IoIosClose size={50} />
+        <IoIosClose size={32} />
       </button>
-      <div className="relative p-8 flex flex-col items-center justify-center text-center h-full">
-        <h2 className="font-semibold flex-grow flex items-center justify-center">
+      <div className="relative flex flex-col items-center justify-center text-center h-full">
+        <h2 className="font-semibold flex-grow flex items-center justify-center px-8 pb-6">
           Are you sure you want to log out?
         </h2>
         <div className="flex justify-center gap-6">
-          <button
+          <Button
+            variant={"outline"}
+            className="py-4 px-6 text-md"
             onClick={() => {
               onClose();
             }}
-            className="hover:bg-bcgw-yellow-light rounded-lg px-2 py-2 border border-black cursor-pointer"
           >
             CANCEL
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={"yellow"}
+            className="py-4 px-6 text-md"
             onClick={() => handleLogOut()}
-            className="bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light rounded-lg px-2 py-2 border border-black cursor-pointer"
           >
             CONFIRM
-          </button>
+          </Button>
         </div>
       </div>
     </Modal>
