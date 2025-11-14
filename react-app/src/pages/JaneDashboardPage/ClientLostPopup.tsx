@@ -3,6 +3,7 @@ import { IoIosClose } from "react-icons/io";
 import { RetentionRate, LostClient } from "./JaneTableColumns";
 import { DataTable } from "@/components/DataTable/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
+import { Button } from "@/components/ui/button";
 
 type ClientLostPopupProps = {
   openRow: RetentionRate;
@@ -43,35 +44,34 @@ const ClientLostPopup = ({ openRow, setOpenRow }: ClientLostPopupProps) => {
       open={openRow !== null}
       onClose={handleClose}
       height={425}
-      width={800}
+      width={500}
     >
       <div className="flex flex-col h-full relative">
-        <div className="flex justify-between items-center px-4 py-3">
-          <p className="text-lg font-medium">Clients Lost After {openRow.visit}</p>
+        <div className="flex justify-between items-center my-2 mx-4">
+          <p className="text-lg">Clients Lost After {openRow.visit}</p>
           <button
             onClick={handleClose}
             className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
+            aria-label="Close"
           >
-            <IoIosClose size={40} />
+            <IoIosClose size={45} />
           </button>
         </div>
 
         <div className="w-full h-[1.5px] bg-black" />
 
-        <div className="p-4">
+        <div className="pt-4 pb-8 px-8">
           <div className="flex justify-end mb-0">
-            <button className="bg-transparent hover:bg-bcgw-gray-lighter text-gray border-2 border-gray py-1 px-6 rounded-full cursor-pointer">
+            <Button variant={"outlineGray"} className="rounded-full text-lg">
               Export
-            </button>
+            </Button>
           </div>
 
-          <div className="mt-0 flex flex-col">
-            <DataTable
-              tableType="clientsLost"
-              columns={lostClientColumns}
-              data={openRow?.clients ?? []}
-            />
-          </div>
+          <DataTable
+            tableType="clientsLost"
+            columns={lostClientColumns}
+            data={openRow?.clients ?? []}
+          />
         </div>
       </div>
     </Modal>

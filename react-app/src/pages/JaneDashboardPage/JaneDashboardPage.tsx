@@ -1,7 +1,6 @@
 import React, { useState, useRef, useMemo } from "react";
 import { Link } from "react-router-dom";
 import ClientLostPopup from "./ClientLostPopup.tsx";
-import ClientLostPopupMobile from "./ClientLostPopupMobile.tsx";
 import {
   PieArcSeries,
   PieChart,
@@ -223,7 +222,8 @@ const JaneDashboardPage = () => {
       numberVisited: 14,
       percent: 4.23,
       loss: 5,
-      clientsLostNames: "Jane Doe, Jane Doe, Jane Doe, Jane Doe, Jane Doe, Jane Doe",
+      clientsLostNames:
+        "Jane Doe, Jane Doe, Jane Doe, Jane Doe, Jane Doe, Jane Doe",
       clients: [
         { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
         { first: "Jane", last: "Doe", email: "jdoe@gmail.com" },
@@ -320,8 +320,6 @@ const JaneDashboardPage = () => {
           </div>
         </div>
 
-
-
         <div className={`${centerItemsInDiv} basis-20xs mt-3`}>
           <Link to="/services/jane/data">
             <button className={`${buttonStyle} mr-5 text-nowrap`}>
@@ -355,15 +353,14 @@ const JaneDashboardPage = () => {
               </button>
             </div>
 
-
             {visitDisplay === "graph" ? (
               <>
                 <span className="self-start font-semibold text-2xl mb-20">
                   Visit Breakdown:{" "}
                   {dateRange?.from && dateRange?.to
                     ? formatDate(dateRange.from) +
-                    " - " +
-                    formatDate(dateRange.to)
+                      " - " +
+                      formatDate(dateRange.to)
                     : "All Data"}
                 </span>
                 <div className={chartDiv} ref={pieChartRef}>
@@ -413,8 +410,8 @@ const JaneDashboardPage = () => {
                   Visit Breakdown:{" "}
                   {dateRange?.from && dateRange?.to
                     ? formatDate(dateRange.from) +
-                    " - " +
-                    formatDate(dateRange.to)
+                      " - " +
+                      formatDate(dateRange.to)
                     : "All Data"}
                 </span>
                 <DataTable
@@ -452,7 +449,6 @@ const JaneDashboardPage = () => {
               </button>
             </div>
 
-
             <span className="self-start font-semibold text-2xl">
               Retention Rate:{" "}
               {dateRange?.from && dateRange?.to
@@ -462,7 +458,6 @@ const JaneDashboardPage = () => {
 
             <div className="w-full pr-[12px] md:pr-0" ref={funnelChartRef}>
               {retentionDisplay === "graph" ? (
-
                 <div className={chartDiv}>
                   <div className="w-full flex justify-end">
                     <select
@@ -475,7 +470,6 @@ const JaneDashboardPage = () => {
                     </select>
                   </div>
 
-
                   <div className="flex items-center">
                     <span className="text-xl whitespace-nowrap -rotate-90 -mr-12 -ml-17">
                       Number of Visits
@@ -484,7 +478,10 @@ const JaneDashboardPage = () => {
                     <FunnelChart
                       height={290}
                       width={
-                        typeof window !== "undefined" && window.innerWidth >= 768 ? 400 : 295
+                        typeof window !== "undefined" &&
+                        window.innerWidth >= 768
+                          ? 400
+                          : 295
                       }
                       data={funnelData}
                       series={
@@ -492,7 +489,12 @@ const JaneDashboardPage = () => {
                           arc={<FunnelArc colorScheme="#05182A" />}
                           axis={
                             <FunnelAxis
-                              line={<FunnelAxisLine strokeColor="#FFFFFF" strokeWidth={5} />}
+                              line={
+                                <FunnelAxisLine
+                                  strokeColor="#FFFFFF"
+                                  strokeWidth={5}
+                                />
+                              }
                               label={
                                 <FunnelAxisLabel
                                   className=""
@@ -513,25 +515,23 @@ const JaneDashboardPage = () => {
                 <>
                   <div className="[&_td]:py-3 [&_th]:py-3">
                     <DataTable
-                      columns={makeRetentionRateColumns((row) => setOpenRow(row))}
+                      columns={makeRetentionRateColumns((row) =>
+                        setOpenRow(row),
+                      )}
                       data={retentionData}
                       tableType="default"
                     />
                   </div>
 
                   {openRow && (
-                    <>
-                      {window.innerWidth < 768 ? (
-                        <ClientLostPopupMobile openRow={openRow} setOpenRow={setOpenRow} />
-                      ) : (
-                        <ClientLostPopup openRow={openRow} setOpenRow={setOpenRow} />
-                      )}
-                    </>
+                    <ClientLostPopup
+                      openRow={openRow}
+                      setOpenRow={setOpenRow}
+                    />
                   )}
                 </>
               )}
             </div>
-
           </div>
         </div>
       </div>
