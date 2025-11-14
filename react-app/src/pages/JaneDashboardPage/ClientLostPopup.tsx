@@ -4,6 +4,7 @@ import { RetentionRate, LostClient } from "./JaneTableColumns";
 import { DataTable } from "@/components/DataTable/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
+import ColumnSortButton from "@/components/DataTable/ColumnSortButton";
 
 type ClientLostPopupProps = {
   openRow: RetentionRate;
@@ -18,21 +19,27 @@ const ClientLostPopup = ({ openRow, setOpenRow }: ClientLostPopupProps) => {
   const lostClientColumns: ColumnDef<LostClient>[] = [
     {
       accessorKey: "first",
-      header: "First Name",
+      header: ({ column }) => (
+        <ColumnSortButton column={column}>First Name</ColumnSortButton>
+      ),
       cell: ({ row }) => (
         <span className="cursor-pointer">{row.getValue("first")}</span>
       ),
     },
     {
       accessorKey: "last",
-      header: "Last Name",
+      header: ({ column }) => (
+        <ColumnSortButton column={column}>Last Name</ColumnSortButton>
+      ),
       cell: ({ row }) => (
         <span className="cursor-pointer">{row.getValue("last")}</span>
       ),
     },
     {
       accessorKey: "email",
-      header: "Email",
+      header: ({ column }) => (
+        <ColumnSortButton column={column}>Email</ColumnSortButton>
+      ),
       cell: ({ row }) => (
         <span className="cursor-pointer">{row.getValue("email")}</span>
       ),
@@ -71,6 +78,7 @@ const ClientLostPopup = ({ openRow, setOpenRow }: ClientLostPopupProps) => {
             tableType="clientsLost"
             columns={lostClientColumns}
             data={openRow?.clients ?? []}
+            pageSize={4}
           />
         </div>
       </div>

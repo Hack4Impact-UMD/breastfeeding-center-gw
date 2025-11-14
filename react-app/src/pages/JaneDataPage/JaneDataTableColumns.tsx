@@ -2,7 +2,7 @@ import { JaneTableRow } from "@/types/JaneType";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { DateTime } from "luxon";
-import ColumnSortButton from "@/components/DataTable/ColumnSortIcon";
+import ColumnSortButton from "@/components/DataTable/ColumnSortButton";
 
 export const janeDataColumns: ColumnDef<JaneTableRow>[] = [
   {

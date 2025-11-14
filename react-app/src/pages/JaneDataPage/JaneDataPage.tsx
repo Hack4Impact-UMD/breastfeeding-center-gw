@@ -43,7 +43,7 @@ const JaneDataPage = () => {
 
   return (
     <>
-      <div className="flex flex-col px-0 pr-[0px] ml-8 md:ml-0 py-6 md:p-8 md:pr-20 md:pl-20 w-full max-w-[365px] md:max-w-none">
+      <div className="flex flex-col p-5 py-6 md:p-8 md:px-20 w-full">
         <div className="relative block md:hidden">
           <h1 className="mt-15 font-bold text-[30px] leading-tight">
             JANE Uploaded Data
@@ -87,12 +87,12 @@ const JaneDataPage = () => {
           </button>
         </div>
 
-        
-          <FileUploadPopup
-            isOpen={showUploadPopup}
-            onClose={() => setShowUploadPopup(false)}
-          />
-      
+
+        <FileUploadPopup
+          isOpen={showUploadPopup}
+          onClose={() => setShowUploadPopup(false)}
+        />
+
 
         {/* DATA TABLE OR LOADING */}
         {isPending ? (
@@ -111,6 +111,7 @@ const JaneDataPage = () => {
             data={janeConsultations}
             handleDelete={handleDelete}
             tableType="janeData"
+            pageSize={10}
           />
         )}
       </div>

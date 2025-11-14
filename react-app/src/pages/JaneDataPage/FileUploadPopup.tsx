@@ -2,7 +2,6 @@ import { useState, useRef } from "react";
 import Modal from "../../components/Modal";
 import { FiCheckCircle } from "react-icons/fi";
 import { IoIosClose } from "react-icons/io";
-import { Tooltip } from "react-tooltip";
 import apptUploadIcon from "../../assets/apptUpload.svg";
 import clientUploadIcon from "../../assets/clientUpload.svg";
 import { useUploadJaneData } from "@/hooks/mutations/useUploadJaneData";
@@ -11,6 +10,11 @@ import { AxiosError } from "axios";
 import { Button } from "@/components/ui/button";
 import { queryClient } from "@/config/query";
 import queries from "@/queries";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type FileUploadPopupProps = {
   isOpen: boolean;
@@ -145,34 +149,31 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
 
           <div className="w-full h-[1.5px] bg-black" />
 
-          <p className="text-gray-500 text-xs mt-3 mb-4 mx-4 sm:text-sm ">
+          <p className="text-gray-500 m-3">
             <span className="text-red-600">*</span> Appointment sheet is required
           </p>
 
-          {/* Upload buttons - vertical on mobile, horizontal on desktop */}
           <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-evenly sm:place-items-center sm:mt-6">
-            {/* Appointment Upload */}
             <div className="flex flex-col items-center">
               <label
                 htmlFor="appt-upload"
-                className="cursor-pointer flex flex-col items-center justify-center text-center"
+                className="cursor-pointer flex flex-col items-center"
               >
                 <img
                   src={apptUploadIcon}
                   alt="Upload Appts"
-                  className="w-14 h-14 object-contain sm:ml-3"
+                  className="w-14 h-14 ml-3"
                 />
-                <span className="mt-2 text-sm font-medium flex items-center justify-center">
+                <span className="mt-2 font-medium text-xl md:text-sm">
                   <span className="text-red-600">* </span>
                   <span className="underline underline-offset-2 decoration-1">
                     UPLOAD APPTS
                   </span>
                   {apptFile && (
                     <FiCheckCircle
-                      className="inline-block ml-1 align-middle sm:w-[18px] sm:h-[18px]"
-                      size={16}
+                      className="inline-block align-middle ml-1"
+                      size={18}
                       color="#04BB22"
-                
                     />
                   )}
                 </span>
@@ -186,12 +187,21 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
                 onChange={(e) => handleFileChange(e, "appt")}
               />
               <div className={apptFileName ? "block" : "invisible"}>
-                <div className="flex text-xs font-bold items-center mt-1 sm:text-sm">
-                  <p className="truncate text-[#1264B1] max-w-[8rem] sm:max-w-[7rem]">
-                    {apptFileName}
-                  </p>
+                <div className="flex text-sm font-bold items-center mt-1">
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <p className="truncate text-[#1264B1] max-w-[7rem]">
+                        {apptFileName}
+                      </p>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      <span className="text-sm">{apptFileName}</span>
+                    </TooltipContent>
+                  </Tooltip>
                   <button
-                    onClick={handleApptFile}
+                    onClick={() => {
+                      handleApptFile();
+                    }}
                     className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
                   >
                     <IoIosClose size={20} />
@@ -200,8 +210,7 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
               </div>
             </div>
 
-            {/* Client Upload */}
-            <div className="flex flex-col items-center sm:mb-2">
+            <div className="flex flex-col items-center mb-2">
               <label
                 htmlFor="client-upload"
                 className="cursor-pointer flex flex-col items-center"
@@ -209,18 +218,17 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
                 <img
                   src={clientUploadIcon}
                   alt="Upload Clients"
-                  className="w-14 h-14 sm:w-16 sm:h-16"
+                  className="w-16 h-16"
                 />
-                <span className="mt-2 text-sm font-medium">
+                <span className="mt-2 font-medium text-xl md:text-sm">
                   <span className="underline underline-offset-2 decoration-1">
                     UPLOAD CLIENTS
                   </span>
                   {clientFile && (
                     <FiCheckCircle
-                      className="inline-block align-middle ml-1 sm:w-[18px] sm:h-[18px]"
-                      size={16}
+                      className="inline-block align-middle ml-1"
+                      size={18}
                       color="#04BB22"
-       
                     />
                   )}
                 </span>
@@ -234,12 +242,21 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
                 onChange={(e) => handleFileChange(e, "client")}
               />
               <div className={clientFileName ? "block" : "invisible"}>
-                <div className="flex text-xs font-bold items-center mt-1 sm:text-sm">
-                  <p className="truncate text-[#1264B1] max-w-[8rem] sm:max-w-[7rem]">
-                    {clientFileName}
-                  </p>
+                <div className="flex text-sm font-bold items-center mt-1">
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <p className="truncate text-[#1264B1] max-w-[7rem]">
+                        {clientFileName}
+                      </p>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      <span className="text-sm">{clientFileName}</span>
+                    </TooltipContent>
+                  </Tooltip>
                   <button
-                    onClick={handleClientFile}
+                    onClick={() => {
+                      handleClientFile();
+                    }}
                     className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
                   >
                     <IoIosClose size={20} />
@@ -249,45 +266,81 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
             </div>
           </div>
 
-          {/* Errors */}
-          {errorType === "other" && (
-            <p className="text-xs text-center mx-2 mb-2 text-red-600 sm:text-sm sm:mx-4">
-              Something went wrong: {uploadMutation.error?.message}
-            </p>
-          )}
           {errorType === "invalidType" && (
-            <p className="text-xs text-center mx-2 mb-2 text-red-600 sm:text-sm sm:mx-4">
+            <p className="text-sm text-center mx-4 text-red-600">
               The file(s) you uploaded does not match upload type
             </p>
           )}
           {errorType === "missingClients" && (
-            <div className="flex flex-col items-center mb-2">
-              <p className="text-xs text-center mx-2 mt-2 text-red-600 sm:text-sm sm:mx-4">
+            <div className="flex flex-col items-center">
+              <p className="text-sm text-center mx-4 text-red-600">
                 Some clients in the uploaded appointment sheet are not in the
                 system. Please upload client sheet with new clients.{" "}
-                <span
-                  data-tooltip-id="missingClientsTip"
-                  className="underline cursor-pointer"
-                >
-                  View missing clients
-                </span>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <span
+                      data-tooltip-id="missingClientsTip"
+                      className="underline cursor-pointer"
+                    >
+                      View missing clients
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <div className="text-sm text-center">
+                      {missingClients.map((client, index) => (
+                        <p key={index}>{client}</p>
+                      ))}
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
               </p>
-
-              <Tooltip
-                id="missingClientsTip"
-                place="bottom"
-                noArrow
-                className="!bg-[#3A3A3A] !text-white !border-0 !rounded-xl !px-4 !py-3 !shadow-lg"
-              >
-                <div className="text-xs leading-6 text-center min-w-[150px] sm:text-sm">
-                  {missingClients.slice(0, 5).map((c, i) => (
-                    <p key={i}>{c}</p>
-                  ))}
-                  {missingClients.length > 5 && <p>…</p>}
-                </div>
-              </Tooltip>
             </div>
           )}
+
+          {/* Errors */}
+          {
+            errorType === "other" && (
+              <p className="text-xs text-center mx-2 mb-2 text-red-600 sm:text-sm sm:mx-4">
+                Something went wrong: {uploadMutation.error?.message}
+              </p>
+            )
+          }
+          {
+            errorType === "invalidType" && (
+              <p className="text-xs text-center mx-2 mb-2 text-red-600 sm:text-sm sm:mx-4">
+                The file(s) you uploaded does not match upload type
+              </p>
+            )
+          }
+          {
+            errorType === "missingClients" && (
+              <div className="flex flex-col items-center mb-2">
+                <p className="text-xs text-center mx-2 mt-2 text-red-600 sm:text-sm sm:mx-4">
+                  Some clients in the uploaded appointment sheet are not in the
+                  system. Please upload client sheet with new clients.{" "}
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <span
+                        data-tooltip-id="missingClientsTip"
+                        className="underline cursor-pointer"
+                      >
+                        View missing clients
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      <div className="text-xs leading-6 text-center min-w-[150px] sm:text-sm">
+                        {missingClients.slice(0, 5).map((c, i) => (
+                          <p key={i}>{c}</p>
+                        ))}
+                        {missingClients.length > 5 && <p>…</p>}
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </p>
+
+              </div>
+            )
+          }
 
           {/* Submit Button */}
           <div className="flex flex-col items-center gap-3 justify-center mt-4 mb-8">
@@ -304,9 +357,9 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
               </Button>
             )}
           </div>
-        </div>
-      </div>
-    </Modal>
+        </div >
+      </div >
+    </Modal >
   );
 };
 

@@ -637,6 +637,7 @@ export default function AcuityDashboardPage() {
               data={trimesterData}
               tableType="default"
               tableHeaderExtras={classAttendanceTableExtras}
+              pageSize={5}
             />
           )}
         </div>
@@ -735,12 +736,11 @@ export default function AcuityDashboardPage() {
             </div>
           ) : (
             <DataTable
-              columns={
-                instructorColumns
-              } /* keep until you have class-popularity columns */
+              columns={instructorColumns}
               data={instructorData}
               tableType="default"
               tableHeaderExtras={classPopularityTableExtras}
+              pageSize={5}
             />
           )}
         </div>
@@ -832,6 +832,7 @@ export default function AcuityDashboardPage() {
               data={instructorTableRows}
               tableType="default"
               tableHeaderExtras={instructorPopularityTableExtras}
+              pageSize={5}
             />
           )}
         </div>

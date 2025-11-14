@@ -1,6 +1,7 @@
 import * as admin from "firebase-admin";
 
-if (!admin.apps.length) {
+// if the app has not been initialized by this point, do it now
+if (!admin.apps.length || admin.apps.length === 0) {
   admin.initializeApp();
 }
 

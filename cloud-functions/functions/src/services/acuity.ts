@@ -1,70 +1,72 @@
 import axios from "axios";
+import { config } from "../config";
+import { DateTime } from "luxon";
+import { AcuityAppointment } from "../types/acuityType";
 
-const creds = {
-  userId: process.env.ACUITY_USER_ID,
-  apiKey: process.env.ACUITY_API_KEY,
-};
+export const acuityClient = () => {
+  const creds = {
+    userId: config.acuityUserId.value(),
+    apiKey: config.acuityAPIKey.value(),
+  };
 
-const acuityClient = axios.create({
-  baseURL: "https://acuityscheduling.com/api/v1",
-  headers: {
-    Authorization: `Basic ${Buffer.from(`${creds.userId}:${creds.apiKey}`).toString("base64")}`,
-  },
-});
-
-//TODO: types and processing for this, for now we just fetch and return
-export async function getAcuityAppointments(max: number = 10) {
-  const res = await acuityClient.get(`/appointments?max=${max}`);
-  const data = res.data;
-  return data;
-}
-
-//TODO: i don't think this is correct, but i'm just copying it over from the old version for now
-export async function getBabyInfo(max: number = 10) {
-  const res = await acuityClient.get(`/appointments?max=${max}`);
-  const data = res.data;
-  return data;
-}
-
-type AcuityAppt = {
-  date: Date;
-  instructor?: string;
-  title?: string;
-  classType: string;
-  didAttend: boolean;
-};
-
-const CLASS_CATEGORIES = [
-  "Childbirth Classes",
-  "Postpartum Classes",
-  "Prenatal Classes",
-  "Infant Massage",
-  "Parent Groups",
-];
-
-export async function getClientAppointments(max: number = 100) {
-  const res = await acuityClient.get(`/appointments?max=${max}`);
-  const raw = res.data;
-
-  const clientMap: Record<string, { appointments: AcuityAppt[] }> = {};
-
-  raw.forEach((appt: { [key: string]: string }) => {
-    // Skip anything that isn't one of our class categories
-    if (!CLASS_CATEGORIES.includes(appt.category)) return;
-
-    const id = appt.id;
-    if (!clientMap[id]) {
-      clientMap[id] = { appointments: [] };
-    }
-
-    clientMap[id].appointments.push({
-      date: new Date(appt.datetime),
-      instructor: appt.calendar,
-      title: appt.type,
-      classType: appt.category,
-      didAttend: !appt.canceled,
-    });
+  return axios.create({
+    baseURL: "https://acuityscheduling.com/api/v1",
+    headers: {
+      Authorization: `Basic ${Buffer.from(`${creds.userId}:${creds.apiKey}`).toString("base64")}`,
+    },
   });
+};
 
-  return clientMap;
+export async function getAllAcuityApptsInRange(
+  startDate: string,
+  endDate: string,
+): Promise<AcuityAppointment[]> {
+  const startDateLuxon = DateTime.fromISO(startDate, { zone: "utc" });
+  const endDateLuxon = DateTime.fromISO(endDate, { zone: "utc" });
+
+  if (!startDateLuxon.isValid || !endDateLuxon.isValid) {
+    throw new Error("Invalid date format provided");
+  }
+
+  const api = acuityClient();
+  let acuityApptsInRange: AcuityAppointment[] = [];
+  const diffInMonths = endDateLuxon.diff(startDateLuxon, "months").months;
+
+  if (startDateLuxon.toMillis() > endDateLuxon.toMillis()) {
+    throw new Error("startDate must be on or before endDate");
+  }
+
+  if (diffInMonths <= 1) {
+    // make a single request
+    const response = await api.get("/appointments", {
+      params: {
+        max: -1,
+        minDate: startDateLuxon.toISO(),
+        maxDate: endDateLuxon.toISO(),
+      },
+    });
+    return response.data;
+  }
+
+  // split into chunks
+  let currentStart = startDateLuxon.setZone("utc");
+
+  while (currentStart < endDateLuxon) {
+    const chunkEnd = currentStart.plus({ months: 1 }).setZone("utc");
+    const actualChunkEnd = chunkEnd > endDateLuxon ? endDateLuxon.setZone("utc") : chunkEnd;
+
+    // make request for this chunk
+    const response = await api.get("/appointments", {
+      params: {
+        max: -1,
+        minDate: currentStart.toISO(),
+        maxDate: actualChunkEnd.toISO(),
+      },
+    });
+
+    acuityApptsInRange = [...acuityApptsInRange, ...response.data];
+    currentStart = actualChunkEnd.plus({ milliseconds: 1 });
+  }
+
+  return acuityApptsInRange;
 }

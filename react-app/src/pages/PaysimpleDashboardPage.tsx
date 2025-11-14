@@ -9,7 +9,7 @@ import {
 } from "@/components/DateRangePicker/DateRangePicker";
 import { DataTable } from "@/components/DataTable/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
-import ColumnSortButton from "@/components/DataTable/ColumnSortIcon";
+import ColumnSortButton from "@/components/DataTable/ColumnSortButton";
 
 // record of colors to use for each rental item
 const colors: Record<string, string> = {
