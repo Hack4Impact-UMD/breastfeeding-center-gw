@@ -265,38 +265,6 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
               </div>
             </div>
           </div>
-
-          {errorType === "invalidType" && (
-            <p className="text-sm text-center mx-4 text-red-600">
-              The file(s) you uploaded does not match upload type
-            </p>
-          )}
-          {errorType === "missingClients" && (
-            <div className="flex flex-col items-center">
-              <p className="text-sm text-center mx-4 text-red-600">
-                Some clients in the uploaded appointment sheet are not in the
-                system. Please upload client sheet with new clients.{" "}
-                <Tooltip>
-                  <TooltipTrigger>
-                    <span
-                      data-tooltip-id="missingClientsTip"
-                      className="underline cursor-pointer"
-                    >
-                      View missing clients
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom">
-                    <div className="text-sm text-center">
-                      {missingClients.map((client, index) => (
-                        <p key={index}>{client}</p>
-                      ))}
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
-              </p>
-            </div>
-          )}
-
           {/* Errors */}
           {
             errorType === "other" && (
