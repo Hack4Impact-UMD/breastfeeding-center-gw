@@ -51,7 +51,6 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
 
       if (err instanceof AxiosError) {
         if (Array.isArray(err.response?.data.details)) {
-          //missing clients
           setErrorType("missingClients");
           setMissingClients(err.response.data.details as string[]);
         } else {
@@ -116,8 +115,8 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
       clientFileInputRef.current.value = "";
     }
   };
+
   const handleSubmit = async () => {
-    //TODO: Better loading state
     handleUploadSubmit(apptFile, clientFile);
   };
 
@@ -135,201 +134,200 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
     !!apptFile && errorType === "none" && !uploadMutation.isPending;
 
   return (
-    <Modal
-      open={isOpen}
-      onClose={handleClose}
-      height={350}
-      width={500}
-      disabled={uploadMutation.isPending}
-    >
-      <div className="flex flex-col h-full">
-        <div className="flex justify-between items-center m-2">
-          <p className="text-lg grow">Jane File Upload</p>
-          <Button
-            variant="ghost"
-            onClick={() => {
-              if (!uploadMutation.isPending) {
-                handleClose();
-              }
-            }}
-            disabled={uploadMutation.isPending}
-            className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer p-0"
-          >
-            <IoIosClose className="size-7" />
-          </Button>
-        </div>
-        <div className="w-full h-[1.5px] bg-black" />
-
-        <p className="text-gray-500 m-3">
-          <span className="text-red-600">*</span> Appointment sheet is required
-        </p>
-
-        <div className="flex flex-row justify-evenly place-items-center mt-6 mb-2">
-          <div className="flex flex-col items-center">
-            <label
-              htmlFor="appt-upload"
-              className="cursor-pointer flex flex-col items-center"
-            >
-              <img
-                src={apptUploadIcon}
-                alt="Upload Appts"
-                className="w-14 h-14 ml-3"
-              />
-              <span className="mt-2 text-sm font-medium">
-                <span className="text-red-600">* </span>
-                <span className="underline underline-offset-2 decoration-1">
-                  UPLOAD APPTS
-                </span>
-                {apptFile && (
-                  <FiCheckCircle
-                    className="inline-block align-middle ml-1"
-                    size={18}
-                    color="#04BB22"
-                  />
-                )}
-              </span>
-            </label>
-            <input
-              id="appt-upload"
-              type="file"
-              ref={apptFileInputRef}
-              accept=".xlsx,.csv"
-              className="hidden"
-              onChange={(e) => handleFileChange(e, "appt")}
+    <Modal open={isOpen} onClose={handleClose} height={350} width={500}>
+      <div className="flex justify-center items-center sm:block">
+        <div className="flex flex-col bg-white rounded-2xl w-full h-auto overflow-y-auto sm:overflow-visible">
+          {/* Header */}
+          <div className="flex justify-between items-center my-2 mx-4">
+            <p className="text-base sm:text-lg">Jane File Upload</p>
+            <IoIosClose
+              className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
+              onClick={onClose}
+              size={32}
             />
-            <div className={apptFileName ? "block" : "invisible"}>
-              <div className="flex text-sm font-bold items-center mt-1">
-                <Tooltip>
-                  <TooltipTrigger>
-                    <p className="truncate text-[#1264B1] max-w-[7rem]">
-                      {apptFileName}
-                    </p>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom">
-                    <span className="text-sm">{apptFileName}</span>
-                  </TooltipContent>
-                </Tooltip>
-                <button
-                  onClick={() => {
-                    handleApptFile();
-                  }}
-                  className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
-                >
-                  <IoIosClose size={20} />
-                </button>
-              </div>
-            </div>
           </div>
 
-          <div className="flex flex-col items-center mb-2">
-            <label
-              htmlFor="client-upload"
-              className="cursor-pointer flex flex-col items-center"
-            >
-              <img
-                src={clientUploadIcon}
-                alt="Upload Clients"
-                className="w-16 h-16"
-              />
-              <span className="mt-2 text-sm font-medium">
-                <span className="underline underline-offset-2 decoration-1">
-                  UPLOAD CLIENTS
-                </span>
-                {clientFile && (
-                  <FiCheckCircle
-                    className="inline-block align-middle ml-1"
-                    size={18}
-                    color="#04BB22"
-                  />
-                )}
-              </span>
-            </label>
-            <input
-              id="client-upload"
-              type="file"
-              ref={clientFileInputRef}
-              accept=".xlsx,.csv"
-              className="hidden"
-              onChange={(e) => handleFileChange(e, "client")}
-            />
-            <div className={clientFileName ? "block" : "invisible"}>
-              <div className="flex text-sm font-bold items-center mt-1">
-                <Tooltip>
-                  <TooltipTrigger>
-                    <p className="truncate text-[#1264B1] max-w-[7rem]">
-                      {clientFileName}
-                    </p>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom">
-                    <span className="text-sm">{clientFileName}</span>
-                  </TooltipContent>
-                </Tooltip>
-                <button
-                  onClick={() => {
-                    handleClientFile();
-                  }}
-                  className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
-                >
-                  <IoIosClose size={20} />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+          <div className="w-full h-[1.5px] bg-black" />
 
-        {/* Errors */}
-        {errorType === "other" && (
-          <p className="text-sm text-center mx-4 text-red-600">
-            Something went wrong: {uploadMutation.error?.message}
+          <p className="text-gray-500 m-3">
+            <span className="text-red-600">*</span> Appointment sheet is required
           </p>
-        )}
-        {errorType === "invalidType" && (
-          <p className="text-sm text-center mx-4 text-red-600">
-            The file(s) you uploaded does not match upload type
-          </p>
-        )}
-        {errorType === "missingClients" && (
-          <div className="flex flex-col items-center">
-            <p className="text-sm text-center mx-4 text-red-600">
-              Some clients in the uploaded appointment sheet are not in the
-              system. Please upload client sheet with new clients.{" "}
-              <Tooltip>
-                <TooltipTrigger>
-                  <span
-                    data-tooltip-id="missingClientsTip"
-                    className="underline cursor-pointer"
-                  >
-                    View missing clients
+
+          <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-evenly sm:place-items-center sm:mt-6">
+            <div className="flex flex-col items-center">
+              <label
+                htmlFor="appt-upload"
+                className="cursor-pointer flex flex-col items-center"
+              >
+                <img
+                  src={apptUploadIcon}
+                  alt="Upload Appts"
+                  className="w-14 h-14 ml-3"
+                />
+                <span className="mt-2 font-medium text-xl md:text-sm">
+                  <span className="text-red-600">* </span>
+                  <span className="underline underline-offset-2 decoration-1">
+                    UPLOAD APPTS
                   </span>
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  <div className="text-sm text-center">
-                    {missingClients.map((client, index) => (
-                      <p key={index}>{client}</p>
-                    ))}
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            </p>
-          </div>
-        )}
+                  {apptFile && (
+                    <FiCheckCircle
+                      className="inline-block align-middle ml-1"
+                      size={18}
+                      color="#04BB22"
+                    />
+                  )}
+                </span>
+              </label>
+              <input
+                id="appt-upload"
+                type="file"
+                ref={apptFileInputRef}
+                accept=".xlsx,.csv"
+                className="hidden"
+                onChange={(e) => handleFileChange(e, "appt")}
+              />
+              <div className={apptFileName ? "block" : "invisible"}>
+                <div className="flex text-sm font-bold items-center mt-1">
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <p className="truncate text-[#1264B1] max-w-[7rem]">
+                        {apptFileName}
+                      </p>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      <span className="text-sm">{apptFileName}</span>
+                    </TooltipContent>
+                  </Tooltip>
+                  <button
+                    onClick={() => {
+                      handleApptFile();
+                    }}
+                    className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
+                  >
+                    <IoIosClose size={20} />
+                  </button>
+                </div>
+              </div>
+            </div>
 
-        <div className="flex flex-col items-center gap-3 justify-center mt-6">
-          {uploadMutation.isPending ? (
-            <Loading />
-          ) : (
-            <Button
-              variant={"yellow"}
-              className={`px-6 py-2 rounded-lg border border-black cursor-pointer`}
-              disabled={!uploadButtonEnabled}
-              onClick={handleSubmit}
-            >
-              UPLOAD DATA
-            </Button>
-          )}
-        </div>
-      </div>
-    </Modal>
+            <div className="flex flex-col items-center mb-2">
+              <label
+                htmlFor="client-upload"
+                className="cursor-pointer flex flex-col items-center"
+              >
+                <img
+                  src={clientUploadIcon}
+                  alt="Upload Clients"
+                  className="w-16 h-16"
+                />
+                <span className="mt-2 font-medium text-xl md:text-sm">
+                  <span className="underline underline-offset-2 decoration-1">
+                    UPLOAD CLIENTS
+                  </span>
+                  {clientFile && (
+                    <FiCheckCircle
+                      className="inline-block align-middle ml-1"
+                      size={18}
+                      color="#04BB22"
+                    />
+                  )}
+                </span>
+              </label>
+              <input
+                id="client-upload"
+                type="file"
+                ref={clientFileInputRef}
+                accept=".xlsx,.csv"
+                className="hidden"
+                onChange={(e) => handleFileChange(e, "client")}
+              />
+              <div className={clientFileName ? "block" : "invisible"}>
+                <div className="flex text-sm font-bold items-center mt-1">
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <p className="truncate text-[#1264B1] max-w-[7rem]">
+                        {clientFileName}
+                      </p>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      <span className="text-sm">{clientFileName}</span>
+                    </TooltipContent>
+                  </Tooltip>
+                  <button
+                    onClick={() => {
+                      handleClientFile();
+                    }}
+                    className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
+                  >
+                    <IoIosClose size={20} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* Errors */}
+          {
+            errorType === "other" && (
+              <p className="text-xs text-center mx-2 mb-2 text-red-600 sm:text-sm sm:mx-4">
+                Something went wrong: {uploadMutation.error?.message}
+              </p>
+            )
+          }
+          {
+            errorType === "invalidType" && (
+              <p className="text-xs text-center mx-2 mb-2 text-red-600 sm:text-sm sm:mx-4">
+                The file(s) you uploaded does not match upload type
+              </p>
+            )
+          }
+          {
+            errorType === "missingClients" && (
+              <div className="flex flex-col items-center mb-2">
+                <p className="text-xs text-center mx-2 mt-2 text-red-600 sm:text-sm sm:mx-4">
+                  Some clients in the uploaded appointment sheet are not in the
+                  system. Please upload client sheet with new clients.{" "}
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <span
+                        data-tooltip-id="missingClientsTip"
+                        className="underline cursor-pointer"
+                      >
+                        View missing clients
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      <div className="text-xs leading-6 text-center min-w-[150px] sm:text-sm">
+                        {missingClients.slice(0, 5).map((c, i) => (
+                          <p key={i}>{c}</p>
+                        ))}
+                        {missingClients.length > 5 && <p>…</p>}
+                      </div>
+                    </TooltipContent>
+                  </Tooltip>
+                </p>
+
+              </div>
+            )
+          }
+
+          {/* Submit Button */}
+          <div className="flex flex-col items-center gap-3 justify-center mt-4 mb-8">
+            {uploadMutation.isPending ? (
+              <Loading />
+            ) : (
+              <Button
+                variant={"yellow"}
+                className="px-6 py-2"
+                disabled={!uploadButtonEnabled}
+                onClick={handleSubmit}
+              >
+                UPLOAD DATA
+              </Button>
+            )}
+          </div>
+        </div >
+      </div >
+    </Modal >
   );
 };
 

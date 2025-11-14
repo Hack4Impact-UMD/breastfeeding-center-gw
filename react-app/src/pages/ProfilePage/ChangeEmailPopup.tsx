@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { IoIosClose } from "react-icons/io";
 import Modal from "../../components/Modal";
+import { Button } from "@/components/ui/button";
 
 const ChangeEmailPopup = ({
   open,
@@ -41,14 +42,15 @@ const ChangeEmailPopup = ({
 
   const ModalHeader = ({ onClose }: { onClose: () => void }) => (
     <>
-      <div className="flex justify-between items-center m-2">
+      <div className="flex justify-between items-center my-2 mx-4">
         <p className="text-lg">Change Email</p>
         <IoIosClose
-          className="text-2xl cursor-pointer hover:text-gray-500"
+          className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
           onClick={onClose}
+          size={32}
         />
       </div>
-      <div className="w-full h-[1.5px] bg-black my-2" />
+      <div className="w-full h-[1.5px] bg-black" />
     </>
   );
 
@@ -57,7 +59,7 @@ const ChangeEmailPopup = ({
       <div className="flex flex-col h-full">
         <div>
           <ModalHeader onClose={() => onClose()} />
-          <div className="grid grid-cols-[170px_1fr] m-8 mb-2">
+          <div className="grid grid-cols-[170px_1fr] m-8 mb-2 text-left">
             <label className="text-sm font-medium content-center">
               Enter New Email:
             </label>
@@ -75,7 +77,8 @@ const ChangeEmailPopup = ({
               placeholder="New email"
             />
             <div className="h-[30px]"></div>
-            <p className="text-green-600 text-sm">valid email check here</p>
+            {/* TODO: Implement email validation message */}
+            <p className="text-red-600 text-sm">valid email check here</p>
             <label className="text-sm font-medium content-center">
               Confirm New Email:
             </label>
@@ -100,25 +103,19 @@ const ChangeEmailPopup = ({
         </div>
 
         <div className="flex justify-end m-8 mt-0">
-          <button
-            className={`px-4 py-2 border-black rounded ${
-              !newEmail ||
-              !confirmNewEmail ||
-              newEmail !== confirmNewEmail ||
-              showEmailInvalidError
-                ? "bg-bcgw-gray-light text-black cursor-not-allowed"
-                : "bg-bcgw-yellow-dark text-black hover:bg-bcgw-yellow-light"
-            }`}
-            onClick={handleNewEmailSubmit}
+          <Button
+            variant={"yellow"}
+            className="py-4 px-6 text-md"
             disabled={
               !newEmail ||
               !confirmNewEmail ||
               newEmail !== confirmNewEmail ||
               showEmailInvalidError
             }
+            onClick={handleNewEmailSubmit}
           >
             Save
-          </button>
+          </Button>
         </div>
       </div>
     </Modal>

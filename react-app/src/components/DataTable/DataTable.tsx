@@ -97,19 +97,15 @@ export function DataTable<TData, TValue>({
       <div className="flex justify-between items-center my-3 flex-wrap gap-4">
         <div className="flex items-center gap-4">
           {tableType === "janeData" && (
-            <button
-              className={`${
-                rowsSelected.length === 0
-                  ? "bg-bcgw-gray-light cursor-not-allowed"
-                  : "bg-bcgw-yellow-dark cursor-pointer hover:bg-bcgw-yellow-light"
-              } text-base border border-black py-1.5 font-bold px-6 rounded-[10px]`}
+            <Button
+              variant={"yellow"}
+              className={"rounded-lg text-sm flex items-center gap-2"}
               disabled={rowsSelected.length === 0}
               onClick={openModal}
+              aria-label="Delete selected rows"
             >
-              <div className="flex items-center gap-2">
-                <FiTrash /> Delete
-              </div>
-            </button>
+              <FiTrash /> Delete
+            </Button>
           )}
         </div>
 

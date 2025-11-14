@@ -107,25 +107,23 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
   if (retentionError) return <div>Error loading retention data</div>;
 
   return (
-    <div className="flex-[0_0_48%] max-w-[50%] min-w-[560px]">
+    <div className="flex-[0_0_48%] w-full lg:w-1/2">
       <div className={`${centerItemsInDiv} pt-4 mb-6`}>
         <div className="flex flex-row">
           <button
-            className={`${graphTableButtonStyle} ${
-              retentionDisplay === "graph"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#CED8E1]"
-            }`}
+            className={`${graphTableButtonStyle} ${retentionDisplay === "graph"
+              ? "bg-bcgw-gray-light"
+              : "bg-[#CED8E1]"
+              }`}
             onClick={() => setRetentionDisplay("graph")}
           >
             Graph
           </button>
           <button
-            className={`${graphTableButtonStyle} ${
-              retentionDisplay === "table"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#CED8E1]"
-            }`}
+            className={`${graphTableButtonStyle} ${retentionDisplay === "table"
+              ? "bg-bcgw-gray-light"
+              : "bg-[#CED8E1]"
+              }`}
             onClick={() => setRetentionDisplay("table")}
           >
             Table
@@ -205,7 +203,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
                 columns={makeRetentionRateColumns((row) => setOpenRow(row))}
                 data={retentionData}
                 tableType="default"
-                //tableHeaderExtras={retentionHeaderExtras}
+              //tableHeaderExtras={retentionHeaderExtras}
               />
             </div>
 

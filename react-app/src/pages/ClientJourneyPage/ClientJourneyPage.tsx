@@ -100,11 +100,11 @@ const ClientJourney = () => {
 
   return (
     <>
-      <div className="flex flex-col p-8 pr-20 pl-20">
+      <div className="flex flex-col py-14 px-10 sm:px-20">
         {/*headings*/}
         <div className={centerItemsInDiv}>
           <div>
-            <h1 className="font-bold">Client Journey</h1>
+            <h1 className="font-bold text-4xl lg:text-5xl">Client Journey</h1>
           </div>
         </div>
 
