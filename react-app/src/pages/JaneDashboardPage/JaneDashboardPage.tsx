@@ -173,9 +173,9 @@ const JaneDashboardPage = () => {
 
   return (
     <>
-      <div className="flex flex-col py-8 px-10 sm:px-20">
-        <div className="flex flex-col-reverse md:flex-row md:items-center justify-between mb-4">
-          <h1 className="font-bold">Jane</h1>
+      <div className="flex flex-col py-14 px-10 sm:px-20">
+        <div className="flex flex-col-reverse gap-4  md:flex-row md:items-center justify-between mb-4">
+          <h1 className="font-bold text-4xl lg:text-5xl">Jane</h1>
           <div className="w-full flex justify-end">
             <DateRangePicker
               enableYearNavigation
@@ -191,7 +191,7 @@ const JaneDashboardPage = () => {
           <Link to="/services/jane/data">
             <Button
               variant={"yellow"}
-              className={"rounded-full text-lg w-full"}
+              className={"rounded-full text-lg w-full py-6 px-8"}
             >
               VIEW UPLOADED DATA
             </Button>
@@ -232,8 +232,8 @@ const JaneDashboardPage = () => {
                   Visit Breakdown:{" "}
                   {dateRange?.from && dateRange?.to
                     ? formatDate(dateRange.from) +
-                    " - " +
-                    formatDate(dateRange.to)
+                      " - " +
+                      formatDate(dateRange.to)
                     : "All Data"}
                 </span>
                 <div className={chartDiv} ref={pieChartRef}>
@@ -283,8 +283,8 @@ const JaneDashboardPage = () => {
                   Visit Breakdown:{" "}
                   {dateRange?.from && dateRange?.to
                     ? formatDate(dateRange.from) +
-                    " - " +
-                    formatDate(dateRange.to)
+                      " - " +
+                      formatDate(dateRange.to)
                     : "All Data"}
                 </span>
                 <DataTable
@@ -300,8 +300,8 @@ const JaneDashboardPage = () => {
             startDate={dateRange?.from}
             endDate={dateRange?.to}
           ></JaneRetention>
-        </div >
-      </div >
+        </div>
+      </div>
     </>
   );
 };

@@ -14,12 +14,12 @@ const ProfilePage = () => {
     useState(false);
 
   return (
-    <div className="flex flex-col gap-8 justify-center px-10 md:px-20 py-16 ">
+    <div className="flex flex-col gap-8 justify-center py-14 px-10 sm:px-20">
       <div className="w-full">
         <div className="flex items-center gap-4 md:gap-6">
           <ProfileIcon initials={initials} />
           <div className="flex flex-col lg:flex-row lg:gap-4 lg:items-end">
-            <h1 className="font-normal text-3xl md:text-5xl leading-tight text-left">
+            <h1 className="font-normal text-4xl lg:text-5xl leading-tight text-left">
               {name}
             </h1>
             <div className="flex items-center gap-2 text-sm mb-2">
