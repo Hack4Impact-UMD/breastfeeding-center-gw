@@ -6,8 +6,6 @@ interface modalPropsType {
   children: React.ReactNode;
   height?: number;
   width?: number;
-  maxWidth?: number;
-  responsive?: boolean;
   disabled?: boolean;
 }
 
