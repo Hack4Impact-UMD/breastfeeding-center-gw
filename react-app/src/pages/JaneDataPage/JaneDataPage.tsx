@@ -43,7 +43,7 @@ const JaneDataPage = () => {
 
   return (
     <>
-      <div className="flex flex-col p-5 py-6 md:p-8 md:px-20 w-full">
+      <div className="flex flex-col px-10 py-6 sm:p-8 sm:px-20 w-full">
         <div className="relative block md:hidden">
           <h1 className="mt-15 font-bold text-[30px] leading-tight">
             JANE Uploaded Data
