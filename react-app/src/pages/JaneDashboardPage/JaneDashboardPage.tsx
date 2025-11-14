@@ -70,8 +70,6 @@ const JaneDashboardPage = () => {
   );
 
   const [selectedDropdown, setSelectedDropdown] = useState("ALL CLIENTS");
-  const transparentGrayButtonStyle =
-    "flex items-center justify-center bg-transparent hover:bg-bcgw-gray-light text-gray border-2 border-gray py-1 px-6 rounded-full cursor-pointer";
   const graphTableButtonStyle =
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer border border-gray-300";
   const centerItemsInDiv = "flex justify-between items-center";
