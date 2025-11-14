@@ -99,9 +99,10 @@ export function DataTable<TData, TValue>({
           {tableType === "janeData" && (
             <Button
               variant={"yellow"}
-              className={"rounded-lg text-md flex items-center gap-2"}
+              className={"rounded-lg text-sm flex items-center gap-2"}
               disabled={rowsSelected.length === 0}
               onClick={openModal}
+              aria-label="Delete selected rows"
             >
               <FiTrash /> Delete
             </Button>
