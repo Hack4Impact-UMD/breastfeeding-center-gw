@@ -2,7 +2,7 @@ import React from "react";
 import ProfileIcon from "../../components/ProfileIcon";
 import Modal from "../../components/Modal";
 import { Role, RoleLevels, User } from "@/types/UserType";
-import { Button } from "../../components/ui/original-button";
+import { Button } from "../../components/ui/button";
 import { IoIosClose } from "react-icons/io";
 import { useAuth } from "@/auth/AuthProvider";
 import { useUpdateUserRole } from "@/hooks/mutations/useUpdateUserRole";

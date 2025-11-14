@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/tooltip";
 import Modal from "../../components/Modal";
 import { PASSWORD_REQUIREMENTS, validatePassword } from "@/lib/passwordUtils";
+import { Button } from "@/components/ui/button";
 
 const ChangePasswordPopup = ({
   open,
@@ -49,18 +50,18 @@ const ChangePasswordPopup = ({
 
   const ModalHeader = ({ onClose }: { onClose: () => void }) => (
     <>
-      <div className="flex justify-between items-center m-2">
+      <div className="flex justify-between items-center my-2 mx-4">
         <p className="text-lg">Change Password</p>
         <button
           onClick={onClose}
-          className="absolute top-0.25 right-0.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
+          className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
           aria-label="Close"
         >
           <IoIosClose size={45} />
         </button>
       </div>
       {/* thinner divider */}
-      <div className="w-full h-px bg-black my-2" />
+      <div className="w-full h-px bg-black" />
     </>
   );
 
@@ -73,9 +74,8 @@ const ChangePasswordPopup = ({
   return (
     <Modal open={open} onClose={handleOnClose} height={300} width={600}>
       <div className="flex flex-col h-full">
-        <div>
-          <ModalHeader onClose={handleOnClose} />
-
+        <ModalHeader onClose={handleOnClose} />
+        <div className="text-left">
           {/* New Password */}
           <div className="grid grid-cols-[190px_1fr] m-8 mb-2 gap-x-2">
             <label className="text-md font-medium text-nowrap content-center flex items-center gap-1">
@@ -186,17 +186,14 @@ const ChangePasswordPopup = ({
 
         {/* Save Button */}
         <div className="flex justify-end m-8 mt-4">
-          <button
-            className={`px-6 py-2 rounded-lg border border-black text-black ${
-              saveDisabled
-                ? "bg-bcgw-gray-light cursor-not-allowed"
-                : "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light cursor-pointer"
-            }`}
-            onClick={handleNewPasswordSubmit}
+          <Button
+            variant={"yellow"}
+            className="py-4 px-6 text-md"
             disabled={saveDisabled}
+            onClick={handleNewPasswordSubmit}
           >
             Save
-          </button>
+          </Button>
         </div>
       </div>
     </Modal>

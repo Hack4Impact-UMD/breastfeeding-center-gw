@@ -18,12 +18,11 @@ import JaneDataPage from "./pages/JaneDataPage/JaneDataPage";
 import NewUserPage from "./pages/NewUserPage/NewUserPage";
 import RegisterSuccessPage from "./pages/NewUserPage/RegisterSuccessPage";
 import { TooltipProvider } from "./components/ui/tooltip";
-import { Button } from "./components/ui/original-button";
+import { Button } from "./components/ui/button";
 import RequireNoAuth from "./auth/RequireNoAuth";
 import { axiosClient } from "./lib/utils";
 import { getAllJaneApptsInRange } from "./services/janeService";
 import LayoutShell from "./pages/LayoutShell";
-// import "@tremor/react/dist/esm/tremor.css";
 
 function App() {
   return (

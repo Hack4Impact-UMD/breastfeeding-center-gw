@@ -14,7 +14,7 @@ import { AiOutlineInfoCircle } from "react-icons/ai";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { PASSWORD_REQUIREMENTS, validatePassword } from "@/lib/passwordUtils";
 import { useRegisterUser } from "@/hooks/mutations/useRegisterUser";
-import { Button } from "@/components/ui/original-button";
+import { Button } from "@/components/ui/button";
 
 const PRONOUN_OPTIONS = ["she/her", "he/him", "they/them", "Other", "None"];
 

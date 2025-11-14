@@ -8,10 +8,9 @@ import clientUploadIcon from "../../assets/clientUpload.svg";
 import { useUploadJaneData } from "@/hooks/mutations/useUploadJaneData";
 import Loading from "@/components/Loading";
 import { AxiosError } from "axios";
-import { Button } from "@/components/ui/original-button";
+import { Button } from "@/components/ui/button";
 import { queryClient } from "@/config/query";
 import queries from "@/queries";
-import { useEffect } from "react";
 
 type FileUploadPopupProps = {
   isOpen: boolean;
@@ -72,30 +71,6 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
     "none" | "invalidType" | "missingClients" | "other"
   >("none");
 
-  const DEV_FORCE = true;
-  const injectedOnceRef = useRef(false);
-
-  useEffect(() => {
-    if (!DEV_FORCE) return;
-
-    if (isOpen && !injectedOnceRef.current) {
-      injectedOnceRef.current = true;
-      setErrorType("missingClients");
-      setMissingClients([
-        "Client A",
-        "Client B",
-        "Client C",
-        "Client D",
-        "Client E",
-        "Client F",
-        "Client G",
-      ]);
-    }
-    if (!isOpen) {
-      injectedOnceRef.current = false;
-    }
-  }, [isOpen]);
-
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     type: "appt" | "client",
@@ -103,7 +78,7 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const invalidType = false;
+    const invalidType = false; // TODO: implement check for correct files
     if (invalidType) {
       setErrorType("invalidType");
       return;
@@ -154,32 +129,28 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
   const uploadButtonEnabled =
     !!apptFile && errorType === "none" && !uploadMutation.isPending;
 
-  const DEV_FORCE_MISSING = true;
-
   return (
-    <Modal open={isOpen} onClose={handleClose} responsive height={350} width={500}>
-      {/* Mobile: centered container with overflow, Desktop: normal height */}
-      <div className="flex justify-center items-center w-full h-full overflow-hidden sm:block">
-        <div className="flex flex-col py-3 px-3 bg-white rounded-2xl w-full max-w-[450px] mx-auto h-auto max-h-[80vh] overflow-y-auto sm:py-2 sm:px-0 sm:max-w-none sm:h-full sm:max-h-none sm:overflow-visible sm:rounded-none">
+    <Modal open={isOpen} onClose={handleClose} height={350} width={500}>
+      <div className="flex justify-center items-center sm:block">
+        <div className="flex flex-col bg-white rounded-2xl w-full h-auto overflow-y-auto sm:overflow-visible">
           {/* Header */}
-          <div className="flex justify-between items-center mb-2 mx-2 sm:m-2">
-            <p className="text-base font-semibold sm:text-lg">Jane File Upload</p>
-            <button
-              onClick={handleClose}
-              className="text-gray-700 hover:text-gray-600 cursor-pointer sm:absolute sm:top-0.25 sm:right-0.25 sm:text-bcgw-blue-dark"
-            >
-              <IoIosClose size={32} className="sm:w-10 sm:h-10" />
-            </button>
+          <div className="flex justify-between items-center my-2 mx-4">
+            <p className="text-base sm:text-lg">Jane File Upload</p>
+            <IoIosClose
+              className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
+              onClick={onClose}
+              size={32}
+            />
           </div>
 
           <div className="w-full h-[1.5px] bg-black" />
 
-          <p className="text-gray-500 text-xs mt-3 mb-4 mx-2 sm:text-sm sm:m-3">
+          <p className="text-gray-500 text-xs mt-3 mb-4 mx-4 sm:text-sm ">
             <span className="text-red-600">*</span> Appointment sheet is required
           </p>
 
           {/* Upload buttons - vertical on mobile, horizontal on desktop */}
-          <div className="flex flex-col items-center gap-3 mb-3 sm:flex-row sm:justify-evenly sm:place-items-center sm:mt-6 sm:mb-2">
+          <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-evenly sm:place-items-center sm:mt-6">
             {/* Appointment Upload */}
             <div className="flex flex-col items-center">
               <label
@@ -279,19 +250,19 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
           </div>
 
           {/* Errors */}
-          {!DEV_FORCE_MISSING && errorType === "other" && (
+          {errorType === "other" && (
             <p className="text-xs text-center mx-2 mb-2 text-red-600 sm:text-sm sm:mx-4">
               Something went wrong: {uploadMutation.error?.message}
             </p>
           )}
-          {!DEV_FORCE_MISSING && errorType === "invalidType" && (
+          {errorType === "invalidType" && (
             <p className="text-xs text-center mx-2 mb-2 text-red-600 sm:text-sm sm:mx-4">
               The file(s) you uploaded does not match upload type
             </p>
           )}
           {errorType === "missingClients" && (
             <div className="flex flex-col items-center mb-2">
-              <p className="text-xs text-center mx-2 text-red-600 sm:text-sm sm:mx-4">
+              <p className="text-xs text-center mx-2 mt-2 text-red-600 sm:text-sm sm:mx-4">
                 Some clients in the uploaded appointment sheet are not in the
                 system. Please upload client sheet with new clients.{" "}
                 <span
@@ -301,21 +272,6 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
                   View missing clients
                 </span>
               </p>
-
-              {/* Tooltip with triangle pointer (desktop only) */}
-              <style>{`
-                @media (min-width: 640px) {
-                  #missingClientsTip.react-tooltip::before {
-                    content: "";
-                    position: absolute;
-                    top: -7px;
-                    left: 50%;
-                    border-left: 8px solid transparent;
-                    border-right: 8px solid transparent;
-                    border-bottom: 8px solid #3A3A3A;
-                  }
-                }
-              `}</style>
 
               <Tooltip
                 id="missingClientsTip"
@@ -334,13 +290,13 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
           )}
 
           {/* Submit Button */}
-          <div className="flex flex-col items-center gap-3 justify-center mt-4 sm:mt-6">
+          <div className="flex flex-col items-center gap-3 justify-center mt-4 mb-8">
             {uploadMutation.isPending ? (
               <Loading />
             ) : (
               <Button
                 variant={"yellow"}
-                className="px-6 py-2 text-sm rounded-lg border border-black cursor-pointer"
+                className="px-6 py-2"
                 disabled={!uploadButtonEnabled}
                 onClick={handleSubmit}
               >

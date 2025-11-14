@@ -6,7 +6,7 @@ import { AuthError } from "firebase/auth";
 import { authenticateUserEmailAndPassword } from "../../services/authService";
 import ForgotPasswordPopup from "./ForgotPasswordPopup";
 import TwoFAPopup from "../../components/TwoFAPopup";
-import { Button } from "@/components/ui/original-button";
+import { Button } from "@/components/ui/button";
 
 const LoginPage = () => {
   const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;

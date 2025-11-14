@@ -1,6 +1,6 @@
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import { ReactNode } from "react";
-import { Button } from "../ui/original-button";
+import { Button } from "../ui/button";
 import { Column } from "@tanstack/react-table";
 
 type ColumnSortIconProps<T, V> = {

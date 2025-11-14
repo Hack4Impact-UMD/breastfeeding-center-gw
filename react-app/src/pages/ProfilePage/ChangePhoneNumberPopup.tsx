@@ -2,7 +2,8 @@ import { useState } from "react";
 import { IoIosClose } from "react-icons/io";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import Modal from "../../components/Modal";
-import {PhoneInput} from "@/components/ui/phone-input";
+import { PhoneInput } from "@/components/ui/phone-input";
+import { Button } from "@/components/ui/button";
 
 const ChangePhoneNumberPopup = ({
   open,
@@ -33,26 +34,29 @@ const ChangePhoneNumberPopup = ({
 
   const ModalHeader = ({ onClose }: { onClose: () => void }) => (
     <>
-      <div className="flex justify-between items-center m-2">
+      <div className="flex justify-between items-center my-2 mx-4">
         <p className="text-lg">Change Phone Number</p>
         <IoIosClose
-          className="text-2xl cursor-pointer hover:text-gray-500"
+          className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
           onClick={onClose}
+          size={32}
         />
       </div>
-      <div className="w-full h-[1.5px] bg-black my-2" />
+      <div className="w-full h-[1.5px] bg-black" />
     </>
   );
 
   const isPhoneValid = newPhone ? isValidPhoneNumber(newPhone) : true;
-  const doPhoneNumbersMatch = confirmNewPhone ? newPhone === confirmNewPhone : true;
+  const doPhoneNumbersMatch = confirmNewPhone
+    ? newPhone === confirmNewPhone
+    : true;
 
   return (
     <Modal open={open} onClose={() => onClose()} height={290} width={600}>
       <div className="flex flex-col h-full">
         <ModalHeader onClose={() => onClose()} />
-        
-        <div className="m-8 mb-2 space-y-4">
+
+        <div className="m-8 mb-2 space-y-4 text-left">
           <div className="grid grid-cols-[210px_1fr] items-center gap-x-4">
             <label className="text-sm font-medium">
               Enter New Phone Number:
@@ -92,32 +96,28 @@ const ChangePhoneNumberPopup = ({
               {newPhone === confirmNewPhone ? (
                 <p className="text-green-600 text-sm">Phone number matches.</p>
               ) : (
-                <p className="text-red-600 text-sm">Phone number does not match.</p>
+                <p className="text-red-600 text-sm">
+                  Phone number does not match.
+                </p>
               )}
             </div>
           )}
         </div>
 
-        <div className="flex justify-end m-8 mt-auto">
-          <button
-            className={`px-4 py-2 border-black rounded ${
-              !newPhone ||
-              !confirmNewPhone ||
-              !doPhoneNumbersMatch ||
-              !isPhoneValid
-                ? "bg-bcgw-gray-light text-black cursor-not-allowed"
-                : "bg-bcgw-yellow-dark text-black hover:bg-bcgw-yellow-light"
-            }`}
-            onClick={handleNewPhoneSubmit}
+        <div className="flex justify-end m-8 mt-0">
+          <Button
+            variant={"yellow"}
+            className="py-4 px-6 text-md"
             disabled={
               !newPhone ||
               !confirmNewPhone ||
               !doPhoneNumbersMatch ||
               !isPhoneValid
             }
+            onClick={handleNewPhoneSubmit}
           >
-            SAVE
-          </button>
+            Save
+          </Button>
         </div>
       </div>
     </Modal>

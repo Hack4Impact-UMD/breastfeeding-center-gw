@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Modal from "../../components/Modal";
-import { Button } from "@/components/ui/original-button";
+import { Button } from "@/components/ui/button";
 import { IoIosClose } from "react-icons/io";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
