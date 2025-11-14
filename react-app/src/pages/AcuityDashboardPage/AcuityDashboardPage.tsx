@@ -490,7 +490,7 @@ export default function AcuityDashboardPage() {
 
   return (
     <>
-      <div className="flex flex-col p-8 pr-20 pl-20 space-y-5">
+      <div className="flex flex-col p-8 py-8 px-20 space-y-5">
         <div className={centerItemsInDiv}>
           <div>
             <h1 className="font-bold">ACUITY</h1>
