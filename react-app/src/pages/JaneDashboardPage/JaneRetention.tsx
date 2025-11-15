@@ -19,6 +19,7 @@ import { useRetentionData } from "@/hooks/queries/useRetentionData.ts";
 import { processRetentionData } from "@/services/janeService.ts";
 import { DataTable } from "@/components/DataTable/DataTable";
 import Loading from "@/components/Loading.tsx";
+import { useDimensions } from "@/hooks/layout/useDimensions.ts";
 
 type JaneRetentionProps = {
   startDate?: Date | undefined;
@@ -39,6 +40,8 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
 
   const [retentionDisplay, setRetentionDisplay] = useState<string>("graph");
   const [openRow, setOpenRow] = useState<RetentionRate | null>(null);
+  const retentionChartRef = useRef<HTMLDivElement>(null);
+  const retentionChartDims = useDimensions(retentionChartRef);
 
   const handleExport = async (
     ref: React.RefObject<HTMLDivElement | null>,
@@ -165,35 +168,37 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
                 Number of Visits
               </span>
 
-              <FunnelChart
-                height={290}
-                width={400}
-                data={funnelData}
-                series={
-                  <FunnelSeries
-                    arc={<FunnelArc colorScheme="#05182A" />}
-                    axis={
-                      <FunnelAxis
-                        line={
-                          <FunnelAxisLine
-                            strokeColor="#FFFFFF"
-                            strokeWidth={5}
-                          ></FunnelAxisLine>
-                        }
-                        label={
-                          <FunnelAxisLabel
-                            className=""
-                            labelVisibility="always"
-                            fontSize={15}
-                            position="middle"
-                            fill="#FFFFFF"
-                          />
-                        }
-                      />
-                    }
-                  />
-                }
-              />
+              <div className="w-full h-full min-w-[300px] min-h-[300px]" ref={retentionChartRef}>
+                <FunnelChart
+                  height={retentionChartDims.height}
+                  width={retentionChartDims.width}
+                  data={funnelData}
+                  series={
+                    <FunnelSeries
+                      arc={<FunnelArc colorScheme="#05182A" />}
+                      axis={
+                        <FunnelAxis
+                          line={
+                            <FunnelAxisLine
+                              strokeColor="#FFFFFF"
+                              strokeWidth={5}
+                            ></FunnelAxisLine>
+                          }
+                          label={
+                            <FunnelAxisLabel
+                              className=""
+                              labelVisibility="always"
+                              fontSize={15}
+                              position="middle"
+                              fill="#FFFFFF"
+                            />
+                          }
+                        />
+                      }
+                    />
+                  }
+                />
+              </div>
             </div>
           </>
         ) : (
@@ -213,7 +218,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
           </>
         )}
       </div>
-    </div>
+    </div >
   );
 };
 

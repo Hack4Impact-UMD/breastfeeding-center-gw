@@ -16,6 +16,7 @@ import { DataTable } from "@/components/DataTable/DataTable";
 import { useJaneAppts } from "@/hooks/queries/useJaneData.ts";
 import { Button } from "@/components/ui/button.tsx";
 import JaneRetention from "./JaneRetention.tsx";
+import { useDimensions } from "@/hooks/layout/useDimensions.ts";
 
 function BreakdownPieChartLabels(chartData: { key: string; data: number }[]) {
   if (chartData.length === 0) return <></>;
@@ -72,6 +73,10 @@ const JaneDashboardPage = () => {
 
   const [visitDisplay, setVisitDisplay] = useState<string>("graph");
   const pieChartRef = useRef<HTMLDivElement>(null);
+  const retentionChartRef = useRef<HTMLDivElement>(null);
+
+  const pieChartDims = useDimensions(pieChartRef);
+  const retentionChartDims = useDimensions(retentionChartRef);
 
   const handleExport = async (
     ref: React.RefObject<HTMLDivElement | null>,
@@ -232,14 +237,13 @@ const JaneDashboardPage = () => {
                   Visit Breakdown:{" "}
                   {dateRange?.from && dateRange?.to
                     ? formatDate(dateRange.from) +
-                      " - " +
-                      formatDate(dateRange.to)
+                    " - " +
+                    formatDate(dateRange.to)
                     : "All Data"}
                 </span>
                 <div className={chartDiv} ref={pieChartRef}>
                   <div
-                    className="relative"
-                    style={{ width: "300px", height: "300px" }}
+                    className="flex items-center justify-center min-w-[300px] min-h-[300px]"
                   >
                     {isLoading ? (
                       <Loading />
@@ -254,8 +258,8 @@ const JaneDashboardPage = () => {
                               label={null}
                             />
                           }
-                          height={300}
-                          width={300}
+                          height={pieChartDims.height}
+                          width={pieChartDims.width}
                         />
                         {visitBreakdownPieChartLabels}
                       </>
@@ -283,8 +287,8 @@ const JaneDashboardPage = () => {
                   Visit Breakdown:{" "}
                   {dateRange?.from && dateRange?.to
                     ? formatDate(dateRange.from) +
-                      " - " +
-                      formatDate(dateRange.to)
+                    " - " +
+                    formatDate(dateRange.to)
                     : "All Data"}
                 </span>
                 <DataTable
