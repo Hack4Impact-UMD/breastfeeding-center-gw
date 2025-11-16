@@ -94,7 +94,13 @@ export function DataTable<TData, TValue>({
 
   return (
     <>
-      <div className="flex justify-between items-center my-3 flex-wrap gap-4">
+      <div
+        className={
+          tableType === "janeData"
+            ? "flex my-3 flex-wrap gap-4"
+            : "flex my-3 flex-wrap"
+        }
+      >
         <div className="flex items-center gap-4">
           {tableType === "janeData" && (
             <button
@@ -113,12 +119,18 @@ export function DataTable<TData, TValue>({
           )}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div
+          className={
+            tableType === "janeData"
+              ? "flex items-center gap-3 w-[80%]"
+              : "flex items-center gap-3 w-full"
+          }
+        >
           {(tableType === "clientList" || tableType === "janeData") && (
             <div className="flex items-center w-full max-w-sm border bg-bcgw-gray-light p-1.5">
               <input
                 type="text"
-                className="flex-grow border-none outline-none bg-bcgw-gray-light"
+                className="flex-grow border-none min-w-0 outline-none bg-bcgw-gray-light"
                 value={table.getState().globalFilter ?? ""}
                 onChange={(event) => table.setGlobalFilter(event.target.value)}
                 placeholder="Search"
