@@ -36,9 +36,7 @@ function CustomBar(props: Partial<BarProps>) {
       style={{
         fill: fillColor,
       }}
-      label={
-        <BarLabel />
-      }
+      label={<BarLabel />}
     />
   );
 }
@@ -53,7 +51,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer border border-gray-300";
   const centerItemsInDiv = "flex justify-between items-center";
   const chartDiv =
-    "flex flex-col items-center justify-start bg-white h-[370px] border-2 border-black p-5 mt-5 rounded-lg";
+    "flex flex-col items-center justify-start bg-white min-h-[400px] border-2 border-black p-5 mt-5 rounded-lg";
 
   const [retentionDisplay, setRetentionDisplay] = useState<string>("graph");
   const [openRow, setOpenRow] = useState<RetentionRate | null>(null);
@@ -129,19 +127,21 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
       <div className={`${centerItemsInDiv} pt-4 mb-6`}>
         <div className="flex flex-row">
           <button
-            className={`${graphTableButtonStyle} ${retentionDisplay === "graph"
-              ? "bg-bcgw-gray-light"
-              : "bg-[#CED8E1]"
-              }`}
+            className={`${graphTableButtonStyle} ${
+              retentionDisplay === "graph"
+                ? "bg-bcgw-gray-light"
+                : "bg-[#CED8E1]"
+            }`}
             onClick={() => setRetentionDisplay("graph")}
           >
             Graph
           </button>
           <button
-            className={`${graphTableButtonStyle} ${retentionDisplay === "table"
-              ? "bg-bcgw-gray-light"
-              : "bg-[#CED8E1]"
-              }`}
+            className={`${graphTableButtonStyle} ${
+              retentionDisplay === "table"
+                ? "bg-bcgw-gray-light"
+                : "bg-[#CED8E1]"
+            }`}
             onClick={() => setRetentionDisplay("table")}
           >
             Table
@@ -193,7 +193,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
                 columns={makeRetentionRateColumns((row) => setOpenRow(row))}
                 data={retentionData}
                 tableType="default"
-              //tableHeaderExtras={retentionHeaderExtras}
+                //tableHeaderExtras={retentionHeaderExtras}
               />
             </div>
 

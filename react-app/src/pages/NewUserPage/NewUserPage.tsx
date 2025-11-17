@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useInvite } from "@/hooks/queries/useInvite";
 import Loading from "@/components/Loading";
-import {PhoneInput} from "@/components/ui/phone-input";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { isValidPhoneNumber } from "react-phone-number-input";
 
 import { AiOutlineInfoCircle } from "react-icons/ai";

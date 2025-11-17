@@ -19,8 +19,9 @@ export default function LayoutShell() {
       </div>
 
       <div
-        className={`transition-all duration-200 ease-in-out bg-gray-100 min-h-screen overflow-x-hidden flex flex-col ml-0 ${navBarOpen ? "md:ml-[250px]" : "md:ml-[60px]"
-          }`}
+        className={`transition-all duration-200 ease-in-out bg-gray-100 min-h-screen overflow-x-hidden flex flex-col ml-0 ${
+          navBarOpen ? "md:ml-[250px]" : "md:ml-[60px]"
+        }`}
       >
         <span className="hidden md:block">
           <Header />

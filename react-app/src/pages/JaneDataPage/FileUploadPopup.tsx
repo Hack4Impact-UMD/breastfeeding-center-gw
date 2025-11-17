@@ -150,7 +150,8 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
           <div className="w-full h-[1.5px] bg-black" />
 
           <p className="text-gray-500 m-3">
-            <span className="text-red-600">*</span> Appointment sheet is required
+            <span className="text-red-600">*</span> Appointment sheet is
+            required
           </p>
 
           <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-evenly sm:place-items-center sm:mt-6">
@@ -266,49 +267,42 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
             </div>
           </div>
           {/* Errors */}
-          {
-            errorType === "other" && (
-              <p className="text-xs text-center mx-2 mb-2 text-red-600 sm:text-sm sm:mx-4">
-                Something went wrong: {uploadMutation.error?.message}
+          {errorType === "other" && (
+            <p className="text-xs text-center mx-2 mb-2 text-red-600 sm:text-sm sm:mx-4">
+              Something went wrong: {uploadMutation.error?.message}
+            </p>
+          )}
+          {errorType === "invalidType" && (
+            <p className="text-xs text-center mx-2 mb-2 text-red-600 sm:text-sm sm:mx-4">
+              The file(s) you uploaded does not match upload type
+            </p>
+          )}
+          {errorType === "missingClients" && (
+            <div className="flex flex-col items-center mb-2">
+              <p className="text-xs text-center mx-2 mt-2 text-red-600 sm:text-sm sm:mx-4">
+                Some clients in the uploaded appointment sheet are not in the
+                system. Please upload client sheet with new clients.{" "}
+                <Tooltip>
+                  <TooltipTrigger>
+                    <span
+                      data-tooltip-id="missingClientsTip"
+                      className="underline cursor-pointer"
+                    >
+                      View missing clients
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <div className="text-xs leading-6 text-center min-w-[150px] sm:text-sm">
+                      {missingClients.slice(0, 5).map((c, i) => (
+                        <p key={i}>{c}</p>
+                      ))}
+                      {missingClients.length > 5 && <p>…</p>}
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
               </p>
-            )
-          }
-          {
-            errorType === "invalidType" && (
-              <p className="text-xs text-center mx-2 mb-2 text-red-600 sm:text-sm sm:mx-4">
-                The file(s) you uploaded does not match upload type
-              </p>
-            )
-          }
-          {
-            errorType === "missingClients" && (
-              <div className="flex flex-col items-center mb-2">
-                <p className="text-xs text-center mx-2 mt-2 text-red-600 sm:text-sm sm:mx-4">
-                  Some clients in the uploaded appointment sheet are not in the
-                  system. Please upload client sheet with new clients.{" "}
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <span
-                        data-tooltip-id="missingClientsTip"
-                        className="underline cursor-pointer"
-                      >
-                        View missing clients
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">
-                      <div className="text-xs leading-6 text-center min-w-[150px] sm:text-sm">
-                        {missingClients.slice(0, 5).map((c, i) => (
-                          <p key={i}>{c}</p>
-                        ))}
-                        {missingClients.length > 5 && <p>…</p>}
-                      </div>
-                    </TooltipContent>
-                  </Tooltip>
-                </p>
-
-              </div>
-            )
-          }
+            </div>
+          )}
 
           {/* Submit Button */}
           <div className="flex flex-col items-center gap-3 justify-center mt-4 mb-8">
@@ -325,9 +319,9 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
               </Button>
             )}
           </div>
-        </div >
-      </div >
-    </Modal >
+        </div>
+      </div>
+    </Modal>
   );
 };
 

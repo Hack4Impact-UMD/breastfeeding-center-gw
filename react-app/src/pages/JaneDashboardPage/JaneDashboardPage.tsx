@@ -59,7 +59,7 @@ const JaneDashboardPage = () => {
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer border border-gray-300";
   const centerItemsInDiv = "flex justify-between items-center";
   const chartDiv =
-    "flex flex-col items-center justify-start bg-white h-[370px] border-2 border-black p-5 mt-5 rounded-lg";
+    "flex flex-col items-center justify-start bg-white min-h-[400px] border-2 border-black p-5 mt-5 rounded-lg";
 
   const {
     data: janeAppts,
@@ -203,19 +203,21 @@ const JaneDashboardPage = () => {
             <div className="flex items-center justify-between w-full pt-4 mb-6">
               <div className="flex w-[175px] h-10 overflow-hidden ">
                 <button
-                  className={`${graphTableButtonStyle} ${visitDisplay === "graph"
+                  className={`${graphTableButtonStyle} ${
+                    visitDisplay === "graph"
                       ? "bg-bcgw-gray-light"
                       : "bg-[#CED8E1]"
-                    }`}
+                  }`}
                   onClick={() => setVisitDisplay("graph")}
                 >
                   Graph
                 </button>
                 <button
-                  className={`${graphTableButtonStyle} ${visitDisplay === "table"
+                  className={`${graphTableButtonStyle} ${
+                    visitDisplay === "table"
                       ? "bg-bcgw-gray-light"
                       : "bg-[#CED8E1]"
-                    }`}
+                  }`}
                   onClick={() => setVisitDisplay("table")}
                 >
                   Table
@@ -238,15 +240,12 @@ const JaneDashboardPage = () => {
                   Visit Breakdown:{" "}
                   {dateRange?.from && dateRange?.to
                     ? formatDate(dateRange.from) +
-                    " - " +
-                    formatDate(dateRange.to)
+                      " - " +
+                      formatDate(dateRange.to)
                     : "All Data"}
                 </span>
                 <div className={chartDiv} ref={pieChartRef}>
-                  <div
-                    className="relative"
-                    style={{ width: "300px", height: "300px" }}
-                  >
+                  <div className="relative">
                     {isLoading ? (
                       <Loading />
                     ) : (
@@ -289,8 +288,8 @@ const JaneDashboardPage = () => {
                   Visit Breakdown:{" "}
                   {dateRange?.from && dateRange?.to
                     ? formatDate(dateRange.from) +
-                    " - " +
-                    formatDate(dateRange.to)
+                      " - " +
+                      formatDate(dateRange.to)
                     : "All Data"}
                 </span>
                 <DataTable
