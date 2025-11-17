@@ -14,6 +14,7 @@ import {
 import { VisitBreakdown, visitBreakdownColumns } from "./JaneTableColumns";
 import { DataTable } from "@/components/DataTable/DataTable";
 import { useJaneAppts } from "@/hooks/queries/useJaneData.ts";
+import { Button } from "@/components/ui/button.tsx";
 import JaneRetention from "./JaneRetention.tsx";
 
 function BreakdownPieChartLabels(chartData: { key: string; data: number }[]) {
@@ -54,11 +55,6 @@ const JaneDashboardPage = () => {
     defaultDateRange,
   );
 
-  //styles
-  const buttonStyle =
-    "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light text-lg border-1 border-black-500 py-2 px-8 rounded-full cursor-pointer";
-  const transparentGrayButtonStyle =
-    "bg-transparent hover:bg-bcgw-gray-light text-gray border-2 border-gray py-1 px-6 rounded-full cursor-pointer";
   const graphTableButtonStyle =
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer border border-gray-300";
   const centerItemsInDiv = "flex justify-between items-center";
@@ -177,11 +173,10 @@ const JaneDashboardPage = () => {
 
   return (
     <>
-      <div className="flex flex-col p-8 pr-20 pl-20">
-        <div className={centerItemsInDiv}>
-          <h1 className="font-bold">JANE</h1>
-          {/* date picker */}
-          <div className="w-60">
+      <div className="flex flex-col py-14 px-10 sm:px-20">
+        <div className="flex flex-col-reverse gap-4  md:flex-row md:items-center justify-between mb-4">
+          <h1 className="font-bold text-4xl lg:text-5xl">Jane</h1>
+          <div className="w-full flex justify-end">
             <DateRangePicker
               enableYearNavigation
               value={dateRange}
@@ -192,18 +187,21 @@ const JaneDashboardPage = () => {
           </div>
         </div>
 
-        <div className={`${centerItemsInDiv} basis-20xs mt-6`}>
+        <div className={`${centerItemsInDiv} basis-20xs`}>
           <Link to="/services/jane/data">
-            <button className={`${buttonStyle} mr-5 text-nowrap`}>
+            <Button
+              variant={"yellow"}
+              className={"rounded-full text-lg w-full py-6 px-8"}
+            >
               VIEW UPLOADED DATA
-            </button>
+            </Button>
           </Link>
         </div>
 
-        <div className="flex flex-wrap gap-8 pt-3">
-          <div className="flex-[0_0_48%] max-w-[50%] min-w-[560px]">
-            <div className={`${centerItemsInDiv} pt-4 mb-6`}>
-              <div className="flex flex-row">
+        <div className="flex flex-col lg:flex-row gap-8 pt-3">
+          <div className="flex-[0_0_100%] max-w-full min-w-[200px] md:flex-[0_0_48%] lg:w-1/2">
+            <div className="flex items-center justify-between w-full pt-4 mb-6">
+              <div className="flex w-[175px] h-10 overflow-hidden ">
                 <button
                   className={`${graphTableButtonStyle} ${visitDisplay === "graph"
                       ? "bg-bcgw-gray-light"
@@ -223,12 +221,15 @@ const JaneDashboardPage = () => {
                   Table
                 </button>
               </div>
-              <button
-                className={transparentGrayButtonStyle}
+              <Button
+                variant={"outlineGray"}
+                className={
+                  "text-md rounded-full border-2 py-4 hover:bg-bcgw-gray-light"
+                }
                 onClick={() => handleExport(pieChartRef, "visit_breakdown")}
               >
                 Export
-              </button>
+              </Button>
             </div>
 
             {visitDisplay === "graph" ? (

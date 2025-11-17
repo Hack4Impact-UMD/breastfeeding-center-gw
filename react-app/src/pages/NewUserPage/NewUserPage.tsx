@@ -7,6 +7,8 @@ import {
 } from "@/components/ui/tooltip";
 import { useInvite } from "@/hooks/queries/useInvite";
 import Loading from "@/components/Loading";
+import {PhoneInput} from "@/components/ui/phone-input";
+import { isValidPhoneNumber } from "react-phone-number-input";
 
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
@@ -15,11 +17,6 @@ import { useRegisterUser } from "@/hooks/mutations/useRegisterUser";
 import { Button } from "@/components/ui/button";
 
 const PRONOUN_OPTIONS = ["she/her", "he/him", "they/them", "Other", "None"];
-
-function validatePhone(phone: string) {
-  const regex = /^\+?\d{10,14}$/gim;
-  return regex.test(phone);
-}
 
 export default function NewUserPage() {
   const { inviteId = "" } = useParams();
@@ -43,10 +40,9 @@ export default function NewUserPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  // const [showPasswordInfo, setShowPasswordInfo] = useState(false);
   const [formError, setError] = useState("");
 
-  const isPhoneValid = phone === "" || validatePhone(phone);
+  const isPhoneValid = phone ? isValidPhoneNumber(phone) : true;
   const isPasswordValid = password === "" || validatePassword(password);
   const doPasswordsMatch = password === confirmPassword;
 
@@ -92,7 +88,7 @@ export default function NewUserPage() {
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
-    if (!validatePhone(phone)) {
+    if (!isValidPhoneNumber(phone)) {
       setError(INVALID_MESSAGE);
       return;
     }
@@ -186,14 +182,16 @@ export default function NewUserPage() {
             <span className="text-red-500 mr-2">*</span>
             <span>Phone Number</span>
           </label>
-          <input
-            className={`w-full border rounded px-3 py-2 ${phone && !isPhoneValid ? "border-red-500" : ""}`}
-            placeholder="(XXX) - XXX - XXXX"
+          <PhoneInput
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            required
-            inputMode="tel"
+            onChange={(value) => setPhone(value || "")}
+            defaultCountry="US"
+            placeholder="Enter phone number"
+            className="border-[1.5px] border-black"
           />
+          {phone && !isPhoneValid && (
+            <p className="text-red-600 text-sm mt-1">Phone number is invalid</p>
+          )}
         </div>
 
         <div>

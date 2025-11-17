@@ -23,7 +23,6 @@ import RequireNoAuth from "./auth/RequireNoAuth";
 import { axiosClient } from "./lib/utils";
 import { getClientByPatientId } from "./services/janeService";
 import LayoutShell from "./pages/LayoutShell";
-// import "@tremor/react/dist/esm/tremor.css";
 
 function App() {
   return (

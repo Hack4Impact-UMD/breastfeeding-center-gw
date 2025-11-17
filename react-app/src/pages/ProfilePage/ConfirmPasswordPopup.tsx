@@ -2,24 +2,29 @@ import { useState } from "react";
 import { IoIosClose } from "react-icons/io";
 import Modal from "../../components/Modal";
 import ChangeEmailPopup from "./ChangeEmailPopup";
+import ChangePhoneNumberPopup from "./ChangePhoneNumberPopup";
 import ChangePasswordPopup from "./ChangePasswordPopup";
+import { Button } from "@/components/ui/button";
 
 const ConfirmPasswordPopup = ({
   open,
   onClose,
   editType,
   email,
+  phone,
 }: {
   open: boolean;
   onClose: any;
   editType: string;
   email: string;
+  phone: string;
 }) => {
   const [currentPasswordInput, setCurrentPasswordInput] = useState("");
   //@ts-expect-error
   const [currentPassword, setCurrentPassword] = useState("abc");
   const [showIncorrectPassword, setShowIncorrectPassword] = useState(false);
   const [openEmailModal, setOpenEmailModal] = useState(false);
+  const [openPhoneModal, setOpenPhoneModal] = useState(false);
   const [openPasswordModal, setOpenPasswordModal] = useState(false);
 
   const handleOnClose = () => {
@@ -32,6 +37,8 @@ const ConfirmPasswordPopup = ({
     if (currentPasswordInput === currentPassword) {
       if (editType == "Email") {
         setOpenEmailModal(true);
+      } else if (editType == "Phone") {
+        setOpenPhoneModal(true);
       } else {
         setOpenPasswordModal(true);
       }
@@ -44,20 +51,21 @@ const ConfirmPasswordPopup = ({
 
   const ModalHeader = ({ onClose }: { onClose: () => void }) => (
     <>
-      <div className="flex justify-between items-center m-2">
+      <div className="flex justify-between items-center my-2 mx-4">
         <p className="text-lg">
-          {editType == "Email" ? "Change Email" : "Change Password"}
+          {editType == "Email"
+            ? "Change Email"
+            : editType == "Phone"
+              ? "Change Phone Number"
+              : "Change Password"}
         </p>
-        <button
-          onClick={() => {
-            onClose();
-          }}
-          className="absolute top-0.25 right-0.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
-        >
-          <IoIosClose size={45} />
-        </button>
+        <IoIosClose
+          className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
+          onClick={onClose}
+          size={32}
+        />
       </div>
-      <div className="w-full h-px bg-bcgw-gray-dark my-2" />
+      <div className="w-full h-[1.5px] bg-black" />
     </>
   );
 
@@ -78,7 +86,7 @@ const ConfirmPasswordPopup = ({
                 handleOnClose();
               }}
             />
-            <div className="grid grid-cols-[190px_1fr] m-8 mb-2 gap-x-2">
+            <div className="grid grid-cols-[190px_1fr] m-8 mb-2 gap-x-2 text-left">
               <label className="text-md font-medium text-nowrap content-center">
                 Enter Current Password:
               </label>
@@ -102,24 +110,26 @@ const ConfirmPasswordPopup = ({
             </div>
           </div>
           <div className="flex justify-end m-8 mt-0">
-            <button
-              className={`px-6 py-2 rounded-lg border border-black text-black ${
-                !currentPasswordInput
-                  ? "bg-bcgw-gray-light cursor-not-allowed"
-                  : "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light cursor-pointer"
-              }`}
-              onClick={handleNextFromCurrent}
+            <Button
+              variant={"yellow"}
+              className="py-4 px-6 text-md"
               disabled={!currentPasswordInput}
+              onClick={handleNextFromCurrent}
             >
               Next
-            </button>
+            </Button>
           </div>
         </div>
       </Modal>
 
+      <ChangePhoneNumberPopup
+        open={openPhoneModal}
+        onClose={() => setOpenPhoneModal(false)}
+        initialPhone={phone}
+      />
       <ChangeEmailPopup
         open={openEmailModal}
-        onClose={setOpenEmailModal}
+        onClose={() => setOpenEmailModal(false)}
         initialEmail={email}
       />
       <ChangePasswordPopup

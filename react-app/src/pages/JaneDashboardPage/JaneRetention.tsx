@@ -125,7 +125,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
   if (retentionError) return <div>Error loading retention data</div>;
 
   return (
-    <div className="flex-[0_0_48%] max-w-[50%] min-w-[560px]">
+    <div className="flex-[0_0_48%] w-full lg:w-1/2">
       <div className={`${centerItemsInDiv} pt-4 mb-6`}>
         <div className="flex flex-row">
           <button
