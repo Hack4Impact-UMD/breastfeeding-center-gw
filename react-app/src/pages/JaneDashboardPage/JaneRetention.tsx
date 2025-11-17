@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo } from "react";
 import ClientLostPopup from "./ClientLostPopup.tsx";
-import { BarChart, BarSeries, BarProps, Bar } from "reaviz";
+import { BarChart, BarSeries, BarProps, Bar, BarLabel } from "reaviz";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
 import {
@@ -28,14 +28,17 @@ const colors: Record<string, string> = {
 };
 
 function CustomBar(props: Partial<BarProps>) {
-  console.log("CustomBar:", props.data?.key, colors[props.data!.key as string]);
-  const label = props.data?.key;
+  const label = props.data?.key as string | undefined;
+  const fillColor = label && colors[label] ? colors[label] : "#000000";
   return (
     <Bar
       {...props}
       style={{
-        fill: colors[label! as string] || "#000000",
+        fill: fillColor,
       }}
+      label={
+        <BarLabel />
+      }
     />
   );
 }
@@ -126,21 +129,19 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
       <div className={`${centerItemsInDiv} pt-4 mb-6`}>
         <div className="flex flex-row">
           <button
-            className={`${graphTableButtonStyle} ${
-              retentionDisplay === "graph"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#CED8E1]"
-            }`}
+            className={`${graphTableButtonStyle} ${retentionDisplay === "graph"
+              ? "bg-bcgw-gray-light"
+              : "bg-[#CED8E1]"
+              }`}
             onClick={() => setRetentionDisplay("graph")}
           >
             Graph
           </button>
           <button
-            className={`${graphTableButtonStyle} ${
-              retentionDisplay === "table"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#CED8E1]"
-            }`}
+            className={`${graphTableButtonStyle} ${retentionDisplay === "table"
+              ? "bg-bcgw-gray-light"
+              : "bg-[#CED8E1]"
+              }`}
             onClick={() => setRetentionDisplay("table")}
           >
             Table
@@ -192,7 +193,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
                 columns={makeRetentionRateColumns((row) => setOpenRow(row))}
                 data={retentionData}
                 tableType="default"
-                //tableHeaderExtras={retentionHeaderExtras}
+              //tableHeaderExtras={retentionHeaderExtras}
               />
             </div>
 

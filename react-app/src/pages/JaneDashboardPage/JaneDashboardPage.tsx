@@ -205,21 +205,19 @@ const JaneDashboardPage = () => {
             <div className={`${centerItemsInDiv} pt-4 mb-6`}>
               <div className="flex flex-row">
                 <button
-                  className={`${graphTableButtonStyle} ${
-                    visitDisplay === "graph"
+                  className={`${graphTableButtonStyle} ${visitDisplay === "graph"
                       ? "bg-bcgw-gray-light"
                       : "bg-[#CED8E1]"
-                  }`}
+                    }`}
                   onClick={() => setVisitDisplay("graph")}
                 >
                   Graph
                 </button>
                 <button
-                  className={`${graphTableButtonStyle} ${
-                    visitDisplay === "table"
+                  className={`${graphTableButtonStyle} ${visitDisplay === "table"
                       ? "bg-bcgw-gray-light"
                       : "bg-[#CED8E1]"
-                  }`}
+                    }`}
                   onClick={() => setVisitDisplay("table")}
                 >
                   Table
@@ -239,8 +237,8 @@ const JaneDashboardPage = () => {
                   Visit Breakdown:{" "}
                   {dateRange?.from && dateRange?.to
                     ? formatDate(dateRange.from) +
-                      " - " +
-                      formatDate(dateRange.to)
+                    " - " +
+                    formatDate(dateRange.to)
                     : "All Data"}
                 </span>
                 <div className={chartDiv} ref={pieChartRef}>
@@ -290,8 +288,8 @@ const JaneDashboardPage = () => {
                   Visit Breakdown:{" "}
                   {dateRange?.from && dateRange?.to
                     ? formatDate(dateRange.from) +
-                      " - " +
-                      formatDate(dateRange.to)
+                    " - " +
+                    formatDate(dateRange.to)
                     : "All Data"}
                 </span>
                 <DataTable
