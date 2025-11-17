@@ -203,13 +203,19 @@ const JaneDashboardPage = () => {
             <div className="flex items-center justify-between w-full pt-4 mb-6">
               <div className="flex w-[175px] h-10 overflow-hidden ">
                 <button
-                  className={`flex-1 h-full ${graphTableButtonStyle} ${visitDisplay === "graph" ? "bg-bcgw-gray-light" : "bg-[#CED8E1]"}`}
+                  className={`${graphTableButtonStyle} ${visitDisplay === "graph"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#CED8E1]"
+                    }`}
                   onClick={() => setVisitDisplay("graph")}
                 >
                   Graph
                 </button>
                 <button
-                  className={`flex-1 h-full ${graphTableButtonStyle} ${visitDisplay === "table" ? "bg-bcgw-gray-light" : "bg-[#CED8E1]"}`}
+                  className={`${graphTableButtonStyle} ${visitDisplay === "table"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#CED8E1]"
+                    }`}
                   onClick={() => setVisitDisplay("table")}
                 >
                   Table
@@ -232,8 +238,8 @@ const JaneDashboardPage = () => {
                   Visit Breakdown:{" "}
                   {dateRange?.from && dateRange?.to
                     ? formatDate(dateRange.from) +
-                      " - " +
-                      formatDate(dateRange.to)
+                    " - " +
+                    formatDate(dateRange.to)
                     : "All Data"}
                 </span>
                 <div className={chartDiv} ref={pieChartRef}>
@@ -283,8 +289,8 @@ const JaneDashboardPage = () => {
                   Visit Breakdown:{" "}
                   {dateRange?.from && dateRange?.to
                     ? formatDate(dateRange.from) +
-                      " - " +
-                      formatDate(dateRange.to)
+                    " - " +
+                    formatDate(dateRange.to)
                     : "All Data"}
                 </span>
                 <DataTable

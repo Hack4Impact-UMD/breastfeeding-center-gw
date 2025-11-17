@@ -1,13 +1,6 @@
 import { useState, useRef, useMemo } from "react";
 import ClientLostPopup from "./ClientLostPopup.tsx";
-import {
-  FunnelChart,
-  FunnelAxis,
-  FunnelAxisLabel,
-  FunnelArc,
-  FunnelAxisLine,
-  FunnelSeries,
-} from "reaviz";
+import { BarChart, BarSeries, BarProps, Bar, BarLabel } from "reaviz";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
 import {
@@ -24,6 +17,31 @@ type JaneRetentionProps = {
   startDate?: Date | undefined;
   endDate?: Date | undefined;
 };
+
+const colors: Record<string, string> = {
+  "Week 1": "#05182A",
+  "Week 2": "#092D4F",
+  "Week 3": "#0A3863",
+  "Week 4": "#0A3863",
+  "Week 5": "#0F4374",
+  "Week 6": "#0F4374",
+};
+
+function CustomBar(props: Partial<BarProps>) {
+  const label = props.data?.key as string | undefined;
+  const fillColor = label && colors[label] ? colors[label] : "#000000";
+  return (
+    <Bar
+      {...props}
+      style={{
+        fill: fillColor,
+      }}
+      label={
+        <BarLabel />
+      }
+    />
+  );
+}
 
 const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
   const [selectedDropdown, setSelectedDropdown] = useState("ALL CLIENTS");
@@ -78,7 +96,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
     () =>
       processedData.map((row) => ({
         data: row.numberVisited,
-        key: row.visit,
+        key: `Week ${row.visit}`,
       })),
     [processedData],
   );
@@ -160,39 +178,11 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
                 <option>RECENT CHILDBIRTH</option>
               </select>
             </div>
-            <div className="flex items-center">
-              <span className="text-xl whitespace-nowrap -rotate-90 -mr-15 -ml-15">
-                Number of Visits
-              </span>
-
-              <FunnelChart
-                height={290}
-                width={400}
+            <div className="w-full">
+              <BarChart
+                height={300}
                 data={funnelData}
-                series={
-                  <FunnelSeries
-                    arc={<FunnelArc colorScheme="#05182A" />}
-                    axis={
-                      <FunnelAxis
-                        line={
-                          <FunnelAxisLine
-                            strokeColor="#FFFFFF"
-                            strokeWidth={5}
-                          ></FunnelAxisLine>
-                        }
-                        label={
-                          <FunnelAxisLabel
-                            className=""
-                            labelVisibility="always"
-                            fontSize={15}
-                            position="middle"
-                            fill="#FFFFFF"
-                          />
-                        }
-                      />
-                    }
-                  />
-                }
+                series={<BarSeries layout="vertical" bar={<CustomBar />} />}
               />
             </div>
           </>
