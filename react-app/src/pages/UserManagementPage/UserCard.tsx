@@ -27,12 +27,14 @@ const UserCard: React.FC<{ user: User; singleDirector: boolean }> = ({
   const [isDirectorBlockOpen, setIsDirectorBlockOpen] = React.useState(false);
 
   return (
-    <div className="grid grid-cols-[auto_1fr_auto] items-center py-9 px-6 border-b border-black gap-8">
+     <div className="grid grid-cols-[1fr_auto] md:grid-cols-[auto_1fr_auto] items-center py-4 md:py-9 px-4 md:px-6 border-b border-black gap-4 md:gap-8">
+      <div className="hidden md:block">
       <ProfileIcon initials={initials} size={112} />
+      </div>
 
       {/* name + contact info */}
       <div>
-        <div className="flex items-center">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
           <a className="text-2xl text-[#165896] w-65">
             {user.lastName}, {user.firstName}
           </a>
@@ -49,13 +51,14 @@ const UserCard: React.FC<{ user: User; singleDirector: boolean }> = ({
         </div>
       </div>
 
-      <div className="flex gap-4 justify-end">
+      <div className="flex flex-col md:flex-row gap-4 justify-end">
         {profile?.auth_id === user.auth_id ||
         profile?.type === "DIRECTOR" ||
         (profile?.type === "ADMIN" &&
           RoleLevels[profile.type] >= RoleLevels[user.type]) ? (
           <>
             <Button
+              className="w-full md:w-auto"
               variant="outline"
               onClick={() => {
                 if (user.type === "DIRECTOR" && singleDirector) {
@@ -69,6 +72,7 @@ const UserCard: React.FC<{ user: User; singleDirector: boolean }> = ({
               Change Access
             </Button>
             <Button
+              className="w-full md:w-auto"
               variant="outline"
               onClick={() => {
                 // Placeholder logic: show director block if this is a director

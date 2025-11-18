@@ -58,7 +58,7 @@ const UserManagementPage: React.FC = () => {
 
   return (
     <>
-      <div className="flex flex-col px-16 py-10">
+      <div className="flex flex-col  px-4 md:px-16 py-6 md:py-10">
         <UserFilters
           search={search}
           setSearch={setSearch}
@@ -68,7 +68,8 @@ const UserManagementPage: React.FC = () => {
         />
 
         <div className="flex justify-between items-center mt-4 pb-3 border-b border-gray-300">
-          <div className="text-lg font-semibold">Name</div>
+          <div className="text-lg font-semibold md:hidden">Info</div>
+          <div className="text-lg font-semibold hidden md:block">Name</div>
           <div className="text-lg font-semibold">Actions</div>
         </div>
 
