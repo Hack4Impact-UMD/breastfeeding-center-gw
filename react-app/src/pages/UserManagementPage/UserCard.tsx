@@ -210,7 +210,7 @@ const UserCard: React.FC<{ user: User; singleDirector: boolean }> = ({
         height={200}
         width={520}
       >
-        <div className="h-full flex flex-col relative">
+        <div className="h-full flex flex-col relative pb-6">
           <button
             aria-label="Close"
             className="absolute top-2.25 right-2.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
@@ -224,7 +224,7 @@ const UserCard: React.FC<{ user: User; singleDirector: boolean }> = ({
               Account Cannot Be Modified
             </h3>
           </div>
-          <div className="px-8 text-center text-lg text-gray-700 leading-relaxed">
+          <div className="px-8 text-center text-lg text-gray-700 leading-relaxed max-h-full">
             This director account cannot be removed or set to a lower
             permission. There must be one director.
           </div>

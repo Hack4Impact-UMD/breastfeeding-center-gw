@@ -37,12 +37,14 @@ const UserManagementPage: React.FC = () => {
       firstName,
       lastName,
       email,
+      role,
     }: {
       firstName: string;
       lastName: string;
       email: string;
+      role: string;
     }) => {
-      await sendUserInvite(firstName, lastName, email, "VOLUNTEER"); // TODO: update for different roles
+      await sendUserInvite(firstName, lastName, email, role);
     },
     onSuccess: () => {
       console.log("Invite sent!");
