@@ -1,6 +1,10 @@
-import { Client, clientListColumns } from "./ClientListTableColumns.tsx";
+import {
+  ClientTableRow,
+  clientListColumns,
+} from "./ClientListTableColumns.tsx";
 import { DataTable } from "@/components/DataTable/DataTable.tsx";
 import { useAllClients } from "@/hooks/queries/useAllClients";
+import { useClientListRows } from "@/hooks/queries/useClientListRows.ts";
 import { useJaneAppts } from "@/hooks/queries/useJaneData";
 import { DateTime } from "luxon";
 import { useMemo } from "react";
@@ -9,41 +13,47 @@ const ClientList = () => {
   //styles
   const centerItemsInDiv = "flex justify-between items-center";
 
-  const now = DateTime.now();
-  const oneMonthAgo = now.minus({ months: 1 });
-  const startDate = oneMonthAgo.startOf("day").toISO();
-  const endDate = now.endOf("day").toISO();
+  // const now = DateTime.now();
+  // const oneMonthAgo = now.minus({ months: 1 });
+  // const startDate = oneMonthAgo.startOf("day").toISO();
+  // const endDate = now.endOf("day").toISO();
 
-  const { data: clients, isLoading: clientsLoading } = useAllClients();
+  // const { data: clients, isLoading: clientsLoading } = useAllClients();
 
-  const { data: appointments, isLoading: appointmentsLoading } = useJaneAppts(
-    startDate || undefined,
-    endDate || undefined,
-  );
+  // const { data: appointments, isLoading: appointmentsLoading } = useJaneAppts(
+  //   startDate || undefined,
+  //   endDate || undefined,
+  // );
 
-  const clientData: Client[] = useMemo(() => {
-    if (!clients || !appointments) {
-      return [];
-    }
+  // const clientData: Client[] = useMemo(() => {
+  //   if (!clients || !appointments) {
+  //     return [];
+  //   }
 
-    const appointmentCounts = new Map<string, number>();
-    appointments.forEach((appt) => {
-      const count = appointmentCounts.get(appt.patientId) || 0;
-      appointmentCounts.set(appt.patientId, count + 1);
-    });
+  //   const appointmentCounts = new Map<string, number>();
+  //   appointments.forEach((appt) => {
+  //     const count = appointmentCounts.get(appt.patientId) || 0;
+  //     appointmentCounts.set(appt.patientId, count + 1);
+  //   });
 
-    return clients.map((client) => ({
-      firstName: client.firstName || "N/A",
-      lastName: client.lastName || "N/A",
-      email: client.email || "N/A",
-      acuityClasses: 0,
-      janeConsults: appointmentCounts.get(client.id) || 0,
-      rentals: 0,
-      purchases: 0,
-    }));
-  }, [clients, appointments]);
+  //   return clients.map((client) => ({
+  //     firstName: client.firstName || "N/A",
+  //     lastName: client.lastName || "N/A",
+  //     email: client.email || "N/A",
+  //     acuityClasses: 0,
+  //     janeConsults: appointmentCounts.get(client.id) || 0,
+  //     rentals: 0,
+  //     purchases: 0,
+  //   }));
+  // }, [clients, appointments]);
 
-  const isLoading = clientsLoading || appointmentsLoading;
+  const {
+    data: clientData,
+    isPending: clientsLoading,
+    error,
+  } = useClientListRows();
+
+  const isLoading = clientsLoading;
 
   return (
     <>
@@ -59,6 +69,12 @@ const ClientList = () => {
         <div className="mt-5">
           {isLoading ? (
             <div>Loading...</div>
+          ) : error ? (
+            <div className="flex justify-center items-center p-8">
+              <p className="text-red-600">
+                Failed to load Client data: {error.message}
+              </p>
+            </div>
           ) : (
             <DataTable
               columns={clientListColumns}

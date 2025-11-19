@@ -2,7 +2,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { LuArrowUpDown } from "react-icons/lu";
 
-export type Client = {
+export type ClientTableRow = {
   firstName: string;
   lastName: string;
   email: string;
@@ -10,9 +10,10 @@ export type Client = {
   janeConsults: number;
   rentals: number;
   purchases: number;
+  id: string;
 };
 
-export const clientListColumns: ColumnDef<Client>[] = [
+export const clientListColumns: ColumnDef<ClientTableRow>[] = [
   {
     accessorKey: "firstName",
     header: ({ column }) => {
