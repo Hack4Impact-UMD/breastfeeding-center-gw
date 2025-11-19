@@ -19,44 +19,32 @@ export default function LogoutConfirmation({
   }
 
   return (
-    <Modal
-      open={open}
-      onClose={() => {
-        onClose();
-      }}
-      height={250}
+    <Modal open={open} onClose={onClose} height={250}>
+  <div className="bg-white rounded-2xl shadow-lg p-6 w-full">
+    
+    <button
+      onClick={onClose}
+      className="w-full flex justify-end p-2 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
     >
-      <button
-        onClick={() => {
-          onClose();
-        }}
-        className="w-full flex justify-end p-2 text-bcgw-blue-dark hover:text-gray-600 z-10 cursor-pointer"
-      >
-        <IoIosClose size={32} />
-      </button>
-      <div className="relative flex flex-col items-center justify-center text-center h-full">
-        <h2 className="font-semibold flex-grow flex items-center justify-center px-8 pb-6">
-          Are you sure you want to log out?
-        </h2>
-        <div className="flex justify-center gap-6">
-          <Button
-            variant={"outline"}
-            className="py-4 px-6 text-md"
-            onClick={() => {
-              onClose();
-            }}
-          >
-            CANCEL
-          </Button>
-          <Button
-            variant={"yellow"}
-            className="py-4 px-6 text-md"
-            onClick={() => handleLogOut()}
-          >
-            CONFIRM
-          </Button>
-        </div>
+      <IoIosClose size={32} />
+    </button>
+
+    <div className="flex flex-col items-center justify-center text-center p-4">
+      <h2 className="font-semibold px-8 pb-6">
+        Are you sure you want to log out?
+      </h2>
+
+      <div className="flex justify-center gap-6">
+        <Button variant="outline" className="py-4 px-6 text-md" onClick={onClose}>
+          CANCEL
+        </Button>
+
+        <Button variant="yellow" className="py-4 px-6 text-md" onClick={handleLogOut}>
+          CONFIRM
+        </Button>
       </div>
-    </Modal>
+    </div>
+  </div>
+</Modal>
   );
 }

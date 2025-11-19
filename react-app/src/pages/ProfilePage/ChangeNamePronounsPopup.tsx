@@ -30,14 +30,13 @@ const ChangeNamePronounsPopup = ({
 
   const handleSave = () => {
     console.log("Updated name to:", { firstName, lastName, pronouns });
-    // Add your save logic here
     onClose();
   };
 
   const ModalHeader = ({ onClose }: { onClose: () => void }) => (
     <>
       <div className="flex justify-between items-center my-2 mx-4">
-        <p className="text-lg">Change Name and Pronouns</p>
+        <p className="text-base sm:text-lg">Change Name and Pronouns</p>
         <IoIosClose
           className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
           onClick={onClose}
@@ -51,57 +50,72 @@ const ChangeNamePronounsPopup = ({
   const isSaveDisabled = !firstName.trim() || !lastName.trim();
 
   return (
-    <Modal open={open} onClose={onClose} height={280} width={600}>
-      <div className="flex flex-col h-full">
-        <div>
+    <Modal open={open} onClose={onClose} height={350} width={600}>
+      <div className="w-full">
+        <div className="flex flex-col bg-white rounded-2xl w-full h-auto overflow-y-auto sm:overflow-visible">
+
           <ModalHeader onClose={onClose} />
-          <div className="grid grid-cols-[130px_1fr] gap-y-4 m-8 mb-2 text-left items-center">
-            <label className="text-sm font-medium">
-              First Name <span className="text-red-600">*</span>
-            </label>
-            <input
-              type="text"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              className="border-[1.5px] border-black px-3 py-2"
-              placeholder="FirstName"
-            />
 
-            <label className="text-sm font-medium">
-              Last Name <span className="text-red-600">*</span>
-            </label>
-            <input
-              type="text"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              className="border-[1.5px] border-black px-3 py-2"
-              placeholder="LastName"
-            />
+          {/* CONTENT WRAPPER – now mobile responsive */}
+          <div className="flex flex-col m-4 sm:m-8 mb-2 text-left space-y-4">
 
-            <label className="text-sm font-medium">Pronouns</label>
-            <select
-              value={pronouns}
-              onChange={(e) => setPronouns(e.target.value)}
-              className="border-[1.5px] border-black px-3 py-2 bg-white cursor-pointer rounded-2xl w-fit"
-            >
-              {pronounOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
+            {/* FIRST NAME */}
+            <div className="flex flex-col sm:grid sm:grid-cols-[150px_1fr] sm:gap-x-2">
+              <label className="text-sm sm:text-base font-medium mb-1 sm:mb-0 sm:content-center">
+                First Name <span className="text-red-600">*</span>
+              </label>
+              <input
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                className="border-[1.5px] border-black px-3 py-2 text-sm sm:text-base"
+                placeholder="First Name"
+              />
+            </div>
+
+            {/* LAST NAME */}
+            <div className="flex flex-col sm:grid sm:grid-cols-[150px_1fr] sm:gap-x-2">
+              <label className="text-sm sm:text-base font-medium mb-1 sm:mb-0 sm:content-center">
+                Last Name <span className="text-red-600">*</span>
+              </label>
+              <input
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                className="border-[1.5px] border-black px-3 py-2 text-sm sm:text-base"
+                placeholder="Last Name"
+              />
+            </div>
+
+            {/* PRONOUNS */}
+            <div className="flex flex-col sm:grid sm:grid-cols-[150px_1fr] sm:gap-x-2">
+              <label className="text-sm font-medium mb-1 sm:mb-0 sm:content-center">
+                Pronouns
+              </label>
+              <select
+                value={pronouns}
+                onChange={(e) => setPronouns(e.target.value)}
+                className="w-full sm:w-fit border-[1.5px] border-black px-3 py-2 bg-white cursor-pointer rounded-2xl text-sm sm:text-base"
+              >
+                {pronounOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-        </div>
 
-        <div className="flex justify-end m-8 mt-0">
-          <Button
-            variant={"yellow"}
-            className="py-4 px-6 text-md"
-            disabled={isSaveDisabled}
-            onClick={handleSave}
-          >
-            SAVE
-          </Button>
+          <div className="flex justify-center sm:justify-end m-4 sm:m-8 mt-0">
+            <Button
+              variant="yellow"
+              className="w-full sm:w-auto py-4 px-6 text-sm sm:text-base"
+              disabled={isSaveDisabled}
+              onClick={handleSave}
+            >
+              Save
+            </Button>
+          </div>
         </div>
       </div>
     </Modal>

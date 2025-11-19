@@ -15,6 +15,7 @@ const TwoFAPopup = ({
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
 
   const CORRECT_CODE = "123456";
+
   useEffect(() => {
     inputRefs.current[activeIndex]?.focus();
   }, [activeIndex]);
@@ -23,10 +24,7 @@ const TwoFAPopup = ({
     onClose();
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number,
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const value = e.target.value;
     if (!/^[0-9]$/.test(value)) return;
 
@@ -37,10 +35,7 @@ const TwoFAPopup = ({
     if (index < 5) setActiveIndex(index + 1);
   };
 
-  const handleKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement>,
-    index: number,
-  ) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
     if (e.key === "Backspace") {
       const newOtp = [...otp];
       if (otp[index] === "") {
@@ -52,22 +47,18 @@ const TwoFAPopup = ({
     }
   };
 
-  const handleClick = (index: number) => {
-    setActiveIndex(index);
-  };
+  const handleClick = (index: number) => setActiveIndex(index);
 
   const handleSubmit = () => {
     const code = otp.join("");
-    if (code !== CORRECT_CODE) {
-      setError(true);
-    } else {
+    if (code !== CORRECT_CODE) setError(true);
+    else {
       setError(false);
       console.log("Success");
     }
   };
 
   const handleResendCode = () => {
-    console.log("Resent code!");
     setOtp(new Array(6).fill(""));
     setActiveIndex(0);
     setError(false);
@@ -76,66 +67,63 @@ const TwoFAPopup = ({
   const allFilled = otp.every((digit) => digit !== "");
 
   const twoFA = (
-    <div>
+    <div className="w-full">
       <button onClick={handleClose} className="cursor-pointer p-4">
-        <BiArrowBack className="w-10 h-8" />
+        <BiArrowBack className="w-8 h-8 sm:w-10 sm:h-10" />
       </button>
-      <div className="flex flex-col items-center justify-center px-15">
-        <p className="mt-3 mb-8 text-3xl font-semibold text-center font-Montserrat">
+
+      <div className="flex flex-col items-center justify-center px-6 sm:px-12">
+
+        <p className="mt-2 mb-6 text-xl sm:text-3xl font-semibold text-center font-Montserrat">
           Two-Factor Authentication
         </p>
-        <div className="flex gap-3">
+
+        {/* OTP Inputs */}
+        <div className="flex gap-2 sm:gap-3 mb-4">
           {otp.map((digit, index) => (
             <input
               key={index}
-              ref={(el) => {
-                inputRefs.current[index] = el;
-              }}
+              ref={(el) => (inputRefs.current[index] = el)}
               type="text"
               maxLength={1}
               value={digit}
               onChange={(e) => handleChange(e, index)}
               onKeyDown={(e) => handleKeyDown(e, index)}
               onClick={() => handleClick(index)}
-              className={`w-14 h-14 text-center text-2xl border-2 rounded-lg ${
+              className={`w-10 h-12 sm:w-14 sm:h-14 text-center text-xl sm:text-2xl border-2 rounded-lg ${
                 activeIndex === index ? "border-[#1239BB]" : "border-black-300"
               } focus:outline-none`}
             />
           ))}
         </div>
-        <p
-          className={`text-red-500 text-center mt-2 ${
-            error ? "block" : "hidden"
-          }`}
-        >
-          Two-factor authentication code is incorrect
+
+        {error && (
+          <p className="text-red-500 text-center text-xs sm:text-sm mb-2">
+            Two-factor authentication code is incorrect
+          </p>
+        )}
+
+        <p className="text-center text-sm sm:text-lg leading-6 mb-6 mx-6">
+          The verification code has been sent to your phone. Enter the code to continue.
         </p>
 
-        <p
-          className={`leading-6 font-Inter text-lg text-center mb-6 mx-6 ${
-            error ? "mt-2" : "mt-10"
-          }`}
-        >
-          The verification code has been sent to your phone. Enter the code to
-          continue.
-        </p>
         <button
           onClick={handleSubmit}
           disabled={!allFilled}
-          className={`font-bold text-lg py-4 px-20 rounded-full ${
+          className={`font-bold rounded-full py-3 px-12 sm:py-4 sm:px-20 text-sm sm:text-lg mb-4 ${
             allFilled
-              ? "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light cursor-pointer "
+              ? "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light cursor-pointer"
               : "bg-bcgw-gray-light cursor-not-allowed"
-          } self-center text-lg font-bold`}
+          }`}
         >
           Submit
         </button>
 
-        <p className="flex flex-col gap-1.2 leading-6 font-Inter text-lg text-[#1239BB] text-center p-8">
-          Didn't get a verification code?
+        <p className="flex flex-col gap-1 text-center text-[#1239BB] text-sm sm:text-lg p-4">
+          Didn’t get a verification code?
           <button
             onClick={handleResendCode}
-            className="underline text-[#1239BB] hover:opacity-80 transition cursor-pointer"
+            className="underline hover:opacity-80 transition cursor-pointer"
           >
             Resend a new code
           </button>
@@ -145,9 +133,11 @@ const TwoFAPopup = ({
   );
 
   return (
-    <Modal open={openModal} onClose={handleClose} height={500} width={550}>
-      {twoFA}
-    </Modal>
+    <Modal open={openModal} onClose={handleClose} height={520} width={550}>
+  <div className="bg-white rounded-2xl shadow-lg p-6 w-full">
+    {twoFA}
+  </div>
+</Modal>
   );
 };
 

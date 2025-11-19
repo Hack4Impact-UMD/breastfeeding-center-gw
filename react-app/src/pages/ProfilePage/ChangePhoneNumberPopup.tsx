@@ -35,7 +35,7 @@ const ChangePhoneNumberPopup = ({
   const ModalHeader = ({ onClose }: { onClose: () => void }) => (
     <>
       <div className="flex justify-between items-center my-2 mx-4">
-        <p className="text-lg">Change Phone Number</p>
+        <p className="text-base sm:text-lg">Change Phone Number</p>
         <IoIosClose
           className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
           onClick={onClose}
@@ -53,73 +53,77 @@ const ChangePhoneNumberPopup = ({
 
   return (
     <Modal open={open} onClose={() => onClose()} height={290} width={600}>
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col bg-white rounded-2xl w-full">
         <ModalHeader onClose={() => onClose()} />
 
-        <div className="m-8 mb-2 space-y-4 text-left">
-          <div className="grid grid-cols-[210px_1fr] items-center gap-x-4">
-            <label className="text-sm font-medium">
-              Enter New Phone Number:
-            </label>
-            <PhoneInput
-              value={newPhone}
-              onChange={(value) => setNewPhone(value || "")}
-              defaultCountry="US"
-              placeholder="Enter phone number"
-              className="border-[1.5px] border-black"
-            />
-          </div>
-
-          {newPhone && !isPhoneValid && (
-            <div className="grid grid-cols-[210px_1fr] gap-x-4">
-              <div></div>
-              <p className="text-red-600 text-sm">Phone number is invalid</p>
+          <div className="flex flex-col m-4 sm:m-8 mb-2 text-left space-y-3 sm:space-y-0">
+            {/* New Phone Number Input */}
+            <div className="flex flex-col sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4">
+              <label className="text-sm font-medium mb-1 sm:mb-0 sm:content-center">
+                Enter New Phone Number:
+              </label>
+              <PhoneInput
+                value={newPhone}
+                onChange={(value) => setNewPhone(value || "")}
+                defaultCountry="US"
+                placeholder="Enter phone number"
+                className="border-[1.5px] border-black"
+              />
             </div>
-          )}
 
-          <div className="grid grid-cols-[210px_1fr] items-center gap-x-4">
-            <label className="text-sm font-medium">
-              Confirm New Phone Number:
-            </label>
-            <PhoneInput
-              value={confirmNewPhone}
-              onChange={(value) => setConfirmNewPhone(value || "")}
-              defaultCountry="US"
-              placeholder="Confirm phone number"
-              className="border-[1.5px] border-black"
-            />
-          </div>
-
-          {confirmNewPhone && (
-            <div className="grid grid-cols-[210px_1fr] gap-x-4">
-              <div></div>
-              {newPhone === confirmNewPhone ? (
-                <p className="text-green-600 text-sm">Phone number matches.</p>
-              ) : (
-                <p className="text-red-600 text-sm">
-                  Phone number does not match.
-                </p>
+            {/* Phone validation error */}
+            <div className="sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4 min-h-[20px]">
+              <div className="hidden sm:block"></div>
+              {newPhone && !isPhoneValid && (
+                <p className="text-red-600 text-xs sm:text-sm">Phone number is invalid</p>
               )}
             </div>
-          )}
-        </div>
 
-        <div className="flex justify-end m-8 mt-0">
-          <Button
-            variant={"yellow"}
-            className="py-4 px-6 text-md"
-            disabled={
-              !newPhone ||
-              !confirmNewPhone ||
-              !doPhoneNumbersMatch ||
-              !isPhoneValid
-            }
-            onClick={handleNewPhoneSubmit}
-          >
-            Save
-          </Button>
+            {/* Confirm Phone Number Input */}
+            <div className="flex flex-col sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4">
+              <label className="text-sm font-medium mb-1 sm:mb-0 sm:content-center">
+                Confirm New Phone Number:
+              </label>
+              <PhoneInput
+                value={confirmNewPhone}
+                onChange={(value) => setConfirmNewPhone(value || "")}
+                defaultCountry="US"
+                placeholder="Confirm phone number"
+                className="border-[1.5px] border-black"
+              />
+            </div>
+
+            {/* Phone match status */}
+            <div className="sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4 min-h-[20px]">
+              <div className="hidden sm:block"></div>
+              {confirmNewPhone &&
+                (newPhone === confirmNewPhone ? (
+                  <p className="text-green-600 text-xs sm:text-sm">Phone number matches.</p>
+                ) : (
+                  <p className="text-red-600 text-xs sm:text-sm">
+                    Phone number does not match.
+                  </p>
+                ))}
+            </div>
+          </div>
+
+          <div className="flex justify-center sm:justify-end m-4 sm:m-8 mt-0">
+            <Button
+              variant={"yellow"}
+              className="w-full sm:w-auto py-4 px-6 text-sm sm:text-base"
+              disabled={
+                !newPhone ||
+                !confirmNewPhone ||
+                !doPhoneNumbersMatch ||
+                !isPhoneValid
+              }
+              onClick={handleNewPhoneSubmit}
+            >
+              Save
+            </Button>
+          </div>
         </div>
-      </div>
+      
     </Modal>
   );
 };
