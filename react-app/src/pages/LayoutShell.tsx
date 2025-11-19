@@ -9,22 +9,26 @@ export default function LayoutShell() {
   return (
     <div className="w-full h-full">
       {/* Desktop navbar - hidden on mobile (sm breakpoint) */}
-      <div className="hidden sm:block">
+      <div className="hidden md:block">
         <NavigationBar navBarOpen={navBarOpen} setNavBarOpen={setNavBarOpen} />
       </div>
-      
+
       {/* Mobile navbar - shown only on mobile */}
-      <div className="block sm:hidden">
+      <div className="block md:hidden">
         <MobileNavigationBar />
       </div>
-      
+
       <div
         className={`transition-all duration-200 ease-in-out bg-gray-100 min-h-screen overflow-x-hidden flex flex-col ml-0 ${
-          navBarOpen ? "sm:ml-[250px]" : "sm:ml-[60px]"
+          navBarOpen ? "md:ml-[250px]" : "md:ml-[60px]"
         }`}
       >
-        <Header />
-        <Outlet />
+        <span className="hidden md:block">
+          <Header />
+        </span>
+        <div className="mt-14 md:mt-0">
+          <Outlet />
+        </div>
       </div>
     </div>
   );

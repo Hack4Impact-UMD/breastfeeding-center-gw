@@ -6,8 +6,10 @@ import { useAuth } from "@/auth/AuthProvider";
 
 const Header = () => {
   const { profile: user } = useAuth();
-  const name = `${user?.firstName} ${user?.lastName}`
-  const initials = (user?.firstName.charAt(0).toUpperCase() ?? "") + (user?.lastName.charAt(0).toUpperCase() ?? "");
+  const name = `${user?.firstName} ${user?.lastName}`;
+  const initials =
+    (user?.firstName?.charAt(0).toUpperCase() ?? "") +
+    (user?.lastName?.charAt(0).toUpperCase() ?? "");
   const [hover, setHover] = useState(false);
   const navigate = useNavigate();
   return (

@@ -2,6 +2,7 @@ import csv from "csvtojson";
 import * as XLSX from "xlsx";
 import { Baby, Client } from "../types/clientType";
 import { logger } from "firebase-functions";
+import { v7 as uuidv7 } from "uuid";
 
 export async function parseClientSheet(fileType: string, fileAsBuffer: Buffer) {
   const requiredHeaders = [
@@ -84,7 +85,8 @@ export async function parseClientSheet(fileType: string, fileAsBuffer: Buffer) {
 
 function parseClient(clientRawData: Record<string, string>) {
   const client = {} as Client;
-  client.id = clientRawData["Patient Number"].trim();
+  client.id = uuidv7();
+  client.janeId = clientRawData["Patient Number"].trim();
 
   client.email =
     clientRawData.Email === undefined ||

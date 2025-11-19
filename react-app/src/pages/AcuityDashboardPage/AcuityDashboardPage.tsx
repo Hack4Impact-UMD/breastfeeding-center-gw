@@ -490,10 +490,10 @@ export default function AcuityDashboardPage() {
 
   return (
     <>
-      <div className="flex flex-col p-8 pr-20 pl-20 space-y-5">
+      <div className="flex flex-col py-14 px-10 sm:px-20 space-y-5">
         <div className={centerItemsInDiv}>
           <div>
-            <h1 className="font-bold">ACUITY</h1>
+            <h1 className="font-bold text-4xl lg:text-5xl">ACUITY</h1>
           </div>
           {/*date picker*/}
           <div className="w-60">
@@ -637,6 +637,7 @@ export default function AcuityDashboardPage() {
               data={trimesterData}
               tableType="default"
               tableHeaderExtras={classAttendanceTableExtras}
+              pageSize={5}
             />
           )}
         </div>
@@ -735,12 +736,11 @@ export default function AcuityDashboardPage() {
             </div>
           ) : (
             <DataTable
-              columns={
-                instructorColumns
-              } /* keep until you have class-popularity columns */
+              columns={instructorColumns}
               data={instructorData}
               tableType="default"
               tableHeaderExtras={classPopularityTableExtras}
+              pageSize={5}
             />
           )}
         </div>
@@ -832,6 +832,7 @@ export default function AcuityDashboardPage() {
               data={instructorTableRows}
               tableType="default"
               tableHeaderExtras={instructorPopularityTableExtras}
+              pageSize={5}
             />
           )}
         </div>

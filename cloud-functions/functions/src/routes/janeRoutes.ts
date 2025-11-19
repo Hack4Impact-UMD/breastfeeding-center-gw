@@ -80,7 +80,9 @@ router.post(
       const clientMap: Map<string, Client> = new Map();
 
       clientsList.forEach((client) => {
-        clientMap.set(client.id, client);
+        if (client.janeId) {
+          clientMap.set(client.janeId, client);
+        }
       });
 
       const appointments_map = new Map<string, JaneAppt[]>();
@@ -203,6 +205,7 @@ router.post(
             if (clientExists(appt.patientId)) {
               const client = clientMap.get(appt.patientId);
               parent = client;
+              // appt.patientId = client!.id; // set patientId to the  doc id
             } else {
               // if the client is not in firebase or the clients sheet, we cannot add this appointment
               // get the patient's first and last name and add them to the missing clients list
@@ -261,14 +264,15 @@ router.post(
         });
       }
 
+      const janeToDocIdMap = new Map<string, string>();
       // batch transaction for performace, limit is 500 per batch
       const chunkSize = 500;
       for (let i = 0; i < parentsToAdd.length; i += chunkSize) {
         const chunk = parentsToAdd.slice(i, i + chunkSize);
         const batch = db.batch();
         chunk.forEach((parent) => {
-          const { id } = parent;
-          batch.set(db.collection(CLIENTS_COLLECTION).doc(id), parent, {
+          janeToDocIdMap.set(parent.janeId!, parent.id);
+          batch.set(db.collection(CLIENTS_COLLECTION).doc(parent.id), parent, {
             merge: true,
           });
         });
@@ -280,9 +284,14 @@ router.post(
         const batch = db.batch();
         chunk.forEach((appt) => {
           const { apptId } = appt;
-          batch.set(db.collection(JANE_APPT_COLLECTION).doc(apptId), appt, {
-            merge: true,
-          });
+          const parentId = janeToDocIdMap.get(appt.patientId);
+          batch.set(
+            db.collection(JANE_APPT_COLLECTION).doc(apptId),
+            { ...appt, patientId: parentId } as JaneAppt,
+            {
+              merge: true,
+            },
+          );
         });
         await batch.commit();
       }
@@ -315,6 +324,7 @@ router.get(
       const startDate = req.query.startDate as string;
       const endDate = req.query.endDate as string;
       const includeClient = req.query.includeClient === "true";
+      const clientId = req.query.clientId as string;
 
       logger.info(`Fetching jane appts between: ${startDate} - ${endDate}`);
 
@@ -337,6 +347,7 @@ router.get(
       if (includeClient) {
         // bulk fetch clients, then join them with their appts
         const clientIds = appts.map((appt) => appt.patientId);
+        // logger.info(clientIds);
 
         const clients = await db.getAll(
           ...clientIds.map((id) => db.collection(CLIENTS_COLLECTION).doc(id)),
@@ -345,7 +356,9 @@ router.get(
 
         clients.forEach((c) => {
           const client = c.data() as Client;
-          clientsMap.set(client.id, client);
+          if (client && client.id) {
+            clientsMap.set(client.id, client);
+          }
         });
 
         const appointmentsWithClient: (JaneAppt & { client?: Client })[] =
@@ -362,6 +375,9 @@ router.get(
         return res.status(200).json(appointmentsWithClient);
       } else {
         // Convert documents to JaneAppt objects
+        if (clientId) {
+          appts = appts.filter((a) => a.patientId === clientId);
+        }
         return res.status(200).json(appts);
       }
     } catch (e) {
@@ -438,6 +454,106 @@ router.post(
     }
 
     return res.status(200).send();
+  },
+);
+
+router.get(
+  "/retention",
+  [isAuthenticated],
+  async (req: Request, res: Response) => {
+    try {
+      const startDate = req.query.startDate as string;
+      const endDate = req.query.endDate as string;
+
+      logger.info(`Fetching jane appts between: ${startDate} - ${endDate}`);
+
+      let appts: JaneAppt[] = [];
+      try {
+        appts = await getAllJaneApptsInRange(startDate, endDate);
+      } catch (err) {
+        logger.error("Failed to fetch jane appts in range");
+        logger.error(err);
+
+        if (err instanceof Error) {
+          return res.status(400).send(err.message);
+        } else {
+          return res.status(400).send();
+        }
+      }
+      const clientsByNumVisits: { [key: number]: Client[] } = {};
+
+      for (let i = 1; i <= 6; i++) {
+        clientsByNumVisits[i] = [];
+      }
+
+      const apptsToRemove = ["bra fitting", "pump check"];
+
+      const appts_filtered = appts.filter(
+        (appt) =>
+          !apptsToRemove.some((phrase) =>
+            appt.service.toLowerCase().includes(phrase),
+          ) && appt.firstVisit,
+      );
+
+      if (appts_filtered.length === 0)
+        return res.status(200).send(clientsByNumVisits);
+
+      const firstVisitClients: Client[] = [];
+      const clientDict: { [key: string]: Set<string> } = {};
+
+      const uniquePatientIds = [
+        ...new Set(appts_filtered.map((a) => a.patientId)),
+      ];
+
+      const clientDocs = await db.getAll(
+        ...uniquePatientIds.map((id) =>
+          db.collection(CLIENTS_COLLECTION).doc(id),
+        ),
+      );
+
+      const clientsMap = new Map<string, Client>();
+      clientDocs.forEach((doc) => {
+        if (doc.exists) {
+          const client = doc.data() as Client;
+          clientsMap.set(client.id, client);
+        }
+      });
+
+      for (const appt of appts_filtered) {
+        const matchingClient = clientsMap.get(appt.patientId);
+        if (matchingClient) {
+          firstVisitClients.push(matchingClient);
+          if (!clientDict[appt.patientId]) {
+            clientDict[appt.patientId] = new Set();
+          }
+          clientDict[appt.patientId].add(appt.apptId);
+        } else {
+          logger.warn(`No client found with id ${appt.patientId}`);
+        }
+      }
+      // For each client in the firstVisitClients list, get the list of all
+      // their appointments within date range (use the original list of returned appointments to filter)
+      // ?
+      firstVisitClients.forEach((client: Client) => {
+        const matchingAppts = appts
+          .filter((appt) => client.id === appt.patientId)
+          .map((appt) => appt.apptId);
+        clientDict[client.id] = new Set([
+          ...clientDict[client.id],
+          ...new Set(matchingAppts),
+        ]);
+        if (clientDict[client.id].size >= 6) {
+          clientsByNumVisits[6].push(client);
+        } else {
+          clientsByNumVisits[clientDict[client.id].size].push(client);
+        }
+      });
+
+      return res.status(200).send(clientsByNumVisits);
+    } catch (e) {
+      logger.error("Error fetching retention data:", e);
+      return res.status(500).send((e as Error).message);
+    }
   },
 );
 

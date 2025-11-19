@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { NavLink, useLocation } from "react-router-dom";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { ChevronsDown, ChevronsUp } from "lucide-react";
 import primaryLogo from "../assets/bcgw-logo.png";
 import home from "../assets/home.svg";
 import logout from "../assets/logout.svg";
@@ -9,12 +9,18 @@ import management from "../assets/management.svg";
 import service from "../assets/services.svg";
 import LogoutConfirmation from "./NavigationBar/LogoutConfirmation";
 import { createPortal } from "react-dom";
+import { useAuth } from "@/auth/AuthProvider";
 
 const MobileNavigationBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [openLogoutConfirmation, setOpenLogoutConfirmation] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { profile: user } = useAuth();
+  const initials =
+    (user?.firstName.charAt(0).toUpperCase() ?? "") +
+    (user?.lastName.charAt(0).toUpperCase() ?? "");
 
   // Auto-collapse on scroll
   useEffect(() => {
@@ -51,6 +57,10 @@ const MobileNavigationBar = () => {
     setOpenLogoutConfirmation(true);
   };
 
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
+
   // Check if any service page is active
   const isServiceActive = () => {
     return (
@@ -60,43 +70,44 @@ const MobileNavigationBar = () => {
     );
   };
 
-  const activeStyle = "bg-bcgw-yellow-dark rounded-none -my-2 -mx-3 py-4 px-4";
+  const activeStyle = "bg-bcgw-yellow-dark rounded-none";
 
   return (
     <>
-      {/* Fixed header bar */}
-      <div className="fixed top-0 left-0 right-0 bg-[#05182a] z-50 h-[60px]">
+      <div className="fixed top-0 left-0 right-0 bg-bcgw-blue-dark text-bcgw-yellow-dark pr-2 z-40 h-[60px] shadow-md">
         <div className="flex items-center justify-between h-full px-4">
           {/* Logo */}
           <div className="flex items-center">
             <img
               src={primaryLogo}
               alt="BCGW Logo"
-              className="w-10 h-10 object-contain"
+              className="w-14 h-14 object-contain"
             />
           </div>
 
           {/* User initials */}
-          <div className="w-10 h-10 bg-bcgw-yellow-dark rounded-full flex items-center justify-center">
-            <span className="text-[#05182a] font-bold text-sm">KL</span>
-          </div>
+          <button
+            onClick={handleProfileClick}
+            className="rounded-full bg-bcgw-yellow-dark text-bcgw-blue-dark font-semibold h-10 w-10 flex items-center justify-center hover:bg-[#9A762C] hover:cursor-pointer"
+            aria-label="Go to profile"
+          >
+            {initials}
+          </button>
         </div>
       </div>
 
-      {/* Navigation menu container */}
       <div className="fixed top-[60px] left-0 right-0 z-40">
-        {/* Navigation menu - shows when open */}
         {isOpen && (
           <div className="bg-white border-b border-gray-300">
-            <div className="flex items-center justify-between px-4 py-2">
+            <div className="flex items-center justify-between">
               {/* Navigation icons */}
-              <div className="flex items-center gap-6">
+              <div className="flex items-center">
                 {/* Home icon */}
                 <NavLink
                   to="/"
                   onClick={handleNavClick}
                   className={({ isActive }) =>
-                    `p-2 rounded ${isActive ? activeStyle : ""}`
+                    `p-3 rounded ${isActive ? activeStyle : ""}`
                   }
                 >
                   <img className="w-[28px] h-[28px]" src={home} alt="Home" />
@@ -105,9 +116,13 @@ const MobileNavigationBar = () => {
                 {/* Services icon */}
                 <button
                   onClick={handleServicesClick}
-                  className={`p-2 rounded ${isServiceActive() ? activeStyle : ""}`}
+                  className={`p-3 rounded ${isServiceActive() ? activeStyle : ""}`}
                 >
-                  <img className="w-[28px] h-[28px]" src={service} alt="Services" />
+                  <img
+                    className="w-[28px] h-[28px]"
+                    src={service}
+                    alt="Services"
+                  />
                 </button>
 
                 {/* Clients icon */}
@@ -115,10 +130,14 @@ const MobileNavigationBar = () => {
                   to="/clients"
                   onClick={handleNavClick}
                   className={({ isActive }) =>
-                    `p-2 rounded ${isActive ? activeStyle : ""}`
+                    `p-3 rounded ${isActive ? activeStyle : ""}`
                   }
                 >
-                  <img className="w-[28px] h-[28px]" src={clients} alt="Clients" />
+                  <img
+                    className="w-[28px] h-[28px]"
+                    src={clients}
+                    alt="Clients"
+                  />
                 </NavLink>
 
                 {/* User Management icon */}
@@ -126,7 +145,7 @@ const MobileNavigationBar = () => {
                   to="/user-management"
                   onClick={handleNavClick}
                   className={({ isActive }) =>
-                    `p-2 rounded ${isActive ? activeStyle : ""}`
+                    `p-3 rounded ${isActive ? activeStyle : ""}`
                   }
                 >
                   <img
@@ -138,7 +157,7 @@ const MobileNavigationBar = () => {
               </div>
 
               {/* Logout icon */}
-              <button onClick={handleLogOut} className="p-2">
+              <button onClick={handleLogOut} className="p-3">
                 <img className="w-[28px] h-[28px]" src={logout} alt="Logout" />
               </button>
             </div>
@@ -149,7 +168,10 @@ const MobileNavigationBar = () => {
                 <NavLink
                   to="/services/jane"
                   className={({ isActive }) =>
-                    `block px-6 py-3 text-base font-medium ${isActive ? "bg-bcgw-yellow-dark" : "bg-white hover:bg-gray-100"
+                    `block px-6 py-3 text-base font-medium ${
+                      isActive
+                        ? "bg-bcgw-yellow-dark"
+                        : "bg-white hover:bg-bcgw-yellow-light"
                     }`
                   }
                 >
@@ -158,7 +180,10 @@ const MobileNavigationBar = () => {
                 <NavLink
                   to="/services/acuity"
                   className={({ isActive }) =>
-                    `block px-6 py-3 text-base font-medium ${isActive ? "bg-bcgw-yellow-dark" : "bg-white hover:bg-gray-100"
+                    `block px-6 py-3 text-base font-medium ${
+                      isActive
+                        ? "bg-bcgw-yellow-dark"
+                        : "bg-white hover:bg-bcgw-yellow-light"
                     }`
                   }
                 >
@@ -167,7 +192,10 @@ const MobileNavigationBar = () => {
                 <NavLink
                   to="/services/paysimple"
                   className={({ isActive }) =>
-                    `block px-6 py-3 text-base font-medium ${isActive ? "bg-bcgw-yellow-dark" : "bg-white hover:bg-gray-100"
+                    `block px-6 py-3 text-base font-medium ${
+                      isActive
+                        ? "bg-bcgw-yellow-dark"
+                        : "bg-white hover:bg-bcgw-yellow-light"
                     }`
                   }
                 >
@@ -181,19 +209,13 @@ const MobileNavigationBar = () => {
         <div className="relative">
           <button
             onClick={handleToggle}
-            className="absolute left-0 bg-white border border-gray-300 border-t-0 rounded-b-lg px-3 py-1.5 flex flex-col items-center justify-center"
+            className="absolute left-0 bg-white border border-gray-300 border-t-0 rounded-b-lg px-3 py-1.5"
             aria-label={isOpen ? "Collapse menu" : "Expand menu"}
           >
             {isOpen ? (
-              <>
-                <ChevronUp size={14} strokeWidth={3} className="-mb-1.5" />
-                <ChevronUp size={14} strokeWidth={3} />
-              </>
+              <ChevronsUp size={16} strokeWidth={3} />
             ) : (
-              <>
-                <ChevronDown size={14} strokeWidth={3} className="-mb-1.5" />
-                <ChevronDown size={14} strokeWidth={3} />
-              </>
+              <ChevronsDown size={16} strokeWidth={3} />
             )}
           </button>
         </div>
@@ -206,7 +228,7 @@ const MobileNavigationBar = () => {
             open={openLogoutConfirmation}
             onClose={() => setOpenLogoutConfirmation(false)}
           />,
-          document.body
+          document.body,
         )}
     </>
   );

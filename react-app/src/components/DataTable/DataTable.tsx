@@ -1,6 +1,6 @@
 "use client";
 import { useNavigate } from "react-router-dom";
-import { SearchIcon } from "lucide-react";
+import { SearchIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { FiTrash } from "react-icons/fi";
 import { useEffect, useState } from "react";
 import DeleteRowPopup from "./DeleteRowPopup";
@@ -24,6 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "../ui/button";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -31,6 +32,8 @@ interface DataTableProps<TData, TValue> {
   handleDelete?: (selectedRows: TData[]) => void;
   tableType: string;
   tableHeaderExtras?: React.ReactNode;
+  pageSize?: number;
+  paginate?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -39,6 +42,8 @@ export function DataTable<TData, TValue>({
   handleDelete,
   tableType,
   tableHeaderExtras,
+  pageSize = 10,
+  paginate = true,
 }: DataTableProps<TData, TValue>) {
   const [globalFilter, setGlobalFilter] = useState("");
   const [rowSelection, setRowSelection] = useState({});
@@ -59,8 +64,25 @@ export function DataTable<TData, TValue>({
     onGlobalFilterChange: setGlobalFilter,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
-    state: { globalFilter, rowSelection, sorting },
+    state: {
+      globalFilter,
+      rowSelection,
+      sorting,
+    },
+    initialState: {
+      pagination: {
+        pageSize,
+      },
+    },
   });
+
+  const [pageInput, setPageInput] = useState<string>(
+    String(table.getState().pagination.pageIndex + 1),
+  );
+
+  useEffect(() => {
+    setPageInput(String(table.getState().pagination.pageIndex + 1));
+  }, [table.getState().pagination.pageIndex]);
 
   useEffect(() => {
     setRowsSelected(
@@ -68,35 +90,43 @@ export function DataTable<TData, TValue>({
         (item) => item.original,
       ),
     );
-  }, [rowSelection]);
+  }, [rowSelection, table]);
 
   return (
     <>
-      <div className="flex justify-between items-center my-3 flex-wrap gap-4">
+      <div
+        className={
+          tableType === "janeData"
+            ? "flex my-3 flex-wrap gap-4"
+            : "flex my-3 flex-wrap"
+        }
+      >
         <div className="flex items-center gap-4">
           {tableType === "janeData" && (
-            <button
-              className={`${
-                rowsSelected.length === 0
-                  ? "bg-bcgw-gray-light cursor-not-allowed"
-                  : "bg-bcgw-yellow-dark cursor-pointer hover:bg-bcgw-yellow-light"
-              } text-base border border-black py-1.5 font-bold px-6 rounded-[10px]`}
+            <Button
+              variant={"yellow"}
+              className={"rounded-lg text-sm flex items-center gap-2"}
               disabled={rowsSelected.length === 0}
               onClick={openModal}
+              aria-label="Delete selected rows"
             >
-              <div className="flex items-center gap-2">
-                <FiTrash /> Delete
-              </div>
-            </button>
+              <FiTrash /> Delete
+            </Button>
           )}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div
+          className={
+            tableType === "janeData"
+              ? "flex items-center gap-3 w-[80%]"
+              : "flex items-center gap-3 w-full"
+          }
+        >
           {(tableType === "clientList" || tableType === "janeData") && (
             <div className="flex items-center w-full max-w-sm border bg-bcgw-gray-light p-1.5">
               <input
                 type="text"
-                className="flex-grow border-none outline-none bg-bcgw-gray-light"
+                className="flex-grow border-none min-w-0 outline-none bg-bcgw-gray-light"
                 value={table.getState().globalFilter ?? ""}
                 onChange={(event) => table.setGlobalFilter(event.target.value)}
                 placeholder="Search"
@@ -189,32 +219,100 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
 
-      {/* pagination (unchanged) */}
-      {table.getCoreRowModel().rows.length >= 10 && (
-        <div className="flex items-center justify-end space-x-2 py-3">
+      {/* pagination */}
+      {paginate && table.getPageCount() > 1 && (
+        <div className="flex items-center justify-end py-3">
+          <div className="flex items-center mr-6">
+            <span className="mr-4 text-base font-medium">Page</span>
+            <div className="mr-3">
+              <input
+                type="text"
+                aria-label="Page number"
+                value={pageInput}
+                disabled={table.getPageCount() <= 1}
+                onChange={(e) => {
+                  const v = e.target.value.replace(/[^0-9]/g, "");
+                  setPageInput(v);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    const requested = Number(pageInput);
+                    const total = table.getPageCount();
+                    if (
+                      Number.isInteger(requested) &&
+                      requested >= 1 &&
+                      requested <= total
+                    ) {
+                      table.setPageIndex(requested - 1);
+                    } else {
+                      setPageInput(
+                        String(table.getState().pagination.pageIndex + 1),
+                      );
+                    }
+                  }
+                }}
+                onBlur={() => {
+                  const requested = Number(pageInput);
+                  const total = table.getPageCount();
+                  if (
+                    Number.isInteger(requested) &&
+                    requested >= 1 &&
+                    requested <= total
+                  ) {
+                    table.setPageIndex(requested - 1);
+                  } else {
+                    setPageInput(
+                      String(table.getState().pagination.pageIndex + 1),
+                    );
+                  }
+                }}
+                className={`border-2 border-black w-8 h-8 text-center focus:outline-none focus:ring-2 focus:ring-[#0C3D6B] ${
+                  table.getPageCount() <= 1
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                }`}
+              />
+            </div>
+            <span className="text-base">of {table.getPageCount()}</span>
+          </div>
+
           <div className="flex items-center gap-2">
-            <button
-              className={`border border-black w-8 h-8 flex items-center justify-center pb-1 ${
+            <Button
+              variant="ghost"
+              className={`rounded-none w-8 h-8 flex items-center justify-center border-2 ${
                 table.getCanPreviousPage()
-                  ? "cursor-pointer hover:bg-bcgw-gray-light"
-                  : "cursor-not-allowed opacity-50"
+                  ? "border-black text-[#222] cursor-pointer"
+                  : "border-gray-300 text-gray-300 cursor-not-allowed"
               }`}
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
+              aria-label="Previous page"
             >
-              {"<"}
-            </button>
-            <button
-              className={`border border-black w-8 h-8 flex items-center justify-center pb-1 ${
+              <ChevronLeft
+                size={14}
+                className={
+                  table.getCanPreviousPage() ? "text-[#222]" : "text-gray-300"
+                }
+              />
+            </Button>
+            <Button
+              variant="ghost"
+              className={`rounded-none w-8 h-8 flex items-center justify-center border-2 ${
                 table.getCanNextPage()
-                  ? "cursor-pointer hover:bg-bcgw-gray-light"
-                  : "cursor-not-allowed opacity-50"
+                  ? "border-black text-[#222] cursor-pointer"
+                  : "border-gray-300 text-gray-300 cursor-not-allowed"
               }`}
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
+              aria-label="Next page"
             >
-              {">"}
-            </button>
+              <ChevronRight
+                size={14}
+                className={
+                  table.getCanNextPage() ? "text-[#222]" : "text-gray-300"
+                }
+              />
+            </Button>
           </div>
         </div>
       )}

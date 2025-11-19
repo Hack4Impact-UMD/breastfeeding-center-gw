@@ -6,9 +6,11 @@ export const janeQueries = createQueryKeys("janeData", {
     startDate,
     endDate,
   ],
-  appts: (startDate?: string, endDate?: string) => [
+  appts: (startDate?: string, endDate?: string, clientId?: string) => [
     "appts",
     startDate,
     endDate,
+    clientId,
   ],
+  patientId: (patientId: string) => ["patientId", patientId],
 });

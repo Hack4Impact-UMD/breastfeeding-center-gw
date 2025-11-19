@@ -13,8 +13,8 @@ const ProfileIcon: React.FC<ProfileIconProps> = ({
   return (
     <div
       style={{
-        width: `${size}px`,
-        height: `${size}px`,
+        minWidth: `${size}px`,
+        minHeight: `${size}px`,
       }}
       className={`border-[3px] rounded-full flex items-center justify-center bg-bcgw-yellow-dark border-black`}
     >

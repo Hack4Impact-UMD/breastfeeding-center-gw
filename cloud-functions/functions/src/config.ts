@@ -17,10 +17,19 @@ const inviteExpirationDays = defineInt("INVITE_EXPIRE_DAYS", {
   default: 7,
 });
 
+const acuityUserId = defineString("ACUITY_USER_ID", {
+  default: "",
+});
+const acuityAPIKey = defineString("ACUITY_API_KEY", {
+  default: "",
+});
+
 const config = {
   rootUserEmail,
   inviteExpirationDays,
   rootUserSecret,
+  acuityAPIKey,
+  acuityUserId,
 };
 
 export { config };

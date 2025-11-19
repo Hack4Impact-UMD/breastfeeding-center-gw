@@ -8,7 +8,7 @@ permissions:
   contents: read
   pull-requests: write
 jobs:
-  build_and_preview:
+  build_and_preview_frontend:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     steps:
@@ -20,3 +20,35 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BREASTFEEDING_CENTER_GW }}
           projectId: breastfeeding-center-gw
+  build_functions:
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cloud-functions/functions
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Cache npm dependencies for functions
+        uses: actions/cache@v4
+        with:
+          path: cloud-functions/functions/node_modules
+          key: ${{ runner.os }}-npm-functions-${{ hashFiles('cloud-functions/functions/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-functions-
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Lint Cloud Functions
+        run: npm run lint
+
+      - name: Build Cloud Functions
+        run: npm run build

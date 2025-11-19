@@ -21,9 +21,8 @@ import { TooltipProvider } from "./components/ui/tooltip";
 import { Button } from "./components/ui/button";
 import RequireNoAuth from "./auth/RequireNoAuth";
 import { axiosClient } from "./lib/utils";
-import { getAllJaneApptsInRange } from "./services/janeService";
+import { getClientByPatientId } from "./services/janeService";
 import LayoutShell from "./pages/LayoutShell";
-// import "@tremor/react/dist/esm/tremor.css";
 
 function App() {
   return (
@@ -66,7 +65,7 @@ function App() {
                 />
                 <Route path="/clients" element={<ClientListPage />} />
                 <Route
-                  path="/clients/journey"
+                  path="/clients/journey/:id"
                   element={<ClientJourneyPage />}
                 />
                 <Route path="/profile" element={<ProfilePage />} />
@@ -86,7 +85,7 @@ function App() {
                         <Button
                           variant={"yellow"}
                           onClick={async () => {
-                            await getAllJaneApptsInRange();
+                            await getClientByPatientId("100");
                           }}
                         >
                           TEST
@@ -120,17 +119,16 @@ function App() {
                         </Button>
                         <Button
                           variant={"gray"}
-                          disabled
                           className="rounded-full"
                           onClick={async () => {
                             const axiosInstance = await axiosClient();
                             await axiosInstance
-                              .get("/jane/appointments")
+                              .get("/jane/appointments?clientId=14806")
                               .then((response) => console.log(response))
                               .catch((error) => console.log(error));
                           }}
                         >
-                          TEST HERE
+                          TEST HERE!!
                         </Button>
                       </div>
                     </div>

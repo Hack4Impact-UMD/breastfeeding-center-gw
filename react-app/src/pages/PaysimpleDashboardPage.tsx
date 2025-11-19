@@ -9,7 +9,7 @@ import {
 } from "@/components/DateRangePicker/DateRangePicker";
 import { DataTable } from "@/components/DataTable/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
-import ColumnSortButton from "@/components/DataTable/ColumnSortIcon";
+import ColumnSortButton from "@/components/DataTable/ColumnSortButton";
 
 // record of colors to use for each rental item
 const colors: Record<string, string> = {
@@ -135,11 +135,11 @@ export default function PaysimpleDashboardPage() {
 
   return (
     <>
-      <div className="flex flex-col p-8 pr-20 pl-20 space-y-5">
+      <div className="flex flex-col py-14 px-10 sm:px-20 space-y-5">
         {/* Page Title */}
         <div className={centerItemsInDiv}>
           <div>
-            <h1 className="font-bold">Paysimple</h1>
+            <h1 className="font-bold text-4xl lg:text-5xl">Paysimple</h1>
           </div>
           {/*date picker*/}
           <div className="w-60">

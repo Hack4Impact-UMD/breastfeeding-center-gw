@@ -6,22 +6,18 @@ import {
 import { useJaneData } from "@/hooks/queries/useJaneData.ts";
 import { useDeleteJaneRecord } from "@/hooks/mutations/useDeleteJaneRecord.ts";
 import FileUploadPopup from "./FileUploadPopup.tsx";
-import FileUploadPopupMobile from "./FileUploadPopupMobile";
 import Loading from "@/components/Loading.tsx";
 import { JaneTableRow } from "@/types/JaneType.ts";
-//import { useState } from "react";
 import { DataTable } from "@/components/DataTable/DataTable.tsx";
 import { janeIDDataColumns } from "./JaneDataTableColumns.tsx";
 import { DateRange } from "react-day-picker";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button.tsx";
 const JaneDataPage = () => {
-  // styles
-  const buttonStyle =
-    "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light text-lg border-1 border-black-500 py-2 px-8 rounded-full cursor-pointer";
+  // style
   const centerItemsInDiv = "flex justify-between items-center";
 
   const [showUploadPopup, setShowUploadPopup] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange | undefined>(
     defaultDateRange,
   );
@@ -42,42 +38,14 @@ const JaneDataPage = () => {
     });
   };
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   return (
     <>
-      <div className="flex flex-col px-0 pr-[0px] ml-8 md:ml-0 py-6 md:p-8 md:pr-20 md:pl-20 w-full max-w-[365px] md:max-w-none">
-        {/* MOBILE HEADER (≤ md): title + floating date picker */}
-        <div className="relative block md:hidden">
-          <h1 className="mt-15 font-bold text-[30px] leading-tight">
-            JANE Uploaded Data
+      <div className="flex flex-col py-14 px-10 sm:px-20">
+        <div className="flex flex-col-reverse gap-4 md:flex-row md:items-center justify-between mb-4">
+          <h1 className="font-bold w-full text-4xl lg:text-5xl">
+            Jane Uploaded Data
           </h1>
-          <div className="absolute top-0 right-[12px]">
-            <div className="w-[220px] h-[45px]">
-              <DateRangePicker
-                enableYearNavigation
-                value={dateRange}
-                onChange={(range) => setDateRange(range)}
-                presets={defaultPresets}
-                className="w-[220px] h-[45px]"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* DESKTOP HEADER (md+): inline title + picker, no absolute positioning */}
-        <div className="hidden md:flex items-center justify-between mb-4">
-          <h1 className="font-bold text-[60px] leading-tight">
-            JANE Uploaded Data
-          </h1>
-          <div className="w-60">
+          <div className="flex justify-end">
             <DateRangePicker
               enableYearNavigation
               value={dateRange}
@@ -90,26 +58,19 @@ const JaneDataPage = () => {
 
         {/* UPLOAD BUTTON */}
         <div className={`${centerItemsInDiv} basis-20xs mt-4 mb-4`}>
-          <button
-            className={`${buttonStyle} mr-5 text-nowrap`}
+          <Button
+            variant={"yellow"}
+            className={"rounded-full text-lg py-6 px-8"}
             onClick={() => setShowUploadPopup(true)}
           >
             UPLOAD NEW SPREADSHEETS
-          </button>
+          </Button>
         </div>
 
-        {/* CONDITIONAL POPUP */}
-        {isMobile ? (
-          <FileUploadPopupMobile
-            isOpen={showUploadPopup}
-            onClose={() => setShowUploadPopup(false)}
-          />
-        ) : (
-          <FileUploadPopup
-            isOpen={showUploadPopup}
-            onClose={() => setShowUploadPopup(false)}
-          />
-        )}
+        <FileUploadPopup
+          isOpen={showUploadPopup}
+          onClose={() => setShowUploadPopup(false)}
+        />
 
         {/* DATA TABLE OR LOADING */}
         {isPending ? (
@@ -128,6 +89,7 @@ const JaneDataPage = () => {
             data={janeConsultations}
             handleDelete={handleDelete}
             tableType="janeData"
+            pageSize={10}
           />
         )}
       </div>

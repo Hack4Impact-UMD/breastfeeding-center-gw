@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import ColumnSortButton from "@/components/DataTable/ColumnSortIcon";
+import ColumnSortButton from "@/components/DataTable/ColumnSortButton";
 
 /* ---------- Trimester Attendance ---------- */
 export type TrimesterAttendance = {
