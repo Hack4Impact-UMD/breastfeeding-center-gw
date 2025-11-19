@@ -21,14 +21,12 @@ export function useClientListRows() {
       // map matching client ids to their list of jane appts
       const clientAppts: Map<string, JaneAppt[]> = new Map();
       for (const appt of appointments) {
-        console.log("processing", appt);
         if (!clientAppts.get(appt.patientId)) {
           clientAppts.set(appt.patientId, []);
         }
 
         clientAppts.get(appt.patientId)!.push(appt);
       }
-      console.log(clientAppts);
 
       const clients = await getAllClients();
 
