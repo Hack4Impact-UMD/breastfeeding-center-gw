@@ -731,7 +731,7 @@ export default function AcuityDashboardPage() {
                     value={selectedClass}
                     onChange={(e) => setSelectedClass(e.target.value)}
                   >
-                    <option>All Classes</option>
+                    <option>ALL CLASSES</option>
                     {allClassData.map((c) => (
                       <option key={c.key}>{c.key}</option>
                     ))}
