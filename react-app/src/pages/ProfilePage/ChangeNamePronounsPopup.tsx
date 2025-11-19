@@ -89,7 +89,7 @@ const ChangeNamePronounsPopup = ({
 
             {/* PRONOUNS */}
             <div className="flex flex-col sm:grid sm:grid-cols-[150px_1fr] sm:gap-x-2">
-              <label className="text-sm font-medium mb-1 sm:mb-0 sm:content-center">
+              <label className="text-sm sm:text-base font-medium mb-1 sm:mb-0 sm:content-center">
                 Pronouns
               </label>
               <select
