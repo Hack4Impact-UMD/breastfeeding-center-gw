@@ -129,10 +129,10 @@ export function instructorColumns(
       },
     },
     {
-      accessorKey: "clientsLostNames",
+      accessorKey: "instructorNames",
       header: ({ column }) => {
         return (
-          <ColumnSortButton column={column}>Clients Lost</ColumnSortButton>
+          <ColumnSortButton column={column}>Instructors</ColumnSortButton>
         );
       },
       cell: ({ row }) => {
@@ -156,5 +156,5 @@ export function instructorColumns(
         );
       },
     },
-  ];
+  ] as ColumnDef<InstructorAttendance>[];
 }

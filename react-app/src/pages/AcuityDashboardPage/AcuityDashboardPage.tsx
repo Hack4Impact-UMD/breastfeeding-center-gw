@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef } from "react";
 import {
   LineChart,
   LineSeries,
@@ -35,7 +35,7 @@ export default function AcuityDashboardPage() {
   const attendanceChartRef = useRef<HTMLDivElement>(null);
   const classPopularityChartRef = useRef<HTMLDivElement>(null);
   const instructorPopularityChartRef = useRef<HTMLDivElement>(null);
-  const [openRow, setOpenRow] = useState<InstructorAttendance | null>(null);
+  const [, setOpenRow] = useState<InstructorAttendance | null>(null);
 
   // ── CLASS dropdown state & data ───────────────────────────────
   const [selectedClass, setSelectedClass] = useState("ALL CLASSES");
@@ -417,19 +417,19 @@ export default function AcuityDashboardPage() {
   // ── INSTRUCTOR dropdown state & data ─────────────────────────
   const [selectedInstructor, setSelectedInstructor] = useState("ALL CLASSES");
 
-  const typeToCategory: Record<string, string> = {
-    "Postpartum Classes": "Postpartum",
-    "Prenatal Classes": "Prenatal",
-    "Infant Massage": "Infant Massage",
-    "Parent Groups": "Parent Groups",
-    "Childbirth Classes": "Childbirth",
-  };
+  // const typeToCategory: Record<string, string> = {
+  //   "Postpartum Classes": "Postpartum",
+  //   "Prenatal Classes": "Prenatal",
+  //   "Infant Massage": "Infant Massage",
+  //   "Parent Groups": "Parent Groups",
+  //   "Childbirth Classes": "Childbirth",
+  // };
 
-  const instructorTableRows = useMemo(() => {
-    if (selectedInstructor === "ALL CLASSES") return instructorData;
-    const cat = typeToCategory[selectedInstructor] ?? selectedInstructor;
-    return instructorData.filter((r) => r.category === cat);
-  }, [selectedInstructor, instructorData]);
+  // const instructorTableRows = useMemo(() => {
+  //   if (selectedInstructor === "ALL CLASSES") return instructorData;
+  //   const cat = typeToCategory[selectedInstructor] ?? selectedInstructor;
+  //   return instructorData.filter((r) => r.category === cat);
+  // }, [selectedInstructor, instructorData]);
 
   const allInstructorData = [
     {
@@ -519,20 +519,20 @@ export default function AcuityDashboardPage() {
     </div>
   );
 
-  const instructorPopularityTableExtras = (
-    <div className="w-full flex justify-end">
-      <select
-        className="h-9 rounded-md border bg-white px-3 text-sm"
-        value={selectedInstructor}
-        onChange={(e) => setSelectedInstructor(e.target.value)}
-      >
-        <option>ALL CLASSES</option>
-        {allInstructorData.map((ins) => (
-          <option key={ins.key}>{ins.key}</option>
-        ))}
-      </select>
-    </div>
-  );
+  // const instructorPopularityTableExtras = (
+  //   <div className="w-full flex justify-end">
+  //     <select
+  //       className="h-9 rounded-md border bg-white px-3 text-sm"
+  //       value={selectedInstructor}
+  //       onChange={(e) => setSelectedInstructor(e.target.value)}
+  //     >
+  //       <option>ALL CLASSES</option>
+  //       {allInstructorData.map((ins) => (
+  //         <option key={ins.key}>{ins.key}</option>
+  //       ))}
+  //     </select>
+  //   </div>
+  // );
 
   // ── Order By dropdown state & data ─────────────────────────
   // const [selectedOrder, setSelectedOrder] = useState("Order By");
@@ -557,21 +557,19 @@ export default function AcuityDashboardPage() {
         <div className={`${centerItemsInDiv} pt-4`}>
           <div className="flex flex-row">
             <button
-              className={`${graphTableButtonStyle} ${
-                attendanceDisplay == "graph"
+              className={`${graphTableButtonStyle} ${attendanceDisplay == "graph"
                   ? "bg-bcgw-gray-light"
                   : "bg-[#f5f5f5]"
-              }`}
+                }`}
               onClick={() => setAttendanceDisplay("graph")}
             >
               Graph
             </button>
             <button
-              className={`${graphTableButtonStyle} ${
-                attendanceDisplay == "table"
+              className={`${graphTableButtonStyle} ${attendanceDisplay == "table"
                   ? "bg-bcgw-gray-light"
                   : "bg-[#f5f5f5]"
-              }`}
+                }`}
               onClick={() => setAttendanceDisplay("table")}
             >
               Table
@@ -694,21 +692,19 @@ export default function AcuityDashboardPage() {
         <div className={`${centerItemsInDiv} pt-8`}>
           <div className="flex flex-row">
             <button
-              className={`${graphTableButtonStyle} ${
-                popularityDisplay == "graph"
+              className={`${graphTableButtonStyle} ${popularityDisplay == "graph"
                   ? "bg-bcgw-gray-light"
                   : "bg-[#f5f5f5]"
-              }`}
+                }`}
               onClick={() => setPopularityDisplay("graph")}
             >
               Graph
             </button>
             <button
-              className={`${graphTableButtonStyle} ${
-                popularityDisplay == "table"
+              className={`${graphTableButtonStyle} ${popularityDisplay == "table"
                   ? "bg-bcgw-gray-light"
                   : "bg-[#f5f5f5]"
-              }`}
+                }`}
               onClick={() => setPopularityDisplay("table")}
             >
               Table
