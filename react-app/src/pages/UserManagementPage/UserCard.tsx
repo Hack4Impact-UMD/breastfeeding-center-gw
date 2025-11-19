@@ -94,7 +94,7 @@ const UserCard: React.FC<{ user: User; singleDirector: boolean }> = ({
       {/* Change Access Modal (UI only, no functionality wired) */}
       <div>
         <Modal
-          open={true} 
+          open={isChangeAccessOpen} 
           onClose={() => setIsChangeAccessOpen(false)}
           height={220}
           width={475}
