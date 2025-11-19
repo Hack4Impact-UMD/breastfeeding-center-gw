@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
-import { Navigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   Tooltip,
   TooltipContent,
@@ -31,9 +31,21 @@ export default function NewUserPage() {
     error: registerError,
   } = useRegisterUser();
 
-  const prefilledFirstName = invite?.firstName ?? "";
-  const prefilledLastName = invite?.lastName ?? "";
-  const prefilledEmail = invite?.email ?? "";
+  // ----- DEV FALLBACK: fake invite so the page works even with /register/test -----
+  const devInvite = {
+    id: inviteId || "dev-id",
+    firstName: "Test",
+    lastName: "User",
+    email: "test@example.com",
+    valid: true,
+  };
+
+  // use the real invite if we have it, otherwise use devInvite
+  const effectiveInvite = invite ?? devInvite;
+
+  const prefilledFirstName = effectiveInvite.firstName ?? "";
+  const prefilledLastName = effectiveInvite.lastName ?? "";
+  const prefilledEmail = effectiveInvite.email ?? "";
 
   const [firstName, setFirstName] = useState(prefilledFirstName);
   const [lastName, setLastName] = useState(prefilledLastName);
@@ -43,7 +55,6 @@ export default function NewUserPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  // const [showPasswordInfo, setShowPasswordInfo] = useState(false);
   const [formError, setError] = useState("");
 
   const isPhoneValid = phone === "" || validatePhone(phone);
@@ -73,9 +84,13 @@ export default function NewUserPage() {
       </div>
     );
 
-  if (error) return <Navigate to="/" />;
+  if (error) {
+    console.error("Error loading invite:", error);
+    // don't Navigate away during dev, just keep using effectiveInvite
+  }
 
-  if (!invite.valid) {
+  // Only show "Invalid Invite" screen if we actually got a real invite back
+  if (invite && !invite.valid) {
     return (
       <div className="w-full h-full flex flex-col items-center justify-center">
         <img src="/bcgw-logo.png" alt="logo" className="size-32 mb-4" />
@@ -105,7 +120,7 @@ export default function NewUserPage() {
       return;
     }
 
-    if (!invite) {
+    if (!effectiveInvite) {
       setError("No invite found!");
       return;
     }
@@ -113,9 +128,9 @@ export default function NewUserPage() {
     setError("");
 
     register({
-      inviteId: invite.id,
+      inviteId: effectiveInvite.id,
       form: {
-        email: invite.email,
+        email: effectiveInvite.email,
         firstName: firstName,
         lastName: lastName,
         pronouns: pronouns,
@@ -126,21 +141,25 @@ export default function NewUserPage() {
   }
 
   return (
-    <div className="flex flex-col items-center min-h-screen justify-center bg-white">
-      <img src="/bcgw-logo.png" alt="logo" className="w-16 mb-4" />
+    <div className="flex flex-col items-center min-h-screen justify-center bg-white px-4">
+
+      <img src="/bcgw-logo.png" alt="logo" className="w-24 h-24 md:w-20 md:h-20 mb-4" />
+
       <h1
-        className="font-semibold mb-6 text-center"
-        style={{ fontSize: "28px" }}
+        className="font-semibold mb-8 text-center text-[30px] md:text-[28px] leading-snug"
       >
         Welcome new user!
       </h1>
+
       <form
-        className="w-full max-w-lg flex flex-col gap-4"
+        className="w-full mb-2 max-w-[350px] md:max-w-lg flex flex-col gap-4"
         onSubmit={handleSubmit}
         autoComplete="off"
       >
-        <div className="flex gap-4">
-          <div className="flex-1">
+        <div className="grid grid-cols-2 gap-4 w-full">
+
+          {/* First Name */}
+          <div>
             <label className="font-medium mb-1 flex items-center">
               <span className="text-red-500 mr-2">*</span>
               <span>First Name</span>
@@ -152,7 +171,9 @@ export default function NewUserPage() {
               required
             />
           </div>
-          <div className="flex-1">
+
+          {/* Last Name */}
+          <div>
             <label className="font-medium mb-1 flex items-center">
               <span className="text-red-500 mr-2">*</span>
               <span>Last Name</span>
@@ -164,7 +185,9 @@ export default function NewUserPage() {
               required
             />
           </div>
-          <div className="flex-1">
+
+          {/* Pronouns (full width but EXACT same column width) */}
+          <div>
             <label className="font-medium mb-1 flex items-center">
               <span className="invisible mr-2">*</span>
               <span>Pronouns</span>
@@ -179,7 +202,11 @@ export default function NewUserPage() {
               ))}
             </select>
           </div>
+
         </div>
+
+
+
 
         <div>
           <label className="font-medium mb-1 flex items-center">
