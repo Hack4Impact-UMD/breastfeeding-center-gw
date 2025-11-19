@@ -388,6 +388,24 @@ router.get(
 );
 
 router.get(
+  "/clients",
+  [isAuthenticated],
+  async (req: Request, res: Response) => {
+    try {
+      const clientsSnapshot = await db.collection(CLIENTS_COLLECTION).get();
+      const clients = clientsSnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      })) as Client[];
+      return res.status(200).json(clients);
+    } catch (e) {
+      logger.error("Error fetching clients:", e);
+      return res.status(500).send((e as Error).message);
+    }
+  },
+);
+
+router.get(
   "/client/:patient_id",
   [isAuthenticated],
   async (req: Request, res: Response) => {

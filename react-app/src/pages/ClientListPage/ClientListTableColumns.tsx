@@ -72,6 +72,10 @@ export const clientListColumns: ColumnDef<Client>[] = [
         </Button>
       );
     },
+    cell: ({ row }) => {
+      const value = row.getValue<number>("acuityClasses");
+      return value === 0 ? "N/A" : value;
+    },
   },
   {
     accessorKey: "janeConsults",
@@ -102,6 +106,10 @@ export const clientListColumns: ColumnDef<Client>[] = [
         </Button>
       );
     },
+    cell: ({ row }) => {
+      const value = row.getValue<number>("rentals");
+      return value === 0 ? "N/A" : value;
+    },
   },
   {
     accessorKey: "purchases",
@@ -116,6 +124,10 @@ export const clientListColumns: ColumnDef<Client>[] = [
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
       );
+    },
+    cell: ({ row }) => {
+      const value = row.getValue<number>("purchases");
+      return value === 0 ? "N/A" : value;
     },
   },
 ];
