@@ -37,6 +37,9 @@ export default function AcuityDashboardPage() {
   const instructorPopularityChartRef = useRef<HTMLDivElement>(null);
   const [, setOpenRow] = useState<InstructorAttendance | null>(null);
 
+  const chartDiv =
+    "flex flex-col items-center justify-start bg-white min-h-[400px] border-2 border-black p-5 mt-5 rounded-2xl";
+
   // ── CLASS dropdown state & data ───────────────────────────────
   const [selectedClass, setSelectedClass] = useState("ALL CLASSES");
 
@@ -557,19 +560,21 @@ export default function AcuityDashboardPage() {
         <div className={`${centerItemsInDiv} pt-4`}>
           <div className="flex flex-row">
             <button
-              className={`${graphTableButtonStyle} ${attendanceDisplay == "graph"
+              className={`${graphTableButtonStyle} ${
+                attendanceDisplay == "graph"
                   ? "bg-bcgw-gray-light"
                   : "bg-[#f5f5f5]"
-                }`}
+              }`}
               onClick={() => setAttendanceDisplay("graph")}
             >
               Graph
             </button>
             <button
-              className={`${graphTableButtonStyle} ${attendanceDisplay == "table"
+              className={`${graphTableButtonStyle} ${
+                attendanceDisplay == "table"
                   ? "bg-bcgw-gray-light"
                   : "bg-[#f5f5f5]"
-                }`}
+              }`}
               onClick={() => setAttendanceDisplay("table")}
             >
               Table
@@ -692,19 +697,21 @@ export default function AcuityDashboardPage() {
         <div className={`${centerItemsInDiv} pt-8`}>
           <div className="flex flex-row">
             <button
-              className={`${graphTableButtonStyle} ${popularityDisplay == "graph"
+              className={`${graphTableButtonStyle} ${
+                popularityDisplay == "graph"
                   ? "bg-bcgw-gray-light"
                   : "bg-[#f5f5f5]"
-                }`}
+              }`}
               onClick={() => setPopularityDisplay("graph")}
             >
               Graph
             </button>
             <button
-              className={`${graphTableButtonStyle} ${popularityDisplay == "table"
+              className={`${graphTableButtonStyle} ${
+                popularityDisplay == "table"
                   ? "bg-bcgw-gray-light"
                   : "bg-[#f5f5f5]"
-                }`}
+              }`}
               onClick={() => setPopularityDisplay("table")}
             >
               Table
@@ -720,45 +727,82 @@ export default function AcuityDashboardPage() {
           </button>
         </div>
 
+        <span className="self-start font-semibold text-2xl">
+          {popularityDisplay === "graph" ? (
+            <span>Class and Instructor Popularity Over Time</span>
+          ) : (
+            <span>Attendance By Class & Instructor</span>
+          )}
+          {popularityDisplay === "graph" ? <br /> : <></>} 2/19/25 - 3/19/25
+        </span>
         {/* Class Popularity Over Time */}
         <div
-          className={
-            popularityDisplay === "graph"
-              ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
-              : ""
-          }
+          // className={popularityDisplay === "graph" ? chartDiv : ""}
           ref={classPopularityChartRef}
         >
-          <div className="flex justify-between items-center space-x-4">
-            <div className="text-2xl font-semibold">
-              {popularityDisplay === "graph" ? (
-                <span>Class Attendance Over Time</span>
-              ) : (
-                <span>Class Attendance</span>
-              )}
-              {popularityDisplay === "graph" ? <br /> : <></>} 2/19/25 - 3/19/25
-            </div>
-
-            {popularityDisplay === "graph" ? (
-              // Class dropdown
-              <div className="flex items-center space-x-2">
-                <label className="text-sm font-medium"></label>
-                <select
-                  className="border rounded-md px-2 py-1 text-sm"
-                  value={selectedClass}
-                  onChange={(e) => setSelectedClass(e.target.value)}
-                >
-                  <option>All Classes</option>
-                  {allClassData.map((c) => (
-                    <option key={c.key}>{c.key}</option>
-                  ))}
-                </select>
-              </div>
-            ) : (
-              <></>
-            )}
-          </div>
+          {/* <div className="flex justify-between items-center space-x-4"> */}
           {popularityDisplay === "graph" ? (
+            <>
+              <div className="text-2xl font-semibold">Class Popularity</div>
+              {/* Class dropdown */}
+              <div className={chartDiv}>
+                <div className="self-end">
+                  <select
+                    className="border rounded-md px-2 py-1 text-sm"
+                    value={selectedClass}
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                  >
+                    <option>All Classes</option>
+                    {allClassData.map((c) => (
+                      <option key={c.key}>{c.key}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="w-full h-96">
+                  <LineChart
+                    height={300}
+                    data={filteredClassData}
+                    series={<LineSeries type="grouped" />}
+                  />
+                </div>
+              </div>
+
+              <div className="mt-8 text-2xl font-semibold">
+                Instructor Popularity
+              </div>
+              <div className={chartDiv}>
+                <div className="self-end">
+                  <select
+                    className="border rounded-md px-2 py-1 text-sm"
+                    value={selectedInstructor}
+                    onChange={(e) => setSelectedInstructor(e.target.value)}
+                  >
+                    <option>All Classes</option>
+                    {allInstructorData.map((ins) => (
+                      <option key={ins.key}>{ins.key}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="w-full h-96">
+                  <LineChart
+                    height={300}
+                    data={filteredInstructorData}
+                    series={<LineSeries type="grouped" />}
+                  />
+                </div>
+              </div>
+            </>
+          ) : (
+            <DataTable
+              columns={instructorColumns((row) => setOpenRow(row))}
+              data={instructorData}
+              tableType="default"
+              tableHeaderExtras={classPopularityTableExtras}
+              pageSize={5}
+            />
+          )}
+          {/* </div> */}
+          {/* {popularityDisplay === "graph" ? (
             <div className="w-full h-96">
               <LineChart
                 height={300}
@@ -774,11 +818,11 @@ export default function AcuityDashboardPage() {
               tableHeaderExtras={classPopularityTableExtras}
               pageSize={5}
             />
-          )}
+          )} */}
         </div>
 
         {/* Instructor Popularity Over Time */}
-        <div
+        {/* <div
           className={
             popularityDisplay === "graph"
               ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
@@ -823,7 +867,7 @@ export default function AcuityDashboardPage() {
           ) : (
             <></>
           )}
-        </div>
+        </div> */}
       </div>
     </>
   );
