@@ -45,14 +45,9 @@ function App() {
                 path="/register-success"
                 element={<RegisterSuccessPage />}
               />
-              <Route
-                path="/register/:inviteId"
-                element={
-                  <RequireNoAuth>
-                    <NewUserPage />
-                  </RequireNoAuth>
-                }
-              />
+              <Route path="/register/:inviteId" element={<NewUserPage />} />
+
+
 
               <Route
                 element={
