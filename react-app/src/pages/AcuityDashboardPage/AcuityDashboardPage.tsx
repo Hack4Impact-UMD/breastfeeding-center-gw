@@ -34,7 +34,6 @@ export default function AcuityDashboardPage() {
   const [popularityDisplay, setPopularityDisplay] = useState<string>("graph");
   const attendanceChartRef = useRef<HTMLDivElement>(null);
   const classPopularityChartRef = useRef<HTMLDivElement>(null);
-  const instructorPopularityChartRef = useRef<HTMLDivElement>(null);
   const [, setOpenRow] = useState<InstructorAttendance | null>(null);
 
   const chartDiv =
@@ -593,7 +592,7 @@ export default function AcuityDashboardPage() {
           {attendanceDisplay === "graph" ? <br /> : <></>}2/19/25 - 3/19/25
         </span>
         {attendanceDisplay === "graph" ? (
-          <div className={chartDiv}>
+          <div className={chartDiv} ref={attendanceChartRef}>
             {/* Class dropdown */}
             <div className="self-end">
               <label className="text-sm font-medium"></label>
