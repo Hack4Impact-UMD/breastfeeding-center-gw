@@ -56,7 +56,7 @@ const ChangePhoneNumberPopup = ({
       <div className="flex flex-col bg-white rounded-2xl w-full">
         <ModalHeader onClose={() => onClose()} />
 
-          <div className="flex flex-col m-4 sm:m-8 mb-2 text-left space-y-3 sm:space-y-0">
+          <div className="flex flex-col m-4 sm:m-8 mb-2 text-left">
             {/* New Phone Number Input */}
             <div className="flex flex-col sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4">
               <label className="text-sm font-medium mb-1 sm:mb-0 sm:content-center">
@@ -107,7 +107,7 @@ const ChangePhoneNumberPopup = ({
             </div>
           </div>
 
-          <div className="flex justify-center sm:justify-end m-4 sm:m-8 mt-0">
+          <div className="flex justify-center sm:justify-end mx-4 sm:mx-8 mb-4 sm:mb-8">
             <Button
               variant={"yellow"}
               className="w-full sm:w-auto py-4 px-6 text-sm sm:text-base"

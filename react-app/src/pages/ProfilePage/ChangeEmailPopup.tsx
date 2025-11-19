@@ -60,7 +60,7 @@ const ChangeEmailPopup = ({
   <div className="flex flex-col bg-white rounded-2xl w-full h-auto overflow-y-auto sm:overflow-visible">
           <ModalHeader onClose={() => onClose()} />
           
-          <div className="flex flex-col m-4 sm:m-8 mb-2 text-left space-y-3 sm:space-y-0">
+          <div className="flex flex-col m-4 sm:m-8 mb-2 text-left">
             {/* New Email Input */}
             <div className="flex flex-col sm:grid sm:grid-cols-[170px_1fr] sm:gap-x-2">
               <label className="text-sm font-medium mb-1 sm:mb-0 sm:content-center">
@@ -82,7 +82,7 @@ const ChangeEmailPopup = ({
             </div>
 
             {/* Email validation error */}
-            <div className="sm:grid sm:grid-cols-[170px_1fr] sm:gap-x-2 min-h-[20px] sm:min-h-[30px]">
+            <div className="sm:grid sm:grid-cols-[170px_1fr] sm:gap-x-2 sm:min-h-[30px]">
               <div className="hidden sm:block"></div>
               {showEmailInvalidError && newEmail && (
                 <p className="text-red-600 text-xs sm:text-sm">Please enter a valid email</p>
@@ -90,7 +90,7 @@ const ChangeEmailPopup = ({
             </div>
 
             {/* Confirm Email Input */}
-            <div className="flex flex-col sm:grid sm:grid-cols-[170px_1fr] sm:gap-x-2">
+            <div className="flex flex-col sm:grid sm:grid-cols-[170px_1fr] sm:gap-x-2 mt-3 sm:mt-4">
               <label className="text-sm font-medium mb-1 sm:mb-0 sm:content-center">
                 Confirm New Email:
               </label>
@@ -107,7 +107,7 @@ const ChangeEmailPopup = ({
             </div>
 
             {/* Email match status */}
-            <div className="sm:grid sm:grid-cols-[170px_1fr] sm:gap-x-2 min-h-[20px]">
+            <div className="sm:grid sm:grid-cols-[170px_1fr] sm:gap-x-2">
               <div className="hidden sm:block"></div>
               {confirmNewEmail &&
                 (newEmail === confirmNewEmail ? (
@@ -118,7 +118,7 @@ const ChangeEmailPopup = ({
             </div>
           </div>
 
-          <div className="flex justify-center sm:justify-end m-4 sm:m-8 mt-0">
+          <div className="flex justify-center sm:justify-end mx-4 sm:mx-8 mb-4 sm:mb-8">
             <Button
               variant={"yellow"}
               className="w-full sm:w-auto py-4 px-6 text-sm sm:text-base"
