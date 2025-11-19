@@ -94,9 +94,9 @@ const UserCard: React.FC<{ user: User; singleDirector: boolean }> = ({
       {/* Change Access Modal (UI only, no functionality wired) */}
       <div>
         <Modal
-          open={isChangeAccessOpen} 
+          open={true} 
           onClose={() => setIsChangeAccessOpen(false)}
-          height={260}
+          height={220}
           width={475}
         >
           <div className="h-full flex flex-col relative">
