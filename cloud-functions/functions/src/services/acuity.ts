@@ -55,13 +55,14 @@ function processRawAcuityAppts(appts: RawAcuityAppt[]) {
     const birthDates = (formValues?.find(q => q.fieldID === 16417167)?.value)?.split(",");
     const dueDates = (formValues?.find(q => q.fieldID === 7203871)?.value)?.split(",");
 
-    const babyBirthDates = birthDates?.map(b => fromFormatArray(b, formats))?.sort() ?? [];
-    const babyDueDates = dueDates?.map(b => fromFormatArray(b, formats))?.sort() ?? [];
+    const babyBirthDates = birthDates?.map(b => fromFormatArray(b.trim(), formats))?.sort() ?? [];
+    const babyDueDates = dueDates?.map(b => fromFormatArray(b.trim(), formats))?.sort() ?? [];
 
-    const finalDates = []
-    for (let i = 0; i < Math.min(babyBirthDates.length, babyDueDates.length); i++) {
-      const babyBirthDate = babyBirthDates[i];
-      const babyDueDate = babyDueDates[i];
+    const finalDates: (DateTime<true> | null)[] = []
+    const count = Math.max(babyBirthDates.length, babyDueDates.length);
+    for (let i = 0; i < count; i++) {
+      const babyBirthDate = babyBirthDates[i] ?? null;
+      const babyDueDate = babyDueDates[i] ?? null;
       const finalBirthDate = babyBirthDate !== null ? babyBirthDate : babyDueDate;
       finalDates.push(finalBirthDate);
     }
