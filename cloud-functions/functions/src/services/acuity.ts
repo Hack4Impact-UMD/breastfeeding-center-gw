@@ -47,16 +47,20 @@ function fromFormatArray(dateStr: string | undefined, formats: string[]) {
   return null;
 }
 
+const INTAKE_FORM_ID = 1313857;
+const BIRTH_DATE_FIELD_ID = 16417167;
+const DUE_DATE_FIELD_ID = 7203871;
+
 function processRawAcuityAppts(appts: RawAcuityAppt[]) {
   return appts.map(appt => {
-    const formValues = appt.forms.find((form) => form.id === 1313857)?.values;
+    const formValues = appt.forms.find((form) => form.id === INTAKE_FORM_ID)?.values;
     const formats = ["LL-dd-yyyy", "L-d-yyyy", "LL-dd-yy", "D", "DD", "DDD", "LL/dd/yyyy", "L/d/yyyy", "LL/dd/yy", "yyyy-dd-LL", "yyyy-dd-L", "yyyy/dd/LL", "yyyy/dd/L"];
 
-    const birthDates = (formValues?.find(q => q.fieldID === 16417167)?.value)?.split(",");
-    const dueDates = (formValues?.find(q => q.fieldID === 7203871)?.value)?.split(",");
+    const birthDates = (formValues?.find(q => q.fieldID === BIRTH_DATE_FIELD_ID)?.value)?.split(",");
+    const dueDates = (formValues?.find(q => q.fieldID === DUE_DATE_FIELD_ID)?.value)?.split(",");
 
-    const babyBirthDates = birthDates?.map(b => fromFormatArray(b.trim(), formats))?.sort() ?? [];
-    const babyDueDates = dueDates?.map(b => fromFormatArray(b.trim(), formats))?.sort() ?? [];
+    const babyBirthDates = birthDates?.map(b => fromFormatArray(b.trim(), formats)) ?? [];
+    const babyDueDates = dueDates?.map(b => fromFormatArray(b.trim(), formats)) ?? [];
 
     const finalDates: (DateTime<true> | null)[] = []
     const count = Math.max(babyBirthDates.length, babyDueDates.length);
@@ -111,7 +115,7 @@ export async function getAllAcuityApptsInRange(
       },
     });
 
-    if (!Array.isArray(response.data)) throw new Error("Invalid resposne format!")
+    if (!Array.isArray(response.data)) throw new Error("Invalid response format!")
 
     return processRawAcuityAppts(response.data as RawAcuityAppt[])
   }
