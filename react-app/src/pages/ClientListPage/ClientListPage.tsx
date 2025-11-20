@@ -1,5 +1,6 @@
 import { clientListColumns } from "./ClientListTableColumns.tsx";
 import { DataTable } from "@/components/DataTable/DataTable.tsx";
+import Loading from "@/components/Loading.tsx";
 import { useClientListRows } from "@/hooks/queries/useClientListRows.ts";
 
 const ClientList = () => {
@@ -26,7 +27,7 @@ const ClientList = () => {
         {/*table section*/}
         <div className="mt-5">
           {isLoading ? (
-            <div>Loading...</div>
+            <Loading />
           ) : error ? (
             <div className="flex justify-center items-center p-8">
               <p className="text-red-600">

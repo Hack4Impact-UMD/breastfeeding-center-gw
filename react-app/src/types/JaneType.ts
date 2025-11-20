@@ -18,7 +18,7 @@ export interface Jane {
 
 export interface JaneAppt {
   apptId: string; // appt_id
-  patientId: string; // patient_number
+  clientId: string; // firebase client id
   startAt: string; // start_at ISO
   endAt: string; // end_at ISO
   visitType: VisitType; // treatment_name

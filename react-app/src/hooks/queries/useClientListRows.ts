@@ -17,28 +17,29 @@ export function useClientListRows() {
       const endDate = now.endOf("day").toISO();
 
       const appointments = await getAllJaneApptsInRange(startDate!, endDate!);
-
       // map matching client ids to their list of jane appts
       const clientAppts: Map<string, JaneAppt[]> = new Map();
       for (const appt of appointments) {
-        if (!clientAppts.get(appt.patientId)) {
-          clientAppts.set(appt.patientId, []);
+        if (!clientAppts.get(appt.clientId)) {
+          clientAppts.set(appt.clientId, []);
         }
 
-        clientAppts.get(appt.patientId)!.push(appt);
+        clientAppts.get(appt.clientId)!.push(appt);
       }
 
       const clients = await getAllClients();
 
       return clients.map((client: Client) => ({
-        firstName: client.firstName || "N/A",
-        lastName: client.lastName || "N/A",
-        email: client.email || "N/A",
+        id: client.id,
+        firstName: client.firstName,
+        lastName: client.lastName,
+        email: client.email,
         acuityClasses: 0,
-        janeConsults: clientAppts.get(client.id)?.length ?? 0,
+        janeConsults: client.janeId
+          ? (clientAppts.get(client.id)?.length ?? 0)
+          : "N/A",
         rentals: 0,
         purchases: 0,
-        id: client.id,
       }));
     },
   });

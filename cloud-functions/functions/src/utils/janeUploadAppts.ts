@@ -122,7 +122,7 @@ function parseAppointment(appt: Record<string, string>) {
   ) {
     return null;
   }
-  janeAppt.patientId = appt.patient_number.trim();
+  janeAppt.clientId = appt.patient_number.trim();
 
   janeAppt.clinician =
     appt.staff_member_name === undefined ||
