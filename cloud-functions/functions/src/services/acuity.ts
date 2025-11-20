@@ -39,7 +39,7 @@ function fromFormatArray(dateStr: string | undefined, formats: string[]) {
   if (!dateStr) return null;
 
   for (const fmt of formats) {
-    const date = DateTime.fromFormat(dateStr, fmt)
+    const date = DateTime.fromFormat(dateStr, fmt, { zone: "est" });
     if (date.isValid) {
       return date;
     }
