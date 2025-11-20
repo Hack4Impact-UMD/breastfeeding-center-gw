@@ -75,7 +75,7 @@ function processRawAcuityAppts(appts: RawAcuityAppt[]) {
       instructor: appt.calendar,
       class: appt.type,
       classCategory: appt.category,
-      babyDueDatesISO: finalDates.map(d => d?.toISODate()).filter(d => d !== null && d !== undefined)
+      babyDueDatesISO: finalDates.filter(d => d !== null && d !== undefined).map(d => d.toJSDate().toISOString())
     } as AcuityAppointment
   }
   )
@@ -130,6 +130,8 @@ export async function getAllAcuityApptsInRange(
         maxDate: actualChunkEnd.toISO(),
       },
     });
+
+    if (!Array.isArray(response.data)) throw new Error("Invalid response format!");
 
     acuityApptsInRange = [...acuityApptsInRange, ...processRawAcuityAppts(response.data)];
     currentStart = actualChunkEnd.plus({ milliseconds: 1 });
