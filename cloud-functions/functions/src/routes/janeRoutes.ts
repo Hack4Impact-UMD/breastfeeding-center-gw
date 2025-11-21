@@ -108,65 +108,18 @@ router.post(
         return (await clients.get()).docs.map((d) => d.data() as Client);
       }
 
-      async function appt_in_firebase(appt: JaneAppt): Promise<boolean> {
+      async function getAllFirebaseAppts(): Promise<JaneAppt[]> {
         // check if appt in firebase JaneAppt collection
         const querySnapshot = await db
           .collection(JANE_APPT_COLLECTION)
-          .where("apptId", "==", appt.apptId)
           .get();
 
         if (querySnapshot.docs.length == 0) {
-          // logger.info(
-          //   `No matching appointment in JaneAppt collection for appointment: ${appt.apptId}`,
-          // );
-          return false;
+          return [];
         }
-        return true;
+        return querySnapshot.docs.map(d => d.data() as JaneAppt);
       }
 
-      // async function client_in_firebase(patientId: string): Promise<boolean> {
-      //   // check patientid in firebase client collection
-      //   const querySnapshot = await db
-      //     .collection(CLIENTS_COLLECTION)
-      //     .where("id", "==", patientId)
-      //     .get();
-      //
-      //   if (querySnapshot.docs.length == 0) {
-      //     // logger.info(
-      //     //   `No matching client in Client collection for client ID: ${patientId}`,
-      //     // );
-      //     return false;
-      //   }
-      //   return true;
-      // }
-      //
-      // async function get_client_from_firebase(
-      //   patientId: string,
-      // ): Promise<Client> {
-      //   const querySnapshot = await db
-      //     .collection(CLIENTS_COLLECTION)
-      //     .where("id", "==", patientId)
-      //     .get();
-      //
-      //   // querySnapshot is guaranteed to not be empty
-      //   const doc = querySnapshot.docs[0];
-      //   const data = doc.data();
-      //
-      //   const client: Client = {
-      //     id: data.id,
-      //     firstName: data.firstName,
-      //     ...(data.middleName && { middleName: data.middleName }),
-      //     lastName: data.lastName,
-      //     email: data.email,
-      //     ...(data.phone && { phone: data.phone }),
-      //     ...(data.insurance && { insurance: data.insurance }),
-      //     ...(data.paysimpleId && { paysimpleId: data.paysimpleId }),
-      //     baby: data.baby,
-      //   };
-      //
-      //   return client;
-      // }
-      //
       function clientExists(patientId: string): boolean {
         return clientMap.has(patientId);
       }
@@ -174,6 +127,10 @@ router.post(
       const parentsToAdd: Client[] = [];
       const apptsToAdd: JaneAppt[] = [];
 
+      const firebaseAppts = await getAllFirebaseAppts();
+      const firebaseApptIdsSet = new Set(...firebaseAppts.map(a => a.apptId));
+
+      // iterate through each group of appts with the same start time + clinician
       for (const appointments of appointments_map.values()) {
         let parent = null; // Client type
         const babies: Baby[] = []; // list of baby type
@@ -196,7 +153,7 @@ router.post(
             }
           } else {
             // the appt is for client
-            if (await appt_in_firebase(appt)) {
+            if (firebaseApptIdsSet.has(appt.apptId)) {
               parentApptExistsInFirebase = true;
               break;
             }

@@ -122,11 +122,13 @@ function parseAppointment(appt: Record<string, string>) {
   ) {
     return null;
   }
+
+  //TODO: This is supposed to be this way for now and gets overwritten later. We need the jane patient id to refer to patient names and babies that are in the clients sheet but not in firebase yet (ie. they do not have a generated uuid). We should look into ways of doing this cleaner, probably better to have a custom type here that adds janeId as a separate field.
   janeAppt.clientId = appt.patient_number.trim();
 
   janeAppt.clinician =
     appt.staff_member_name === undefined ||
-    String(appt.staff_member_name).trim() === ""
+      String(appt.staff_member_name).trim() === ""
       ? "N/A"
       : String(appt.staff_member_name).trim();
   janeAppt.firstVisit =
