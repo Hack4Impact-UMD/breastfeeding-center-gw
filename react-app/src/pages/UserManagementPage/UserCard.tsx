@@ -27,15 +27,15 @@ const UserCard: React.FC<{ user: User; singleDirector: boolean }> = ({
   const [isDirectorBlockOpen, setIsDirectorBlockOpen] = React.useState(false);
 
   return (
-     <div className="grid grid-cols-[1fr_auto] md:grid-cols-[auto_1fr_auto] items-center py-3 max-[375px]:pb-1 md:py-7 px-2 md:px-5 border-b border-black gap-2 max-[375px]:gap-1.5 md:gap-6">
+    <div className="grid grid-cols-[1fr_auto] md:grid-cols-[auto_1fr_auto] items-center py-3 max-[375px]:pb-1 md:py-7 px-2 md:px-5 border-b border-black gap-2 max-[375px]:gap-1.5 md:gap-6">
       <div className="hidden md:block">
-      <ProfileIcon initials={initials} size={102} />
+        <ProfileIcon initials={initials} size={102} />
       </div>
 
       {/* name + contact info */}
       <div className="min-w-0 overflow-hidden">
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-2 max-[375px]:gap-1.5">
-          <a className="text-xl max-[375px]:text-lg text-[#165896] w-65">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-2 max-[375px]:gap-1.5">
+          <a className="text-xl max-[375px]:text-lg text-[#165896] truncate">
             {user.lastName}, {user.firstName}
           </a>
           <span className={roleChipClass}>
@@ -53,9 +53,9 @@ const UserCard: React.FC<{ user: User; singleDirector: boolean }> = ({
 
       <div className="flex flex-col gap-3 max-[375px]:gap-2 lg:flex-row lg:gap-4 lg:justify-end flex-shrink-0">
         {profile?.auth_id === user.auth_id ||
-        profile?.type === "DIRECTOR" ||
-        (profile?.type === "ADMIN" &&
-          RoleLevels[profile.type] >= RoleLevels[user.type]) ? (
+          profile?.type === "DIRECTOR" ||
+          (profile?.type === "ADMIN" &&
+            RoleLevels[profile.type] >= RoleLevels[user.type]) ? (
           <>
             <Button
               className="max-[375px]:py-1 max-[375px]:px-2 max-[375px]:text-xs"
@@ -94,7 +94,7 @@ const UserCard: React.FC<{ user: User; singleDirector: boolean }> = ({
       {/* Change Access Modal (UI only, no functionality wired) */}
       <div>
         <Modal
-          open={isChangeAccessOpen} 
+          open={isChangeAccessOpen}
           onClose={() => setIsChangeAccessOpen(false)}
           height={220}
           width={475}
@@ -125,7 +125,7 @@ const UserCard: React.FC<{ user: User; singleDirector: boolean }> = ({
               >
                 {["DIRECTOR", "ADMIN", "VOLUNTEER"].map((role) =>
                   profile?.type === "DIRECTOR" ||
-                  RoleLevels[role as Role] <
+                    RoleLevels[role as Role] <
                     RoleLevels[profile?.type ?? "VOLUNTEER"] ? (
                     <option key={role} value={role}>
                       {role.charAt(0) + role.substring(1).toLocaleLowerCase()}
@@ -161,7 +161,7 @@ const UserCard: React.FC<{ user: User; singleDirector: boolean }> = ({
 
       {/* Remove Access - Confirm Modal (UI only) */}
       <Modal
-        open={isRemoveConfirmOpen} 
+        open={isRemoveConfirmOpen}
         onClose={() => setIsRemoveConfirmOpen(false)}
         height={220}
         width={520}

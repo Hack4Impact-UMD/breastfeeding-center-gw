@@ -7,6 +7,7 @@ import { useAllUsers } from "@/hooks/queries/useUsers";
 import Loading from "@/components/Loading";
 import { useMutation } from "@tanstack/react-query";
 import { sendUserInvite } from "@/services/inviteService";
+import { Role } from "@/types/UserType";
 
 const UserManagementPage: React.FC = () => {
   const [search, setSearch] = useState("");
@@ -42,7 +43,7 @@ const UserManagementPage: React.FC = () => {
       firstName: string;
       lastName: string;
       email: string;
-      role: string;
+      role: Role;
     }) => {
       await sendUserInvite(firstName, lastName, email, role);
     },

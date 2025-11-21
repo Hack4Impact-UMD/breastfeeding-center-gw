@@ -28,21 +28,9 @@ export default function NewUserPage() {
     error: registerError,
   } = useRegisterUser();
 
-  // ----- DEV FALLBACK: fake invite so the page works even with /register/test -----
-  const devInvite = {
-    id: inviteId || "dev-id",
-    firstName: "Test",
-    lastName: "User",
-    email: "test@example.com",
-    valid: true,
-  };
-
-  // use the real invite if we have it, otherwise use devInvite
-  const effectiveInvite = invite ?? devInvite;
-
-  const prefilledFirstName = effectiveInvite.firstName ?? "";
-  const prefilledLastName = effectiveInvite.lastName ?? "";
-  const prefilledEmail = effectiveInvite.email ?? "";
+  const prefilledFirstName = invite?.firstName ?? "";
+  const prefilledLastName = invite?.lastName ?? "";
+  const prefilledEmail = invite?.email ?? "";
 
   const [firstName, setFirstName] = useState(prefilledFirstName);
   const [lastName, setLastName] = useState(prefilledLastName);
@@ -117,7 +105,7 @@ export default function NewUserPage() {
       return;
     }
 
-    if (!effectiveInvite) {
+    if (!invite) {
       setError("No invite found!");
       return;
     }
@@ -125,9 +113,9 @@ export default function NewUserPage() {
     setError("");
 
     register({
-      inviteId: effectiveInvite.id,
+      inviteId: invite.id,
       form: {
-        email: effectiveInvite.email,
+        email: invite.email,
         firstName: firstName,
         lastName: lastName,
         pronouns: pronouns,
@@ -215,7 +203,7 @@ export default function NewUserPage() {
             onChange={(value) => setPhone(value || "")}
             defaultCountry="US"
             placeholder="Enter phone number"
-            className="border-[1.5px] border-black"
+            className="w-full"
           />
           {phone && !isPhoneValid && (
             <p className="text-red-600 text-sm mt-1">Phone number is invalid</p>

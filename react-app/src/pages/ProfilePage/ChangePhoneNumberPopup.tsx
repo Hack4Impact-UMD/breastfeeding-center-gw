@@ -66,7 +66,6 @@ const ChangePhoneNumberPopup = ({
               onChange={(value) => setNewPhone(value || "")}
               defaultCountry="US"
               placeholder="Enter phone number"
-              className="border-[1.5px] border-black"
             />
           </div>
 
@@ -86,7 +85,6 @@ const ChangePhoneNumberPopup = ({
               onChange={(value) => setConfirmNewPhone(value || "")}
               defaultCountry="US"
               placeholder="Confirm phone number"
-              className="border-[1.5px] border-black"
             />
           </div>
 
