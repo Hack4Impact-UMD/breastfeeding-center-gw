@@ -16,7 +16,7 @@ onInit(() => {
   logger.info("====CONFIG DETAILS END====");
 });
 
-exports.api = onRequest({ region: "us-east4", timeoutSeconds: 120 }, app);
+exports.api = onRequest({ region: "us-east4", timeoutSeconds: 120, memory: "512MiB" }, app);
 
 //TODO: this package is really old, doesn't have type definitions, and introduces some vulnerabilities.
 //It's best to switch to just making http requestions to the acuity api directly instead of using this.
