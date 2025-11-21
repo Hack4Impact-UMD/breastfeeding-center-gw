@@ -168,10 +168,9 @@ const MobileNavigationBar = () => {
                 <NavLink
                   to="/services/jane"
                   className={({ isActive }) =>
-                    `block px-6 py-3 text-base font-medium ${
-                      isActive
-                        ? "bg-bcgw-yellow-dark"
-                        : "bg-white hover:bg-bcgw-yellow-light"
+                    `block px-6 py-3 text-base font-medium ${isActive
+                      ? "bg-bcgw-yellow-dark"
+                      : "bg-white hover:bg-bcgw-yellow-light"
                     }`
                   }
                 >
@@ -180,10 +179,9 @@ const MobileNavigationBar = () => {
                 <NavLink
                   to="/services/acuity"
                   className={({ isActive }) =>
-                    `block px-6 py-3 text-base font-medium ${
-                      isActive
-                        ? "bg-bcgw-yellow-dark"
-                        : "bg-white hover:bg-bcgw-yellow-light"
+                    `block px-6 py-3 text-base font-medium ${isActive
+                      ? "bg-bcgw-yellow-dark"
+                      : "bg-white hover:bg-bcgw-yellow-light"
                     }`
                   }
                 >
@@ -192,10 +190,9 @@ const MobileNavigationBar = () => {
                 <NavLink
                   to="/services/paysimple"
                   className={({ isActive }) =>
-                    `block px-6 py-3 text-base font-medium ${
-                      isActive
-                        ? "bg-bcgw-yellow-dark"
-                        : "bg-white hover:bg-bcgw-yellow-light"
+                    `block px-6 py-3 text-base font-medium ${isActive
+                      ? "bg-bcgw-yellow-dark"
+                      : "bg-white hover:bg-bcgw-yellow-light"
                     }`
                   }
                 >

@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import {
   Tooltip,
   TooltipContent,
@@ -71,7 +71,7 @@ export default function NewUserPage() {
 
   if (error) {
     console.error("Error loading invite:", error);
-    // don't Navigate away during dev, just keep using effectiveInvite
+    return <Navigate to="/" />
   }
 
   // Only show "Invalid Invite" screen if we actually got a real invite back
@@ -238,7 +238,7 @@ export default function NewUserPage() {
               </TooltipTrigger>
               <TooltipContent
                 side="bottom"
-                className="p-0 border-0 bg-transparent rounded text-sm"
+                className="p-0 border-0 bg-transparent rounded text-sm [&_svg]:stroke-[#0F4374] [&_svg]:fill-[#0F4374] [&_svg]:bg-[#0F4374]"
               >
                 <div className="bg-[#0F4374] text-white p-3 rounded-lg shadow-md">
                   <ul className="text-sm list-disc list-inside">

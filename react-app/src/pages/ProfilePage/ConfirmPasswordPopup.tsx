@@ -52,7 +52,7 @@ const ConfirmPasswordPopup = ({
   const ModalHeader = ({ onClose }: { onClose: () => void }) => (
     <>
       <div className="flex justify-between items-center my-2 mx-4">
-        <p className="text-lg">
+        <p className="text-base sm:text-lg">
           {editType == "Email"
             ? "Change Email"
             : editType == "Phone"
@@ -79,47 +79,55 @@ const ConfirmPasswordPopup = ({
         height={220}
         width={500}
       >
-        <div className="flex flex-col h-full">
-          <div>
+        <div className="flex flex-col bg-white rounded-2xl w-full">
             <ModalHeader
               onClose={() => {
                 handleOnClose();
               }}
             />
-            <div className="grid grid-cols-[190px_1fr] m-8 mb-2 gap-x-2 text-left">
-              <label className="text-md font-medium text-nowrap content-center">
-                Enter Current Password:
-              </label>
-              <input
-                type="password"
-                value={currentPasswordInput}
-                onChange={(e) => setCurrentPasswordInput(e.target.value)}
-                onKeyDown={(event) => {
-                  if (currentPasswordInput && event.key === "Enter") {
-                    event.preventDefault();
-                    handleNextFromCurrent();
-                  }
-                }}
-                className="w-full border-[1.5px] border-black px-2 py-2"
-                placeholder="Current password"
-              />
-              <div className="h-[20px]"></div>
-              {showIncorrectPassword && (
-                <p className="text-red-600 text-sm">Password is incorrect</p>
-              )}
-            </div>
+            
+            <div className="flex flex-col m-4 sm:m-8 mb-2 text-left">
+  {/* Current Password Input */}
+  <div className="flex flex-col sm:grid sm:grid-cols-[190px_1fr] sm:gap-x-2">
+    <label className="text-sm sm:text-base font-medium mb-1 sm:mb-0 text-nowrap sm:content-center">
+      Enter Current Password:
+    </label>
+    <input
+      type="password"
+      value={currentPasswordInput}
+      onChange={(e) => setCurrentPasswordInput(e.target.value)}
+      onKeyDown={(event) => {
+        if (currentPasswordInput && event.key === "Enter") {
+          event.preventDefault();
+          handleNextFromCurrent();
+        }
+      }}
+      className="w-full border-[1.5px] border-black px-3 py-2 text-sm sm:text-base"
+      placeholder="Current password"
+    />
+  </div>
+
+  {/* Error message - only show when there's an error */}
+  {showIncorrectPassword && (
+    <div className="sm:grid sm:grid-cols-[190px_1fr] sm:gap-x-2 mt-1">
+      <div className="hidden sm:block"></div>
+      <p className="text-red-600 text-xs sm:text-sm">Password is incorrect</p>
+    </div>
+  )}
+</div>
+
+<div className="flex justify-center sm:justify-end mx-4 sm:mx-8 mb-4 sm:mb-8">
+  <Button
+    variant={"yellow"}
+    className="w-full sm:w-auto py-4 px-6 text-sm sm:text-base"
+    disabled={!currentPasswordInput}
+    onClick={handleNextFromCurrent}
+  >
+    Next
+  </Button>
+</div>
           </div>
-          <div className="flex justify-end m-8 mt-0">
-            <Button
-              variant={"yellow"}
-              className="py-4 px-6 text-md"
-              disabled={!currentPasswordInput}
-              onClick={handleNextFromCurrent}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
+        
       </Modal>
 
       <ChangePhoneNumberPopup

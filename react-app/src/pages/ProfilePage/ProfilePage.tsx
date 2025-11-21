@@ -2,16 +2,21 @@ import { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import ConfirmPasswordPopup from "./ConfirmPasswordPopup";
 import ProfileIcon from "../../components/ProfileIcon";
+import ChangeNamePronounsPopup from "./ChangeNamePronounsPopup";
 
 const ProfilePage = () => {
   const [initials] = useState("VT");
-  const [name] = useState("Volunteer");
+  const [firstName] = useState("Volunteer");
+  const [lastName] = useState("Tester");
   const [pronouns] = useState("She/Her/Hers");
   const [email] = useState("kim@gmail.com");
   const [phone] = useState("585-105-6915");
   const [editType, setEditType] = useState("Email");
   const [openConfirmPasswordModal, setOpenConfirmPasswordModal] =
     useState(false);
+  const [openNamePronounsModal, setOpenNamePronounsModal] = useState(false);
+
+  const displayName = `${firstName} ${lastName}`;
 
   return (
     <div className="flex flex-col gap-8 justify-center py-14 px-10 sm:px-20">
@@ -20,11 +25,14 @@ const ProfilePage = () => {
           <ProfileIcon initials={initials} />
           <div className="flex flex-col lg:flex-row lg:gap-4 lg:items-end">
             <h1 className="font-normal text-4xl lg:text-5xl leading-tight text-left">
-              {name}
+              {displayName}
             </h1>
             <div className="flex items-center gap-2 text-sm mb-2">
               ({pronouns})
-              <FaEdit className="cursor-pointer text-gray-600 text-sm" />
+              <FaEdit 
+                className="cursor-pointer text-gray-600 text-sm" 
+                onClick={() => setOpenNamePronounsModal(true)}
+              />
             </div>
           </div>
         </div>
@@ -90,6 +98,14 @@ const ProfilePage = () => {
           />
         </div>
       </div>
+
+      <ChangeNamePronounsPopup
+        open={openNamePronounsModal}
+        onClose={() => setOpenNamePronounsModal(false)}
+        initialFirstName={firstName}
+        initialLastName={lastName}
+        initialPronouns={pronouns}
+      />
 
       <ConfirmPasswordPopup
         open={openConfirmPasswordModal}

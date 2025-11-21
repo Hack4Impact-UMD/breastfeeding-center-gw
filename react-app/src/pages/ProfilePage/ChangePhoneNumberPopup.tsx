@@ -11,11 +11,10 @@ const ChangePhoneNumberPopup = ({
   initialPhone,
 }: {
   open: boolean;
-  onClose: any;
+  onClose: () => void;
   initialPhone: string;
 }) => {
-  //@ts-expect-error
-  const [phone, setPhone] = useState(initialPhone);
+  const [, setPhone] = useState(initialPhone);
   const [newPhone, setNewPhone] = useState("");
   const [confirmNewPhone, setConfirmNewPhone] = useState("");
 
@@ -35,7 +34,7 @@ const ChangePhoneNumberPopup = ({
   const ModalHeader = ({ onClose }: { onClose: () => void }) => (
     <>
       <div className="flex justify-between items-center my-2 mx-4">
-        <p className="text-lg">Change Phone Number</p>
+        <p className="text-base sm:text-lg">Change Phone Number</p>
         <IoIosClose
           className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
           onClick={onClose}
@@ -53,12 +52,13 @@ const ChangePhoneNumberPopup = ({
 
   return (
     <Modal open={open} onClose={() => onClose()} height={290} width={600}>
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col bg-white rounded-2xl w-full">
         <ModalHeader onClose={() => onClose()} />
 
-        <div className="m-8 mb-2 space-y-4 text-left">
-          <div className="grid grid-cols-[210px_1fr] items-center gap-x-4">
-            <label className="text-sm font-medium">
+        <div className="flex flex-col m-4 sm:m-8 mb-2 text-left">
+          {/* New Phone Number Input */}
+          <div className="flex flex-col sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4">
+            <label className="text-sm font-medium mb-1 sm:mb-0 sm:content-center">
               Enter New Phone Number:
             </label>
             <PhoneInput
@@ -69,15 +69,17 @@ const ChangePhoneNumberPopup = ({
             />
           </div>
 
-          {newPhone && !isPhoneValid && (
-            <div className="grid grid-cols-[210px_1fr] gap-x-4">
-              <div></div>
-              <p className="text-red-600 text-sm">Phone number is invalid</p>
-            </div>
-          )}
+          {/* Phone validation error */}
+          <div className="sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4 min-h-[20px]">
+            <div className="hidden sm:block"></div>
+            {newPhone && !isPhoneValid && (
+              <p className="text-red-600 text-xs sm:text-sm">Phone number is invalid</p>
+            )}
+          </div>
 
-          <div className="grid grid-cols-[210px_1fr] items-center gap-x-4">
-            <label className="text-sm font-medium">
+          {/* Confirm Phone Number Input */}
+          <div className="flex flex-col sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4">
+            <label className="text-sm font-medium mb-1 sm:mb-0 sm:content-center">
               Confirm New Phone Number:
             </label>
             <PhoneInput
@@ -88,24 +90,24 @@ const ChangePhoneNumberPopup = ({
             />
           </div>
 
-          {confirmNewPhone && (
-            <div className="grid grid-cols-[210px_1fr] gap-x-4">
-              <div></div>
-              {newPhone === confirmNewPhone ? (
-                <p className="text-green-600 text-sm">Phone number matches.</p>
+          {/* Phone match status */}
+          <div className="sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4 min-h-[20px]">
+            <div className="hidden sm:block"></div>
+            {confirmNewPhone &&
+              (newPhone === confirmNewPhone ? (
+                <p className="text-green-600 text-xs sm:text-sm">Phone number matches.</p>
               ) : (
-                <p className="text-red-600 text-sm">
+                <p className="text-red-600 text-xs sm:text-sm">
                   Phone number does not match.
                 </p>
-              )}
-            </div>
-          )}
+              ))}
+          </div>
         </div>
 
-        <div className="flex justify-end m-8 mt-0">
+        <div className="flex justify-center sm:justify-end mx-4 sm:mx-8 mb-4 sm:mb-8">
           <Button
             variant={"yellow"}
-            className="py-4 px-6 text-md"
+            className="w-full sm:w-auto py-4 px-6 text-sm sm:text-base"
             disabled={
               !newPhone ||
               !confirmNewPhone ||
@@ -118,6 +120,7 @@ const ChangePhoneNumberPopup = ({
           </Button>
         </div>
       </div>
+
     </Modal>
   );
 };
