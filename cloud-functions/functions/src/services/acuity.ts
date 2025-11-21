@@ -3,6 +3,24 @@ import { config } from "../config";
 import { DateTime } from "luxon";
 import { AcuityAppointment } from "../types/acuityType";
 
+type RawAcuityAppt = {
+  id: number,
+  forms: {
+    id: number,
+    values: {
+      fieldID: number,
+      value: string
+    }[]
+  }[],
+  firstName: string,
+  lastName: string,
+  email: string,
+  datetime: string,
+  calendar: string,
+  type: string,
+  category: string
+}
+
 export const acuityClient = () => {
   const creds = {
     userId: config.acuityUserId.value(),
@@ -16,6 +34,57 @@ export const acuityClient = () => {
     },
   });
 };
+
+function fromFormatArray(dateStr: string | undefined, formats: string[]) {
+  if (!dateStr) return null;
+
+  for (const fmt of formats) {
+    const date = DateTime.fromFormat(dateStr, fmt, { zone: "est" });
+    if (date.isValid) {
+      return date;
+    }
+  }
+  return null;
+}
+
+const INTAKE_FORM_ID = 1313857;
+const BIRTH_DATE_FIELD_ID = 16417167;
+const DUE_DATE_FIELD_ID = 7203871;
+
+function processRawAcuityAppts(appts: RawAcuityAppt[]) {
+  return appts.map(appt => {
+    const formValues = appt.forms.find((form) => form.id === INTAKE_FORM_ID)?.values;
+    const formats = ["LL-dd-yyyy", "L-d-yyyy", "LL-dd-yy", "D", "DD", "DDD", "LL/dd/yyyy", "L/d/yyyy", "LL/dd/yy", "yyyy-dd-LL", "yyyy-dd-L", "yyyy/dd/LL", "yyyy/dd/L"];
+
+    const birthDates = (formValues?.find(q => q.fieldID === BIRTH_DATE_FIELD_ID)?.value)?.split(",");
+    const dueDates = (formValues?.find(q => q.fieldID === DUE_DATE_FIELD_ID)?.value)?.split(",");
+
+    const babyBirthDates = birthDates?.map(b => fromFormatArray(b.trim(), formats)) ?? [];
+    const babyDueDates = dueDates?.map(b => fromFormatArray(b.trim(), formats)) ?? [];
+
+    const finalDates: (DateTime<true> | null)[] = []
+    const count = Math.max(babyBirthDates.length, babyDueDates.length);
+    for (let i = 0; i < count; i++) {
+      const babyBirthDate = babyBirthDates[i] ?? null;
+      const babyDueDate = babyDueDates[i] ?? null;
+      const finalBirthDate = babyBirthDate !== null ? babyBirthDate : babyDueDate;
+      finalDates.push(finalBirthDate);
+    }
+
+    return {
+      id: appt.id,
+      firstName: appt.firstName,
+      lastName: appt.lastName,
+      email: appt.email,
+      datetime: appt.datetime,
+      instructor: appt.calendar,
+      class: appt.type,
+      classCategory: appt.category,
+      babyDueDatesISO: finalDates.filter(d => d !== null && d !== undefined).map(d => d.toJSDate().toISOString())
+    } as AcuityAppointment
+  }
+  )
+}
 
 export async function getAllAcuityApptsInRange(
   startDate: string,
@@ -45,7 +114,10 @@ export async function getAllAcuityApptsInRange(
         maxDate: endDateLuxon.toISO(),
       },
     });
-    return response.data;
+
+    if (!Array.isArray(response.data)) throw new Error("Invalid response format!")
+
+    return processRawAcuityAppts(response.data as RawAcuityAppt[])
   }
 
   // split into chunks
@@ -64,7 +136,9 @@ export async function getAllAcuityApptsInRange(
       },
     });
 
-    acuityApptsInRange = [...acuityApptsInRange, ...response.data];
+    if (!Array.isArray(response.data)) throw new Error("Invalid response format!");
+
+    acuityApptsInRange = [...acuityApptsInRange, ...processRawAcuityAppts(response.data)];
     currentStart = actualChunkEnd.plus({ milliseconds: 1 });
   }
 

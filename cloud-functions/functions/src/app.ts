@@ -5,6 +5,7 @@ import authRouter from "./routes/authRoutes";
 import userRouter from "./routes/userRoutes";
 import janeRouter from "./routes/janeRoutes";
 import inviteRouter from "./routes/inviteRoutes";
+import acuityRouter from "./routes/acuityRoutes"
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use("/auth", authRouter);
 app.use("/jane", janeRouter);
 app.use("/users", userRouter);
 app.use("/invites", inviteRouter);
+app.use("/acuity", acuityRouter)
 
 app.get("/", (_, res) => {
   res.status(200).json({
