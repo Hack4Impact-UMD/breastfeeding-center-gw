@@ -1,102 +1,18 @@
-import { Client, clientListColumns } from "./ClientListTableColumns.tsx";
+import { clientListColumns } from "./ClientListTableColumns.tsx";
 import { DataTable } from "@/components/DataTable/DataTable.tsx";
+import Loading from "@/components/Loading.tsx";
+import { useClientListRows } from "@/hooks/queries/useClientListRows.ts";
 
 const ClientList = () => {
   //styles
   const centerItemsInDiv = "flex justify-between items-center";
+  const {
+    data: clientData,
+    isPending: clientsLoading,
+    error,
+  } = useClientListRows();
 
-  const sampleClientData: Client[] = [
-    {
-      firstName: "Jane",
-      lastName: "Doe",
-      email: "jdoe@gmail.com",
-      acuityClasses: 2,
-      janeConsults: 3,
-      rentals: 2,
-      purchases: 1,
-    },
-    {
-      firstName: "Jess",
-      lastName: "Do",
-      email: "jdo098@gmail.com",
-      acuityClasses: 2,
-      janeConsults: 1,
-      rentals: 2,
-      purchases: 1,
-    },
-    {
-      firstName: "Joanne",
-      lastName: "De",
-      email: "jde111@gmail.com",
-      acuityClasses: 1,
-      janeConsults: 3,
-      rentals: 5,
-      purchases: 1,
-    },
-    {
-      firstName: "Jenny",
-      lastName: "Doe",
-      email: "jdoe5234@gmail.com",
-      acuityClasses: 1,
-      janeConsults: 3,
-      rentals: 2,
-      purchases: 4,
-    },
-    {
-      firstName: "Jan",
-      lastName: "Doe",
-      email: "jdoe1234@gmail.com",
-      acuityClasses: 2,
-      janeConsults: 2,
-      rentals: 1,
-      purchases: 1,
-    },
-    {
-      firstName: "Janette",
-      lastName: "Day",
-      email: "jday@gmail.com",
-      acuityClasses: 2,
-      janeConsults: 3,
-      rentals: 3,
-      purchases: 0,
-    },
-    {
-      firstName: "Jamie",
-      lastName: "Dane",
-      email: "jdane@gmail.com",
-      acuityClasses: 1,
-      janeConsults: 1,
-      rentals: 0,
-      purchases: 0,
-    },
-    {
-      firstName: "Janice",
-      lastName: "Di",
-      email: "jdi1@gmail.com",
-      acuityClasses: 4,
-      janeConsults: 5,
-      rentals: 9,
-      purchases: 2,
-    },
-    {
-      firstName: "Jennifer",
-      lastName: "Dio",
-      email: "jdio@gmail.com",
-      acuityClasses: 1,
-      janeConsults: 4,
-      rentals: 9,
-      purchases: 2,
-    },
-    {
-      firstName: "Julie",
-      lastName: "Diaz",
-      email: "jdiaz@gmail.com",
-      acuityClasses: 3,
-      janeConsults: 4,
-      rentals: 1,
-      purchases: 6,
-    },
-  ];
+  const isLoading = clientsLoading;
 
   return (
     <>
@@ -110,12 +26,22 @@ const ClientList = () => {
 
         {/*table section*/}
         <div className="mt-5">
-          <DataTable
-            columns={clientListColumns}
-            data={sampleClientData}
-            tableType="clientList"
-            pageSize={10}
-          />
+          {isLoading ? (
+            <Loading />
+          ) : error ? (
+            <div className="flex justify-center items-center p-8">
+              <p className="text-red-600">
+                Failed to load Client data: {error.message}
+              </p>
+            </div>
+          ) : (
+            <DataTable
+              columns={clientListColumns}
+              data={clientData}
+              tableType="clientList"
+              pageSize={10}
+            />
+          )}
         </div>
       </div>
     </>

@@ -25,6 +25,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "../ui/button";
+import { ClientTableRow } from "@/pages/ClientListPage/ClientListTableColumns";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -176,35 +177,39 @@ export function DataTable<TData, TValue>({
 
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  onClick={() => {
-                    if (tableType === "clientList") {
-                      navigate("/clients/journey");
-                    }
-                  }}
-                  data-state={row.getIsSelected() ? "selected" : "unselected"}
-                  className="group data-[state=selected]:bg-gray-200 data-[state=unselected]:bg-white"
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className={`${
-                        tableType === "clientList" ||
-                        tableType === "clientsLost"
-                          ? "cursor-pointer group-hover:bg-gray-300 transition-colors"
-                          : ""
-                      }`}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              table.getRowModel().rows.map((row) => {
+                const client = row.original as ClientTableRow;
+
+                return (
+                  <TableRow
+                    key={row.id}
+                    onClick={() => {
+                      if (tableType === "clientList") {
+                        navigate(`/clients/journey/${client.id}`);
+                      }
+                    }}
+                    data-state={row.getIsSelected() ? "selected" : "unselected"}
+                    className="group data-[state=selected]:bg-gray-200 data-[state=unselected]:bg-white"
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell
+                        key={cell.id}
+                        className={`${
+                          tableType === "clientList" ||
+                          tableType === "clientsLost"
+                            ? "cursor-pointer group-hover:bg-gray-300 transition-colors"
+                            : ""
+                        }`}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                );
+              })
             ) : (
               <TableRow>
                 <TableCell

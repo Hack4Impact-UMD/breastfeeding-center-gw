@@ -183,9 +183,9 @@ router.post(
 
         for (const appt of appointments) {
           // the appt is for baby
-          const patientName = patientNames[appt.patientId];
+          const patientName = patientNames[appt.clientId];
           if (is_baby_appt(appt)) {
-            const baby = babiesMap.get(appt.patientId); // find matching baby
+            const baby = babiesMap.get(appt.clientId); // find matching baby
             if (baby) {
               babies.push(baby);
             } else {
@@ -202,10 +202,9 @@ router.post(
             }
 
             // get the client info, either from firebase or the clients sheet if the client is not in the db yet
-            if (clientExists(appt.patientId)) {
-              const client = clientMap.get(appt.patientId);
+            if (clientExists(appt.clientId)) {
+              const client = clientMap.get(appt.clientId);
               parent = client;
-              // appt.patientId = client!.id; // set patientId to the  doc id
             } else {
               // if the client is not in firebase or the clients sheet, we cannot add this appointment
               // get the patient's first and last name and add them to the missing clients list
@@ -284,10 +283,10 @@ router.post(
         const batch = db.batch();
         chunk.forEach((appt) => {
           const { apptId } = appt;
-          const parentId = janeToDocIdMap.get(appt.patientId);
+          const parentId = janeToDocIdMap.get(appt.clientId);
           batch.set(
             db.collection(JANE_APPT_COLLECTION).doc(apptId),
-            { ...appt, patientId: parentId } as JaneAppt,
+            { ...appt, clientId: parentId } as JaneAppt,
             {
               merge: true,
             },
@@ -346,7 +345,7 @@ router.get(
 
       if (includeClient) {
         // bulk fetch clients, then join them with their appts
-        const clientIds = appts.map((appt) => appt.patientId);
+        const clientIds = appts.map((appt) => appt.clientId);
         // logger.info(clientIds);
 
         const clients = await db.getAll(
@@ -363,7 +362,7 @@ router.get(
 
         const appointmentsWithClient: (JaneAppt & { client?: Client })[] =
           appts.map((appt) => {
-            const client = clientsMap.get(appt.patientId);
+            const client = clientsMap.get(appt.clientId);
 
             if (client) {
               return { ...appt, client };
@@ -376,7 +375,7 @@ router.get(
       } else {
         // Convert documents to JaneAppt objects
         if (clientId) {
-          appts = appts.filter((a) => a.patientId === clientId);
+          appts = appts.filter((a) => a.clientId === clientId);
         }
         return res.status(200).json(appts);
       }
@@ -388,14 +387,32 @@ router.get(
 );
 
 router.get(
-  "/client/:patient_id",
+  "/clients",
   [isAuthenticated],
   async (req: Request, res: Response) => {
     try {
-      const patientId = req.params.patient_id;
+      const clientsSnapshot = await db.collection(CLIENTS_COLLECTION).get();
+      const clients = clientsSnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      })) as Client[];
+      return res.status(200).json(clients);
+    } catch (e) {
+      logger.error("Error fetching clients:", e);
+      return res.status(500).send((e as Error).message);
+    }
+  },
+);
 
-      // Get client document by patient_id
-      const doc = await db.collection(CLIENTS_COLLECTION).doc(patientId).get();
+router.get(
+  "/client/:client_id",
+  [isAuthenticated],
+  async (req: Request, res: Response) => {
+    try {
+      const clientId = req.params.client_id;
+
+      // Get client document by client_id
+      const doc = await db.collection(CLIENTS_COLLECTION).doc(clientId).get();
 
       if (!doc.exists) {
         return res.status(404).send("Client not found");
@@ -502,7 +519,7 @@ router.get(
       const clientDict: { [key: string]: Set<string> } = {};
 
       const uniquePatientIds = [
-        ...new Set(appts_filtered.map((a) => a.patientId)),
+        ...new Set(appts_filtered.map((a) => a.clientId)),
       ];
 
       const clientDocs = await db.getAll(
@@ -520,15 +537,15 @@ router.get(
       });
 
       for (const appt of appts_filtered) {
-        const matchingClient = clientsMap.get(appt.patientId);
+        const matchingClient = clientsMap.get(appt.clientId);
         if (matchingClient) {
           firstVisitClients.push(matchingClient);
-          if (!clientDict[appt.patientId]) {
-            clientDict[appt.patientId] = new Set();
+          if (!clientDict[appt.clientId]) {
+            clientDict[appt.clientId] = new Set();
           }
-          clientDict[appt.patientId].add(appt.apptId);
+          clientDict[appt.clientId].add(appt.apptId);
         } else {
-          logger.warn(`No client found with id ${appt.patientId}`);
+          logger.warn(`No client found with id ${appt.clientId}`);
         }
       }
       // For each client in the firstVisitClients list, get the list of all
@@ -536,7 +553,7 @@ router.get(
       // ?
       firstVisitClients.forEach((client: Client) => {
         const matchingAppts = appts
-          .filter((appt) => client.id === appt.patientId)
+          .filter((appt) => client.id === appt.clientId)
           .map((appt) => appt.apptId);
         clientDict[client.id] = new Set([
           ...clientDict[client.id],

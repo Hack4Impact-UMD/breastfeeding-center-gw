@@ -39,12 +39,6 @@ export const janeDataColumns: ColumnDef<JaneTableRow>[] = [
     },
   },
   {
-    accessorKey: "apptId",
-    header: ({ column }) => {
-      return <ColumnSortButton column={column}>Id</ColumnSortButton>;
-    },
-  },
-  {
     accessorKey: "email",
     header: ({ column }) => {
       return <ColumnSortButton column={column}>Email</ColumnSortButton>;
