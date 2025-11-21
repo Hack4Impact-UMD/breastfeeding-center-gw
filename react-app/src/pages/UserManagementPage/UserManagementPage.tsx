@@ -7,6 +7,7 @@ import { useAllUsers } from "@/hooks/queries/useUsers";
 import Loading from "@/components/Loading";
 import { useMutation } from "@tanstack/react-query";
 import { sendUserInvite } from "@/services/inviteService";
+import { Role } from "@/types/UserType";
 
 const UserManagementPage: React.FC = () => {
   const [search, setSearch] = useState("");
@@ -37,12 +38,14 @@ const UserManagementPage: React.FC = () => {
       firstName,
       lastName,
       email,
+      role,
     }: {
       firstName: string;
       lastName: string;
       email: string;
+      role: Role;
     }) => {
-      await sendUserInvite(firstName, lastName, email, "VOLUNTEER"); // TODO: update for different roles
+      await sendUserInvite(firstName, lastName, email, role);
     },
     onSuccess: () => {
       console.log("Invite sent!");
@@ -58,7 +61,7 @@ const UserManagementPage: React.FC = () => {
 
   return (
     <>
-      <div className="flex flex-col px-16 py-10">
+      <div className="flex flex-col  px-4 md:px-14 py-5 md:py-8">
         <UserFilters
           search={search}
           setSearch={setSearch}
@@ -67,9 +70,10 @@ const UserManagementPage: React.FC = () => {
           onAddUserClick={() => setShowAddModal(true)}
         />
 
-        <div className="flex justify-between items-center mt-4 pb-3 border-b border-gray-300">
-          <div className="text-lg font-semibold">Name</div>
-          <div className="text-lg font-semibold">Actions</div>
+        <div className="flex justify-between items-center mt-3 pb-2 px-2.5 border-b border-gray-300">
+          <div className="text-base font-semibold md:hidden">Info</div>
+          <div className="text-base font-semibold hidden md:block">Name</div>
+          <div className="text-base font-semibold">Actions</div>
         </div>
 
         {/* user list */}
