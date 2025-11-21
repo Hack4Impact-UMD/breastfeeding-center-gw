@@ -26,7 +26,6 @@ export function useJaneData(startDate?: string, endDate?: string) {
         const client = appointment.client;
         const tableRow: JaneTableRow = {
           apptId: appointment.apptId,
-          patientId: appointment.clientId,
           startAt: appointment.startAt,
           endAt: appointment.endAt,
           visitType: appointment.visitType,
