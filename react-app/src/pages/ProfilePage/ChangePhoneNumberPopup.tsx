@@ -11,11 +11,10 @@ const ChangePhoneNumberPopup = ({
   initialPhone,
 }: {
   open: boolean;
-  onClose: any;
+  onClose: () => void;
   initialPhone: string;
 }) => {
-  //@ts-expect-error
-  const [phone, setPhone] = useState(initialPhone);
+  const [, setPhone] = useState(initialPhone);
   const [newPhone, setNewPhone] = useState("");
   const [confirmNewPhone, setConfirmNewPhone] = useState("");
 
@@ -56,74 +55,72 @@ const ChangePhoneNumberPopup = ({
       <div className="flex flex-col bg-white rounded-2xl w-full">
         <ModalHeader onClose={() => onClose()} />
 
-          <div className="flex flex-col m-4 sm:m-8 mb-2 text-left">
-            {/* New Phone Number Input */}
-            <div className="flex flex-col sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4">
-              <label className="text-sm font-medium mb-1 sm:mb-0 sm:content-center">
-                Enter New Phone Number:
-              </label>
-              <PhoneInput
-                value={newPhone}
-                onChange={(value) => setNewPhone(value || "")}
-                defaultCountry="US"
-                placeholder="Enter phone number"
-                className="border-[1.5px] border-black"
-              />
-            </div>
-
-            {/* Phone validation error */}
-            <div className="sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4 min-h-[20px]">
-              <div className="hidden sm:block"></div>
-              {newPhone && !isPhoneValid && (
-                <p className="text-red-600 text-xs sm:text-sm">Phone number is invalid</p>
-              )}
-            </div>
-
-            {/* Confirm Phone Number Input */}
-            <div className="flex flex-col sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4">
-              <label className="text-sm font-medium mb-1 sm:mb-0 sm:content-center">
-                Confirm New Phone Number:
-              </label>
-              <PhoneInput
-                value={confirmNewPhone}
-                onChange={(value) => setConfirmNewPhone(value || "")}
-                defaultCountry="US"
-                placeholder="Confirm phone number"
-                className="border-[1.5px] border-black"
-              />
-            </div>
-
-            {/* Phone match status */}
-            <div className="sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4 min-h-[20px]">
-              <div className="hidden sm:block"></div>
-              {confirmNewPhone &&
-                (newPhone === confirmNewPhone ? (
-                  <p className="text-green-600 text-xs sm:text-sm">Phone number matches.</p>
-                ) : (
-                  <p className="text-red-600 text-xs sm:text-sm">
-                    Phone number does not match.
-                  </p>
-                ))}
-            </div>
+        <div className="flex flex-col m-4 sm:m-8 mb-2 text-left">
+          {/* New Phone Number Input */}
+          <div className="flex flex-col sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4">
+            <label className="text-sm font-medium mb-1 sm:mb-0 sm:content-center">
+              Enter New Phone Number:
+            </label>
+            <PhoneInput
+              value={newPhone}
+              onChange={(value) => setNewPhone(value || "")}
+              defaultCountry="US"
+              placeholder="Enter phone number"
+            />
           </div>
 
-          <div className="flex justify-center sm:justify-end mx-4 sm:mx-8 mb-4 sm:mb-8">
-            <Button
-              variant={"yellow"}
-              className="w-full sm:w-auto py-4 px-6 text-sm sm:text-base"
-              disabled={
-                !newPhone ||
-                !confirmNewPhone ||
-                !doPhoneNumbersMatch ||
-                !isPhoneValid
-              }
-              onClick={handleNewPhoneSubmit}
-            >
-              Save
-            </Button>
+          {/* Phone validation error */}
+          <div className="sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4 min-h-[20px]">
+            <div className="hidden sm:block"></div>
+            {newPhone && !isPhoneValid && (
+              <p className="text-red-600 text-xs sm:text-sm">Phone number is invalid</p>
+            )}
+          </div>
+
+          {/* Confirm Phone Number Input */}
+          <div className="flex flex-col sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4">
+            <label className="text-sm font-medium mb-1 sm:mb-0 sm:content-center">
+              Confirm New Phone Number:
+            </label>
+            <PhoneInput
+              value={confirmNewPhone}
+              onChange={(value) => setConfirmNewPhone(value || "")}
+              defaultCountry="US"
+              placeholder="Confirm phone number"
+            />
+          </div>
+
+          {/* Phone match status */}
+          <div className="sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4 min-h-[20px]">
+            <div className="hidden sm:block"></div>
+            {confirmNewPhone &&
+              (newPhone === confirmNewPhone ? (
+                <p className="text-green-600 text-xs sm:text-sm">Phone number matches.</p>
+              ) : (
+                <p className="text-red-600 text-xs sm:text-sm">
+                  Phone number does not match.
+                </p>
+              ))}
           </div>
         </div>
-      
+
+        <div className="flex justify-center sm:justify-end mx-4 sm:mx-8 mb-4 sm:mb-8">
+          <Button
+            variant={"yellow"}
+            className="w-full sm:w-auto py-4 px-6 text-sm sm:text-base"
+            disabled={
+              !newPhone ||
+              !confirmNewPhone ||
+              !doPhoneNumbersMatch ||
+              !isPhoneValid
+            }
+            onClick={handleNewPhoneSubmit}
+          >
+            Save
+          </Button>
+        </div>
+      </div>
+
     </Modal>
   );
 };

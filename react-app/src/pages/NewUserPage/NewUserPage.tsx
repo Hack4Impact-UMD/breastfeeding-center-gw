@@ -69,9 +69,13 @@ export default function NewUserPage() {
       </div>
     );
 
-  if (error) return <Navigate to="/" />;
+  if (error) {
+    console.error("Error loading invite:", error);
+    return <Navigate to="/" />
+  }
 
-  if (!invite.valid) {
+  // Only show "Invalid Invite" screen if we actually got a real invite back
+  if (invite && !invite.valid) {
     return (
       <div className="w-full h-full flex flex-col items-center justify-center">
         <img src="/bcgw-logo.png" alt="logo" className="size-32 mb-4" />
@@ -122,21 +126,25 @@ export default function NewUserPage() {
   }
 
   return (
-    <div className="flex flex-col items-center min-h-screen justify-center bg-white">
-      <img src="/bcgw-logo.png" alt="logo" className="w-16 mb-4" />
+    <div className="flex flex-col items-center min-h-screen justify-center bg-white px-4">
+
+      <img src="/bcgw-logo.png" alt="logo" className="w-24 h-24 md:w-20 md:h-20 mb-4" />
+
       <h1
-        className="font-semibold mb-6 text-center"
-        style={{ fontSize: "28px" }}
+        className="font-semibold mb-8 text-center text-[30px] md:text-[28px] leading-snug"
       >
         Welcome new user!
       </h1>
+
       <form
-        className="w-full max-w-lg flex flex-col gap-4"
+        className="w-full mb-2 max-w-[350px] md:max-w-lg flex flex-col gap-4"
         onSubmit={handleSubmit}
         autoComplete="off"
       >
-        <div className="flex gap-4">
-          <div className="flex-1">
+        <div className="grid grid-cols-2 gap-4 w-full">
+
+          {/* First Name */}
+          <div>
             <label className="font-medium mb-1 flex items-center">
               <span className="text-red-500 mr-2">*</span>
               <span>First Name</span>
@@ -148,7 +156,9 @@ export default function NewUserPage() {
               required
             />
           </div>
-          <div className="flex-1">
+
+          {/* Last Name */}
+          <div>
             <label className="font-medium mb-1 flex items-center">
               <span className="text-red-500 mr-2">*</span>
               <span>Last Name</span>
@@ -160,7 +170,9 @@ export default function NewUserPage() {
               required
             />
           </div>
-          <div className="flex-1">
+
+          {/* Pronouns (full width but EXACT same column width) */}
+          <div>
             <label className="font-medium mb-1 flex items-center">
               <span className="invisible mr-2">*</span>
               <span>Pronouns</span>
@@ -175,7 +187,11 @@ export default function NewUserPage() {
               ))}
             </select>
           </div>
+
         </div>
+
+
+
 
         <div>
           <label className="font-medium mb-1 flex items-center">
@@ -187,7 +203,7 @@ export default function NewUserPage() {
             onChange={(value) => setPhone(value || "")}
             defaultCountry="US"
             placeholder="Enter phone number"
-            className="border-[1.5px] border-black"
+            className="w-full"
           />
           {phone && !isPhoneValid && (
             <p className="text-red-600 text-sm mt-1">Phone number is invalid</p>
@@ -222,7 +238,7 @@ export default function NewUserPage() {
               </TooltipTrigger>
               <TooltipContent
                 side="bottom"
-                className="p-0 border-0 bg-transparent rounded text-sm"
+                className="p-0 border-0 bg-transparent rounded text-sm [&_svg]:stroke-[#0F4374] [&_svg]:fill-[#0F4374] [&_svg]:bg-[#0F4374]"
               >
                 <div className="bg-[#0F4374] text-white p-3 rounded-lg shadow-md">
                   <ul className="text-sm list-disc list-inside">

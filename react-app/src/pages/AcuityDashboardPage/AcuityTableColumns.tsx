@@ -71,45 +71,90 @@ export const trimesterColumns: ColumnDef<TrimesterAttendance>[] = [
 export type InstructorAttendance = {
   class: string;
   category: string;
-  total_attendance: number;
-  instructor1_attendance: number;
-  instructor2_attendance: number;
+  avgAttendance: number;
+  numClasses: number;
+  totalAttendance: number;
+  instructorNames: string;
+  instructors: InstructorData[];
 };
 
-export const instructorColumns: ColumnDef<InstructorAttendance>[] = [
-  {
-    accessorKey: "class",
-    header: ({ column }) => {
-      return <ColumnSortButton column={column}>Class</ColumnSortButton>;
+export type InstructorData = {
+  instructor: string;
+  avgAttendance: number;
+  numClasses: number;
+  totalAttendance: number;
+};
+
+export function instructorColumns(
+  onOpen: (row: InstructorAttendance) => void,
+): ColumnDef<InstructorAttendance>[] {
+  return [
+    {
+      accessorKey: "class",
+      header: ({ column }) => {
+        return <ColumnSortButton column={column}>Class</ColumnSortButton>;
+      },
+      cell: ({ row }) => (
+        <span className="font-bold">{row.getValue("class")}</span>
+      ),
     },
-    cell: ({ row }) => (
-      <span className="font-bold">{row.getValue("class")}</span>
-    ),
-  },
-  {
-    accessorKey: "category",
-    header: ({ column }) => {
-      return <ColumnSortButton column={column}>Category</ColumnSortButton>;
+    {
+      accessorKey: "category",
+      header: ({ column }) => {
+        return <ColumnSortButton column={column}>Category</ColumnSortButton>;
+      },
     },
-  },
-  {
-    accessorKey: "total_attendance",
-    header: ({ column }) => {
-      return (
-        <ColumnSortButton column={column}>Total Attendance</ColumnSortButton>
-      );
+    {
+      accessorKey: "avgAttendance",
+      header: ({ column }) => {
+        return (
+          <ColumnSortButton column={column}>Avg. Attend.</ColumnSortButton>
+        );
+      },
     },
-  },
-  {
-    accessorKey: "instructor1_attendance",
-    header: ({ column }) => {
-      return <ColumnSortButton column={column}>Kaely Harrod</ColumnSortButton>;
+    {
+      accessorKey: "numClasses",
+      header: ({ column }) => {
+        return (
+          <ColumnSortButton column={column}>Num. Classes</ColumnSortButton>
+        );
+      },
     },
-  },
-  {
-    accessorKey: "instructor2_attendance",
-    header: ({ column }) => {
-      return <ColumnSortButton column={column}>Instructor 2</ColumnSortButton>;
+    {
+      accessorKey: "totalAttendance",
+      header: ({ column }) => {
+        return (
+          <ColumnSortButton column={column}>Total Attend.</ColumnSortButton>
+        );
+      },
     },
-  },
-];
+    {
+      accessorKey: "instructorNames",
+      header: ({ column }) => {
+        return (
+          <ColumnSortButton column={column}>Instructors</ColumnSortButton>
+        );
+      },
+      cell: ({ row }) => {
+        const r = row.original as InstructorAttendance;
+        const hasInstructors = (r.instructors?.length ?? 0) > 0;
+
+        if (!hasInstructors)
+          return (
+            <span className="text-gray-900 text-center w-full block">N/A</span>
+          );
+
+        return (
+          <button
+            title={r.instructorNames}
+            onClick={() => onOpen(r)}
+            className="w-56 sm:w-64 truncate border rounded-full px-3 py-1 text-sm font-medium
+                       bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light cursor-pointer"
+          >
+            {r.instructorNames}
+          </button>
+        );
+      },
+    },
+  ] as ColumnDef<InstructorAttendance>[];
+}

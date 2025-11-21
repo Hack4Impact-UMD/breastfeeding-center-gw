@@ -1,25 +1,7 @@
 import * as React from "react";
-import { CheckIcon, ChevronsUpDown } from "lucide-react";
 import * as RPNInput from "react-phone-number-input";
-import flags from "react-phone-number-input/flags";
-
-import { Button } from "@/components/ui/shad-button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { Input } from "./input";
 
 type PhoneInputProps = Omit<
   React.ComponentProps<"input">,
@@ -35,8 +17,10 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
       return (
         <RPNInput.default
           ref={ref}
-          className={cn("flex", className)}
-          countrySelectComponent={() => null}  
+          className={cn("flex w-full", className)}
+          flagComponent={() => <></>}
+          countrySelectComponent={() => <></>}
+          inputComponent={InputComponent}
           smartCaret={false}
           value={value || undefined}
           /**
@@ -56,5 +40,16 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
   );
 PhoneInput.displayName = "PhoneInput";
 
+const InputComponent = React.forwardRef<
+  HTMLInputElement,
+  React.ComponentProps<"input">
+>(({ className, ...props }, ref) => (
+  <Input
+    className={cn("border rounded-md px-3 py-2 !text-base h-fit", className)}
+    {...props}
+    ref={ref}
+  />
+));
+InputComponent.displayName = "InputComponent";
 
 export { PhoneInput };

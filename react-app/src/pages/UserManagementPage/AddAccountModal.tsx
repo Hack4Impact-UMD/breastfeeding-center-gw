@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Modal from "../../components/Modal";
 import { Button } from "@/components/ui/button";
 import { IoIosClose } from "react-icons/io";
+import { Role } from "@/types/UserType";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -12,6 +13,7 @@ interface AddAccountModalProps {
     firstName: string;
     lastName: string;
     email: string;
+    role: Role;
   }) => void;
   disabled?: boolean;
 }
@@ -26,6 +28,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [confirmEmail, setConfirmEmail] = useState("");
+  const [role, setRole] = useState<Role>("VOLUNTEER");
   const [touched, setTouched] = useState(false);
 
   const emailValid = emailRegex.test(email);
@@ -40,7 +43,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({
   else if (touched && !emailsMatch) error = "Email addresses don’t match";
 
   return (
-    <Modal open={open} onClose={onClose} width={500} height={370}>
+    <Modal open={open} onClose={onClose} width={500} height={440}>
       <div className="relative flex flex-col h-full">
         <button
           className="absolute top-2.25 right-2.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
@@ -84,6 +87,17 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({
             onBlur={() => setTouched(true)}
           />
         </div>
+        <div className="mb-3 px-8 flex flex-col items-center">
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value as Role)}
+            className="py-3 px-3 w-28 border border-black rounded bg-white text-sm focus:outline-none"
+          >
+            <option value="DIRECTOR">Director</option>
+            <option value="ADMIN">Admin</option>
+            <option value="VOLUNTEER">Volunteer</option>
+          </select>
+        </div>
         <div className="text-sm text-gray-700 mb-2 text-center">
           Are you sure you would like to create a new account?
         </div>
@@ -97,11 +111,12 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({
             onClick={() => {
               setTouched(true);
               if (canConfirm) {
-                onConfirm({ firstName, lastName, email });
+                onConfirm({ firstName, lastName, email, role });
                 setFirstName("");
                 setLastName("");
                 setEmail("");
                 setConfirmEmail("");
+                setRole("VOLUNTEER");
                 setTouched(false);
               }
             }}

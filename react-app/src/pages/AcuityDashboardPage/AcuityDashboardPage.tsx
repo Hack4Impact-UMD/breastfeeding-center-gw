@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef } from "react";
 import {
   LineChart,
   LineSeries,
@@ -31,13 +31,13 @@ import {
 export default function AcuityDashboardPage() {
   // const [allClasses, setAllClasses] = useState<any[]>([]);
   const [attendanceDisplay, setAttendanceDisplay] = useState<string>("graph");
-  const [classPopularityDisplay, setClassPopularityDisplay] =
-    useState<string>("graph");
-  const [instructorPopularityDisplay, setInstructorPopularityDisplay] =
-    useState<string>("graph");
+  const [popularityDisplay, setPopularityDisplay] = useState<string>("graph");
   const attendanceChartRef = useRef<HTMLDivElement>(null);
   const classPopularityChartRef = useRef<HTMLDivElement>(null);
-  const instructorPopularityChartRef = useRef<HTMLDivElement>(null);
+  const [, setOpenRow] = useState<InstructorAttendance | null>(null);
+
+  const chartDiv =
+    "flex flex-col items-center justify-start bg-white min-h-[400px] border-2 border-black p-5 mt-5 rounded-2xl";
 
   // ── CLASS dropdown state & data ───────────────────────────────
   const [selectedClass, setSelectedClass] = useState("ALL CLASSES");
@@ -256,37 +256,88 @@ export default function AcuityDashboardPage() {
     {
       class: "Prenatal R...",
       category: "Postpartum",
-      total_attendance: 30,
-      instructor1_attendance: 11,
-      instructor2_attendance: 11,
+      avgAttendance: 30,
+      numClasses: 11,
+      totalAttendance: 11,
+      instructorNames: "Jane Doe, John Smith",
+      instructors: [
+        {
+          instructor: "Jane Doe",
+          avgAttendance: 15,
+          numClasses: 6,
+          totalAttendance: 90,
+        },
+        {
+          instructor: "John Smith",
+          avgAttendance: 15,
+          numClasses: 5,
+          totalAttendance: 75,
+        },
+      ],
     },
     {
       class: "Baby Care",
       category: "Prenatal",
-      total_attendance: 15,
-      instructor1_attendance: 7,
-      instructor2_attendance: 7,
+      avgAttendance: 15,
+      numClasses: 7,
+      totalAttendance: 7,
+      instructorNames: "Emily Davis",
+      instructors: [
+        {
+          instructor: "Emily Davis",
+          avgAttendance: 15,
+          numClasses: 7,
+          totalAttendance: 105,
+        },
+      ],
     },
     {
       class: "Postpartum...",
       category: "Postpartum",
-      total_attendance: 32,
-      instructor1_attendance: 17,
-      instructor2_attendance: 10,
+      avgAttendance: 32,
+      numClasses: 17,
+      totalAttendance: 10,
+      instructorNames: "Michael Brown",
+      instructors: [
+        {
+          instructor: "Michael Brown",
+          avgAttendance: 32,
+          numClasses: 17,
+          totalAttendance: 544,
+        },
+      ],
     },
     {
       class: "Bottle & O...",
       category: "Postpartum",
-      total_attendance: 22,
-      instructor1_attendance: 1,
-      instructor2_attendance: 19,
+      avgAttendance: 22,
+      numClasses: 1,
+      totalAttendance: 19,
+      instructorNames: "Sarah Lee",
+      instructors: [
+        {
+          instructor: "Sarah Lee",
+          avgAttendance: 22,
+          numClasses: 1,
+          totalAttendance: 22,
+        },
+      ],
     },
     {
       class: "Starting S...",
       category: "Postpartum",
-      total_attendance: 32,
-      instructor1_attendance: 13,
-      instructor2_attendance: 15,
+      avgAttendance: 32,
+      numClasses: 13,
+      totalAttendance: 15,
+      instructorNames: "David Wilson",
+      instructors: [
+        {
+          instructor: "David Wilson",
+          avgAttendance: 32,
+          numClasses: 13,
+          totalAttendance: 416,
+        },
+      ],
     },
   ];
 
@@ -368,19 +419,19 @@ export default function AcuityDashboardPage() {
   // ── INSTRUCTOR dropdown state & data ─────────────────────────
   const [selectedInstructor, setSelectedInstructor] = useState("ALL CLASSES");
 
-  const typeToCategory: Record<string, string> = {
-    "Postpartum Classes": "Postpartum",
-    "Prenatal Classes": "Prenatal",
-    "Infant Massage": "Infant Massage",
-    "Parent Groups": "Parent Groups",
-    "Childbirth Classes": "Childbirth",
-  };
+  // const typeToCategory: Record<string, string> = {
+  //   "Postpartum Classes": "Postpartum",
+  //   "Prenatal Classes": "Prenatal",
+  //   "Infant Massage": "Infant Massage",
+  //   "Parent Groups": "Parent Groups",
+  //   "Childbirth Classes": "Childbirth",
+  // };
 
-  const instructorTableRows = useMemo(() => {
-    if (selectedInstructor === "ALL CLASSES") return instructorData;
-    const cat = typeToCategory[selectedInstructor] ?? selectedInstructor;
-    return instructorData.filter((r) => r.category === cat);
-  }, [selectedInstructor, instructorData]);
+  // const instructorTableRows = useMemo(() => {
+  //   if (selectedInstructor === "ALL CLASSES") return instructorData;
+  //   const cat = typeToCategory[selectedInstructor] ?? selectedInstructor;
+  //   return instructorData.filter((r) => r.category === cat);
+  // }, [selectedInstructor, instructorData]);
 
   const allInstructorData = [
     {
@@ -470,20 +521,20 @@ export default function AcuityDashboardPage() {
     </div>
   );
 
-  const instructorPopularityTableExtras = (
-    <div className="w-full flex justify-end">
-      <select
-        className="h-9 rounded-md border bg-white px-3 text-sm"
-        value={selectedInstructor}
-        onChange={(e) => setSelectedInstructor(e.target.value)}
-      >
-        <option>ALL CLASSES</option>
-        {allInstructorData.map((ins) => (
-          <option key={ins.key}>{ins.key}</option>
-        ))}
-      </select>
-    </div>
-  );
+  // const instructorPopularityTableExtras = (
+  //   <div className="w-full flex justify-end">
+  //     <select
+  //       className="h-9 rounded-md border bg-white px-3 text-sm"
+  //       value={selectedInstructor}
+  //       onChange={(e) => setSelectedInstructor(e.target.value)}
+  //     >
+  //       <option>ALL CLASSES</option>
+  //       {allInstructorData.map((ins) => (
+  //         <option key={ins.key}>{ins.key}</option>
+  //       ))}
+  //     </select>
+  //   </div>
+  // );
 
   // ── Order By dropdown state & data ─────────────────────────
   // const [selectedOrder, setSelectedOrder] = useState("Order By");
@@ -535,42 +586,28 @@ export default function AcuityDashboardPage() {
             Export
           </button>
         </div>
-
-        {/* Attendance Bar Chart */}
-        <div
-          className={
-            attendanceDisplay === "graph"
-              ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
-              : ""
-          }
-          ref={attendanceChartRef}
-        >
-          <div className="flex justify-between items-center space-x-4">
-            <div className="text-2xl font-semibold">
-              Class Attendance By Trimester,{" "}
-              {attendanceDisplay === "graph" ? <br /> : <></>}2/19/25 - 3/19/25
+        {/* Attendance by Trimester Bar Chart */}
+        <span className="self-start font-semibold text-2xl">
+          Class Attendance By Trimester,{" "}
+          {attendanceDisplay === "graph" ? <br /> : <></>}2/19/25 - 3/19/25
+        </span>
+        {attendanceDisplay === "graph" ? (
+          <div className={chartDiv} ref={attendanceChartRef}>
+            {/* Class dropdown */}
+            <div className="self-end">
+              <label className="text-sm font-medium"></label>
+              <select
+                className="border rounded-md px-2 py-1 text-sm"
+                value={selectedClass}
+                onChange={(e) => setSelectedClass(e.target.value)}
+              >
+                <option>ALL CLASSES</option>
+                {allClassData.map((c) => (
+                  <option key={c.key}>{c.key}</option>
+                ))}
+              </select>
             </div>
-            {attendanceDisplay === "graph" ? (
-              // Class dropdown
-              <div className="flex items-center space-x-2">
-                <label className="text-sm font-medium"></label>
-                <select
-                  className="border rounded-md px-2 py-1 text-sm"
-                  value={selectedClass}
-                  onChange={(e) => setSelectedClass(e.target.value)}
-                >
-                  <option>ALL CLASSES</option>
-                  {allClassData.map((c) => (
-                    <option key={c.key}>{c.key}</option>
-                  ))}
-                </select>
-              </div>
-            ) : (
-              <></>
-            )}
-          </div>
 
-          {attendanceDisplay === "graph" ? (
             <div className="w-full h-96">
               {selectedClass === "ALL CLASSES" ? (
                 /* stacked chart for all classes: */
@@ -631,36 +668,35 @@ export default function AcuityDashboardPage() {
                 />
               )}
             </div>
-          ) : (
-            <DataTable
-              columns={trimesterColumns}
-              data={trimesterData}
-              tableType="default"
-              tableHeaderExtras={classAttendanceTableExtras}
-              pageSize={5}
-            />
-          )}
-        </div>
-
+          </div>
+        ) : (
+          <DataTable
+            columns={trimesterColumns}
+            data={trimesterData}
+            tableType="default"
+            tableHeaderExtras={classAttendanceTableExtras}
+            pageSize={5}
+          />
+        )}
         <div className={`${centerItemsInDiv} pt-8`}>
           <div className="flex flex-row">
             <button
               className={`${graphTableButtonStyle} ${
-                classPopularityDisplay == "graph"
+                popularityDisplay == "graph"
                   ? "bg-bcgw-gray-light"
                   : "bg-[#f5f5f5]"
               }`}
-              onClick={() => setClassPopularityDisplay("graph")}
+              onClick={() => setPopularityDisplay("graph")}
             >
               Graph
             </button>
             <button
               className={`${graphTableButtonStyle} ${
-                classPopularityDisplay == "table"
+                popularityDisplay == "table"
                   ? "bg-bcgw-gray-light"
                   : "bg-[#f5f5f5]"
               }`}
-              onClick={() => setClassPopularityDisplay("table")}
+              onClick={() => setPopularityDisplay("table")}
             >
               Table
             </button>
@@ -674,164 +710,73 @@ export default function AcuityDashboardPage() {
             Export
           </button>
         </div>
-
+        <span className="self-start font-semibold text-2xl">
+          {popularityDisplay === "graph" ? (
+            <span>Class and Instructor Popularity Over Time</span>
+          ) : (
+            <span>Attendance By Class & Instructor</span>
+          )}
+          {popularityDisplay === "graph" ? <br /> : <></>} 2/19/25 - 3/19/25
+        </span>
         {/* Class Popularity Over Time */}
-        <div
-          className={
-            classPopularityDisplay === "graph"
-              ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
-              : ""
-          }
-          ref={classPopularityChartRef}
-        >
-          <div className="flex justify-between items-center space-x-4">
-            <div className="text-2xl font-semibold">
-              {classPopularityDisplay === "graph" ? (
-                <span>Class Attendance Over Time</span>
-              ) : (
-                <span>Class Attendance</span>
-              )}
-              {classPopularityDisplay === "graph" ? <br /> : <></>} 2/19/25 -
-              3/19/25
-            </div>
+        <div ref={classPopularityChartRef}>
+          {popularityDisplay === "graph" ? (
+            <>
+              <div className="text-2xl font-semibold">Class Popularity</div>
+              {/* Class dropdown */}
+              <div className={chartDiv}>
+                <div className="self-end">
+                  <select
+                    className="border rounded-md px-2 py-1 text-sm"
+                    value={selectedClass}
+                    onChange={(e) => setSelectedClass(e.target.value)}
+                  >
+                    <option>ALL CLASSES</option>
+                    {allClassData.map((c) => (
+                      <option key={c.key}>{c.key}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="w-full h-96">
+                  <LineChart
+                    height={300}
+                    data={filteredClassData}
+                    series={<LineSeries type="grouped" />}
+                  />
+                </div>
+              </div>
 
-            {classPopularityDisplay === "graph" ? (
-              // Class dropdown
-              <div className="flex items-center space-x-2">
-                <label className="text-sm font-medium"></label>
-                <select
-                  className="border rounded-md px-2 py-1 text-sm"
-                  value={selectedClass}
-                  onChange={(e) => setSelectedClass(e.target.value)}
-                >
-                  <option>All Classes</option>
-                  {allClassData.map((c) => (
-                    <option key={c.key}>{c.key}</option>
-                  ))}
-                </select>
+              <div className="mt-8 text-2xl font-semibold">
+                Instructor Popularity
               </div>
-            ) : (
-              <div className="flex items-center space-x-2">
-                <label className="text-sm font-medium"></label>
-                <select
-                  className="border rounded-md px-2 py-1 text-sm"
-                  value={selectedClass}
-                  onChange={(e) => setSelectedClass(e.target.value)}
-                >
-                  <option>All Classes</option>
-                  {allClassData.map((c) => (
-                    <option key={c.key}>{c.key}</option>
-                  ))}
-                </select>
+              <div className={chartDiv}>
+                <div className="self-end">
+                  <select
+                    className="border rounded-md px-2 py-1 text-sm"
+                    value={selectedInstructor}
+                    onChange={(e) => setSelectedInstructor(e.target.value)}
+                  >
+                    <option>All Classes</option>
+                    {allInstructorData.map((ins) => (
+                      <option key={ins.key}>{ins.key}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="w-full h-96">
+                  <LineChart
+                    height={300}
+                    data={filteredInstructorData}
+                    series={<LineSeries type="grouped" />}
+                  />
+                </div>
               </div>
-            )}
-          </div>
-          {classPopularityDisplay === "graph" ? (
-            <div className="w-full h-96">
-              <LineChart
-                height={300}
-                data={filteredClassData}
-                series={<LineSeries type="grouped" />}
-              />
-            </div>
+            </>
           ) : (
             <DataTable
-              columns={instructorColumns}
+              columns={instructorColumns((row) => setOpenRow(row))}
               data={instructorData}
               tableType="default"
               tableHeaderExtras={classPopularityTableExtras}
-              pageSize={5}
-            />
-          )}
-        </div>
-
-        <div className={`${centerItemsInDiv} pt-8`}>
-          <div className="flex flex-row">
-            <button
-              className={`${graphTableButtonStyle} ${
-                instructorPopularityDisplay == "graph"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#f5f5f5]"
-              }`}
-              onClick={() => setInstructorPopularityDisplay("graph")}
-            >
-              Graph
-            </button>
-            <button
-              className={`${graphTableButtonStyle} ${
-                instructorPopularityDisplay == "table"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#f5f5f5]"
-              }`}
-              onClick={() => setInstructorPopularityDisplay("table")}
-            >
-              Table
-            </button>
-          </div>
-          <button
-            className={transparentGrayButtonStyle}
-            onClick={() =>
-              handleExport(
-                instructorPopularityChartRef,
-                "instructor_popularity",
-              )
-            }
-          >
-            Export
-          </button>
-        </div>
-
-        {/* Instructor Popularity Over Time */}
-        <div
-          className={
-            instructorPopularityDisplay === "graph"
-              ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
-              : ""
-          }
-          ref={instructorPopularityChartRef}
-        >
-          <div className="flex justify-between items-center space-x-4">
-            <div className="text-2xl font-semibold">
-              {instructorPopularityDisplay === "graph" ? (
-                <span>Class Attendance by Instructor Over Time</span>
-              ) : (
-                <span>Class Attendance by Instructor</span>
-              )}
-              {instructorPopularityDisplay === "graph" ? <br /> : <></>} 2/19/25
-              - 3/19/25
-            </div>
-
-            {/* Instructor dropdown */}
-            <div className="flex items-center space-x-2">
-              <label className="text-sm font-medium"></label>
-              <select
-                className="border rounded-md px-2 py-1 text-sm"
-                value={selectedInstructor}
-                onChange={(e) => setSelectedInstructor(e.target.value)}
-              >
-                <option>All Classes</option>
-                {allInstructorData.map((ins) => (
-                  <option key={ins.key}>{ins.key}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {instructorPopularityDisplay === "graph" ? (
-            <div className="w-full h-96">
-              <LineChart
-                height={300}
-                data={filteredInstructorData}
-                series={<LineSeries type="grouped" />}
-              />
-            </div>
-          ) : (
-            // ===== TABLE MODE =====
-            <DataTable
-              columns={instructorColumns}
-              data={instructorTableRows}
-              tableType="default"
-              tableHeaderExtras={instructorPopularityTableExtras}
               pageSize={5}
             />
           )}
