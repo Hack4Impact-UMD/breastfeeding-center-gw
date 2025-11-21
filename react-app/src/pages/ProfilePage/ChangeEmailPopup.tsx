@@ -9,18 +9,16 @@ const ChangeEmailPopup = ({
   initialEmail,
 }: {
   open: boolean;
-  onClose: any;
+  onClose: () => void;
   initialEmail: string;
 }) => {
-  //@ts-expect-error
-  const [email, setEmail] = useState(initialEmail); // display value
+  const [, setEmail] = useState(initialEmail); // display value
   const [newEmail, setNewEmail] = useState(""); // value while changing email & used for checks
   const [confirmNewEmail, setConfirmNewEmail] = useState("");
-  //@ts-expect-error
-  const [showEmailMatchError, setShowEmailMatchError] = useState(false);
+  const [, setShowEmailMatchError] = useState(false);
   const [showEmailInvalidError, setShowEmailInvalidError] = useState(false);
 
-  const validateEmail = (email: any) => {
+  const validateEmail = (email: string) => {
     const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return re.test(email);
   };
@@ -57,9 +55,9 @@ const ChangeEmailPopup = ({
   return (
     <Modal open={open} onClose={() => onClose()} height={290} width={600}>
       <div className="flex justify-center items-center sm:block">
-  <div className="flex flex-col bg-white rounded-2xl w-full h-auto overflow-y-auto sm:overflow-visible">
+        <div className="flex flex-col bg-white rounded-2xl w-full h-auto overflow-y-auto sm:overflow-visible">
           <ModalHeader onClose={() => onClose()} />
-          
+
           <div className="flex flex-col m-4 sm:m-8 mb-2 text-left">
             {/* New Email Input */}
             <div className="flex flex-col sm:grid sm:grid-cols-[170px_1fr] sm:gap-x-2">
