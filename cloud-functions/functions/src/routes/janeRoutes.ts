@@ -205,7 +205,6 @@ router.post(
             if (clientExists(appt.clientId)) {
               const client = clientMap.get(appt.clientId);
               parent = client;
-              // appt.patientId = client!.id; // set patientId to the  doc id
             } else {
               // if the client is not in firebase or the clients sheet, we cannot add this appointment
               // get the patient's first and last name and add them to the missing clients list
@@ -406,14 +405,14 @@ router.get(
 );
 
 router.get(
-  "/client/:patient_id",
+  "/client/:client_id",
   [isAuthenticated],
   async (req: Request, res: Response) => {
     try {
-      const patientId = req.params.patient_id;
+      const clientId = req.params.client_id;
 
-      // Get client document by patient_id
-      const doc = await db.collection(CLIENTS_COLLECTION).doc(patientId).get();
+      // Get client document by client_id
+      const doc = await db.collection(CLIENTS_COLLECTION).doc(clientId).get();
 
       if (!doc.exists) {
         return res.status(404).send("Client not found");

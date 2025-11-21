@@ -30,7 +30,6 @@ export interface JaneAppt {
 // combines fields from both JaneAppt and Client type
 export interface JaneTableRow {
   apptId: string; // appt_id
-  patientId: string; // patient_number
   startAt: string; // start_at ISO
   endAt: string; // end_at ISO
   visitType: VisitType; // treatment_name
