@@ -47,22 +47,26 @@ router.post(
       );
 
       const {
-        appointments: appointmentsSheet, patientNames,
+        appointments: appointmentsSheet,
+        patientNames,
         babyAppts,
       } = appointmentParseResults;
 
       const babyApptSet = new Set(babyAppts.map((appt) => appt.apptId));
 
-      const referencedClientIds = new Set(appointmentsSheet.map(appt => appt.janePatientNumber));
-      let clientsList: Client[] = await getAllFirebaseClients(referencedClientIds);
+      const referencedClientIds = new Set(
+        appointmentsSheet.map((appt) => appt.janePatientNumber),
+      );
+      let clientsList: Client[] =
+        await getAllFirebaseClients(referencedClientIds);
 
-      logger.info("client list:")
-      logger.info(clientsList)
+      logger.info("client list:");
+      logger.info(clientsList);
 
       const janeIdToUUIDMap = new Map<string, string>();
-      clientsList.forEach(c => {
-        if (c.janeId) janeIdToUUIDMap.set(c.janeId, c.id)
-      })
+      clientsList.forEach((c) => {
+        if (c.janeId) janeIdToUUIDMap.set(c.janeId, c.id);
+      });
 
       const babiesMap: Map<string, Baby> = new Map();
       if (clientFileExists) {
@@ -70,7 +74,7 @@ router.post(
         const clientParseResults = await parseClientSheet(
           clientFileType,
           clientsFile.buffer,
-          janeIdToUUIDMap
+          janeIdToUUIDMap,
         );
 
         clientsList = clientParseResults.clientList;
@@ -114,23 +118,24 @@ router.post(
       }
 
       async function getAllFirebaseClients(janeIdsSet: Set<string>) {
-        const allClients: Client[] = []
+        const allClients: Client[] = [];
         const MAX_IN_SIZE = 30;
         const janeIds = [...janeIdsSet];
 
         for (let i = 0; i < janeIds.length; i += MAX_IN_SIZE) {
           const chunk = janeIds.slice(i, i + MAX_IN_SIZE);
-          const query = db.collection(CLIENTS_COLLECTION).where("janeId", "in", chunk);
-          const clients = (await query.get()).docs.map(d => d.data() as Client)
+          const query = db
+            .collection(CLIENTS_COLLECTION)
+            .where("janeId", "in", chunk);
+          const clients = (await query.get()).docs.map(
+            (d) => d.data() as Client,
+          );
 
-          allClients.push(
-            ...clients
-          )
+          allClients.push(...clients);
         }
 
         return allClients;
       }
-
 
       const parentsToAdd: Client[] = [];
       const apptsToAdd: RawJaneAppt[] = [];
@@ -140,7 +145,7 @@ router.post(
         let parent = null; // Client type
         const babies: Baby[] = []; // list of baby type
         let parentAppt: RawJaneAppt | null = null; // JaneAppt type, the parent's appointment
-        const potentiallyMissing: string[] = []
+        const potentiallyMissing: string[] = [];
         let foundClientInGroup = false;
 
         for (const appt of appointments) {
@@ -159,7 +164,6 @@ router.post(
               // );
             }
           } else {
-
             // get the client info, either from firebase or the clients sheet if the client is not in the db yet
             if (clientMap.has(appt.janePatientNumber)) {
               const client = clientMap.get(appt.janePatientNumber);
@@ -179,7 +183,7 @@ router.post(
           }
 
           if (!foundClientInGroup) {
-            potentiallyMissing.forEach(c => missingClients.add(c))
+            potentiallyMissing.forEach((c) => missingClients.add(c));
           }
         }
 

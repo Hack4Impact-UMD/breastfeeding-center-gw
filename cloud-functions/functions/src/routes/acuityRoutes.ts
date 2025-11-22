@@ -6,19 +6,25 @@ import { isAuthenticated } from "../middleware/authMiddleware";
 
 const router = Router();
 
-router.get("/appointments", [isAuthenticated], async (req: Request, res: Response) => {
-  const startDate = req.query.startDate as string;
-  const endDate = req.query.endDate as string;
-  const classCategory = req.query.classCategory as string;
+router.get(
+  "/appointments",
+  [isAuthenticated],
+  async (req: Request, res: Response) => {
+    const startDate = req.query.startDate as string;
+    const endDate = req.query.endDate as string;
+    const classCategory = req.query.classCategory as string;
 
-  let appts: AcuityAppointment[] = []
-  if (classCategory && classCategory.trim().length !== 0) {
-    appts = (await getAllAcuityApptsInRange(startDate, endDate)).filter(appt => appt.classCategory === classCategory);
-  } else {
-    appts = (await getAllAcuityApptsInRange(startDate, endDate));
-  }
+    let appts: AcuityAppointment[] = [];
+    if (classCategory && classCategory.trim().length !== 0) {
+      appts = (await getAllAcuityApptsInRange(startDate, endDate)).filter(
+        (appt) => appt.classCategory === classCategory,
+      );
+    } else {
+      appts = await getAllAcuityApptsInRange(startDate, endDate);
+    }
 
-  return res.status(200).send(appts)
-})
+    return res.status(200).send(appts);
+  },
+);
 
 export default router;

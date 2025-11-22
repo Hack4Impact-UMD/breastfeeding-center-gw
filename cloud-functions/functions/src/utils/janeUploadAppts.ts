@@ -4,7 +4,9 @@ import { JaneAppt, VisitType } from "../types/janeType";
 // import { logger } from "firebase-functions";
 //
 
-export type RawJaneAppt = Omit<JaneAppt, "clientId"> & { janePatientNumber: string }
+export type RawJaneAppt = Omit<JaneAppt, "clientId"> & {
+  janePatientNumber: string;
+};
 
 export async function parseAppointmentSheet(
   fileType: string,
@@ -130,7 +132,7 @@ function parseAppointment(appt: Record<string, string>) {
 
   janeAppt.clinician =
     appt.staff_member_name === undefined ||
-      String(appt.staff_member_name).trim() === ""
+    String(appt.staff_member_name).trim() === ""
       ? "N/A"
       : String(appt.staff_member_name).trim();
   janeAppt.firstVisit =
