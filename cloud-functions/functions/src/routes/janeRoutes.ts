@@ -1,7 +1,7 @@
 import { Request, Router, Response } from "express";
 import { upload } from "../middleware/filesMiddleware";
 import { logger } from "firebase-functions";
-import { parseAppointmentSheet } from "../utils/janeUploadAppts";
+import { parseAppointmentSheet, RawJaneAppt } from "../utils/janeUploadAppts";
 import { parseClientSheet } from "../utils/janeUploadClients";
 import { JaneAppt } from "../types/janeType";
 import { Client, Baby } from "../types/clientType";
@@ -47,20 +47,30 @@ router.post(
       );
 
       const {
-        appointments: appointments_sheet,
-        patientNames,
+        appointments: appointmentsSheet, patientNames,
         babyAppts,
       } = appointmentParseResults;
 
       const babyApptSet = new Set(babyAppts.map((appt) => appt.apptId));
 
-      let clientsList: Client[] = [];
+      const referencedClientIds = new Set(appointmentsSheet.map(appt => appt.janePatientNumber));
+      let clientsList: Client[] = await getAllFirebaseClients(referencedClientIds);
+
+      logger.info("client list:")
+      logger.info(clientsList)
+
+      const janeIdToUUIDMap = new Map<string, string>();
+      clientsList.forEach(c => {
+        if (c.janeId) janeIdToUUIDMap.set(c.janeId, c.id)
+      })
+
       const babiesMap: Map<string, Baby> = new Map();
       if (clientFileExists) {
         const clientFileType = getFileType(clientsFile.name);
         const clientParseResults = await parseClientSheet(
           clientFileType,
           clientsFile.buffer,
+          janeIdToUUIDMap
         );
 
         clientsList = clientParseResults.clientList;
@@ -70,13 +80,13 @@ router.post(
           babiesMap.set(b.id, b);
         });
       } else {
-        clientsList = await getAllFirebaseClients();
         const babies = clientsList.flatMap((client) => client.baby);
         babies.forEach((b) => {
           babiesMap.set(b.id, b);
         });
       }
 
+      // jane id -> client
       const clientMap: Map<string, Client> = new Map();
 
       clientsList.forEach((client) => {
@@ -85,9 +95,9 @@ router.post(
         }
       });
 
-      const appointments_map = new Map<string, JaneAppt[]>();
+      const appointments_map = new Map<string, RawJaneAppt[]>();
 
-      appointments_sheet.forEach((jane_appt: JaneAppt) => {
+      appointmentsSheet.forEach((jane_appt) => {
         const key = `${jane_appt.startAt}-${jane_appt.clinician}`;
         const appt_group = appointments_map.get(key);
         if (appt_group) {
@@ -99,50 +109,43 @@ router.post(
 
       const missing_clients: string[] = [];
 
-      function is_baby_appt(appt: JaneAppt): boolean {
+      function is_baby_appt(appt: RawJaneAppt): boolean {
         return babyApptSet.has(appt.apptId);
       }
 
-      async function getAllFirebaseClients() {
-        const clients = db.collection(CLIENTS_COLLECTION);
-        return (await clients.get()).docs.map((d) => d.data() as Client);
-      }
+      async function getAllFirebaseClients(janeIdsSet: Set<string>) {
+        const allClients: Client[] = []
+        const MAX_IN_SIZE = 30;
+        const janeIds = [...janeIdsSet];
 
-      async function getAllFirebaseAppts(): Promise<JaneAppt[]> {
-        // check if appt in firebase JaneAppt collection
-        const querySnapshot = await db
-          .collection(JANE_APPT_COLLECTION)
-          .get();
+        for (let i = 0; i < janeIds.length; i += MAX_IN_SIZE) {
+          const chunk = janeIds.slice(i, i + MAX_IN_SIZE);
+          const query = db.collection(CLIENTS_COLLECTION).where("janeId", "in", chunk);
+          const clients = (await query.get()).docs.map(d => d.data() as Client)
 
-        if (querySnapshot.docs.length == 0) {
-          return [];
+          allClients.push(
+            ...clients
+          )
         }
-        return querySnapshot.docs.map(d => d.data() as JaneAppt);
+
+        return allClients;
       }
 
-      function clientExists(patientId: string): boolean {
-        return clientMap.has(patientId);
-      }
 
       const parentsToAdd: Client[] = [];
-      const apptsToAdd: JaneAppt[] = [];
-
-      const firebaseAppts = await getAllFirebaseAppts();
-      const firebaseApptIdsSet = new Set(...firebaseAppts.map(a => a.apptId));
+      const apptsToAdd: RawJaneAppt[] = [];
 
       // iterate through each group of appts with the same start time + clinician
       for (const appointments of appointments_map.values()) {
         let parent = null; // Client type
         const babies: Baby[] = []; // list of baby type
-        let parentAppt = null; // JaneAppt type, the parent's appointment
-
-        let parentApptExistsInFirebase = false; // do we already have the parent appointment in firebase?
+        let parentAppt: RawJaneAppt | null = null; // JaneAppt type, the parent's appointment
 
         for (const appt of appointments) {
           // the appt is for baby
-          const patientName = patientNames[appt.clientId];
+          const patientName = patientNames[appt.janePatientNumber];
           if (is_baby_appt(appt)) {
-            const baby = babiesMap.get(appt.clientId); // find matching baby
+            const baby = babiesMap.get(appt.janePatientNumber); // find matching baby
             if (baby) {
               babies.push(baby);
             } else {
@@ -152,15 +155,10 @@ router.post(
               );
             }
           } else {
-            // the appt is for client
-            if (firebaseApptIdsSet.has(appt.apptId)) {
-              parentApptExistsInFirebase = true;
-              break;
-            }
 
             // get the client info, either from firebase or the clients sheet if the client is not in the db yet
-            if (clientExists(appt.clientId)) {
-              const client = clientMap.get(appt.clientId);
+            if (clientMap.has(appt.janePatientNumber)) {
+              const client = clientMap.get(appt.janePatientNumber);
               parent = client;
             } else {
               // if the client is not in firebase or the clients sheet, we cannot add this appointment
@@ -174,9 +172,6 @@ router.post(
             }
             parentAppt = appt;
           }
-        }
-        if (parentApptExistsInFirebase) {
-          continue;
         }
 
         // add to the parent object's babies array using the babies matched with their appointment.
@@ -240,7 +235,7 @@ router.post(
         const batch = db.batch();
         chunk.forEach((appt) => {
           const { apptId } = appt;
-          const parentId = janeToDocIdMap.get(appt.clientId);
+          const parentId = janeToDocIdMap.get(appt.janePatientNumber);
           batch.set(
             db.collection(JANE_APPT_COLLECTION).doc(apptId),
             { ...appt, clientId: parentId } as JaneAppt,

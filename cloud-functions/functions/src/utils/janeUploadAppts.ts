@@ -2,6 +2,9 @@ import * as XLSX from "xlsx";
 import csv from "csvtojson";
 import { JaneAppt, VisitType } from "../types/janeType";
 // import { logger } from "firebase-functions";
+//
+
+export type RawJaneAppt = Omit<JaneAppt, "clientId"> & { janePatientNumber: string }
 
 export async function parseAppointmentSheet(
   fileType: string,
@@ -70,8 +73,8 @@ export async function parseAppointmentSheet(
 
   // initializing the objects to return
   const patientNames: { [id: string]: PatientInfo } = {};
-  const appointments: JaneAppt[] = [];
-  const babyAppts: JaneAppt[] = [];
+  const appointments: RawJaneAppt[] = [];
+  const babyAppts: RawJaneAppt[] = [];
 
   // looping through each element in jsonArray to turn into JaneAppt obj
   for (const rawAppt of jsonArray) {
@@ -109,7 +112,7 @@ function isBabyAppt(appt: Record<string, string>) {
 }
 
 function parseAppointment(appt: Record<string, string>) {
-  const janeAppt = {} as JaneAppt;
+  const janeAppt = {} as RawJaneAppt;
 
   if (appt.id === undefined || appt.id.toString().trim() === "") {
     return null;
@@ -123,8 +126,7 @@ function parseAppointment(appt: Record<string, string>) {
     return null;
   }
 
-  //TODO: This is supposed to be this way for now and gets overwritten later. We need the jane patient id to refer to patient names and babies that are in the clients sheet but not in firebase yet (ie. they do not have a generated uuid). We should look into ways of doing this cleaner, probably better to have a custom type here that adds janeId as a separate field.
-  janeAppt.clientId = appt.patient_number.trim();
+  janeAppt.janePatientNumber = appt.patient_number.trim();
 
   janeAppt.clinician =
     appt.staff_member_name === undefined ||
