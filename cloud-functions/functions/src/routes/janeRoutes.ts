@@ -107,7 +107,7 @@ router.post(
         }
       });
 
-      const missing_clients: string[] = [];
+      const missingClients: Set<string> = new Set<string>();
 
       function is_baby_appt(appt: RawJaneAppt): boolean {
         return babyApptSet.has(appt.apptId);
@@ -140,6 +140,8 @@ router.post(
         let parent = null; // Client type
         const babies: Baby[] = []; // list of baby type
         let parentAppt: RawJaneAppt | null = null; // JaneAppt type, the parent's appointment
+        const potentiallyMissing: string[] = []
+        let foundClientInGroup = false;
 
         for (const appt of appointments) {
           // the appt is for baby
@@ -149,10 +151,12 @@ router.post(
             if (baby) {
               babies.push(baby);
             } else {
+              //NOTE: do nothing for now, this should only happen for babies w/o associated parents
+              //which get ignored anyway.
               // the baby could not be found, add them to missing clients
-              missing_clients.push(
-                `${patientName.firstName} ${patientName.lastName}`,
-              );
+              // potentiallyMissing.push(
+              //   `Baby ${patientName.firstName} ${patientName.lastName}`,
+              // );
             }
           } else {
 
@@ -160,17 +164,22 @@ router.post(
             if (clientMap.has(appt.janePatientNumber)) {
               const client = clientMap.get(appt.janePatientNumber);
               parent = client;
+              foundClientInGroup = true;
             } else {
               // if the client is not in firebase or the clients sheet, we cannot add this appointment
               // get the patient's first and last name and add them to the missing clients list
               if (patientName) {
-                missing_clients.push(
+                potentiallyMissing.push(
                   `${patientName["firstName"]} ${patientName["lastName"]}`,
                 );
               }
               continue; // skip this appointment
             }
             parentAppt = appt;
+          }
+
+          if (!foundClientInGroup) {
+            potentiallyMissing.forEach(c => missingClients.add(c))
           }
         }
 
@@ -207,11 +216,11 @@ router.post(
 
       // if there are missing clients, return an error response with their names.
       // their names will be displayed in the tooltip for users so they can reupload those clients.
-      if (missing_clients.length > 0) {
-        logger.error(["Missing clients!", missing_clients]);
+      if (missingClients.size > 0) {
+        logger.error(["Missing clients!", [...missingClients]]);
         return res.status(400).json({
           error: "Missing clients!",
-          details: missing_clients,
+          details: missingClients,
         });
       }
 
