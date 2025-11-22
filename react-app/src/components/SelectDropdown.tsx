@@ -19,12 +19,12 @@ export default function SelectDropdown({
   onChange,
 }: SelectDropdownProps) {
   return (
-    <div className="flex justify-center self-start pt-6 w-full">
+    <div className="flex justify-center self-start">
       <Select value={selected} onValueChange={(val) => onChange(val)}>
         <SelectTrigger className="w-[160px] sm:w-[200px]">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent className="bg-white w-[160px] sm:w-[200px]">
+        <SelectContent className="bg-white">
           {options.map((option) => (
             <SelectItem
               key={option}
