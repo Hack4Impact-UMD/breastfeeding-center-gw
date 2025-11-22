@@ -1,21 +1,24 @@
 import { PopoverTrigger } from "@radix-ui/react-popover";
 import { Popover, PopoverContent } from "./ui/popover";
 import { Button } from "./ui/button";
-import { ChevronsUpDownIcon } from "lucide-react";
+import { ChevronDownIcon } from "lucide-react";
 import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from "./ui/command";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 type PronounsComboBoxProps = {
-  pronouns: string,
-  onChange: (pronouns: string) => void,
-  className?: string
-}
+  pronouns: string;
+  onChange: (pronouns: string) => void;
+  className?: string;
+};
 
-export default function PronounsComboBox({ pronouns, onChange, className = "" }: PronounsComboBoxProps) {
+export default function PronounsComboBox({
+  pronouns,
+  onChange,
+  className = "",
+}: PronounsComboBoxProps) {
   const [isPronounDropdownOpen, setIsPronounDropdownOpen] = useState(false);
   const [pronounQuery, setPronounQuery] = useState("");
-
 
   const pronounOptions = [
     {
@@ -42,13 +45,18 @@ export default function PronounsComboBox({ pronouns, onChange, className = "" }:
           variant="outline"
           role="combobox"
           aria-expanded={isPronounDropdownOpen}
-          className={cn("w-full sm:w-[175px] justify-between hover:bg-background rounded-2xl mb-4 sm:mb-0", className)}
+          className={cn(
+            "w-full sm:w-[175px] justify-between hover:bg-background rounded-2xl mb-4 sm:mb-0",
+            className,
+          )}
         >
           {pronouns ? pronouns : "Select..."}
-          <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className={cn("w-full sm:w-[175px] p-0 bg-white", className)}>
+      <PopoverContent
+        className={cn("w-full sm:w-[175px] p-0 bg-white", className)}
+      >
         <Command>
           <CommandInput
             placeholder="Search/Add..."
@@ -63,14 +71,12 @@ export default function PronounsComboBox({ pronouns, onChange, className = "" }:
                     "cursor-pointer",
                     pronouns === pronounOption.value
                       ? "bg-bcgw-yellow-dark"
-                      : "hover:bg-bcgw-yellow-light"
+                      : "hover:bg-bcgw-yellow-light",
                   )}
                   key={pronounOption.value}
                   value={pronounOption.value}
                   onSelect={(currentValue) => {
-                    onChange(
-                      currentValue === pronouns ? "" : currentValue,
-                    );
+                    onChange(currentValue === pronouns ? "" : currentValue);
                     setIsPronounDropdownOpen(false);
                   }}
                 >
@@ -80,13 +86,10 @@ export default function PronounsComboBox({ pronouns, onChange, className = "" }:
               {/* custom pronouns already chosen */}
               {pronouns !== "" &&
                 !pronounOptions.some(
-                  (o) =>
-                    o.value.toLowerCase() === pronouns.toLowerCase(),
+                  (o) => o.value.toLowerCase() === pronouns.toLowerCase(),
                 ) && (
                   <CommandItem
-                    className={cn(
-                      "cursor-pointer bg-bcgw-yellow-dark",
-                    )}
+                    className={"cursor-pointer bg-bcgw-yellow-dark"}
                     key={pronouns}
                     value={pronouns}
                     onSelect={() => {
@@ -100,9 +103,7 @@ export default function PronounsComboBox({ pronouns, onChange, className = "" }:
               {/* user entered a custom pronoun option */}
               {pronounQuery.trim() !== "" &&
                 !pronounOptions.some(
-                  (o) =>
-                    o.value.toLowerCase() ===
-                    pronounQuery.toLowerCase(),
+                  (o) => o.value.toLowerCase() === pronounQuery.toLowerCase(),
                 ) && (
                   <CommandItem
                     className={cn(
@@ -125,5 +126,5 @@ export default function PronounsComboBox({ pronouns, onChange, className = "" }:
         </Command>
       </PopoverContent>
     </Popover>
-  )
+  );
 }
