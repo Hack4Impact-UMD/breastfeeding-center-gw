@@ -27,6 +27,7 @@ import {
   InstructorAttendance,
   instructorColumns,
 } from "./AcuityTableColumns";
+import SelectDropdown from "@/components/SelectDropdown";
 
 export default function AcuityDashboardPage() {
   // const [allClasses, setAllClasses] = useState<any[]>([]);
@@ -41,7 +42,7 @@ export default function AcuityDashboardPage() {
 
   // ── CLASS dropdown state & data ───────────────────────────────
   const [selectedClass, setSelectedClass] = useState("ALL CLASSES");
-
+  const classFilterOptions = ["ALL CLASSES", "Postpartum Classes", "Prenatal Classes", "Infant Massage", "Parent Groups", "Childbirth Classes"];
   const trimesterAttendanceData = [
     {
       key: "Postpartum Classes",
@@ -521,21 +522,6 @@ export default function AcuityDashboardPage() {
     </div>
   );
 
-  // const instructorPopularityTableExtras = (
-  //   <div className="w-full flex justify-end">
-  //     <select
-  //       className="h-9 rounded-md border bg-white px-3 text-sm"
-  //       value={selectedInstructor}
-  //       onChange={(e) => setSelectedInstructor(e.target.value)}
-  //     >
-  //       <option>ALL CLASSES</option>
-  //       {allInstructorData.map((ins) => (
-  //         <option key={ins.key}>{ins.key}</option>
-  //       ))}
-  //     </select>
-  //   </div>
-  // );
-
   // ── Order By dropdown state & data ─────────────────────────
   // const [selectedOrder, setSelectedOrder] = useState("Order By");
 
@@ -594,18 +580,8 @@ export default function AcuityDashboardPage() {
         {attendanceDisplay === "graph" ? (
           <div className={chartDiv} ref={attendanceChartRef}>
             {/* Class dropdown */}
-            <div className="self-end">
-              <label className="text-sm font-medium"></label>
-              <select
-                className="border rounded-md px-2 py-1 text-sm"
-                value={selectedClass}
-                onChange={(e) => setSelectedClass(e.target.value)}
-              >
-                <option>ALL CLASSES</option>
-                {allClassData.map((c) => (
-                  <option key={c.key}>{c.key}</option>
-                ))}
-              </select>
+            <div className="self-end mb-4">
+              <SelectDropdown options={classFilterOptions} selected={selectedClass} onChange={setSelectedClass} />
             </div>
 
             <div className="w-full h-96">

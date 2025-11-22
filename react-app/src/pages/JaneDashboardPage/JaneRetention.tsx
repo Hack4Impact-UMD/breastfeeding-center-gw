@@ -171,7 +171,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
           <Loading />
         ) : retentionDisplay === "graph" ? (
           <>
-            <div className="self-end">
+            <div className="self-end mb-4">
               <SelectDropdown
                 options={["ALL CLIENTS", "RECENT CHILDBIRTH"]}
                 selected={selectedDropdown}
