@@ -5,7 +5,8 @@ import { parseAppointmentSheet, RawJaneAppt } from "../utils/janeUploadAppts";
 import { parseClientSheet } from "../utils/janeUploadClients";
 import { JaneAppt } from "../types/janeType";
 import { Client, Baby } from "../types/clientType";
-import { db } from "../services/firebase";
+import { Role } from "../types/userType";
+import { auth, db } from "../services/firebase";
 import { isAuthenticated } from "../middleware/authMiddleware";
 import { CLIENTS_COLLECTION, JANE_APPT_COLLECTION } from "../types/collections";
 import { getAllJaneApptsInRange } from "../services/jane";
@@ -181,7 +182,6 @@ router.post(
             }
             parentAppt = appt;
           }
-
         }
         if (!foundClientInGroup) {
           potentiallyMissing.forEach((c) => missingClients.add(c));
@@ -221,7 +221,7 @@ router.post(
       // if there are missing clients, return an error response with their names.
       // their names will be displayed in the tooltip for users so they can reupload those clients.
       if (missingClients.size > 0) {
-        const missingClientList = [...missingClients]
+        const missingClientList = [...missingClients];
         logger.error("Missing clients!", missingClientList);
         return res.status(400).json({
           error: "Missing clients!",
@@ -399,6 +399,15 @@ router.delete(
   [isAuthenticated],
   async (req: Request, res: Response) => {
     const { id } = req.params;
+
+    const currentUserRole = (await auth.getUser(req.token!.uid)).customClaims
+      ?.role as Role;
+
+    if (currentUserRole === "VOLUNTEER") {
+      // volunteers cannot delete appointments
+      return res.status(403).send("Forbidden");
+    }
+
     if (!id) return res.status(400).send();
 
     const apptsCollection = db.collection(JANE_APPT_COLLECTION);
@@ -415,6 +424,14 @@ router.post(
   [isAuthenticated],
   async (req: Request, res: Response) => {
     const { ids } = req.body as { ids: string[] };
+
+    const currentUserRole = (await auth.getUser(req.token!.uid)).customClaims
+      ?.role as Role;
+
+    if (currentUserRole === "VOLUNTEER") {
+      // volunteers cannot delete appointments
+      return res.status(403).send("Forbidden");
+    }
 
     if (!ids || ids.length == 0) {
       return res.status(400).send("No ids provided");

@@ -38,6 +38,7 @@ export default function SelectDropdown({
                 selected === option
                   ? "bg-bcgw-yellow-dark"
                   : "hover:bg-bcgw-yellow-light",
+                className,
               )}
             >
               {option}

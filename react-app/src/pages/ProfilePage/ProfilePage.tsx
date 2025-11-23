@@ -1,22 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaEdit } from "react-icons/fa";
 import ConfirmPasswordPopup from "./ConfirmPasswordPopup";
 import ProfileIcon from "../../components/ProfileIcon";
 import ChangeNamePronounsPopup from "./ChangeNamePronounsPopup";
+import { useAuth } from "@/auth/AuthProvider";
 
 const ProfilePage = () => {
-  const [initials] = useState("VT");
-  const [firstName] = useState("Volunteer");
-  const [lastName] = useState("Tester");
-  const [pronouns] = useState("She/Her/Hers");
-  const [email] = useState("kim@gmail.com");
-  const [phone] = useState("585-105-6915");
+  const auth = useAuth();
+  const [initials, setInitials] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [pronouns, setPronouns] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [editType, setEditType] = useState("Email");
   const [openConfirmPasswordModal, setOpenConfirmPasswordModal] =
     useState(false);
   const [openNamePronounsModal, setOpenNamePronounsModal] = useState(false);
 
   const displayName = `${firstName} ${lastName}`;
+
+  useEffect(() => {
+    if (!auth.loading) {
+      const user = auth.profile;
+      setFirstName(user?.firstName || "");
+      setLastName(user?.lastName || "");
+      setPronouns(user?.pronouns || "");
+      setEmail(user?.email || "");
+      setPhone(user?.phone || "");
+      const initials =
+        `${user?.firstName?.[0] ?? ""}${user?.lastName?.[0] ?? ""}`.toUpperCase();
+      setInitials(initials);
+    }
+  }, [auth.loading, auth.profile]);
 
   return (
     <div className="flex flex-col gap-8 justify-center py-14 px-10 sm:px-20">
@@ -28,9 +44,9 @@ const ProfilePage = () => {
               {displayName}
             </h1>
             <div className="flex items-center gap-2 text-sm mb-2">
-              ({pronouns})
-              <FaEdit 
-                className="cursor-pointer text-gray-600 text-sm" 
+              {pronouns !== "" ? `(${pronouns})` : ""}
+              <FaEdit
+                className="cursor-pointer text-gray-600 text-sm"
                 onClick={() => setOpenNamePronounsModal(true)}
               />
             </div>
