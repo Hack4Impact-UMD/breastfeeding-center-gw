@@ -11,17 +11,21 @@ type SelectDropdownProps = {
   options: string[];
   selected: string;
   onChange: (selected: string) => void;
+  className?: string;
 };
 
 export default function SelectDropdown({
   options,
   selected,
   onChange,
+  className = "",
 }: SelectDropdownProps) {
   return (
     <div className="flex justify-center self-start">
       <Select value={selected} onValueChange={(val) => onChange(val)}>
-        <SelectTrigger className="w-[160px] sm:w-[200px] bg-white">
+        <SelectTrigger
+          className={cn("w-[160px] sm:w-[200px] bg-white", className)}
+        >
           <SelectValue />
         </SelectTrigger>
         <SelectContent className="bg-white">
