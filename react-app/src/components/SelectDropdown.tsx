@@ -21,7 +21,7 @@ export default function SelectDropdown({
   return (
     <div className="flex justify-center self-start">
       <Select value={selected} onValueChange={(val) => onChange(val)}>
-        <SelectTrigger className="w-[160px] sm:w-[200px]">
+        <SelectTrigger className="w-[160px] sm:w-[200px] bg-white">
           <SelectValue />
         </SelectTrigger>
         <SelectContent className="bg-white">

@@ -28,6 +28,7 @@ import {
   instructorColumns,
 } from "./AcuityTableColumns";
 import SelectDropdown from "@/components/SelectDropdown";
+import { Button } from "@/components/ui/button";
 
 export default function AcuityDashboardPage() {
   // const [allClasses, setAllClasses] = useState<any[]>([]);
@@ -41,11 +42,22 @@ export default function AcuityDashboardPage() {
     "flex flex-col items-center justify-start bg-white min-h-[400px] border-2 border-black p-5 mt-5 rounded-2xl";
 
   // ── CLASS dropdown state & data ───────────────────────────────
-  const [selectedClass, setSelectedClass] = useState("ALL CLASSES");
-  const classFilterOptions = ["ALL CLASSES", "Postpartum Classes", "Prenatal Classes", "Infant Massage", "Parent Groups", "Childbirth Classes"];
+  const [selectedTrimesterClass, setSelectedTrimesterClass] =
+    useState("ALL CLASSES");
+  const [selectedPopularityClass, setSelectedPopularityClass] =
+    useState("ALL CLASSES");
+
+  const classFilterOptions = [
+    "ALL CLASSES",
+    "POSTPARTUM CLASSES",
+    "PRENATAL CLASSES",
+    "INFANT MASSAGE",
+    "PARENT GROUPS",
+    "CHILDBIRTH CLASSES",
+  ];
   const trimesterAttendanceData = [
     {
-      key: "Postpartum Classes",
+      key: "POSTPARTUM CLASSES",
       data: [
         { key: "FIRST TRIM", data: 10 },
         { key: "SECOND TRIM", data: 15 },
@@ -55,7 +67,7 @@ export default function AcuityDashboardPage() {
       ],
     },
     {
-      key: "Prenatal Classes",
+      key: "PRENATAL CLASSES",
       data: [
         { key: "FIRST TRIM", data: 7 },
         { key: "SECOND TRIM", data: 1 },
@@ -65,7 +77,7 @@ export default function AcuityDashboardPage() {
       ],
     },
     {
-      key: "Infant Massage",
+      key: "INFANT MASSAGE",
       data: [
         { key: "FIRST TRIM", data: 1 },
         { key: "SECOND TRIM", data: 4 },
@@ -75,7 +87,7 @@ export default function AcuityDashboardPage() {
       ],
     },
     {
-      key: "Parent Groups",
+      key: "PARENT GROUPS",
       data: [
         { key: "FIRST TRIM", data: 9 },
         { key: "SECOND TRIM", data: 6 },
@@ -85,7 +97,7 @@ export default function AcuityDashboardPage() {
       ],
     },
     {
-      key: "Childbirth Classes",
+      key: "CHILDBIRTH CLASSES",
       data: [
         { key: "FIRST TRIM", data: 13 },
         { key: "SECOND TRIM", data: 16 },
@@ -98,7 +110,7 @@ export default function AcuityDashboardPage() {
 
   const allClassData = [
     {
-      key: "Postpartum Classes",
+      key: "POSTPARTUM CLASSES",
       data: [
         { key: new Date("2025-02-19"), data: 10 },
         { key: new Date("2025-02-26"), data: 20 },
@@ -108,7 +120,7 @@ export default function AcuityDashboardPage() {
       ],
     },
     {
-      key: "Prenatal Classes",
+      key: "PRENATAL CLASSES",
       data: [
         { key: new Date("2025-02-19"), data: 8 },
         { key: new Date("2025-02-26"), data: 15 },
@@ -118,7 +130,7 @@ export default function AcuityDashboardPage() {
       ],
     },
     {
-      key: "Infant Massage",
+      key: "INFANT MASSAGE",
       data: [
         { key: new Date("2025-02-19"), data: 1 },
         { key: new Date("2025-02-26"), data: 2 },
@@ -128,7 +140,7 @@ export default function AcuityDashboardPage() {
       ],
     },
     {
-      key: "Parent Groups",
+      key: "PARENT GROUPS",
       data: [
         { key: new Date("2025-02-19"), data: 5 },
         { key: new Date("2025-02-26"), data: 20 },
@@ -138,7 +150,7 @@ export default function AcuityDashboardPage() {
       ],
     },
     {
-      key: "Childbirth Classes",
+      key: "CHILDBIRTH CLASSES",
       data: [
         { key: new Date("2025-02-19"), data: 5 },
         { key: new Date("2025-02-26"), data: 12 },
@@ -151,7 +163,7 @@ export default function AcuityDashboardPage() {
 
   const allClassAttendanceData = [
     {
-      key: "Postpartum Classes",
+      key: "POSTPARTUM CLASSES",
       data: [
         { key: "Optimizing Sleep, Prenatal", data: 10 },
         { key: "Perinatal Rights at Work", data: 12 },
@@ -164,7 +176,7 @@ export default function AcuityDashboardPage() {
       ],
     },
     {
-      key: "Prenatal Classes",
+      key: "PRENATAL CLASSES",
       data: [
         { key: "Breastfeeding + Pumping Basics", data: 7 },
         { key: "Baby Care", data: 9 },
@@ -175,11 +187,11 @@ export default function AcuityDashboardPage() {
       ],
     },
     {
-      key: "Infant Massage",
-      data: [{ key: "Infant Massage", data: 7 }],
+      key: "INFANT MASSAGE",
+      data: [{ key: "INFANT MASSAGE", data: 7 }],
     },
     {
-      key: "Parent Groups",
+      key: "PARENT GROUPS",
       data: [
         { key: "Navigating Perinatal Stress", data: 7 },
         { key: "Feeding + Postpartum with 0-4m Olds", data: 9 },
@@ -188,7 +200,7 @@ export default function AcuityDashboardPage() {
       ],
     },
     {
-      key: "Childbirth Classes",
+      key: "CHILDBIRTH CLASSES",
       data: [
         { key: "Childbirth Express", data: 7 },
         { key: "Natural Childbirth", data: 9 },
@@ -344,8 +356,6 @@ export default function AcuityDashboardPage() {
 
   // Styles
   const centerItemsInDiv = "flex justify-between items-center";
-  const transparentGrayButtonStyle =
-    "bg-transparent hover:bg-bcgw-gray-light text-gray border-2 border-gray py-1 px-6 rounded-full cursor-pointer";
   const graphTableButtonStyle =
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer";
 
@@ -389,14 +399,14 @@ export default function AcuityDashboardPage() {
 
   // Filter class data based on selection
   const filteredClassData =
-    selectedClass === "ALL CLASSES"
+    selectedPopularityClass === "ALL CLASSES"
       ? allClassData
-      : allClassData.filter((item) => item.key === selectedClass);
+      : allClassData.filter((item) => item.key === selectedPopularityClass);
 
   const filteredClassBars =
-    selectedClass === "ALL CLASSES"
+    selectedTrimesterClass === "ALL CLASSES"
       ? []
-      : allClassAttendanceData.filter((c) => c.key === selectedClass);
+      : allClassAttendanceData.filter((c) => c.key === selectedTrimesterClass);
 
   const barData = filteredClassBars[0]?.data ?? [];
 
@@ -418,25 +428,24 @@ export default function AcuityDashboardPage() {
   };
 
   // ── INSTRUCTOR dropdown state & data ─────────────────────────
-  const [selectedInstructor, setSelectedInstructor] = useState("ALL CLASSES");
 
   // const typeToCategory: Record<string, string> = {
-  //   "Postpartum Classes": "Postpartum",
-  //   "Prenatal Classes": "Prenatal",
-  //   "Infant Massage": "Infant Massage",
-  //   "Parent Groups": "Parent Groups",
-  //   "Childbirth Classes": "Childbirth",
+  //   "POSTPARTUM CLASSES": "Postpartum",
+  //   "PRENATAL CLASSES": "Prenatal",
+  //   "INFANT MASSAGE": "INFANT MASSAGE",
+  //   "PARENT GROUPS": "PARENT GROUPS",
+  //   "CHILDBIRTH CLASSES": "Childbirth",
   // };
 
   // const instructorTableRows = useMemo(() => {
-  //   if (selectedInstructor === "ALL CLASSES") return instructorData;
-  //   const cat = typeToCategory[selectedInstructor] ?? selectedInstructor;
+  //   if (selectedPopularityClass === "ALL CLASSES") return instructorData;
+  //   const cat = typeToCategory[selectedPopularityClass] ?? selectedPopularityClass;
   //   return instructorData.filter((r) => r.category === cat);
-  // }, [selectedInstructor, instructorData]);
+  // }, [selectedPopularityClass, instructorData]);
 
   const allInstructorData = [
     {
-      key: "Postpartum Classes",
+      key: "POSTPARTUM CLASSES",
       data: [
         { key: new Date("2025-02-19"), data: 10 },
         { key: new Date("2025-02-26"), data: 20 },
@@ -446,7 +455,7 @@ export default function AcuityDashboardPage() {
       ],
     },
     {
-      key: "Prenatal Classes",
+      key: "PRENATAL CLASSES",
       data: [
         { key: new Date("2025-02-19"), data: 8 },
         { key: new Date("2025-02-26"), data: 15 },
@@ -456,7 +465,7 @@ export default function AcuityDashboardPage() {
       ],
     },
     {
-      key: "Infant Massage",
+      key: "INFANT MASSAGE",
       data: [
         { key: new Date("2025-02-19"), data: 1 },
         { key: new Date("2025-02-26"), data: 2 },
@@ -466,7 +475,7 @@ export default function AcuityDashboardPage() {
       ],
     },
     {
-      key: "Parent Groups",
+      key: "PARENT GROUPS",
       data: [
         { key: new Date("2025-02-19"), data: 5 },
         { key: new Date("2025-02-26"), data: 20 },
@@ -476,7 +485,7 @@ export default function AcuityDashboardPage() {
       ],
     },
     {
-      key: "Childbirth Classes",
+      key: "CHILDBIRTH CLASSES",
       data: [
         { key: new Date("2025-02-19"), data: 5 },
         { key: new Date("2025-02-26"), data: 12 },
@@ -488,42 +497,31 @@ export default function AcuityDashboardPage() {
   ];
 
   const filteredInstructorData =
-    selectedInstructor === "ALL CLASSES"
+    selectedPopularityClass === "ALL CLASSES"
       ? allInstructorData
-      : allInstructorData.filter((item) => item.key === selectedInstructor);
+      : allInstructorData.filter(
+          (item) => item.key === selectedPopularityClass,
+        );
 
   const classAttendanceTableExtras = (
     <div className="w-full flex justify-end">
-      <select
-        className="h-9 rounded-md border bg-white px-3 text-sm"
-        value={selectedClass}
-        onChange={(e) => setSelectedClass(e.target.value)}
-      >
-        <option>ALL CLASSES</option>
-        {allClassData.map((c) => (
-          <option key={c.key}>{c.key}</option>
-        ))}
-      </select>
+      <SelectDropdown
+        options={classFilterOptions}
+        selected={selectedTrimesterClass}
+        onChange={setSelectedTrimesterClass}
+      />
     </div>
   );
 
   const classPopularityTableExtras = (
     <div className="w-full flex justify-end">
-      <select
-        className="border bg-white h-9 rounded-md px-2 py-1 text-sm"
-        value={selectedClass}
-        onChange={(e) => setSelectedClass(e.target.value)}
-      >
-        <option>ALL CLASSES</option>
-        {allClassData.map((c) => (
-          <option key={c.key}>{c.key}</option>
-        ))}
-      </select>
+      <SelectDropdown
+        options={classFilterOptions}
+        selected={selectedPopularityClass}
+        onChange={setSelectedPopularityClass}
+      />
     </div>
   );
-
-  // ── Order By dropdown state & data ─────────────────────────
-  // const [selectedOrder, setSelectedOrder] = useState("Order By");
 
   return (
     <>
@@ -565,12 +563,15 @@ export default function AcuityDashboardPage() {
               Table
             </button>
           </div>
-          <button
-            className={transparentGrayButtonStyle}
+          <Button
+            variant={"outlineGray"}
+            className={
+              "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
+            }
             onClick={() => handleExport(attendanceChartRef, "class_attendance")}
           >
             Export
-          </button>
+          </Button>
         </div>
         {/* Attendance by Trimester Bar Chart */}
         <span className="self-start font-semibold text-2xl">
@@ -581,11 +582,15 @@ export default function AcuityDashboardPage() {
           <div className={chartDiv} ref={attendanceChartRef}>
             {/* Class dropdown */}
             <div className="self-end mb-4">
-              <SelectDropdown options={classFilterOptions} selected={selectedClass} onChange={setSelectedClass} />
+              <SelectDropdown
+                options={classFilterOptions}
+                selected={selectedTrimesterClass}
+                onChange={setSelectedTrimesterClass}
+              />
             </div>
 
             <div className="w-full h-96">
-              {selectedClass === "ALL CLASSES" ? (
+              {selectedTrimesterClass === "ALL CLASSES" ? (
                 /* stacked chart for all classes: */
                 <StackedBarChart
                   height={350}
@@ -677,14 +682,17 @@ export default function AcuityDashboardPage() {
               Table
             </button>
           </div>
-          <button
-            className={transparentGrayButtonStyle}
+          <Button
+            variant={"outlineGray"}
+            className={
+              "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
+            }
             onClick={() =>
               handleExport(classPopularityChartRef, "class_popularity")
             }
           >
             Export
-          </button>
+          </Button>
         </div>
         <span className="self-start font-semibold text-2xl">
           {popularityDisplay === "graph" ? (
@@ -701,17 +709,12 @@ export default function AcuityDashboardPage() {
               <div className="text-2xl font-semibold">Class Popularity</div>
               {/* Class dropdown */}
               <div className={chartDiv}>
-                <div className="self-end">
-                  <select
-                    className="border rounded-md px-2 py-1 text-sm"
-                    value={selectedClass}
-                    onChange={(e) => setSelectedClass(e.target.value)}
-                  >
-                    <option>ALL CLASSES</option>
-                    {allClassData.map((c) => (
-                      <option key={c.key}>{c.key}</option>
-                    ))}
-                  </select>
+                <div className="self-end mb-4">
+                  <SelectDropdown
+                    options={classFilterOptions}
+                    selected={selectedPopularityClass}
+                    onChange={setSelectedPopularityClass}
+                  />
                 </div>
                 <div className="w-full h-96">
                   <LineChart
@@ -726,17 +729,12 @@ export default function AcuityDashboardPage() {
                 Instructor Popularity
               </div>
               <div className={chartDiv}>
-                <div className="self-end">
-                  <select
-                    className="border rounded-md px-2 py-1 text-sm"
-                    value={selectedInstructor}
-                    onChange={(e) => setSelectedInstructor(e.target.value)}
-                  >
-                    <option>All Classes</option>
-                    {allInstructorData.map((ins) => (
-                      <option key={ins.key}>{ins.key}</option>
-                    ))}
-                  </select>
+                <div className="self-end mb-4">
+                  <SelectDropdown
+                    options={classFilterOptions}
+                    selected={selectedPopularityClass}
+                    onChange={setSelectedPopularityClass}
+                  />
                 </div>
                 <div className="w-full h-96">
                   <LineChart
