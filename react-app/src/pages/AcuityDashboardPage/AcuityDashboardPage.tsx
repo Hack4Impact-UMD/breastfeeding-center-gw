@@ -427,22 +427,6 @@ export default function AcuityDashboardPage() {
     }
   };
 
-  // ── INSTRUCTOR dropdown state & data ─────────────────────────
-
-  // const typeToCategory: Record<string, string> = {
-  //   "POSTPARTUM CLASSES": "Postpartum",
-  //   "PRENATAL CLASSES": "Prenatal",
-  //   "INFANT MASSAGE": "INFANT MASSAGE",
-  //   "PARENT GROUPS": "PARENT GROUPS",
-  //   "CHILDBIRTH CLASSES": "Childbirth",
-  // };
-
-  // const instructorTableRows = useMemo(() => {
-  //   if (selectedPopularityClass === "ALL CLASSES") return instructorData;
-  //   const cat = typeToCategory[selectedPopularityClass] ?? selectedPopularityClass;
-  //   return instructorData.filter((r) => r.category === cat);
-  // }, [selectedPopularityClass, instructorData]);
-
   const allInstructorData = [
     {
       key: "POSTPARTUM CLASSES",
