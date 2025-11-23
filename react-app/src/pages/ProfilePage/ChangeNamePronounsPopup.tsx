@@ -2,6 +2,7 @@ import { useState } from "react";
 import { IoIosClose } from "react-icons/io";
 import Modal from "../../components/Modal";
 import { Button } from "@/components/ui/button";
+import PronounsComboBox from "@/components/PronounsComboBox";
 
 const ChangeNamePronounsPopup = ({
   open,
@@ -19,14 +20,6 @@ const ChangeNamePronounsPopup = ({
   const [firstName, setFirstName] = useState(initialFirstName);
   const [lastName, setLastName] = useState(initialLastName);
   const [pronouns, setPronouns] = useState(initialPronouns);
-
-  const pronounOptions = [
-    "She/Her/Hers",
-    "He/Him/His",
-    "They/Them/Theirs",
-    "Other",
-    "None",
-  ];
 
   const handleSave = () => {
     console.log("Updated name to:", { firstName, lastName, pronouns });
@@ -53,12 +46,10 @@ const ChangeNamePronounsPopup = ({
     <Modal open={open} onClose={onClose} height={350} width={600}>
       <div className="w-full">
         <div className="flex flex-col bg-white rounded-2xl w-full h-auto overflow-y-auto sm:overflow-visible">
-
           <ModalHeader onClose={onClose} />
 
           {/* CONTENT WRAPPER – now mobile responsive */}
           <div className="flex flex-col m-4 sm:m-8 mb-2 text-left space-y-4">
-
             {/* FIRST NAME */}
             <div className="flex flex-col sm:grid sm:grid-cols-[150px_1fr] sm:gap-x-2">
               <label className="text-sm sm:text-base font-medium mb-1 sm:mb-0 sm:content-center">
@@ -92,17 +83,7 @@ const ChangeNamePronounsPopup = ({
               <label className="text-sm sm:text-base font-medium mb-1 sm:mb-0 sm:content-center">
                 Pronouns
               </label>
-              <select
-                value={pronouns}
-                onChange={(e) => setPronouns(e.target.value)}
-                className="w-full sm:w-fit border-[1.5px] border-black px-3 py-2 bg-white cursor-pointer rounded-2xl text-sm sm:text-base"
-              >
-                {pronounOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
+              <PronounsComboBox pronouns={pronouns} onChange={setPronouns} />
             </div>
           </div>
 

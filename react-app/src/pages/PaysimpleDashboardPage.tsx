@@ -10,6 +10,7 @@ import {
 import { DataTable } from "@/components/DataTable/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import ColumnSortButton from "@/components/DataTable/ColumnSortButton";
+import { Button } from "@/components/ui/button";
 
 // record of colors to use for each rental item
 const colors: Record<string, string> = {
@@ -64,8 +65,6 @@ export default function PaysimpleDashboardPage() {
   const { monday, sunday } = getWeekRange(selectedDate);
   const formattedRange = `${formatDate(monday)} - ${formatDate(sunday)}`;
 
-  const transparentGrayButtonStyle =
-    "bg-transparent hover:bg-bcgw-gray-light text-gray border-2 border-gray py-1 px-6 rounded-full cursor-pointer";
   const graphTableButtonStyle =
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer";
   const centerItemsInDiv = "flex justify-between items-center";
@@ -172,12 +171,15 @@ export default function PaysimpleDashboardPage() {
               Table
             </button>
           </div>
-          <button
-            className={transparentGrayButtonStyle}
+          <Button
+            variant={"outlineGray"}
+            className={
+              "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
+            }
             onClick={() => handleExport(rentalChartRef, "rental_duration")}
           >
             Export
-          </button>
+          </Button>
         </div>
 
         {/* white card to put graph inside */}

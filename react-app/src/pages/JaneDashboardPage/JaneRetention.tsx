@@ -11,6 +11,8 @@ import {
 import { useRetentionData } from "@/hooks/queries/useRetentionData.ts";
 import { processRetentionData } from "@/services/janeService.ts";
 import { DataTable } from "@/components/DataTable/DataTable";
+import { Button } from "@/components/ui/button.tsx";
+import SelectDropdown from "@/components/SelectDropdown.tsx";
 import Loading from "@/components/Loading.tsx";
 
 type JaneRetentionProps = {
@@ -45,8 +47,6 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
   const [selectedDropdown, setSelectedDropdown] = useState("ALL CLIENTS");
   const funnelChartRef = useRef<HTMLDivElement>(null);
 
-  const transparentGrayButtonStyle =
-    "bg-transparent hover:bg-bcgw-gray-light text-gray border-2 border-gray py-1 px-6 rounded-full cursor-pointer";
   const graphTableButtonStyle =
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer border border-gray-300";
   const centerItemsInDiv = "flex justify-between items-center";
@@ -147,12 +147,15 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
             Table
           </button>
         </div>
-        <button
-          className={transparentGrayButtonStyle}
-          onClick={() => handleExport(funnelChartRef, "retention_rate")}
+        <Button
+          variant={"outlineGray"}
+          className={
+            "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
+          }
+          onClick={() => handleExport(funnelChartRef, "visit_breakdown")}
         >
           Export
-        </button>
+        </Button>
       </div>
       <span className="self-start font-semibold text-2xl">
         Retention Rate:{" "}
@@ -168,15 +171,12 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
           <Loading />
         ) : retentionDisplay === "graph" ? (
           <>
-            <div className="self-end">
-              <select
-                className="border rounded-md px-2 py-1 text-sm"
-                value={selectedDropdown}
-                onChange={(e) => setSelectedDropdown(e.target.value)}
-              >
-                <option>ALL CLIENTS</option>
-                <option>RECENT CHILDBIRTH</option>
-              </select>
+            <div className="self-end mb-4">
+              <SelectDropdown
+                options={["ALL CLIENTS", "RECENT CHILDBIRTH"]}
+                selected={selectedDropdown}
+                onChange={setSelectedDropdown}
+              />
             </div>
             <div className="w-full">
               <BarChart

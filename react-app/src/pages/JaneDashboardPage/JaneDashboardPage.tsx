@@ -201,7 +201,7 @@ const JaneDashboardPage = () => {
         <div className="flex flex-col lg:flex-row gap-8 pt-3">
           <div className="flex-[0_0_100%] max-w-full min-w-[200px] md:flex-[0_0_48%] lg:w-1/2">
             <div className="flex items-center justify-between w-full pt-4 mb-6">
-              <div className="flex w-[175px] h-10 overflow-hidden ">
+              <div className="flex flex-row ">
                 <button
                   className={`${graphTableButtonStyle} ${
                     visitDisplay === "graph"
@@ -226,7 +226,7 @@ const JaneDashboardPage = () => {
               <Button
                 variant={"outlineGray"}
                 className={
-                  "text-md rounded-full border-2 py-4 hover:bg-bcgw-gray-light"
+                  "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
                 }
                 onClick={() => handleExport(pieChartRef, "visit_breakdown")}
               >

@@ -44,7 +44,9 @@ const UserCard: React.FC<{ user: User; singleDirector: boolean }> = ({
         </div>
 
         <div className="mt-3 max-[375px]:mt-2 space-y-1 max-[375px]:space-y-0.5">
-          <p className="text-base max-[375px]:text-sm text-black">Email: {user.email}</p>
+          <p className="text-base max-[375px]:text-sm text-black">
+            Email: {user.email}
+          </p>
           <p className="text-base max-[375px]:text-sm text-black">
             Phone: {user.phone ?? "XXX-XXX-XXXX"}
           </p>
@@ -53,12 +55,12 @@ const UserCard: React.FC<{ user: User; singleDirector: boolean }> = ({
 
       <div className="flex flex-col gap-3 max-[375px]:gap-2 lg:flex-row lg:gap-4 lg:justify-end flex-shrink-0">
         {profile?.auth_id === user.auth_id ||
-          profile?.type === "DIRECTOR" ||
-          (profile?.type === "ADMIN" &&
-            RoleLevels[profile.type] >= RoleLevels[user.type]) ? (
+        profile?.type === "DIRECTOR" ||
+        (profile?.type === "ADMIN" &&
+          RoleLevels[profile.type] >= RoleLevels[user.type]) ? (
           <>
             <Button
-              className="max-[375px]:py-1 max-[375px]:px-2 max-[375px]:text-xs"
+              className="max-[375px]:py-1 max-[375px]:px-2 max-[375px]:text-xs hover:bg-bcgw-yellow-dark"
               variant="outline"
               onClick={() => {
                 if (user.type === "DIRECTOR" && singleDirector) {
@@ -72,7 +74,7 @@ const UserCard: React.FC<{ user: User; singleDirector: boolean }> = ({
               Change Access
             </Button>
             <Button
-              className="max-[375px]:py-1 max-[375px]:px-2 max-[375px]:text-xs"
+              className="max-[375px]:py-1 max-[375px]:px-2 max-[375px]:text-xs hover:bg-bcgw-yellow-dark"
               variant="outline"
               onClick={() => {
                 // Placeholder logic: show director block if this is a director
@@ -125,7 +127,7 @@ const UserCard: React.FC<{ user: User; singleDirector: boolean }> = ({
               >
                 {["DIRECTOR", "ADMIN", "VOLUNTEER"].map((role) =>
                   profile?.type === "DIRECTOR" ||
-                    RoleLevels[role as Role] <
+                  RoleLevels[role as Role] <
                     RoleLevels[profile?.type ?? "VOLUNTEER"] ? (
                     <option key={role} value={role}>
                       {role.charAt(0) + role.substring(1).toLocaleLowerCase()}

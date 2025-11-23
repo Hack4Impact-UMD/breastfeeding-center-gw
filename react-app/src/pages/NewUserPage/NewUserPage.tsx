@@ -15,8 +15,8 @@ import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { PASSWORD_REQUIREMENTS, validatePassword } from "@/lib/passwordUtils";
 import { useRegisterUser } from "@/hooks/mutations/useRegisterUser";
 import { Button } from "@/components/ui/button";
+import PronounsComboBox from "@/components/PronounsComboBox";
 
-const PRONOUN_OPTIONS = ["she/her", "he/him", "they/them", "Other", "None"];
 
 export default function NewUserPage() {
   const { inviteId = "" } = useParams();
@@ -34,7 +34,7 @@ export default function NewUserPage() {
 
   const [firstName, setFirstName] = useState(prefilledFirstName);
   const [lastName, setLastName] = useState(prefilledLastName);
-  const [pronouns, setPronouns] = useState(PRONOUN_OPTIONS[0]);
+  const [pronouns, setPronouns] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -174,18 +174,9 @@ export default function NewUserPage() {
           {/* Pronouns (full width but EXACT same column width) */}
           <div>
             <label className="font-medium mb-1 flex items-center">
-              <span className="invisible mr-2">*</span>
               <span>Pronouns</span>
             </label>
-            <select
-              className="w-full border rounded px-3 py-2"
-              value={pronouns}
-              onChange={(e) => setPronouns(e.target.value)}
-            >
-              {PRONOUN_OPTIONS.map((option) => (
-                <option key={option}>{option}</option>
-              ))}
-            </select>
+            <PronounsComboBox pronouns={pronouns} onChange={setPronouns} />
           </div>
 
         </div>
