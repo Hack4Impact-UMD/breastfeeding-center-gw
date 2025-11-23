@@ -33,8 +33,7 @@ const UserFilters: React.FC<Props> = ({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search"
-              className="w-36 md:w-48 text-sm border rounded-md px-3 py-2 h-9 bg-white focus:outline-none"
-              // className="w-36 md:w-48 h-8 px-3 border border-black rounded bg-white text-sm focus:outline-none"
+              className="w-36 sm:w-48 text-sm border rounded-md px-3 py-2 h-9 bg-white focus:outline-none"
             />
           </div>
 

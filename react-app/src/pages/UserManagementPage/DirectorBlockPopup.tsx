@@ -12,12 +12,14 @@ const DirectorBlockPopup = ({
     <Modal open={openModal} onClose={() => onClose()} height={220} width={450}>
       <div className="h-full flex flex-col relative">
         {/* Close icon top-right */}
-        <button
-          onClick={() => onClose()}
-          className="w-full flex justify-end p-2 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
-        >
-          <IoIosClose size={32} />
-        </button>
+        <div className="w-full flex justify-end p-2">
+          <IoIosClose
+            className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
+            onClick={() => onClose()}
+            aria-label="Close"
+            size={32}
+          />
+        </div>
 
         {/* Title */}
         <h2 className="px-8 pb-4 text-2xl font-semibold text-center">

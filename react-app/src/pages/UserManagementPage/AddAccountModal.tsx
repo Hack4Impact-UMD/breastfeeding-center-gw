@@ -3,6 +3,7 @@ import Modal from "../../components/Modal";
 import { Button } from "@/components/ui/button";
 import { IoIosClose } from "react-icons/io";
 import { Role } from "@/types/UserType";
+import SelectDropdown from "@/components/SelectDropdown";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -36,6 +37,16 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({
   const allFilled = firstName && lastName && email && confirmEmail;
   const canConfirm = allFilled && emailValid && emailsMatch;
 
+  const handleClose = () => {
+    setFirstName("");
+    setLastName("");
+    setEmail("");
+    setConfirmEmail("");
+    setRole("VOLUNTEER");
+    setTouched(false);
+    onClose();
+  };
+
   let error = "";
   if (touched && !allFilled)
     error = "One of the fields is empty or contains invalid data.";
@@ -43,66 +54,62 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({
   else if (touched && !emailsMatch) error = "Email addresses don’t match";
 
   return (
-    <Modal open={open} onClose={onClose} width={500} height={440}>
+    <Modal open={open} onClose={handleClose} width={500} height={450}>
       <div className="relative flex flex-col h-full">
-        <button
-          className="absolute top-2.25 right-2.25 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
-          onClick={onClose}
-          aria-label="Close"
-        >
-          <IoIosClose size={40} />
-        </button>
-        <h2 className="text-2xl font-bold text-center mb-4 pt-6">
-          Add Account
-        </h2>
+        <div className="w-full flex justify-end p-2">
+          <IoIosClose
+            className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
+            onClick={() => handleClose()}
+            aria-label="Close"
+            size={32}
+          />
+        </div>
+        <h2 className="text-2xl font-semibold text-center mb-4">Add Account</h2>
         <div className="flex gap-2 mb-3 px-8">
           <input
-            className="border rounded px-2 py-1 w-1/2"
+            className="border rounded px-3 py-2 w-1/2"
             placeholder="First Name"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
             onBlur={() => setTouched(true)}
           />
           <input
-            className="border rounded px-2 py-3 w-1/2"
+            className="border rounded px-3 py-2 w-1/2"
             placeholder="Last Name"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
             onBlur={() => setTouched(true)}
           />
         </div>
-        <div className="mb-2 px-8">
+        <div className="mb-3 px-8">
           <input
-            className="border rounded px-2 py-3 mb-2 w-full"
+            className="border rounded px-3 py-2 mb-3 w-full"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             onBlur={() => setTouched(true)}
           />
           <input
-            className="border rounded px-2 py-3 w-full"
+            className="border rounded px-3 py-2 w-full"
             placeholder="Confirm Email"
             value={confirmEmail}
             onChange={(e) => setConfirmEmail(e.target.value)}
             onBlur={() => setTouched(true)}
           />
         </div>
-        <div className="mb-3 px-8 flex flex-col items-center">
-          <select
-            value={role}
-            onChange={(e) => setRole(e.target.value as Role)}
-            className="py-3 px-3 w-28 border border-black rounded bg-white text-sm focus:outline-none"
-          >
-            <option value="DIRECTOR">Director</option>
-            <option value="ADMIN">Admin</option>
-            <option value="VOLUNTEER">Volunteer</option>
-          </select>
+        <div className="mb-8 flex items-center justify-center">
+          <SelectDropdown
+            options={["DIRECTOR", "ADMIN", "VOLUNTEER"]}
+            selected={role}
+            onChange={(value) => setRole(value as Role)}
+            className={"w-36 sm:w-36 flex justify-center"}
+          />
         </div>
-        <div className="text-sm text-gray-700 mb-2 text-center">
+        <div className="text-sm text-gray-700 mb-3 text-center">
           Are you sure you would like to create a new account?
         </div>
-        <div className="flex gap-4 justify-center mb-2">
-          <Button variant="outline" onClick={onClose} disabled={disabled}>
+        <div className="flex gap-4 justify-center mb-3">
+          <Button variant="outline" onClick={handleClose} disabled={disabled}>
             CANCEL
           </Button>
           <Button

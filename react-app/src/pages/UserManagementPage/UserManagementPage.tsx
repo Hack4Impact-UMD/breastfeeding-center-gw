@@ -8,8 +8,10 @@ import Loading from "@/components/Loading";
 import { useMutation } from "@tanstack/react-query";
 import { sendUserInvite } from "@/services/inviteService";
 import { Role } from "@/types/UserType";
+import { useAuth } from "@/auth/AuthProvider";
 
 const UserManagementPage: React.FC = () => {
+  const auth = useAuth();
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("All");
   const [showAddModal, setShowAddModal] = useState(false);
@@ -23,13 +25,19 @@ const UserManagementPage: React.FC = () => {
 
   const filteredUsers = useMemo(
     () =>
-      users?.filter((u) => {
-        const fullName = `${u.lastName}, ${u.firstName}`.toLowerCase();
-        return (
-          fullName.includes(search.toLowerCase()) &&
-          (roleFilter === "All" || u.type === roleFilter)
-        );
-      }),
+      users
+        ?.filter((u) => {
+          const fullName = `${u.lastName}, ${u.firstName}`.toLowerCase();
+          return (
+            fullName.includes(search.toLowerCase()) &&
+            (roleFilter === "All" || u.type === roleFilter)
+          );
+        })
+        .sort((a, b) =>
+          (a.lastName || "")
+            .toLowerCase()
+            .localeCompare((b.lastName || "").toLowerCase()),
+        ),
     [users, roleFilter, search],
   );
 
@@ -72,7 +80,11 @@ const UserManagementPage: React.FC = () => {
 
         <div className="flex justify-between items-center mt-3 pb-2 px-2.5 border-b border-gray-300">
           <div className="text-base font-semibold">User</div>
-          <div className="text-base font-semibold">Actions</div>
+          {auth.token?.claims?.role !== "VOLUNTEER" ? (
+            <div className="text-base font-semibold">Actions</div>
+          ) : (
+            <></>
+          )}
         </div>
 
         {/* user list */}

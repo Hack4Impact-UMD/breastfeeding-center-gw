@@ -21,6 +21,11 @@ const ChangeAccessPopup = ({
   const [selectedRole, setSelectedRole] = useState<Role>(user.type);
   const roleOptions: Role[] = getRoleOptions();
 
+  const handleClose = () => {
+    setSelectedRole(user.type);
+    onClose();
+  };
+
   function getRoleOptions(): Role[] {
     // If the profile is a director, they can select any role
     // Otherwise, they can select any role equal to or below their own
@@ -32,16 +37,22 @@ const ChangeAccessPopup = ({
   }
 
   return (
-    <Modal open={openModal} onClose={() => onClose()} height={220} width={400}>
+    <Modal
+      open={openModal}
+      onClose={() => handleClose()}
+      height={220}
+      width={400}
+    >
       <div className="h-full flex flex-col relative">
         {/* Close icon top-right */}
-        <button
-          onClick={() => onClose()}
-          className="w-full flex justify-end p-2 text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
-        >
-          <IoIosClose size={32} />
-        </button>
-
+        <div className="w-full flex justify-end p-2">
+          <IoIosClose
+            className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
+            onClick={() => handleClose()}
+            aria-label="Close"
+            size={32}
+          />
+        </div>
         {/* Title */}
         <h2 className="px-8 pb-6 text-2xl font-semibold text-center">
           Change Access
@@ -59,7 +70,7 @@ const ChangeAccessPopup = ({
 
         {/* Actions */}
         <div className="px-8 pb-8 flex justify-center gap-3">
-          <Button variant="outline" onClick={() => onClose()}>
+          <Button variant="outline" onClick={() => handleClose()}>
             CANCEL
           </Button>
           <Button

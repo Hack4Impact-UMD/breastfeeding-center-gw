@@ -50,8 +50,7 @@ const UserCard: React.FC<{ user: User; singleDirector: boolean }> = ({
       </div>
 
       <div className="flex flex-col gap-3 max-[375px]:gap-2 lg:flex-row lg:gap-4 lg:justify-end flex-shrink-0">
-        {profile?.auth_id === user.auth_id ||
-        profile?.type === "DIRECTOR" ||
+        {profile?.type === "DIRECTOR" ||
         (profile?.type === "ADMIN" &&
           RoleLevels[profile.type] >= RoleLevels[user.type]) ? (
           <>
@@ -65,7 +64,6 @@ const UserCard: React.FC<{ user: User; singleDirector: boolean }> = ({
                   setIsChangeAccessOpen(true);
                 }
               }}
-              disabled={profile.type === "VOLUNTEER"}
             >
               Change Access
             </Button>
@@ -73,7 +71,6 @@ const UserCard: React.FC<{ user: User; singleDirector: boolean }> = ({
               className="max-[375px]:py-1 max-[375px]:px-2 max-[375px]:text-xs hover:bg-bcgw-yellow-dark"
               variant="outline"
               onClick={() => {
-                // Placeholder logic: show director block if this is a director
                 if (user.type === "DIRECTOR" && singleDirector) {
                   setIsDirectorBlockOpen(true);
                 } else {
