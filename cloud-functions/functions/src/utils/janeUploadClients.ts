@@ -4,7 +4,11 @@ import { Baby, Client } from "../types/clientType";
 import { logger } from "firebase-functions";
 import { v7 as uuidv7 } from "uuid";
 
-export async function parseClientSheet(fileType: string, fileAsBuffer: Buffer) {
+export async function parseClientSheet(
+  fileType: string,
+  fileAsBuffer: Buffer,
+  janeIdToUUID: Map<string, string>,
+) {
   const requiredHeaders = [
     "Patient Number",
     "First Name",
@@ -75,7 +79,7 @@ export async function parseClientSheet(fileType: string, fileAsBuffer: Buffer) {
       ) {
         babyList.push(parseBaby(jsonObj));
       } else {
-        clientList.push(parseClient(jsonObj));
+        clientList.push(parseClient(jsonObj, janeIdToUUID));
       }
     }
   });
@@ -83,10 +87,15 @@ export async function parseClientSheet(fileType: string, fileAsBuffer: Buffer) {
   return { clientList, babyList };
 }
 
-function parseClient(clientRawData: Record<string, string>) {
+function parseClient(
+  clientRawData: Record<string, string>,
+  janeIdToUUID: Map<string, string>,
+) {
   const client = {} as Client;
-  client.id = uuidv7();
   client.janeId = clientRawData["Patient Number"].trim();
+  client.id = janeIdToUUID.has(client.janeId ?? "")
+    ? janeIdToUUID.get(client.janeId)!
+    : uuidv7();
 
   client.email =
     clientRawData.Email === undefined ||
