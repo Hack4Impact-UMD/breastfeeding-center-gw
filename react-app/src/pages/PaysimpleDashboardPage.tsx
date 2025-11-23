@@ -65,8 +65,6 @@ export default function PaysimpleDashboardPage() {
   const { monday, sunday } = getWeekRange(selectedDate);
   const formattedRange = `${formatDate(monday)} - ${formatDate(sunday)}`;
 
-  const transparentGrayButtonStyle =
-    "bg-transparent hover:bg-bcgw-gray-light text-gray border-2 border-gray py-1 px-6 rounded-full cursor-pointer";
   const graphTableButtonStyle =
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer";
   const centerItemsInDiv = "flex justify-between items-center";
