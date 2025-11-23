@@ -31,8 +31,10 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
   };
 
   const handleClose = () => {
-    resetState();
-    onClose();
+    if (!uploadMutation.isPending) {
+      resetState();
+      onClose();
+    }
   };
 
   const [apptFile, setApptFile] = useState<File | null>(null);
@@ -186,6 +188,7 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
                 accept=".xlsx,.csv"
                 className="hidden"
                 onChange={(e) => handleFileChange(e, "appt")}
+                disabled={uploadMutation.isPending}
               />
               <div className={apptFileName ? "block" : "invisible"}>
                 <div className="flex text-sm font-bold items-center mt-1">
@@ -203,6 +206,7 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
                     onClick={() => {
                       handleApptFile();
                     }}
+                    disabled={uploadMutation.isPending}
                     className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
                   >
                     <IoIosClose size={20} />
@@ -241,6 +245,7 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
                 accept=".xlsx,.csv"
                 className="hidden"
                 onChange={(e) => handleFileChange(e, "client")}
+                disabled={uploadMutation.isPending}
               />
               <div className={clientFileName ? "block" : "invisible"}>
                 <div className="flex text-sm font-bold items-center mt-1">
@@ -258,6 +263,7 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
                     onClick={() => {
                       handleClientFile();
                     }}
+                    disabled={uploadMutation.isPending}
                     className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
                   >
                     <IoIosClose size={20} />
