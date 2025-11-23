@@ -3,6 +3,7 @@ import React from "react";
 import addUserIcon from "../../assets/addUser.png";
 import { Button } from "@/components/ui/button";
 import SelectDropdown from "@/components/SelectDropdown";
+import { useAuth } from "@/auth/AuthProvider";
 
 interface Props {
   search: string;
@@ -19,6 +20,7 @@ const UserFilters: React.FC<Props> = ({
   setRoleFilter,
   onAddUserClick,
 }) => {
+  const auth = useAuth();
   return (
     <div className="pb-6 px-2.5 border-b border-gray-300">
       <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4">
@@ -44,7 +46,7 @@ const UserFilters: React.FC<Props> = ({
                 Role Type
               </label>
               <SelectDropdown
-                options={["All", "DIRECTOR", "ADMIN", "VOLUNTEER"]}
+                options={["ALL", "DIRECTOR", "ADMIN", "VOLUNTEER"]}
                 selected={roleFilter}
                 onChange={setRoleFilter}
                 className="w-36 sm:w-36"
@@ -52,18 +54,20 @@ const UserFilters: React.FC<Props> = ({
             </div>
 
             {/* Add User button */}
-            <Button
-              variant="yellow"
-              onClick={onAddUserClick}
-              className="flex items-center gap-2"
-            >
-              <img
-                src={addUserIcon}
-                alt="Add user"
-                className="w-[21px] h-[21px]"
-              />
-              <span>Add User</span>
-            </Button>
+            {auth.token?.claims?.role !== "VOLUNTEER" && (
+              <Button
+                variant="yellow"
+                onClick={onAddUserClick}
+                className="flex items-center gap-2"
+              >
+                <img
+                  src={addUserIcon}
+                  alt="Add user"
+                  className="w-[21px] h-[21px]"
+                />
+                <span>Add User</span>
+              </Button>
+            )}
           </div>
         </div>
       </div>

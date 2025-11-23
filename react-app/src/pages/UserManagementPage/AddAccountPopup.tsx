@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Modal from "../../components/Modal";
 import { Button } from "@/components/ui/button";
 import { IoIosClose } from "react-icons/io";
-import { Role } from "@/types/UserType";
+import { Role, RoleLevels, User } from "@/types/UserType";
 import SelectDropdown from "@/components/SelectDropdown";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -17,13 +17,15 @@ interface AddAccountModalProps {
     role: Role;
   }) => void;
   disabled?: boolean;
+  profile: User | null;
 }
 
-const AddAccountModal: React.FC<AddAccountModalProps> = ({
+const AddAccountPopup: React.FC<AddAccountModalProps> = ({
   open,
   onClose,
   onConfirm,
   disabled = false,
+  profile,
 }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -31,6 +33,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({
   const [confirmEmail, setConfirmEmail] = useState("");
   const [role, setRole] = useState<Role>("VOLUNTEER");
   const [touched, setTouched] = useState(false);
+  const roleOptions: Role[] = getRoleOptions();
 
   const emailValid = emailRegex.test(email);
   const emailsMatch = email === confirmEmail;
@@ -52,6 +55,16 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({
     error = "One of the fields is empty or contains invalid data.";
   else if (touched && !emailValid) error = "Email invalid";
   else if (touched && !emailsMatch) error = "Email addresses don’t match";
+
+  function getRoleOptions(): Role[] {
+    // If the profile is a director, they can select any role
+    // Otherwise, they can select any role equal to or below their own
+    return ["DIRECTOR", "ADMIN", "VOLUNTEER"].filter(
+      (role) =>
+        profile?.type === "DIRECTOR" ||
+        RoleLevels[role as Role] <= RoleLevels[profile?.type ?? "VOLUNTEER"],
+    ) as Role[];
+  }
 
   return (
     <Modal open={open} onClose={handleClose} width={500} height={450}>
@@ -99,7 +112,7 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({
         </div>
         <div className="mb-8 flex items-center justify-center">
           <SelectDropdown
-            options={["DIRECTOR", "ADMIN", "VOLUNTEER"]}
+            options={roleOptions}
             selected={role}
             onChange={(value) => setRole(value as Role)}
             className={"w-36 sm:w-36 flex justify-center"}
@@ -139,4 +152,4 @@ const AddAccountModal: React.FC<AddAccountModalProps> = ({
   );
 };
 
-export default AddAccountModal;
+export default AddAccountPopup;

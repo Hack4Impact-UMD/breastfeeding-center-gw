@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "../ui/button";
 import { ClientTableRow } from "@/pages/ClientListPage/ClientListTableColumns";
+import { useAuth } from "@/auth/AuthProvider";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -46,6 +47,7 @@ export function DataTable<TData, TValue>({
   pageSize = 10,
   paginate = true,
 }: DataTableProps<TData, TValue>) {
+  const auth = useAuth();
   const [globalFilter, setGlobalFilter] = useState("");
   const [rowSelection, setRowSelection] = useState({});
   const [rowsSelected, setRowsSelected] = useState<TData[]>([]);
@@ -102,19 +104,20 @@ export function DataTable<TData, TValue>({
             : "flex my-3 flex-wrap"
         }
       >
-        <div className="flex items-center gap-4">
-          {tableType === "janeData" && (
-            <Button
-              variant={"yellow"}
-              className={"rounded-lg text-sm flex items-center gap-2"}
-              disabled={rowsSelected.length === 0}
-              onClick={openModal}
-              aria-label="Delete selected rows"
-            >
-              <FiTrash /> Delete
-            </Button>
+        {tableType === "janeData" &&
+          auth.token?.claims?.role !== "VOLUNTEER" && (
+            <div className="flex items-center gap-4">
+              <Button
+                variant={"yellow"}
+                className={"rounded-lg text-sm flex items-center gap-2"}
+                disabled={rowsSelected.length === 0}
+                onClick={openModal}
+                aria-label="Delete selected rows"
+              >
+                <FiTrash /> Delete
+              </Button>
+            </div>
           )}
-        </div>
 
         <div
           className={

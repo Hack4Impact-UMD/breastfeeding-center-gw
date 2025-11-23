@@ -1,8 +1,7 @@
-// src/pages/UserManagementPage/UserManagementPage.tsx
 import React, { useMemo, useState } from "react";
 import UserFilters from "./UserFilters";
 import UserCard from "./UserCard";
-import AddAccountModal from "./AddAccountModal";
+import AddAccountPopup from "./AddAccountPopup";
 import { useAllUsers } from "@/hooks/queries/useUsers";
 import Loading from "@/components/Loading";
 import { useMutation } from "@tanstack/react-query";
@@ -13,7 +12,7 @@ import { useAuth } from "@/auth/AuthProvider";
 const UserManagementPage: React.FC = () => {
   const auth = useAuth();
   const [search, setSearch] = useState("");
-  const [roleFilter, setRoleFilter] = useState("All");
+  const [roleFilter, setRoleFilter] = useState("ALL");
   const [showAddModal, setShowAddModal] = useState(false);
 
   const { data: users, isPending, error } = useAllUsers();
@@ -30,7 +29,7 @@ const UserManagementPage: React.FC = () => {
           const fullName = `${u.lastName}, ${u.firstName}`.toLowerCase();
           return (
             fullName.includes(search.toLowerCase()) &&
-            (roleFilter === "All" || u.type === roleFilter)
+            (roleFilter === "ALL" || u.type === roleFilter)
           );
         })
         .sort((a, b) =>
@@ -103,7 +102,7 @@ const UserManagementPage: React.FC = () => {
             ))
           )}
         </div>
-        <AddAccountModal
+        <AddAccountPopup
           disabled={inviteUserMutation.isPending}
           open={showAddModal}
           onClose={() => setShowAddModal(false)}
@@ -112,6 +111,7 @@ const UserManagementPage: React.FC = () => {
               inviteUserMutation.mutate(user);
             }
           }}
+          profile={auth.profile}
         />
       </div>
     </>
