@@ -182,9 +182,9 @@ router.post(
             parentAppt = appt;
           }
 
-          if (!foundClientInGroup) {
-            potentiallyMissing.forEach((c) => missingClients.add(c));
-          }
+        }
+        if (!foundClientInGroup) {
+          potentiallyMissing.forEach((c) => missingClients.add(c));
         }
 
         // add to the parent object's babies array using the babies matched with their appointment.
@@ -221,10 +221,11 @@ router.post(
       // if there are missing clients, return an error response with their names.
       // their names will be displayed in the tooltip for users so they can reupload those clients.
       if (missingClients.size > 0) {
-        logger.error(["Missing clients!", [...missingClients]]);
+        const missingClientList = [...missingClients]
+        logger.error("Missing clients!", missingClientList);
         return res.status(400).json({
           error: "Missing clients!",
-          details: missingClients,
+          details: missingClientList,
         });
       }
 
