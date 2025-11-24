@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IoIosClose } from "react-icons/io";
 import Modal from "../../components/Modal";
 import { Button } from "@/components/ui/button";
 import PronounsComboBox from "@/components/PronounsComboBox";
+import { useUpdateCurrentUserNamePronouns } from "@/hooks/mutations/useUpdateCurrentUserNamePronouns";
 
 const ChangeNamePronounsPopup = ({
   open,
@@ -17,12 +18,25 @@ const ChangeNamePronounsPopup = ({
   initialLastName: string;
   initialPronouns: string;
 }) => {
+  const { mutate: updateNamePronouns } = useUpdateCurrentUserNamePronouns();
   const [firstName, setFirstName] = useState(initialFirstName);
   const [lastName, setLastName] = useState(initialLastName);
   const [pronouns, setPronouns] = useState(initialPronouns);
 
+  useEffect(() => {
+    if (open) {
+      setFirstName(initialFirstName);
+      setLastName(initialLastName);
+      setPronouns(initialPronouns);
+    }
+  }, [open, initialFirstName, initialLastName, initialPronouns]);
+
   const handleSave = () => {
-    console.log("Updated name to:", { firstName, lastName, pronouns });
+    updateNamePronouns({
+      firstName: firstName,
+      lastName: lastName,
+      pronouns: pronouns,
+    });
     onClose();
   };
 
