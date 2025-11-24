@@ -12,6 +12,19 @@ export async function deleteUserById(id: string) {
   await axios.delete("/users/id/" + id);
 }
 
+export async function updateCurrentUserNamePronouns(
+  firstName: string,
+  lastName: string,
+  pronouns: string | null,
+) {
+  const axios = await axiosClient();
+  await axios.put("/users/me/namepronouns", {
+    firstName,
+    lastName,
+    pronouns,
+  });
+}
+
 export async function updateCurrentUserEmail(
   newEmail: string,
   oldEmail: string,

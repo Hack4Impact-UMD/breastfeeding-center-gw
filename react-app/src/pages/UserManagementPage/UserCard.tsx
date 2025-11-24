@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ProfileIcon from "../../components/ProfileIcon";
 import { RoleLevels, User } from "@/types/UserType";
 import { Button } from "../../components/ui/button";
@@ -18,9 +18,9 @@ const UserCard: React.FC<{ user: User; singleDirector: boolean }> = ({
 
   const initials =
     `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase();
-  const [isChangeAccessOpen, setIsChangeAccessOpen] = React.useState(false);
-  const [isRemoveConfirmOpen, setIsRemoveConfirmOpen] = React.useState(false);
-  const [isDirectorBlockOpen, setIsDirectorBlockOpen] = React.useState(false);
+  const [isChangeAccessOpen, setIsChangeAccessOpen] = useState(false);
+  const [isRemoveConfirmOpen, setIsRemoveConfirmOpen] = useState(false);
+  const [isDirectorBlockOpen, setIsDirectorBlockOpen] = useState(false);
 
   return (
     <div className="grid grid-cols-[1fr_auto] md:grid-cols-[auto_1fr_auto] items-center py-3 max-[375px]:pb-1 md:py-7 px-2 md:px-5 border-b border-black gap-2 max-[375px]:gap-1.5 md:gap-6">
