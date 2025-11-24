@@ -82,6 +82,36 @@ router.delete(
   },
 );
 
+// update the current user's name and pronouns
+router.put(
+  "/me/namepronouns",
+  [isAuthenticated],
+  async (req: Request, res: Response) => {
+    const { firstName, lastName, pronouns } = req.body as {
+      firstName: string;
+      lastName: string;
+      pronouns: string;
+    };
+
+    if (!firstName || !lastName) return res.status(400).send("Missing fields!");
+
+    const userId = req.token!.uid;
+
+    const usersCollection = db.collection(
+      USERS_COLLECTION,
+    ) as CollectionReference<User>;
+    const userDoc = usersCollection.doc(userId);
+
+    await userDoc.update({
+      firstName: firstName,
+      lastName: lastName,
+      pronouns: pronouns ?? null,
+    });
+
+    return res.status(200).send("Name and pronouns successfully updated!");
+  },
+);
+
 // update the current user's email
 router.put(
   "/me/email",
