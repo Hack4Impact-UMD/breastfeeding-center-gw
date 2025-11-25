@@ -16,6 +16,9 @@ import { DataTable } from "@/components/DataTable/DataTable";
 import { useJaneAppts } from "@/hooks/queries/useJaneData.ts";
 import { Button } from "@/components/ui/button.tsx";
 import JaneRetention from "./JaneRetention.tsx";
+import ExportContent from "@/components/export/ExportContent.tsx";
+import { Export } from "@/components/export/Export.tsx";
+import ExportTrigger from "@/components/export/ExportTrigger.tsx";
 
 function BreakdownPieChartLabels(chartData: { key: string; data: number }[]) {
   if (chartData.length === 0) return <></>;
@@ -203,21 +206,19 @@ const JaneDashboardPage = () => {
             <div className="flex items-center justify-between w-full pt-4 mb-6">
               <div className="flex flex-row ">
                 <button
-                  className={`${graphTableButtonStyle} ${
-                    visitDisplay === "graph"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#CED8E1]"
-                  }`}
+                  className={`${graphTableButtonStyle} ${visitDisplay === "graph"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#CED8E1]"
+                    }`}
                   onClick={() => setVisitDisplay("graph")}
                 >
                   Graph
                 </button>
                 <button
-                  className={`${graphTableButtonStyle} ${
-                    visitDisplay === "table"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#CED8E1]"
-                  }`}
+                  className={`${graphTableButtonStyle} ${visitDisplay === "table"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#CED8E1]"
+                    }`}
                   onClick={() => setVisitDisplay("table")}
                 >
                   Table
@@ -240,46 +241,53 @@ const JaneDashboardPage = () => {
                   Visit Breakdown:{" "}
                   {dateRange?.from && dateRange?.to
                     ? formatDate(dateRange.from) +
-                      " - " +
-                      formatDate(dateRange.to)
+                    " - " +
+                    formatDate(dateRange.to)
                     : "All Data"}
                 </span>
                 <div className={chartDiv} ref={pieChartRef}>
-                  <div className="relative">
-                    {isLoading ? (
-                      <Loading />
-                    ) : (
-                      <>
-                        <PieChart
-                          data={chartData}
-                          series={
-                            <PieArcSeries
-                              doughnut={true}
-                              colorScheme={chartColors}
-                              label={null}
+                  <Export>
+                    <ExportTrigger variant={"yellow"}>
+                      Export
+                    </ExportTrigger>
+                    <ExportContent className="w-full h-full flex-col items-center justify-center">
+                      <div className="relative">
+                        {isLoading ? (
+                          <Loading />
+                        ) : (
+                          <>
+                            <PieChart
+                              data={chartData}
+                              series={
+                                <PieArcSeries
+                                  doughnut={true}
+                                  colorScheme={chartColors}
+                                  label={null}
+                                />
+                              }
+                              height={300}
+                              width={300}
                             />
-                          }
-                          height={300}
-                          width={300}
-                        />
-                        {visitBreakdownPieChartLabels}
-                      </>
-                    )}
-                  </div>
-                  <div className="mt-4 flex flex-wrap justify-center gap-4">
-                    {chartData.map((item, index) => (
-                      <div key={item.key} className="flex items-center gap-2">
-                        <div
-                          className="w-10 h-4"
-                          style={{
-                            backgroundColor:
-                              chartColors[index % chartColors.length],
-                          }}
-                        />
-                        <span>{item.key}</span>
+                            {visitBreakdownPieChartLabels}
+                          </>
+                        )}
                       </div>
-                    ))}
-                  </div>
+                      <div className="mt-4 flex flex-wrap justify-center gap-4">
+                        {chartData.map((item, index) => (
+                          <div key={item.key} className="flex items-center gap-2">
+                            <div
+                              className="w-10 h-4"
+                              style={{
+                                backgroundColor:
+                                  chartColors[index % chartColors.length],
+                              }}
+                            />
+                            <span>{item.key}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </ExportContent>
+                  </Export>
                 </div>
               </>
             ) : (
@@ -288,8 +296,8 @@ const JaneDashboardPage = () => {
                   Visit Breakdown:{" "}
                   {dateRange?.from && dateRange?.to
                     ? formatDate(dateRange.from) +
-                      " - " +
-                      formatDate(dateRange.to)
+                    " - " +
+                    formatDate(dateRange.to)
                     : "All Data"}
                 </span>
                 <DataTable
