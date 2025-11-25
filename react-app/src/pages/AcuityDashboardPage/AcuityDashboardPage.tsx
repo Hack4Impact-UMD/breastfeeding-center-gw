@@ -27,6 +27,7 @@ import {
   InstructorAttendance,
   instructorColumns,
 } from "./AcuityTableColumns";
+import InstructorPopup from "./InstructorPopup";
 import SelectDropdown from "@/components/SelectDropdown";
 import { Button } from "@/components/ui/button";
 
@@ -36,7 +37,8 @@ export default function AcuityDashboardPage() {
   const [popularityDisplay, setPopularityDisplay] = useState<string>("graph");
   const attendanceChartRef = useRef<HTMLDivElement>(null);
   const classPopularityChartRef = useRef<HTMLDivElement>(null);
-  const [, setOpenRow] = useState<InstructorAttendance | null>(null);
+  const [openInstructorRow, setOpenInstructorRow] =
+    useState<InstructorAttendance | null>(null);
 
   const chartDiv =
     "flex flex-col items-center justify-start bg-white min-h-[400px] border-2 border-black p-5 mt-5 rounded-2xl";
@@ -650,18 +652,18 @@ export default function AcuityDashboardPage() {
                 popularityDisplay == "graph"
                   ? "bg-bcgw-gray-light"
                   : "bg-[#f5f5f5]"
-              }`}
-              onClick={() => setPopularityDisplay("graph")}
+                  }`}
+                  onClick={() => setPopularityDisplay("graph")}
             >
               Graph
             </button>
             <button
-              className={`${graphTableButtonStyle} ${
+                  className={`${graphTableButtonStyle} ${
                 popularityDisplay == "table"
                   ? "bg-bcgw-gray-light"
                   : "bg-[#f5f5f5]"
-              }`}
-              onClick={() => setPopularityDisplay("table")}
+                  }`}
+                  onClick={() => setPopularityDisplay("table")}
             >
               Table
             </button>
@@ -731,7 +733,7 @@ export default function AcuityDashboardPage() {
             </>
           ) : (
             <DataTable
-              columns={instructorColumns((row) => setOpenRow(row))}
+              columns={instructorColumns((row) => setOpenInstructorRow(row))}
               data={instructorData}
               tableType="default"
               tableHeaderExtras={classPopularityTableExtras}
@@ -740,6 +742,10 @@ export default function AcuityDashboardPage() {
           )}
         </div>
       </div>
+      <InstructorPopup
+        openRow={openInstructorRow}
+        setOpenRow={setOpenInstructorRow}
+      />
     </>
   );
 }
