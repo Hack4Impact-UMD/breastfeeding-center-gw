@@ -104,7 +104,7 @@ const ClientJourney = () => {
         {/*headings*/}
         <div className={centerItemsInDiv}>
           <div>
-            <h1 className="font-bold text-4xl lg:text-5xl">Client Journey</h1>
+            <h1 className="font-bold text-3xl sm:text-4xl lg:text-5xl">Client Journey</h1>
           </div>
         </div>
 
@@ -115,16 +115,14 @@ const ClientJourney = () => {
         ) : (
           <>
             {/*info section*/}
-            <div className="flex flex-col space-y-1">
-              <div className={dividingLine}></div> {/* dividing line */}
-              {/* Information in between lines */}
-              <div className="text-left space-y-2 px-3 py-2 w-full max-w-md">
+            <div className="flex flex-col space-y-1 pt-1">
+              <div className="text-left space-y-2 py-2 w-full max-w-md text-sm sm:text-base pt-3 pb-4">
                 <div>
-                  <strong>NAME:</strong> {clientInfo?.firstName}{" "}
+                  <strong className="pr-2">NAME:</strong> {clientInfo?.firstName}{" "}
                   {clientInfo?.lastName}
                 </div>
                 <div>
-                  <strong>CHILDREN: </strong>
+                  <strong className="pr-2">CHILDREN:</strong>
                   {clientInfo?.baby.map((child, index) => (
                     <span key={index}>
                       {child.firstName} {child.lastName}
@@ -133,13 +131,12 @@ const ClientJourney = () => {
                   ))}
                 </div>
               </div>
-              <div className={dividingLine}></div> {/* dividing line */}
             </div>
 
             {/*tables section*/}
             <div>
               <div className={tableSection}>
-                <h2 className="font-bold">Acuity Classes</h2>
+                <h2 className="font-bold text-base sm:text-3xl">Acuity Classes</h2>
                 <DataTable
                   columns={acuityColumns}
                   data={sampleAcuityData}
@@ -149,7 +146,7 @@ const ClientJourney = () => {
               </div>
 
               <div className={tableSection}>
-                <h2 className="font-bold">JANE Consults</h2>
+                <h2 className="font-bold text-base sm:text-3xl">Jane Consults</h2>
                 <DataTable
                   columns={janeConsultsColumns}
                   data={formattedJaneConsultsData}
@@ -159,7 +156,7 @@ const ClientJourney = () => {
               </div>
 
               <div className={tableSection}>
-                <h2 className="font-bold">Paysimple Rentals</h2>
+                <h2 className="font-bold text-base sm:text-3xl">Paysimple Rentals</h2>
                 <DataTable
                   columns={paysimpleColumns}
                   data={samplePaysimple}
@@ -169,7 +166,7 @@ const ClientJourney = () => {
               </div>
 
               <div className={tableSection}>
-                <h2 className="font-bold">One-Time Purchases</h2>
+                <h2 className="font-bold text-base sm:text-3xl">One-Time Purchases</h2>
                 <DataTable
                   columns={oneTimePurchaseColumns}
                   data={sampleOTPs}
