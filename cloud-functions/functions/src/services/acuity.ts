@@ -174,3 +174,13 @@ export async function getAllAcuityApptsInRange(
 
   return acuityApptsInRange;
 }
+
+export async function getAllAcuityAppointmentsForClient(
+  email: string
+): Promise<AcuityAppointment[]> {
+  const client = await acuityClient();
+  const response = await client.get('/appointments', {
+    params: { email }
+  });
+  return response.data as AcuityAppointment[];
+}
