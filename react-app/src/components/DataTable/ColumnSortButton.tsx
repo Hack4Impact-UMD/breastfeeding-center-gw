@@ -6,11 +6,13 @@ import { Column } from "@tanstack/react-table";
 type ColumnSortIconProps<T, V> = {
   column: Column<T, V>;
   children?: ReactNode;
+  showIcons?: boolean;
 };
 
 export default function ColumnSortButton<T, V>({
   children,
   column,
+  showIcons = true,
 }: ColumnSortIconProps<T, V>) {
   return (
     <Button
@@ -19,15 +21,17 @@ export default function ColumnSortButton<T, V>({
       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
     >
       <span className="font-bold">{children}</span>
-      <div>
-        {column.getIsSorted() === false ? (
-          <ArrowUpDown className="h-4 w-4 ml-2" />
-        ) : column.getIsSorted() === "desc" ? (
-          <ArrowDown className="h-4 w-4 ml-2" />
-        ) : (
-          <ArrowUp className="h-4 w-4 ml-2" />
-        )}
-      </div>
+      {showIcons && (
+        <div>
+          {column.getIsSorted() === false ? (
+            <ArrowUpDown className="h-4 w-4 ml-2" />
+          ) : column.getIsSorted() === "desc" ? (
+            <ArrowDown className="h-4 w-4 ml-2" />
+          ) : (
+            <ArrowUp className="h-4 w-4 ml-2" />
+          )}
+        </div>
+      )}
     </Button>
   );
 }
