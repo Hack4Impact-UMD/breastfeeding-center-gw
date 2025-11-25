@@ -24,16 +24,16 @@ const InstructorPopup = ({ openRow, setOpenRow }: InstructorPopupProps) => {
     {
       accessorKey: "instructor",
       header: ({ column }) => (
-        <ColumnSortButton column={column} showIcons={false}>
+        <ColumnSortButton column={column}>
           Instructor
         </ColumnSortButton>
       ),
-  cell: ({ row }) => <span className="cursor-pointer">{row.getValue("instructor")}</span>,
+      cell: ({ row }) => <span className="cursor-pointer">{row.getValue("instructor")}</span>,
     },
     {
       accessorKey: "avgAttendance",
       header: ({ column }) => (
-        <ColumnSortButton column={column} showIcons={false}>
+        <ColumnSortButton column={column}>
           Avg. Attend.
         </ColumnSortButton>
       ),
@@ -42,7 +42,7 @@ const InstructorPopup = ({ openRow, setOpenRow }: InstructorPopupProps) => {
     {
       accessorKey: "numClasses",
       header: ({ column }) => (
-        <ColumnSortButton column={column} showIcons={false}>
+        <ColumnSortButton column={column}>
           Num. Classes
         </ColumnSortButton>
       ),
@@ -51,7 +51,7 @@ const InstructorPopup = ({ openRow, setOpenRow }: InstructorPopupProps) => {
     {
       accessorKey: "totalAttendance",
       header: ({ column }) => (
-        <ColumnSortButton column={column} showIcons={false}>
+        <ColumnSortButton column={column}>
           Total Attend.
         </ColumnSortButton>
       ),
