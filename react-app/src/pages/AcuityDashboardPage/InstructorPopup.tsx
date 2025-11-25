@@ -28,7 +28,7 @@ const InstructorPopup = ({ openRow, setOpenRow }: InstructorPopupProps) => {
           Instructor
         </ColumnSortButton>
       ),
-      cell: ({ row }) => <span className="cursor-pointer">{row.getValue("instructor")}</span>,
+      cell: ({ row }) => row.getValue("instructor"),
     },
     {
       accessorKey: "avgAttendance",
