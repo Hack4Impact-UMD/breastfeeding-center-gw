@@ -9,26 +9,25 @@ export function Export({ children }: { children: ReactNode }) {
       const printWindow = window.open('', '_blank');
       if (printWindow) {
         printWindow.document.open();
-        printWindow.document.write('<html><head><title>Print</title>');
+        printWindow.document.write('<html><head><title>Export</title>');
 
-        // Copy all link and style tags from the main document
+        // copy styling
         document.querySelectorAll('link[rel="stylesheet"], style').forEach(node => {
           printWindow.document.head.appendChild(node.cloneNode(true));
         });
 
-        printWindow.document.write('</head><body>');
-        printWindow.document.write(exportContentRef.current.innerHTML);
+        printWindow.document.write('</head><body class="flex flex-col items-center justify-center w-full h-full">');
+        printWindow.document.write(exportContentRef.current.outerHTML);
         printWindow.document.write('</body></html>');
-        // printWindow.document.close();
+        printWindow.document.close();
 
-        // Wait for styles to load before printing
+        // delay for styles to apply
         const printTimeout = setTimeout(() => {
           printWindow.focus();
           printWindow.print();
-          // printWindow.close();
-        }, 500);
+          printWindow.close();
+        }, 200);
 
-        // Clear timeout if the user closes the print dialog before the timeout
         printWindow.onbeforeunload = () => {
           clearTimeout(printTimeout);
         }
