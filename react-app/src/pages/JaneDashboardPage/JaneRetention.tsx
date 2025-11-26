@@ -167,16 +167,14 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
               </div>
               <ExportContent className="w-full">
                 <ExportOnly>
-                  <ExportOnly>
-                    <h1 className="text-xl font-bold text-black">Client Retention</h1>
-                    <span className="text-base text-black">
-                      {startDate && endDate
-                        ? formatDate(startDate) +
-                        " - " +
-                        formatDate(endDate)
-                        : "All Data"}
-                    </span>
-                  </ExportOnly>
+                  <h1 className="text-xl font-bold text-black">Client Retention</h1>
+                  <span className="text-base text-black">
+                    {startDate && endDate
+                      ? formatDate(startDate) +
+                      " - " +
+                      formatDate(endDate)
+                      : "All Data"}
+                  </span>
                 </ExportOnly>
                 <div className="w-full flex flex-col items-center justify-center mt-4">
                   <BarChart
