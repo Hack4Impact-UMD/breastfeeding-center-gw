@@ -531,7 +531,10 @@ export default function AcuityDashboardPage() {
           {/* Attendance by Trimester Bar Chart */}
           <span className="self-start font-semibold text-2xl">
             Class Attendance By Trimester,{" "}
-            {attendanceDisplay === "graph" ? <br /> : <></>}2/19/25 - 3/19/25
+            {attendanceDisplay === "graph" ? <br /> : <></>}
+            {dateRange?.from && dateRange?.to
+              ? formatDate(dateRange.from) + " - " + formatDate(dateRange.to)
+              : "All Data"}
           </span>
           {attendanceDisplay === "graph" ? (
             <div className={chartDiv}>
@@ -672,7 +675,10 @@ export default function AcuityDashboardPage() {
           ) : (
             <span>Attendance By Class & Instructor</span>
           )}
-          {popularityDisplay === "graph" ? <br /> : <></>} 2/19/25 - 3/19/25
+          {attendanceDisplay === "graph" ? <br /> : <></>}
+          {dateRange?.from && dateRange?.to
+            ? formatDate(dateRange.from) + " - " + formatDate(dateRange.to)
+            : "All Data"}
         </span>
         {/* Class Popularity Over Time */}
         <div>
@@ -720,7 +726,7 @@ export default function AcuityDashboardPage() {
                     <LineChart
                       height={300}
                       data={filteredClassData}
-                      series={<LineSeries colorScheme={(item) => classColorScheme[item[0] ? (item[0].key ?? 0) : item.key]} type="grouped" />}
+                      series={<LineSeries colorScheme={(item) => classColorScheme[item[0] ? item[0].key : item.key]} type="grouped" />}
                     />
                     <div className="w-full flex items-center justify-center">
                       <DiscreteLegend
@@ -774,7 +780,7 @@ export default function AcuityDashboardPage() {
                     <LineChart
                       height={300}
                       data={filteredInstructorData}
-                      series={<LineSeries colorScheme={(item) => classColorScheme[item[0] ? (item[0].key ?? 0) : item.key]} type="grouped" />}
+                      series={<LineSeries colorScheme={(item) => classColorScheme[item[0] ? item[0].key : item.key]} type="grouped" />}
                     />
                     <div className="w-full flex items-center justify-center">
                       <DiscreteLegend
