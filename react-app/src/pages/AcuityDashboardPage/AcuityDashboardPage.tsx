@@ -11,6 +11,10 @@ import {
   GradientStop,
   RangeLines,
   GuideBar,
+  BarLabel,
+  DiscreteLegend,
+  DiscreteLegendEntry,
+  schemes
 } from "reaviz";
 import {
   DateRangePicker,
@@ -61,6 +65,13 @@ export default function AcuityDashboardPage() {
     "PARENT GROUPS",
     "CHILDBIRTH CLASSES",
   ];
+  const trimesterLegend = [
+    { key: "FIRST TRIM", color: "#FCD484" },
+    { key: "SECOND TRIM", color: "#FFAA00" },
+    { key: "THIRD TRIM", color: "#5DB9FF" },
+    { key: "FOURTH TRIM", color: "#1661A9" },
+    { key: "FIFTH TRIM", color: "#05182A" },
+  ]
   const trimesterAttendanceData = [
     {
       key: "POSTPARTUM CLASSES",
@@ -378,6 +389,13 @@ export default function AcuityDashboardPage() {
 
   const barData = filteredClassBars[0]?.data ?? [];
 
+  const classColorScheme: Record<string, string> = {
+    "POSTPARTUM CLASSES": schemes.cybertron[0],
+    "PRENATAL CLASSES": schemes.cybertron[1],
+    "INFANT MASSAGE": schemes.cybertron[2],
+    "PARENT GROUPS": schemes.cybertron[3],
+    "CHILDBIRTH CLASSES": schemes.cybertron[4]
+  }
   const allInstructorData = [
     {
       key: "POSTPARTUM CLASSES",
@@ -529,13 +547,16 @@ export default function AcuityDashboardPage() {
               <ExportContent className="w-full h-96">
                 <ExportOnly className="mb-5">
                   <h1 className="text-xl font-bold text-black">Class Attendance By Trimester</h1>
-                  <span className="text-base text-black">
+                  <p className="text-base text-black">
                     {dateRange?.from && dateRange?.to
                       ? formatDate(dateRange.from) +
                       " - " +
                       formatDate(dateRange.to)
                       : "All Data"}
-                  </span>
+                  </p>
+                  <p className="text-gray-800 text-sm">
+                    {selectedTrimesterClass}
+                  </p>
                 </ExportOnly>
                 {selectedTrimesterClass === "ALL CLASSES" ? (
                   /* stacked chart for all classes: */
@@ -549,6 +570,7 @@ export default function AcuityDashboardPage() {
                             width={100}
                             rx={0}
                             ry={0}
+                            label={<BarLabel position="center" fill="white" scale={20} className="z-20" />}
                             gradient={
                               <Gradient
                                 stops={[
@@ -571,13 +593,7 @@ export default function AcuityDashboardPage() {
                             guide={<GuideBar />}
                           />
                         }
-                        colorScheme={[
-                          "#FCD484",
-                          "#FFAA00",
-                          "#5DB9FF",
-                          "#1661A9",
-                          "#05182A",
-                        ]}
+                        colorScheme={trimesterLegend.map(i => i.color)}
                       />
                     }
                   />
@@ -590,11 +606,20 @@ export default function AcuityDashboardPage() {
                       <BarSeries
                         padding={0.1}
                         colorScheme={"#F4BB47"}
-                        bar={<Bar rx={0} ry={0} style={{ fill: "#F4BB47" }} />}
+                        bar={<Bar
+                          label={<BarLabel position="center" fill="white" scale={20} className="z-20" />}
+                          rx={0} ry={0} style={{ fill: "#F4BB47" }} />}
                       />
                     }
                   />
                 )}
+                <div className="w-full flex items-center justify-center">
+                  <DiscreteLegend orientation="horizontal"
+                    entries={trimesterLegend.map(i =>
+                      <DiscreteLegendEntry label={i.key} color={i.color} />
+                    )}
+                  />
+                </div>
               </ExportContent>
             </div>
           ) : (
@@ -680,20 +705,31 @@ export default function AcuityDashboardPage() {
                   </div>
                   <ExportContent className="w-full h-96">
                     <ExportOnly className="mb-5">
-                      <h1 className="text-xl font-bold text-black">Class Popularity - {selectedPopularityClass}</h1>
-                      <span className="text-base text-black">
+                      <h1 className="text-xl font-bold text-black">Class Popularity </h1>
+                      <p className="text-base text-black">
                         {dateRange?.from && dateRange?.to
                           ? formatDate(dateRange.from) +
                           " - " +
                           formatDate(dateRange.to)
                           : "All Data"}
-                      </span>
+                      </p>
+                      <p className="text-gray-800 text-sm">
+                        {selectedPopularityClass}
+                      </p>
                     </ExportOnly>
                     <LineChart
                       height={300}
                       data={filteredClassData}
-                      series={<LineSeries type="grouped" />}
+                      series={<LineSeries colorScheme={(item) => classColorScheme[item[0] ? (item[0].key ?? 0) : item.key]} type="grouped" />}
                     />
+                    <div className="w-full flex items-center justify-center">
+                      <DiscreteLegend
+                        orientation="horizontal"
+                        entries={filteredInstructorData.map((line) =>
+                          <DiscreteLegendEntry label={line.key} color={classColorScheme[line.key]} />
+                        )}
+                      />
+                    </div>
                   </ExportContent>
                 </div>
               </Export>
@@ -723,20 +759,31 @@ export default function AcuityDashboardPage() {
                   </div>
                   <ExportContent className="w-full h-96">
                     <ExportOnly className="mb-5">
-                      <h1 className="text-xl font-bold text-black">Instructor Popularity - {selectedPopularityClass}</h1>
-                      <span className="text-base text-black">
+                      <h1 className="text-xl font-bold text-black">Instructor Popularity</h1>
+                      <p className="text-base text-black">
                         {dateRange?.from && dateRange?.to
                           ? formatDate(dateRange.from) +
                           " - " +
                           formatDate(dateRange.to)
                           : "All Data"}
-                      </span>
+                      </p>
+                      <p className="text-gray-800 text-sm">
+                        {selectedPopularityClass}
+                      </p>
                     </ExportOnly>
                     <LineChart
                       height={300}
                       data={filteredInstructorData}
-                      series={<LineSeries type="grouped" />}
+                      series={<LineSeries colorScheme={(item) => classColorScheme[item[0] ? (item[0].key ?? 0) : item.key]} type="grouped" />}
                     />
+                    <div className="w-full flex items-center justify-center">
+                      <DiscreteLegend
+                        orientation="horizontal"
+                        entries={filteredInstructorData.map((line) =>
+                          <DiscreteLegendEntry label={line.key} color={classColorScheme[line.key]} />
+                        )}
+                      />
+                    </div>
                   </ExportContent>
                 </div>
               </Export>

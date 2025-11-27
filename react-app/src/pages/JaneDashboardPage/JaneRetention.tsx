@@ -16,6 +16,7 @@ import { Export } from "@/components/export/Export.tsx";
 import ExportContent from "@/components/export/ExportContent.tsx";
 import ExportTrigger from "@/components/export/ExportTrigger.tsx";
 import ExportOnly from "@/components/export/ExportOnly.tsx";
+import { formatDate } from "@/lib/utils.ts";
 
 type JaneRetentionProps = {
   startDate?: Date | undefined;
@@ -58,12 +59,6 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
   const [retentionDisplay, setRetentionDisplay] = useState<string>("graph");
   const [openRow, setOpenRow] = useState<RetentionRate | null>(null);
 
-  const formatDate = (date: Date) =>
-    date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "numeric",
-      day: "numeric",
-    });
 
   const {
     data: rawRetentionData,
@@ -166,15 +161,18 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
                 />
               </div>
               <ExportContent className="w-full">
-                <ExportOnly>
+                <ExportOnly className="mb-5">
                   <h1 className="text-xl font-bold text-black">Client Retention</h1>
-                  <span className="text-base text-black">
+                  <p className="text-base text-black">
                     {startDate && endDate
                       ? formatDate(startDate) +
                       " - " +
                       formatDate(endDate)
                       : "All Data"}
-                  </span>
+                  </p>
+                  <p className="text-gray-800 text-sm">
+                    {selectedDropdown}
+                  </p>
                 </ExportOnly>
                 <div className="w-full flex flex-col items-center justify-center mt-4">
                   <BarChart

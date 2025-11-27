@@ -18,6 +18,7 @@ import ExportContent from "@/components/export/ExportContent.tsx";
 import { Export } from "@/components/export/Export.tsx";
 import ExportTrigger from "@/components/export/ExportTrigger.tsx";
 import ExportOnly from "@/components/export/ExportOnly.tsx";
+import { formatDate } from "@/lib/utils.ts";
 
 function BreakdownPieChartLabels(chartData: { key: string; data: number }[]) {
   if (chartData.length === 0) return <></>;
@@ -74,13 +75,6 @@ const JaneDashboardPage = () => {
 
   const [visitDisplay, setVisitDisplay] = useState<string>("graph");
   const pieChartRef = useRef<HTMLDivElement>(null);
-
-  const formatDate = (date: Date) =>
-    date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "numeric",
-      day: "numeric",
-    });
 
   const chartColors = ["#f4bb47", "#05182a", "#3A8D8E"];
 
