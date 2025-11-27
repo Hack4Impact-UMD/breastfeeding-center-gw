@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useMemo } from "react";
 import ClientLostPopup from "./ClientLostPopup.tsx";
 import { BarChart, BarSeries, BarProps, Bar, BarLabel } from "reaviz";
 import {
@@ -48,13 +48,12 @@ function CustomBar(props: Partial<BarProps>) {
 
 const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
   const [selectedDropdown, setSelectedDropdown] = useState("ALL CLIENTS");
-  const funnelChartRef = useRef<HTMLDivElement>(null);
 
   const graphTableButtonStyle =
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer border border-gray-300";
   const centerItemsInDiv = "flex justify-between items-center";
   const chartDiv =
-    "flex flex-col items-center justify-start bg-white min-h-[400px] border-2 border-black p-5 mt-5 rounded-2xl";
+    "flex flex-col items-center justify-center bg-white min-h-[400px] border-2 border-black p-5 mt-5 rounded-2xl";
 
   const [retentionDisplay, setRetentionDisplay] = useState<string>("graph");
   const [openRow, setOpenRow] = useState<RetentionRate | null>(null);
@@ -101,6 +100,8 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
     [processedData],
   );
 
+  const noData = useMemo(() => !funnelData.some(d => d.data > 0), [funnelData])
+
   if (retentionError) return <div>Error loading retention data</div>;
 
   return (
@@ -128,7 +129,11 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
               Table
             </button>
           </div>
-          <ExportTrigger asChild>
+          <ExportTrigger
+            disabled={
+              retentionDisplay !== "graph" || noData
+            }
+            asChild>
             <Button
               variant={"outlineGray"}
               className={
@@ -147,13 +152,12 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
         </span>
         <div
           className={retentionDisplay === "graph" ? chartDiv : ""}
-          ref={funnelChartRef}
         >
           {isRetentionLoading ? (
             <Loading />
-          ) : !funnelData.some(d => d.data > 0) ? (
+          ) : noData ? (
             <div className="w-full flex grow items-center justify-center p-2">
-              <p>No data. Check the selected date range.</p>
+              <p className="text-center">No data. Check the selected date range.</p>
             </div>
           ) : retentionDisplay === "graph" ? (
             <>

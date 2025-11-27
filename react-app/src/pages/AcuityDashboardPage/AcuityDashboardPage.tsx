@@ -517,7 +517,10 @@ export default function AcuityDashboardPage() {
                 Table
               </button>
             </div>
-            <ExportTrigger asChild>
+            <ExportTrigger
+              disabled={attendanceDisplay !== "graph"}
+              asChild
+            >
               <Button
                 variant={"outlineGray"}
                 className={
@@ -685,7 +688,6 @@ export default function AcuityDashboardPage() {
           {popularityDisplay === "graph" ? (
             <>
               <Export>
-
                 <div className="flex flex-row items-center w-full">
                   <div className="text-2xl font-semibold grow">Class Popularity</div>
 

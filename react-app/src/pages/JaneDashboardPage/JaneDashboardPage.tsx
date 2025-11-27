@@ -199,7 +199,10 @@ const JaneDashboardPage = () => {
                     Table
                   </button>
                 </div>
-                <ExportTrigger asChild>
+                <ExportTrigger
+                  disabled={chartData.length === 0 || isLoading}
+                  asChild
+                >
                   <Button
                     variant={"outlineGray"}
                     className={
@@ -227,7 +230,7 @@ const JaneDashboardPage = () => {
                         <Loading />
                       ) : chartData.length === 0 ? (
                         <div className="w-full flex grow items-center justify-center p-2">
-                          <p>No data. Check the selected date range.</p>
+                          <p className="text-center">No data. Check the selected date range.</p>
                         </div>
                       ) : (
                         <>
