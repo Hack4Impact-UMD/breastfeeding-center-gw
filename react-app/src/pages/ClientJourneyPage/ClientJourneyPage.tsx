@@ -42,8 +42,8 @@ const ClientJourney = () => {
   // get Acuity appts for the specific client 
   const {
     data: acuityApptData,
-    isAcuityPending,
-    acuityError,
+    isPending: isAcuityPending,
+    error: acuityError,
   } = useAcuityApptsForClient(clientInfo?.email ?? "");
 
   const samplePaysimple: PaySimpleRentals[] = [
@@ -93,7 +93,7 @@ const ClientJourney = () => {
       };
     }) ?? [];
 
-  const acuityData: AcuityData[] = 
+  const acuityData: AcuityData[] =
     acuityApptData?.map((appt) => ({
       class: appt.class || "N/A",
       instructor: appt.instructor || "N/A",
