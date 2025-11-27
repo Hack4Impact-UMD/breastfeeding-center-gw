@@ -675,7 +675,7 @@ export default function AcuityDashboardPage() {
           ) : (
             <span>Attendance By Class & Instructor</span>
           )}
-          {attendanceDisplay === "graph" ? <br /> : <></>}
+          {popularityDisplay === "graph" ? <br /> : <></>}
           {dateRange?.from && dateRange?.to
             ? formatDate(dateRange.from) + " - " + formatDate(dateRange.to)
             : "All Data"}
