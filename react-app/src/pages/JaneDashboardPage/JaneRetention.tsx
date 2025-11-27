@@ -151,6 +151,10 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
         >
           {isRetentionLoading ? (
             <Loading />
+          ) : !funnelData.some(d => d.data > 0) ? (
+            <div className="w-full flex grow items-center justify-center p-2">
+              <p>No data. Check the selected date range.</p>
+            </div>
           ) : retentionDisplay === "graph" ? (
             <>
               <div className="self-end mb-4">

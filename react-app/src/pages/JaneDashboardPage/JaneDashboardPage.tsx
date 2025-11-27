@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { PieArcSeries, PieChart } from "reaviz";
 import { JaneAppt } from "../../types/JaneType.ts";
@@ -61,8 +61,6 @@ const JaneDashboardPage = () => {
   const graphTableButtonStyle =
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer border border-gray-300";
   const centerItemsInDiv = "flex justify-between items-center";
-  const chartDiv =
-    "flex flex-col items-center justify-start bg-white min-h-[400px] border-2 border-black p-5 mt-5 rounded-2xl";
 
   const {
     data: janeAppts,
@@ -74,7 +72,6 @@ const JaneDashboardPage = () => {
   );
 
   const [visitDisplay, setVisitDisplay] = useState<string>("graph");
-  const pieChartRef = useRef<HTMLDivElement>(null);
 
   const chartColors = ["#f4bb47", "#05182a", "#3A8D8E"];
 
@@ -224,10 +221,14 @@ const JaneDashboardPage = () => {
                       formatDate(dateRange.to)
                       : "All Data"}
                   </span>
-                  <div className={chartDiv} ref={pieChartRef}>
-                    <ExportContent className="w-full h-full max-w-2xl flex flex-col justify-center">
+                  <div className="flex flex-col items-center justify-start bg-white min-h-[400px] border-2 border-black p-5 mt-5 rounded-2xl">
+                    <ExportContent className={`w-full grow flex flex-col justify-center`}>
                       {isLoading ? (
                         <Loading />
+                      ) : chartData.length === 0 ? (
+                        <div className="w-full flex grow items-center justify-center p-2">
+                          <p>No data. Check the selected date range.</p>
+                        </div>
                       ) : (
                         <>
                           <ExportOnly>
@@ -300,8 +301,8 @@ const JaneDashboardPage = () => {
             startDate={dateRange?.from}
             endDate={dateRange?.to}
           ></JaneRetention>
-        </div>
-      </div>
+        </div >
+      </div >
     </>
   );
 };
