@@ -1,8 +1,8 @@
 import { Response, Router, Request } from "express";
-// import { isAuthenticated } from "../middleware/authMiddleware";
 import { getAllAcuityApptsInRange } from "../services/acuity";
 import { AcuityAppointment } from "../types/acuityType";
 import { isAuthenticated } from "../middleware/authMiddleware";
+import { getAllAcuityAppointmentsForClient } from "../services/acuity";
 
 const router = Router();
 
@@ -12,6 +12,11 @@ router.get(
   async (req: Request, res: Response) => {
     const startDate = req.query.startDate as string;
     const endDate = req.query.endDate as string;
+
+    if (!startDate || !endDate) {
+      return res.status(400).json({ error: "startDate and endDate are required"});
+    }
+
     const classCategory = req.query.classCategory as string;
 
     let appts: AcuityAppointment[] = [];
@@ -25,6 +30,22 @@ router.get(
 
     return res.status(200).send(appts);
   },
+);
+
+router.get(
+  "/appointments/client",
+  [isAuthenticated],
+  async (req: Request, res: Response) => {
+    const email = req.query.email as string;
+
+    if (!email) {
+      return res.status(400).json({ error: "email is required" });
+    }
+
+    const appointments = await
+getAllAcuityAppointmentsForClient(email);
+    return res.status(200).send(appointments);
+  }
 );
 
 export default router;
