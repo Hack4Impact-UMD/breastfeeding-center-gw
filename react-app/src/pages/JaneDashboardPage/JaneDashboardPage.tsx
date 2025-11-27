@@ -214,7 +214,6 @@ const JaneDashboardPage = () => {
                     className={
                       "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
                     }
-                  // onClick={() => handleExport(pieChartRef, "visit_breakdown")}
                   >
                     Export
                   </Button>
