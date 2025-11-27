@@ -731,7 +731,7 @@ export default function AcuityDashboardPage() {
                     <div className="w-full flex items-center justify-center">
                       <DiscreteLegend
                         orientation="horizontal"
-                        entries={filteredInstructorData.map((line) =>
+                        entries={filteredClassData.map((line) =>
                           <DiscreteLegendEntry key={line.key} label={line.key} color={classColorScheme[line.key]} />
                         )}
                       />
