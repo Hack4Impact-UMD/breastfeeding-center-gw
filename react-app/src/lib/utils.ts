@@ -49,8 +49,15 @@ export const axiosClient = async () => {
     baseURL: API_URL,
     headers: auth.currentUser
       ? {
-          Authorization: `Bearer ${await auth.currentUser.getIdToken()}`,
-        }
+        Authorization: `Bearer ${await auth.currentUser.getIdToken()}`,
+      }
       : {},
   });
 };
+
+export const formatDate = (date: Date) =>
+  date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+  });
