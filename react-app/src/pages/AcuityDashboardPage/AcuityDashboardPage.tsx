@@ -14,7 +14,7 @@ import {
   BarLabel,
   DiscreteLegend,
   DiscreteLegendEntry,
-  schemes
+  schemes,
 } from "reaviz";
 import {
   DateRangePicker,
@@ -616,7 +616,7 @@ export default function AcuityDashboardPage() {
                 <div className="w-full flex items-center justify-center">
                   <DiscreteLegend orientation="horizontal"
                     entries={trimesterLegend.map(i =>
-                      <DiscreteLegendEntry label={i.key} color={i.color} />
+                      <DiscreteLegendEntry key={i.key} label={i.key} color={i.color} />
                     )}
                   />
                 </div>
@@ -726,7 +726,7 @@ export default function AcuityDashboardPage() {
                       <DiscreteLegend
                         orientation="horizontal"
                         entries={filteredInstructorData.map((line) =>
-                          <DiscreteLegendEntry label={line.key} color={classColorScheme[line.key]} />
+                          <DiscreteLegendEntry key={line.key} label={line.key} color={classColorScheme[line.key]} />
                         )}
                       />
                     </div>
@@ -780,7 +780,7 @@ export default function AcuityDashboardPage() {
                       <DiscreteLegend
                         orientation="horizontal"
                         entries={filteredInstructorData.map((line) =>
-                          <DiscreteLegendEntry label={line.key} color={classColorScheme[line.key]} />
+                          <DiscreteLegendEntry key={line.key} label={line.key} color={classColorScheme[line.key]} />
                         )}
                       />
                     </div>

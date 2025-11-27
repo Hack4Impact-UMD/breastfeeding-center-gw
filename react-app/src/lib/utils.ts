@@ -54,6 +54,7 @@ export const axiosClient = async () => {
       : {},
   });
 };
+
 export const formatDate = (date: Date) =>
   date.toLocaleDateString("en-US", {
     year: "numeric",
