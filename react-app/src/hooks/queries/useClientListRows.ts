@@ -7,7 +7,7 @@ import { getAllJaneApptsInRange } from "@/services/janeService";
 import { JaneAppt } from "@/types/JaneType";
 import { ClientTableRow } from "@/pages/ClientListPage/ClientListTableColumns";
 import { getAllAcuityApptsInRange } from "@/services/acuityService";
-import { AcuityAppointment } from "@/types/AcuityType";
+//import { AcuityAppointment } from "@/types/AcuityType";
 
 export function useClientListRows() {
   return useQuery<ClientTableRow[]>({

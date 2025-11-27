@@ -182,5 +182,5 @@ export async function getAllAcuityAppointmentsForClient(
   const response = await client.get('/appointments', {
     params: { email }
   });
-  return response.data as AcuityAppointment[];
+  return processRawAcuityAppts(response.data as RawAcuityAppt[]);
 }

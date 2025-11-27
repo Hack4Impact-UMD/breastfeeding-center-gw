@@ -13,11 +13,14 @@ import { Navigate, useParams } from "react-router";
 import { useClientByPatientId } from "@/hooks/queries/useClientById.ts";
 import Loading from "@/components/Loading.tsx";
 import { useJaneApptsForClient } from "@/hooks/queries/useJaneApptsForClient.ts";
+import { useAcuityApptsForClient } from "@/hooks/queries/useAcuityApptsForClient.ts";
+//import { AcuityAppointment } from "@/types/AcuityType.ts";
+import { DateTime } from "luxon";
 
 const ClientJourney = () => {
   //styles
   const centerItemsInDiv = "flex justify-between items-center";
-  const dividingLine = "w-full h-1 border-t border-black-500 mt-3 mb-3";
+  // const dividingLine = "w-full h-1 border-t border-black-500 mt-3 mb-3"; 
   const tableSection = "py-3 space-y-3";
 
   const { id: clientId } = useParams();
@@ -36,18 +39,12 @@ const ClientJourney = () => {
     error,
   } = useJaneApptsForClient(clientId ?? "");
 
-  const sampleAcuityData: AcuityData[] = [
-    {
-      class: "Class A",
-      instructor: "A. Smith",
-      date: "3/01/24",
-    },
-    {
-      class: "Class B",
-      instructor: "A. Smith",
-      date: "3/01/23",
-    },
-  ];
+  // get Acuity appts for the specific client 
+  const {
+    data: acuityApptData,
+    isAcuityPending,
+    acuityError,
+  } = useAcuityApptsForClient(clientInfo?.email ?? "");
 
   const samplePaysimple: PaySimpleRentals[] = [
     {
@@ -96,6 +93,13 @@ const ClientJourney = () => {
       };
     }) ?? [];
 
+  const acuityData: AcuityData[] = 
+    acuityApptData?.map((appt) => ({
+      class: appt.class || "N/A",
+      instructor: appt.instructor || "N/A",
+      date: DateTime.fromISO(appt.datetime).toFormat("M/d/yy"),
+    })) ?? [];
+
   if (!clientId) return <Navigate to="/" />;
 
   return (
@@ -108,9 +112,9 @@ const ClientJourney = () => {
           </div>
         </div>
 
-        {isClientInfoPending || isPending ? (
+        {isClientInfoPending || isPending || isAcuityPending ? (
           <Loading />
-        ) : clientInfoError || error ? (
+        ) : clientInfoError || error || acuityError ? (
           <Navigate to="/*" />
         ) : (
           <>
@@ -139,7 +143,7 @@ const ClientJourney = () => {
                 <h2 className="font-bold text-base sm:text-3xl">Acuity Classes</h2>
                 <DataTable
                   columns={acuityColumns}
-                  data={sampleAcuityData}
+                  data={acuityData}
                   tableType="default"
                   pageSize={5}
                 />
