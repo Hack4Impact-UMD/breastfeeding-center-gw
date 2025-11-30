@@ -13,6 +13,8 @@ import { janeIDDataColumns } from "./JaneDataTableColumns.tsx";
 import { DateRange } from "react-day-picker";
 import { useState } from "react";
 import { Button } from "@/components/ui/button.tsx";
+import { showSuccessToast, showAlertToast, showErrorToast } from "@/lib/toast";
+
 const JaneDataPage = () => {
   // style
   const centerItemsInDiv = "flex justify-between items-center";
@@ -55,6 +57,25 @@ const JaneDataPage = () => {
             />
           </div>
         </div>
+      {/* UNCOMMENT FOR TESTING PURPOSES */}
+            {/* <Button
+              onClick={() => showSuccessToast("Successfully Message")}
+              className="bg-green-600 hover:bg-green-700 text-white"
+            >
+              Test Success Toast
+            </Button>
+            <Button
+              onClick={() => showAlertToast("Alert Message")}
+              className="bg-yellow-500 hover:bg-yellow-600 text-white"
+            >
+              Test Alert Toast
+            </Button>
+            <Button
+              onClick={() => showErrorToast("Error Message")}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              Test Error Toast
+            </Button> */}
 
         {/* UPLOAD BUTTON */}
         <div className={`${centerItemsInDiv} basis-20xs mt-4 mb-4`}>
