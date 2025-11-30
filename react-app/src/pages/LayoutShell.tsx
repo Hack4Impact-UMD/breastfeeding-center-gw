@@ -87,18 +87,18 @@ export default function LayoutShell() {
           padding: 0 !important;
           display: flex !important;
           align-items: center !important;
-          font-size: 40px !important;
+          font-size: 15px !important;
           font-weight: 400 !important;
           color: #ffffff !important;
           flex: 1 !important;
         }
         
         .Toastify__toast-body > div {
-          font-size: 40px !important;
+          font-size: 15px !important;
         }
         
         .Toastify__toast-body span {
-          font-size: 40px !important;
+          font-size: 15px !important;
         }
         
         .Toastify__close-button {
