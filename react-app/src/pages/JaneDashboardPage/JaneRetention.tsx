@@ -58,6 +58,10 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
   const [retentionDisplay, setRetentionDisplay] = useState<string>("graph");
   const [openRow, setOpenRow] = useState<RetentionRate | null>(null);
 
+  const dateRangeLabel =
+    startDate && endDate
+      ? formatDate(startDate) + " - " + formatDate(endDate)
+      : "All Data";
 
   const {
     data: rawRetentionData,
@@ -100,40 +104,43 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
     [processedData],
   );
 
-  const noData = useMemo(() => !funnelData.some(d => d.data > 0), [funnelData])
+  const noData = useMemo(
+    () => !funnelData.some((d) => d.data > 0),
+    [funnelData],
+  );
 
   if (retentionError) return <div>Error loading retention data</div>;
 
   return (
     <div className="flex-[0_0_48%] w-full lg:w-1/2">
-      <Export>
+      <Export title={`Retention Rate${dateRangeLabel}`}>
         <div className={`${centerItemsInDiv} pt-4 mb-6`}>
-
           <div className="flex flex-row">
             <button
-              className={`${graphTableButtonStyle} ${retentionDisplay === "graph"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#CED8E1]"
-                }`}
+              className={`${graphTableButtonStyle} ${
+                retentionDisplay === "graph"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#CED8E1]"
+              }`}
               onClick={() => setRetentionDisplay("graph")}
             >
               Graph
             </button>
             <button
-              className={`${graphTableButtonStyle} ${retentionDisplay === "table"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#CED8E1]"
-                }`}
+              className={`${graphTableButtonStyle} ${
+                retentionDisplay === "table"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#CED8E1]"
+              }`}
               onClick={() => setRetentionDisplay("table")}
             >
               Table
             </button>
           </div>
           <ExportTrigger
-            disabled={
-              retentionDisplay !== "graph" || noData
-            }
-            asChild>
+            disabled={retentionDisplay !== "graph" || noData}
+            asChild
+          >
             <Button
               variant={"outlineGray"}
               className={
@@ -145,19 +152,16 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
           </ExportTrigger>
         </div>
         <span className="self-start font-semibold text-2xl">
-          Retention Rate:{" "}
-          {startDate && endDate
-            ? formatDate(startDate) + " - " + formatDate(endDate)
-            : "All Data"}
+          Retention Rate: {dateRangeLabel}
         </span>
-        <div
-          className={retentionDisplay === "graph" ? chartDiv : ""}
-        >
+        <div className={retentionDisplay === "graph" ? chartDiv : ""}>
           {isRetentionLoading ? (
             <Loading />
           ) : noData ? (
             <div className="w-full flex grow items-center justify-center p-2">
-              <p className="text-center">No data. Check the selected date range.</p>
+              <p className="text-center">
+                No data. Check the selected date range.
+              </p>
             </div>
           ) : retentionDisplay === "graph" ? (
             <>
@@ -170,17 +174,11 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
               </div>
               <ExportContent className="w-full">
                 <ExportOnly className="mb-5">
-                  <h1 className="text-xl font-bold text-black">Client Retention</h1>
-                  <p className="text-base text-black">
-                    {startDate && endDate
-                      ? formatDate(startDate) +
-                      " - " +
-                      formatDate(endDate)
-                      : "All Data"}
-                  </p>
-                  <p className="text-gray-800 text-sm">
-                    {selectedDropdown}
-                  </p>
+                  <h1 className="text-xl font-bold text-black">
+                    Client Retention
+                  </h1>
+                  <p className="text-base text-black">{dateRangeLabel}</p>
+                  <p className="text-gray-800 text-sm">{selectedDropdown}</p>
                 </ExportOnly>
                 <div className="w-full flex flex-col items-center justify-center mt-4">
                   <BarChart
@@ -208,7 +206,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
           )}
         </div>
       </Export>
-    </div >
+    </div>
   );
 };
 

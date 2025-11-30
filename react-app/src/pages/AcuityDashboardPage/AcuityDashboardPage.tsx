@@ -51,6 +51,11 @@ export default function AcuityDashboardPage() {
   const chartDiv =
     "flex flex-col items-center justify-start bg-white min-h-[400px] border-2 border-black p-5 mt-5 rounded-2xl";
 
+  const dateRangeLabel =
+    dateRange?.from && dateRange?.to
+      ? `${formatDate(dateRange.from)} - ${formatDate(dateRange.to)}`
+      : "All Data";
+
   // ── CLASS dropdown state & data ───────────────────────────────
   const [selectedTrimesterClass, setSelectedTrimesterClass] =
     useState("ALL CLASSES");
@@ -71,7 +76,7 @@ export default function AcuityDashboardPage() {
     { key: "THIRD TRIM", color: "#5DB9FF" },
     { key: "FOURTH TRIM", color: "#1661A9" },
     { key: "FIFTH TRIM", color: "#05182A" },
-  ]
+  ];
   const trimesterAttendanceData = [
     {
       key: "POSTPARTUM CLASSES",
@@ -394,8 +399,8 @@ export default function AcuityDashboardPage() {
     "PRENATAL CLASSES": schemes.cybertron[1],
     "INFANT MASSAGE": schemes.cybertron[2],
     "PARENT GROUPS": schemes.cybertron[3],
-    "CHILDBIRTH CLASSES": schemes.cybertron[4]
-  }
+    "CHILDBIRTH CLASSES": schemes.cybertron[4],
+  };
   const allInstructorData = [
     {
       key: "POSTPARTUM CLASSES",
@@ -453,8 +458,8 @@ export default function AcuityDashboardPage() {
     selectedPopularityClass === "ALL CLASSES"
       ? allInstructorData
       : allInstructorData.filter(
-        (item) => item.key === selectedPopularityClass,
-      );
+          (item) => item.key === selectedPopularityClass,
+        );
 
   const classAttendanceTableExtras = (
     <div className="w-full flex justify-end">
@@ -495,32 +500,31 @@ export default function AcuityDashboardPage() {
             />
           </div>
         </div>
-        <Export>
+        <Export title={`ClassAttendanceByTrimester${dateRangeLabel}`}>
           <div className={`${centerItemsInDiv} pt-4`}>
             <div className="flex flex-row">
               <button
-                className={`${graphTableButtonStyle} ${attendanceDisplay == "graph"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#f5f5f5]"
-                  }`}
+                className={`${graphTableButtonStyle} ${
+                  attendanceDisplay == "graph"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
+                }`}
                 onClick={() => setAttendanceDisplay("graph")}
               >
                 Graph
               </button>
               <button
-                className={`${graphTableButtonStyle} ${attendanceDisplay == "table"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#f5f5f5]"
-                  }`}
+                className={`${graphTableButtonStyle} ${
+                  attendanceDisplay == "table"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
+                }`}
                 onClick={() => setAttendanceDisplay("table")}
               >
                 Table
               </button>
             </div>
-            <ExportTrigger
-              disabled={attendanceDisplay !== "graph"}
-              asChild
-            >
+            <ExportTrigger disabled={attendanceDisplay !== "graph"} asChild>
               <Button
                 variant={"outlineGray"}
                 className={
@@ -535,9 +539,7 @@ export default function AcuityDashboardPage() {
           <span className="self-start font-semibold text-2xl">
             Class Attendance By Trimester,{" "}
             {attendanceDisplay === "graph" ? <br /> : <></>}
-            {dateRange?.from && dateRange?.to
-              ? formatDate(dateRange.from) + " - " + formatDate(dateRange.to)
-              : "All Data"}
+            {dateRangeLabel}
           </span>
           {attendanceDisplay === "graph" ? (
             <div className={chartDiv}>
@@ -552,14 +554,10 @@ export default function AcuityDashboardPage() {
 
               <ExportContent className="w-full h-96">
                 <ExportOnly className="mb-5">
-                  <h1 className="text-xl font-bold text-black">Class Attendance By Trimester</h1>
-                  <p className="text-base text-black">
-                    {dateRange?.from && dateRange?.to
-                      ? formatDate(dateRange.from) +
-                      " - " +
-                      formatDate(dateRange.to)
-                      : "All Data"}
-                  </p>
+                  <h1 className="text-xl font-bold text-black">
+                    Class Attendance By Trimester
+                  </h1>
+                  <p className="text-base text-black">{dateRangeLabel}</p>
                   <p className="text-gray-800 text-sm">
                     {selectedTrimesterClass}
                   </p>
@@ -576,7 +574,14 @@ export default function AcuityDashboardPage() {
                             width={100}
                             rx={0}
                             ry={0}
-                            label={<BarLabel position="center" fill="white" scale={20} className="z-20" />}
+                            label={
+                              <BarLabel
+                                position="center"
+                                fill="white"
+                                scale={20}
+                                className="z-20"
+                              />
+                            }
                             gradient={
                               <Gradient
                                 stops={[
@@ -599,7 +604,7 @@ export default function AcuityDashboardPage() {
                             guide={<GuideBar />}
                           />
                         }
-                        colorScheme={trimesterLegend.map(i => i.color)}
+                        colorScheme={trimesterLegend.map((i) => i.color)}
                       />
                     }
                   />
@@ -612,18 +617,35 @@ export default function AcuityDashboardPage() {
                       <BarSeries
                         padding={0.1}
                         colorScheme={"#F4BB47"}
-                        bar={<Bar
-                          label={<BarLabel position="center" fill="white" scale={20} className="z-20" />}
-                          rx={0} ry={0} style={{ fill: "#F4BB47" }} />}
+                        bar={
+                          <Bar
+                            label={
+                              <BarLabel
+                                position="center"
+                                fill="white"
+                                scale={20}
+                                className="z-20"
+                              />
+                            }
+                            rx={0}
+                            ry={0}
+                            style={{ fill: "#F4BB47" }}
+                          />
+                        }
                       />
                     }
                   />
                 )}
                 <div className="w-full flex items-center justify-center">
-                  <DiscreteLegend orientation="horizontal"
-                    entries={trimesterLegend.map(i =>
-                      <DiscreteLegendEntry key={i.key} label={i.key} color={i.color} />
-                    )}
+                  <DiscreteLegend
+                    orientation="horizontal"
+                    entries={trimesterLegend.map((i) => (
+                      <DiscreteLegendEntry
+                        key={i.key}
+                        label={i.key}
+                        color={i.color}
+                      />
+                    ))}
                   />
                 </div>
               </ExportContent>
@@ -641,25 +663,27 @@ export default function AcuityDashboardPage() {
         <div className={`${centerItemsInDiv} pt-8`}>
           <div className="flex flex-row">
             <button
-              className={`${graphTableButtonStyle} ${popularityDisplay == "graph"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#f5f5f5]"
-                }`}
+              className={`${graphTableButtonStyle} ${
+                popularityDisplay == "graph"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
+              }`}
               onClick={() => setPopularityDisplay("graph")}
             >
               Graph
             </button>
             <button
-              className={`${graphTableButtonStyle} ${popularityDisplay == "table"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#f5f5f5]"
-                }`}
+              className={`${graphTableButtonStyle} ${
+                popularityDisplay == "table"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
+              }`}
               onClick={() => setPopularityDisplay("table")}
             >
               Table
             </button>
           </div>
-          {popularityDisplay === "table" &&
+          {popularityDisplay === "table" && (
             <Button
               variant={"outlineGray"}
               className={
@@ -668,9 +692,8 @@ export default function AcuityDashboardPage() {
             >
               Export
             </Button>
-          }
+          )}
         </div>
-
 
         <span className="self-start font-semibold text-2xl">
           {popularityDisplay === "graph" ? (
@@ -679,17 +702,17 @@ export default function AcuityDashboardPage() {
             <span>Attendance By Class & Instructor</span>
           )}
           {popularityDisplay === "graph" ? <br /> : <></>}
-          {dateRange?.from && dateRange?.to
-            ? formatDate(dateRange.from) + " - " + formatDate(dateRange.to)
-            : "All Data"}
+          {dateRangeLabel}
         </span>
         {/* Class Popularity Over Time */}
         <div>
           {popularityDisplay === "graph" ? (
             <>
-              <Export>
+              <Export title={`ClassPopularity${dateRangeLabel}`}>
                 <div className="flex flex-row items-center w-full">
-                  <div className="text-2xl font-semibold grow">Class Popularity</div>
+                  <div className="text-2xl font-semibold grow">
+                    Class Popularity
+                  </div>
 
                   <ExportTrigger asChild>
                     <Button
@@ -713,14 +736,10 @@ export default function AcuityDashboardPage() {
                   </div>
                   <ExportContent className="w-full h-96">
                     <ExportOnly className="mb-5">
-                      <h1 className="text-xl font-bold text-black">Class Popularity </h1>
-                      <p className="text-base text-black">
-                        {dateRange?.from && dateRange?.to
-                          ? formatDate(dateRange.from) +
-                          " - " +
-                          formatDate(dateRange.to)
-                          : "All Data"}
-                      </p>
+                      <h1 className="text-xl font-bold text-black">
+                        Class Popularity{" "}
+                      </h1>
+                      <p className="text-base text-black">{dateRangeLabel}</p>
                       <p className="text-gray-800 text-sm">
                         {selectedPopularityClass}
                       </p>
@@ -728,23 +747,36 @@ export default function AcuityDashboardPage() {
                     <LineChart
                       height={300}
                       data={filteredClassData}
-                      series={<LineSeries colorScheme={(item) => classColorScheme[item[0] ? item[0].key : item.key]} type="grouped" />}
+                      series={
+                        <LineSeries
+                          colorScheme={(item) =>
+                            classColorScheme[item[0] ? item[0].key : item.key]
+                          }
+                          type="grouped"
+                        />
+                      }
                     />
                     <div className="w-full flex items-center justify-center">
                       <DiscreteLegend
                         orientation="horizontal"
-                        entries={filteredClassData.map((line) =>
-                          <DiscreteLegendEntry key={line.key} label={line.key} color={classColorScheme[line.key]} />
-                        )}
+                        entries={filteredClassData.map((line) => (
+                          <DiscreteLegendEntry
+                            key={line.key}
+                            label={line.key}
+                            color={classColorScheme[line.key]}
+                          />
+                        ))}
                       />
                     </div>
                   </ExportContent>
                 </div>
               </Export>
 
-              <Export>
+              <Export title={`InstructorPopularity${dateRangeLabel}`}>
                 <div className="mt-8 flex flex-row items-center w-full">
-                  <div className="text-2xl font-semibold grow">Instructor Popularity</div>
+                  <div className="text-2xl font-semibold grow">
+                    Instructor Popularity
+                  </div>
 
                   <ExportTrigger asChild>
                     <Button
@@ -767,14 +799,10 @@ export default function AcuityDashboardPage() {
                   </div>
                   <ExportContent className="w-full h-96">
                     <ExportOnly className="mb-5">
-                      <h1 className="text-xl font-bold text-black">Instructor Popularity</h1>
-                      <p className="text-base text-black">
-                        {dateRange?.from && dateRange?.to
-                          ? formatDate(dateRange.from) +
-                          " - " +
-                          formatDate(dateRange.to)
-                          : "All Data"}
-                      </p>
+                      <h1 className="text-xl font-bold text-black">
+                        Instructor Popularity
+                      </h1>
+                      <p className="text-base text-black">{dateRangeLabel}</p>
                       <p className="text-gray-800 text-sm">
                         {selectedPopularityClass}
                       </p>
@@ -782,14 +810,25 @@ export default function AcuityDashboardPage() {
                     <LineChart
                       height={300}
                       data={filteredInstructorData}
-                      series={<LineSeries colorScheme={(item) => classColorScheme[item[0] ? item[0].key : item.key]} type="grouped" />}
+                      series={
+                        <LineSeries
+                          colorScheme={(item) =>
+                            classColorScheme[item[0] ? item[0].key : item.key]
+                          }
+                          type="grouped"
+                        />
+                      }
                     />
                     <div className="w-full flex items-center justify-center">
                       <DiscreteLegend
                         orientation="horizontal"
-                        entries={filteredInstructorData.map((line) =>
-                          <DiscreteLegendEntry key={line.key} label={line.key} color={classColorScheme[line.key]} />
-                        )}
+                        entries={filteredInstructorData.map((line) => (
+                          <DiscreteLegendEntry
+                            key={line.key}
+                            label={line.key}
+                            color={classColorScheme[line.key]}
+                          />
+                        ))}
                       />
                     </div>
                   </ExportContent>

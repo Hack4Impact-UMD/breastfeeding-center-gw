@@ -58,6 +58,11 @@ const JaneDashboardPage = () => {
     defaultDateRange,
   );
 
+  const dateRangeLabel =
+    dateRange?.from && dateRange?.to
+      ? `${formatDate(dateRange.from)} - ${formatDate(dateRange.to)}`
+      : "All Data";
+
   const graphTableButtonStyle =
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer border border-gray-300";
   const centerItemsInDiv = "flex justify-between items-center";
@@ -176,24 +181,26 @@ const JaneDashboardPage = () => {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8 pt-3">
-          <Export>
+          <Export title={`VisitsBreakdown${dateRangeLabel}`}>
             <div className="flex-[0_0_100%] max-w-full min-w-[200px] md:flex-[0_0_48%] lg:w-1/2">
               <div className="flex items-center justify-between w-full pt-4 mb-6">
                 <div className="flex flex-row ">
                   <button
-                    className={`${graphTableButtonStyle} ${visitDisplay === "graph"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#CED8E1]"
-                      }`}
+                    className={`${graphTableButtonStyle} ${
+                      visitDisplay === "graph"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#CED8E1]"
+                    }`}
                     onClick={() => setVisitDisplay("graph")}
                   >
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${visitDisplay === "table"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#CED8E1]"
-                      }`}
+                    className={`${graphTableButtonStyle} ${
+                      visitDisplay === "table"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#CED8E1]"
+                    }`}
                     onClick={() => setVisitDisplay("table")}
                   >
                     Table
@@ -217,31 +224,28 @@ const JaneDashboardPage = () => {
               {visitDisplay === "graph" ? (
                 <>
                   <span className="self-start font-semibold text-2xl mb-20">
-                    Visit Breakdown:{" "}
-                    {dateRange?.from && dateRange?.to
-                      ? formatDate(dateRange.from) +
-                      " - " +
-                      formatDate(dateRange.to)
-                      : "All Data"}
+                    Visit Breakdown: {dateRangeLabel}
                   </span>
                   <div className="flex flex-col items-center justify-start bg-white min-h-[400px] border-2 border-black p-5 mt-5 rounded-2xl">
-                    <ExportContent className={`w-full grow flex flex-col justify-center`}>
+                    <ExportContent
+                      className={`w-full grow flex flex-col justify-center`}
+                    >
                       {isLoading ? (
                         <Loading />
                       ) : chartData.length === 0 ? (
                         <div className="w-full flex grow items-center justify-center p-2">
-                          <p className="text-center">No data. Check the selected date range.</p>
+                          <p className="text-center">
+                            No data. Check the selected date range.
+                          </p>
                         </div>
                       ) : (
                         <>
                           <ExportOnly>
-                            <h1 className="text-xl font-bold text-black">Visit Breakdown</h1>
+                            <h1 className="text-xl font-bold text-black">
+                              Visit Breakdown
+                            </h1>
                             <span className="text-base text-black">
-                              {dateRange?.from && dateRange?.to
-                                ? formatDate(dateRange.from) +
-                                " - " +
-                                formatDate(dateRange.to)
-                                : "All Data"}
+                              {dateRangeLabel}
                             </span>
                           </ExportOnly>
                           <div className="flex items-center justify-center w-full">
@@ -265,7 +269,10 @@ const JaneDashboardPage = () => {
                       )}
                       <div className="mt-4 flex flex-wrap justify-center gap-4">
                         {chartData.map((item, index) => (
-                          <div key={item.key} className="flex items-center gap-2">
+                          <div
+                            key={item.key}
+                            className="flex items-center gap-2"
+                          >
                             <div
                               className="w-10 h-4"
                               style={{
@@ -283,12 +290,7 @@ const JaneDashboardPage = () => {
               ) : (
                 <div className="space-y-2">
                   <span className="font-semibold text-2xl">
-                    Visit Breakdown:{" "}
-                    {dateRange?.from && dateRange?.to
-                      ? formatDate(dateRange.from) +
-                      " - " +
-                      formatDate(dateRange.to)
-                      : "All Data"}
+                    Visit Breakdown: {dateRangeLabel}
                   </span>
                   <DataTable
                     columns={visitBreakdownColumns}
@@ -304,8 +306,8 @@ const JaneDashboardPage = () => {
             startDate={dateRange?.from}
             endDate={dateRange?.to}
           ></JaneRetention>
-        </div >
-      </div >
+        </div>
+      </div>
     </>
   );
 };
