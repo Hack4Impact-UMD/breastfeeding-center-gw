@@ -15,7 +15,9 @@ export function Export({
       const printWindow = window.open("", "_blank");
       if (printWindow) {
         printWindow.document.open();
-        const safeTitle = title.replace(/-/g, "").replace(/[^A-Za-z0-9]/g, "_");
+        const safeTitle = title
+          .replace(/-/g, "to")
+          .replace(/[^A-Za-z0-9]/g, "_");
         printWindow.document.write(`<html><head><title>${safeTitle}</title>`);
 
         // copy styling

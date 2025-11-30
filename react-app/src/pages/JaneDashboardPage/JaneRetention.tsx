@@ -113,7 +113,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
 
   return (
     <div className="flex-[0_0_48%] w-full lg:w-1/2">
-      <Export title={`Retention Rate${dateRangeLabel}`}>
+      <Export title={`RetentionRate${dateRangeLabel}`}>
         <div className={`${centerItemsInDiv} pt-4 mb-6`}>
           <div className="flex flex-row">
             <button
