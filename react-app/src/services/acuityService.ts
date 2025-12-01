@@ -12,7 +12,7 @@ export async function getAllAcuityApptsInRange(
     const params = new URLSearchParams();
     if (start) params.append("startDate", start);
     if (end) params.append("endDate", end);
-    if (category) params.append("categoryClass", category);
+    if (category) params.append("classCategory", category);
 
     const queryString = params.toString();
     const url = `/acuity/appointments${queryString ? `?${queryString}` : ""}`;
