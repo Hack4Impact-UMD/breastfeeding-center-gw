@@ -3,6 +3,7 @@ import { Response, Router, Request } from "express";
 import { getAllAcuityApptsInRange } from "../services/acuity";
 import { AcuityAppointment } from "../types/acuityType";
 import { isAuthenticated } from "../middleware/authMiddleware";
+import { logger } from "firebase-functions";
 
 const router = Router();
 
@@ -10,20 +11,25 @@ router.get(
   "/appointments",
   [isAuthenticated],
   async (req: Request, res: Response) => {
-    const startDate = req.query.startDate as string;
-    const endDate = req.query.endDate as string;
-    const classCategory = req.query.classCategory as string;
+    try {
+      const startDate = req.query.startDate as string;
+      const endDate = req.query.endDate as string;
+      const classCategory = req.query.classCategory as string;
 
-    let appts: AcuityAppointment[] = [];
-    if (classCategory && classCategory.trim().length !== 0) {
-      appts = (await getAllAcuityApptsInRange(startDate, endDate)).filter(
-        (appt) => appt.classCategory === classCategory,
-      );
-    } else {
-      appts = await getAllAcuityApptsInRange(startDate, endDate);
+      let appts: AcuityAppointment[] = [];
+      if (classCategory && classCategory.trim().length !== 0) {
+        appts = (await getAllAcuityApptsInRange(startDate, endDate)).filter(
+          (appt) => appt.classCategory === classCategory,
+        );
+      } else {
+        appts = await getAllAcuityApptsInRange(startDate, endDate);
+      }
+
+      return res.status(200).json(appts);
+    } catch (e) {
+      logger.error("Error fetching appointments:", e);
+      return res.status(500).send((e as Error).message);
     }
-
-    return res.status(200).send(appts);
   },
 );
 

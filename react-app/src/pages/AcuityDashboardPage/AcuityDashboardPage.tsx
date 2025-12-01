@@ -19,6 +19,7 @@ import {
   DateRangePicker,
   defaultPresets,
   defaultDateRange,
+  DateRange,
 } from "@/components/DateRangePicker/DateRangePicker";
 import { DataTable } from "@/components/DataTable/DataTable";
 import {
@@ -30,6 +31,9 @@ import {
 import InstructorPopup from "./InstructorPopup";
 import SelectDropdown from "@/components/SelectDropdown";
 import { Button } from "@/components/ui/button";
+import { useAcuityApptsInRange } from "@/hooks/queries/useAcuityApptsInRange";
+import { AcuityAppointment } from "@/types/AcuityType";
+import { DateTime } from "luxon";
 
 export default function AcuityDashboardPage() {
   // const [allClasses, setAllClasses] = useState<any[]>([]);
@@ -57,6 +61,46 @@ export default function AcuityDashboardPage() {
     "PARENT GROUPS",
     "CHILDBIRTH CLASSES",
   ];
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(
+    defaultDateRange,
+  );
+
+  const {
+    data: appointmentData,
+    isPending: isApptDataPending,
+    error: apptError,
+  } = useAcuityApptsInRange(
+    dateRange?.from?.toISOString(),
+    dateRange?.to?.toISOString(),
+    selectedTrimesterClass,
+  );
+  console.log(appointmentData);
+
+  // list of clients by the trimester they are in
+  // const trimesterAttendance: Map<number, AcuityAppointment[]> = new Map([
+  //   [1, []],
+  //   [2, []],
+  //   [3, []],
+  //   [4, []],
+  //   [5, []],
+  // ]);
+  // if (appointmentData) {
+  //   for (const appt of appointmentData) {
+  //     // skip babies with no due dates
+  //     if (appt.babyDueDatesISO.length === 0) {
+  //       continue;
+  //     }
+  //     const dueDate = DateTime.fromISO(appt.babyDueDatesISO[0]);
+  //     const now = DateTime.now();
+  //     // pregnancy typically 40 weeks, find "start" of pregnancy
+  //     const pregnancyStart = dueDate.minus({ weeks: 40 });
+  //     // subtract start date from due date and round
+  //     const weeksIntoPregnancy = Math.floor(
+  //       now.diff(pregnancyStart, "weeks").weeks,
+  //     );
+  //   }
+  // }
+
   const trimesterAttendanceData = [
     {
       key: "POSTPARTUM CLASSES",
@@ -521,6 +565,7 @@ export default function AcuityDashboardPage() {
             <DateRangePicker
               enableYearNavigation
               defaultValue={defaultDateRange}
+              onChange={(range) => setDateRange(range)}
               presets={defaultPresets}
               className="w-60"
             />
@@ -652,18 +697,18 @@ export default function AcuityDashboardPage() {
                 popularityDisplay == "graph"
                   ? "bg-bcgw-gray-light"
                   : "bg-[#f5f5f5]"
-                  }`}
-                  onClick={() => setPopularityDisplay("graph")}
+              }`}
+              onClick={() => setPopularityDisplay("graph")}
             >
               Graph
             </button>
             <button
-                  className={`${graphTableButtonStyle} ${
+              className={`${graphTableButtonStyle} ${
                 popularityDisplay == "table"
                   ? "bg-bcgw-gray-light"
                   : "bg-[#f5f5f5]"
-                  }`}
-                  onClick={() => setPopularityDisplay("table")}
+              }`}
+              onClick={() => setPopularityDisplay("table")}
             >
               Table
             </button>
