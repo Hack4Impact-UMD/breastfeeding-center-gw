@@ -39,9 +39,9 @@ export async function getAllAcuityApptsInRange(startDate: string, endDate: strin
 export async function getAllAcuityApptsForClient(
   email: string
 ): Promise<AcuityAppointment[]> {
-    const axios = await axiosClient();
+  const axios = await axiosClient();
   const response = await axios.get("/acuity/appointments/client", {
-    params: {email}
+    params: { email }
   });
   return response.data as AcuityAppointment[];
 }

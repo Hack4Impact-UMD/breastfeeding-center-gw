@@ -178,9 +178,9 @@ export async function getAllAcuityApptsInRange(
 export async function getAllAcuityAppointmentsForClient(
   email: string
 ): Promise<AcuityAppointment[]> {
-  const client = await acuityClient();
+  const client = acuityClient();
   const response = await client.get('/appointments', {
-    params: { email }
+    params: { email, max: -1 }
   });
   return processRawAcuityAppts(response.data as RawAcuityAppt[]);
 }
