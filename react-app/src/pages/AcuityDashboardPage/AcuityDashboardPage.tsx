@@ -12,7 +12,6 @@ import {
   RangeLines,
   GuideBar,
 } from "reaviz";
-// import { getClientAppointments } from "../backend/AcuityCalls";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
 import {
@@ -32,7 +31,6 @@ import InstructorPopup from "./InstructorPopup";
 import SelectDropdown from "@/components/SelectDropdown";
 import { Button } from "@/components/ui/button";
 import { useAcuityApptsInRange } from "@/hooks/queries/useAcuityApptsInRange";
-import { AcuityAppointment } from "@/types/AcuityType";
 import { DateTime } from "luxon";
 
 export default function AcuityDashboardPage() {
@@ -61,6 +59,13 @@ export default function AcuityDashboardPage() {
     "PARENT GROUPS",
     "CHILDBIRTH CLASSES",
   ];
+  const trimesters = [
+    "FIRST TRIM",
+    "SECOND TRIM",
+    "THIRD TRIM",
+    "FOURTH TRIM",
+    "FIFTH TRIM",
+  ];
   const [dateRange, setDateRange] = useState<DateRange | undefined>(
     defaultDateRange,
   );
@@ -76,83 +81,169 @@ export default function AcuityDashboardPage() {
   );
   console.log(appointmentData);
 
-  // list of clients by the trimester they are in
-  // const trimesterAttendance: Map<number, AcuityAppointment[]> = new Map([
-  //   [1, []],
-  //   [2, []],
-  //   [3, []],
-  //   [4, []],
-  //   [5, []],
-  // ]);
-  // if (appointmentData) {
-  //   for (const appt of appointmentData) {
-  //     // skip babies with no due dates
-  //     if (appt.babyDueDatesISO.length === 0) {
-  //       continue;
-  //     }
-  //     const dueDate = DateTime.fromISO(appt.babyDueDatesISO[0]);
-  //     const now = DateTime.now();
-  //     // pregnancy typically 40 weeks, find "start" of pregnancy
-  //     const pregnancyStart = dueDate.minus({ weeks: 40 });
-  //     // subtract start date from due date and round
-  //     const weeksIntoPregnancy = Math.floor(
-  //       now.diff(pregnancyStart, "weeks").weeks,
-  //     );
-  //   }
-  // }
+  const trimesterAttendance: Map<string, number> = new Map();
+  const classesToCategory: Map<string, string> = new Map();
+  if (appointmentData) {
+    for (const appt of appointmentData) {
+      if (appt.class && appt.classCategory) {
+        classesToCategory.set(appt.class, appt.classCategory);
+      }
 
-  const trimesterAttendanceData = [
-    {
-      key: "POSTPARTUM CLASSES",
-      data: [
-        { key: "FIRST TRIM", data: 10 },
-        { key: "SECOND TRIM", data: 15 },
-        { key: "THIRD TRIM", data: 20 },
-        { key: "FOURTH TRIM", data: 5 },
-        { key: "FIFTH TRIM", data: 5 },
-      ],
-    },
-    {
-      key: "PRENATAL CLASSES",
-      data: [
-        { key: "FIRST TRIM", data: 7 },
-        { key: "SECOND TRIM", data: 1 },
-        { key: "THIRD TRIM", data: 2 },
-        { key: "FOURTH TRIM", data: 10 },
-        { key: "FIFTH TRIM", data: 3 },
-      ],
-    },
-    {
-      key: "INFANT MASSAGE",
-      data: [
-        { key: "FIRST TRIM", data: 1 },
-        { key: "SECOND TRIM", data: 4 },
-        { key: "THIRD TRIM", data: 3 },
-        { key: "FOURTH TRIM", data: 7 },
-        { key: "FIFTH TRIM", data: 10 },
-      ],
-    },
-    {
-      key: "PARENT GROUPS",
-      data: [
-        { key: "FIRST TRIM", data: 9 },
-        { key: "SECOND TRIM", data: 6 },
-        { key: "THIRD TRIM", data: 19 },
-        { key: "FOURTH TRIM", data: 4 },
-        { key: "FIFTH TRIM", data: 7 },
-      ],
-    },
-    {
-      key: "CHILDBIRTH CLASSES",
-      data: [
-        { key: "FIRST TRIM", data: 13 },
-        { key: "SECOND TRIM", data: 16 },
-        { key: "THIRD TRIM", data: 21 },
-        { key: "FOURTH TRIM", data: 0 },
-        { key: "FIFTH TRIM", data: 0 },
-      ],
-    },
-  ];
+      // skip babies with no due dates
+      if (appt.babyDueDatesISO.length === 0) {
+        continue;
+      }
+      const apptTime = DateTime.fromISO(appt.datetime);
+      // get date that is closest to the appt date
+      let timeDiff = DateTime.fromISO(appt.babyDueDatesISO[0]).diff(
+        apptTime,
+        "weeks",
+      ).weeks;
+      // set chosen baby date as first in array
+      let chosenDate = DateTime.fromISO(appt.babyDueDatesISO[0]);
+      // if there are multiple dates in the array, check for each
+      for (let i = 1; i < appt.babyDueDatesISO.length; i++) {
+        // get difference between curr date and appt time
+        const currDiff = DateTime.fromISO(appt.babyDueDatesISO[i]).diff(
+          apptTime,
+          "weeks",
+        ).weeks;
+        // if the time difference is less than the curr min, update
+        chosenDate =
+          currDiff < timeDiff
+            ? DateTime.fromISO(appt.babyDueDatesISO[i])
+            : chosenDate;
+        timeDiff = Math.min(timeDiff, currDiff);
+      }
+
+      // calculate trimester
+      // if the date has already passed, assume that it's a birth date
+      if (chosenDate < apptTime) {
+        const diff = apptTime.diff(chosenDate, "weeks").weeks;
+        // first three months is fourth trimester
+        if (diff <= 12) {
+          trimesterAttendance.set(
+            `${appt.classCategory?.toLowerCase()} FOURTH TRIM`,
+            trimesterAttendance.has(
+              `${appt.classCategory?.toLowerCase()} FOURTH TRIM`,
+            )
+              ? trimesterAttendance.get(
+                  `${appt.classCategory?.toLowerCase()} FOURTH TRIM`,
+                )! + 1
+              : 1,
+          );
+          trimesterAttendance.set(
+            `${appt.class?.toLowerCase()} FOURTH TRIM`,
+            trimesterAttendance.has(`${appt.class?.toLowerCase()} FOURTH TRIM`)
+              ? trimesterAttendance.get(
+                  `${appt.class?.toLowerCase()} FOURTH TRIM`,
+                )! + 1
+              : 1,
+          );
+        } else {
+          trimesterAttendance.set(
+            `${appt.classCategory?.toLowerCase()} FIFTH TRIM`,
+            trimesterAttendance.has(
+              `${appt.classCategory?.toLowerCase()} FIFTH TRIM`,
+            )
+              ? trimesterAttendance.get(
+                  `${appt.classCategory?.toLowerCase()} FIFTH TRIM`,
+                )! + 1
+              : 1,
+          );
+          trimesterAttendance.set(
+            `${appt.class?.toLowerCase()} FIFTH TRIM`,
+            trimesterAttendance.has(`${appt.class?.toLowerCase()} FIFTH TRIM`)
+              ? trimesterAttendance.get(
+                  `${appt.class?.toLowerCase()} FIFTH TRIM`,
+                )! + 1
+              : 1,
+          );
+        }
+      } else {
+        // if not, it is a due date
+        // pregnancy typically 40 weeks, find "start" of pregnancy
+        const pregnancyStart = chosenDate.minus({ weeks: 40 });
+        // subtract start date from due date and round
+        const weeksIntoPregnancy = Math.floor(
+          apptTime.diff(pregnancyStart, "weeks").weeks,
+        );
+        if (weeksIntoPregnancy >= 29) {
+          trimesterAttendance.set(
+            `${appt.classCategory?.toLowerCase()} THIRD TRIM`,
+            trimesterAttendance.has(
+              `${appt.classCategory?.toLowerCase()} THIRD TRIM`,
+            )
+              ? trimesterAttendance.get(
+                  `${appt.classCategory?.toLowerCase()} THIRD TRIM`,
+                )! + 1
+              : 1,
+          );
+          trimesterAttendance.set(
+            `${appt.class?.toLowerCase()} THIRD TRIM`,
+            trimesterAttendance.has(`${appt.class?.toLowerCase()} THIRD TRIM`)
+              ? trimesterAttendance.get(
+                  `${appt.class?.toLowerCase()} THIRD TRIM`,
+                )! + 1
+              : 1,
+          );
+        } else if (weeksIntoPregnancy >= 15) {
+          // 15-18 is second
+          trimesterAttendance.set(
+            `${appt.classCategory?.toLowerCase()} SECOND TRIM`,
+            trimesterAttendance.has(
+              `${appt.classCategory?.toLowerCase()} SECOND TRIM`,
+            )
+              ? trimesterAttendance.get(
+                  `${appt.classCategory?.toLowerCase()} SECOND TRIM`,
+                )! + 1
+              : 1,
+          );
+          trimesterAttendance.set(
+            `${appt.class?.toLowerCase()} SECOND TRIM`,
+            trimesterAttendance.has(`${appt.class?.toLowerCase()} SECOND TRIM`)
+              ? trimesterAttendance.get(
+                  `${appt.class?.toLowerCase()} SECOND TRIM`,
+                )! + 1
+              : 1,
+          );
+        } else {
+          trimesterAttendance.set(
+            `${appt.classCategory?.toLowerCase()} FIRST TRIM`,
+            trimesterAttendance.has(
+              `${appt.classCategory?.toLowerCase()} FIRST TRIM`,
+            )
+              ? trimesterAttendance.get(
+                  `${appt.classCategory?.toLowerCase()} FIRST TRIM`,
+                )! + 1
+              : 1,
+          );
+          trimesterAttendance.set(
+            `${appt.class?.toLowerCase()} FIRST TRIM`,
+            trimesterAttendance.has(`${appt.class?.toLowerCase()} FIRST TRIM`)
+              ? trimesterAttendance.get(
+                  `${appt.class?.toLowerCase()} FIRST TRIM`,
+                )! + 1
+              : 1,
+          );
+        }
+      }
+    }
+  }
+  console.log(trimesterAttendance);
+
+  // for each category, for each trimester, look up totals from map
+  const trimesterAttendanceData = classFilterOptions.map((category) => {
+    const categoryLower = category.toLowerCase();
+
+    return {
+      key: category,
+      data: trimesters.map((trimester) => ({
+        key: trimester,
+        data: trimesterAttendance.get(`${categoryLower} ${trimester}`) ?? 0,
+      })),
+    };
+  });
 
   const allClassData = [
     {
@@ -207,109 +298,53 @@ export default function AcuityDashboardPage() {
     },
   ];
 
-  const allClassAttendanceData = [
-    {
-      key: "POSTPARTUM CLASSES",
-      data: [
-        { key: "Optimizing Sleep, Prenatal", data: 10 },
-        { key: "Perinatal Rights at Work", data: 12 },
-        { key: "Pumping Strategies + RTW", data: 8 },
-        { key: "Starting Solids - Feeding 101", data: 15 },
-        { key: "Feeding 102 - Overcoming Challenges in Feeding", data: 6 },
-        { key: "Postpartum Nutrition", data: 3 },
-        { key: "Rose PT Postpartum Pelvic Health", data: 3 },
-        { key: "Bottles & Other Feeding Tools", data: 3 },
-      ],
-    },
-    {
-      key: "PRENATAL CLASSES",
-      data: [
-        { key: "Breastfeeding + Pumping Basics", data: 7 },
-        { key: "Baby Care", data: 9 },
-        { key: "Babywearing 101", data: 14 },
-        { key: "Financial Planning for Baby", data: 5 },
-        { key: "Rose PT Prenatal Pelvic Health", data: 11 },
-        { key: "Bottles & Other Feeding Tools", data: 2 },
-      ],
-    },
-    {
-      key: "INFANT MASSAGE",
-      data: [{ key: "INFANT MASSAGE", data: 7 }],
-    },
-    {
-      key: "PARENT GROUPS",
-      data: [
-        { key: "Navigating Perinatal Stress", data: 7 },
-        { key: "Feeding + Postpartum with 0-4m Olds", data: 9 },
-        { key: "Feeding + Postpartum with 4-12m Olds", data: 14 },
-        { key: "Feeding + Postpartum with Toddlers", data: 5 },
-      ],
-    },
-    {
-      key: "CHILDBIRTH CLASSES",
-      data: [
-        { key: "Childbirth Express", data: 7 },
-        { key: "Natural Childbirth", data: 9 },
-        { key: "Doula Meet + Greet", data: 14 },
-        { key: "Comfort, Communication & Positions", data: 5 },
-        { key: "Evening Lamaze Series", data: 11 },
-        { key: "Prep for Postpartum Recovery", data: 2 },
-      ],
-    },
-  ];
+  const allClassAttendanceData = classFilterOptions.map((category) => {
+    return {
+      key: category,
+      // for each class of the category, get totals
+      data: Array.from(classesToCategory.entries()).map(([className]) => {
+        const classKey = className.toLowerCase();
 
-  const trimesterData: TrimesterAttendance[] = [
-    {
-      class: "Prenatal R...",
-      category: "Postpartum",
-      first: 11,
-      second: 17,
-      third: 7,
-      fourth: 2,
-      fifth: 17,
-      total: 10,
-    },
-    {
-      class: "Baby Care",
-      category: "Prenatal",
-      first: 7,
-      second: 3,
-      third: 3,
-      fourth: 3,
-      fifth: 3,
-      total: 3,
-    },
-    {
-      class: "Postpartum...",
-      category: "Postpartum",
-      first: 12,
-      second: 5,
-      third: 11,
-      fourth: 3,
-      fifth: 3,
-      total: 9,
-    },
-    {
-      class: "Bottles & O...",
-      category: "Postpartum",
-      first: 4,
-      second: 7,
-      third: 21,
-      fourth: 8,
-      fifth: 1,
-      total: 3,
-    },
-    {
-      class: "Starting S...",
-      category: "Postpartum",
-      first: 17,
-      second: 11,
-      third: 5,
-      fourth: 0,
-      fifth: 2,
-      total: 1,
-    },
-  ];
+        const first = trimesterAttendance.get(`${classKey} FIRST TRIM`) ?? 0;
+        const second = trimesterAttendance.get(`${classKey} SECOND TRIM`) ?? 0;
+        const third = trimesterAttendance.get(`${classKey} THIRD TRIM`) ?? 0;
+        const fourth = trimesterAttendance.get(`${classKey} FOURTH TRIM`) ?? 0;
+        const fifth = trimesterAttendance.get(`${classKey} FIFTH TRIM`) ?? 0;
+
+        const total = first + second + third + fourth + fifth;
+
+        return {
+          key: className,
+          data: total,
+        };
+      }),
+    };
+  });
+
+  const trimesterData: TrimesterAttendance[] = Array.from(
+    classesToCategory.entries(),
+  ).map(([className, category]) => {
+    const classKey = className.toLowerCase();
+
+    const first = trimesterAttendance.get(`${classKey} FIRST TRIM`) ?? 0;
+    const second = trimesterAttendance.get(`${classKey} SECOND TRIM`) ?? 0;
+    const third = trimesterAttendance.get(`${classKey} THIRD TRIM`) ?? 0;
+    const fourth = trimesterAttendance.get(`${classKey} FOURTH TRIM`) ?? 0;
+    const fifth = trimesterAttendance.get(`${classKey} FIFTH TRIM`) ?? 0;
+
+    const total = first + second + third + fourth + fifth;
+
+    return {
+      class: className.slice(0, 15) + "...",
+      category,
+      first,
+      second,
+      third,
+      fourth,
+      fifth,
+      total,
+    };
+  });
 
   const instructorData: InstructorAttendance[] = [
     {
@@ -553,6 +588,12 @@ export default function AcuityDashboardPage() {
     </div>
   );
 
+  const formatDate = (date: Date) =>
+    date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+    });
   return (
     <>
       <div className="flex flex-col py-14 px-10 sm:px-20 space-y-5">
@@ -607,7 +648,10 @@ export default function AcuityDashboardPage() {
         {/* Attendance by Trimester Bar Chart */}
         <span className="self-start font-semibold text-2xl">
           Class Attendance By Trimester,{" "}
-          {attendanceDisplay === "graph" ? <br /> : <></>}2/19/25 - 3/19/25
+          {dateRange?.from && dateRange?.to
+            ? formatDate(dateRange.from) + " - " + formatDate(dateRange.to)
+            : "All Data"}
+          {attendanceDisplay === "graph" ? <br /> : <></>}
         </span>
         {attendanceDisplay === "graph" ? (
           <div className={chartDiv} ref={attendanceChartRef}>
