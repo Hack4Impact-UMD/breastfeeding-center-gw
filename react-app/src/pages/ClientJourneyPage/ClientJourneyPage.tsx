@@ -95,8 +95,8 @@ const ClientJourney = () => {
 
   const acuityData: AcuityData[] =
     acuityApptData?.map((appt) => ({
-      class: appt.class || "N/A",
-      instructor: appt.instructor || "N/A",
+      class: appt.class,
+      instructor: appt.instructor,
       date: DateTime.fromISO(appt.datetime).toFormat("M/d/yy"),
     })) ?? [];
 
