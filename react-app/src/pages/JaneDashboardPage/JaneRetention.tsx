@@ -18,31 +18,9 @@ import ExportTrigger from "@/components/export/ExportTrigger.tsx";
 import ExportOnly from "@/components/export/ExportOnly.tsx";
 import { formatDate } from "@/lib/utils.ts";
 import type { Client } from "@/types/ClientType";
+import { hasRecentBirth } from "@/lib/clientUtils.ts";
 
-
-const MS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
-
-/** Does this client have at least one baby born in the last 0–13 weeks? */
-function hasRecentBirth(client: Client, referenceDate: Date): boolean {
-  const babies: any[] = (client as any).baby ?? [];
-
-  if (!Array.isArray(babies) || babies.length === 0) return false;
-
-  return babies.some((baby) => {
-    if (!baby || !baby.dob) return false;
-
-    const dob = new Date(baby.dob as string);
-    if (isNaN(dob.getTime())) return false;
-
-    const diffWeeks =
-      (referenceDate.getTime() - dob.getTime()) / MS_PER_WEEK;
-
-    // 4th trimester: 0–13 weeks postpartum
-    return diffWeeks >= 0 && diffWeeks <= 13;
-  });
-}
-
-function filterClientsByRecentChildbirth(
+function filterClients(
   clientsByNumVisits: { [key: number]: Client[] } | undefined,
   endDate?: Date,
   mode: "ALL CLIENTS" | "RECENT CHILDBIRTH" = "ALL CLIENTS",
@@ -56,7 +34,7 @@ function filterClientsByRecentChildbirth(
 
   Object.entries(clientsByNumVisits).forEach(([visitStr, clients]) => {
     const visit = Number(visitStr);
-    result[visit] = (clients as Client[]).filter((client) =>
+    result[visit] = clients.filter((client) =>
       hasRecentBirth(client, refDate),
     );
   });
@@ -120,7 +98,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
 
   const filteredRetentionSource = useMemo(
     () =>
-      filterClientsByRecentChildbirth(
+      filterClients(
         rawRetentionData as { [key: number]: Client[] } | undefined,
         endDate,
         selectedDropdown,
