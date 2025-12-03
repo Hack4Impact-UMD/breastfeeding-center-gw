@@ -14,7 +14,7 @@ router.get(
     try {
       const startDate = req.query.startDate as string;
       const endDate = req.query.endDate as string;
-      const classCategory = (req.query.classCategory as string).toLowerCase();
+      const classCategory = req.query.classCategory ? (req.query.classCategory as string).toLowerCase() : undefined;
 
       let appts: AcuityAppointment[] = [];
       if (

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import {
   LineChart,
   LineSeries,
@@ -70,21 +70,45 @@ export default function AcuityDashboardPage() {
     defaultDateRange,
   );
 
+  const normalizeCategory = (category: string | null | undefined): string => {
+    if (!category) return "";
+    return category.toUpperCase().trim();
+  };
+
   const {
-    data: appointmentData,
-    isPending: isApptDataPending,
-    error: apptError,
+    data: allAppointmentData,
+    // isPending: isApptDataPending,
+    // error: apptError,
   } = useAcuityApptsInRange(
     dateRange?.from?.toISOString(),
     dateRange?.to?.toISOString(),
     selectedTrimesterClass,
   );
-  console.log(appointmentData);
+
+  const filteredAppointmentsForTrimester = useMemo(() => {
+    if (!allAppointmentData) return [];
+    if (selectedTrimesterClass === "ALL CLASSES") return allAppointmentData;
+    const selectedCategory = normalizeCategory(selectedTrimesterClass);
+    return allAppointmentData.filter(
+      (appt) => normalizeCategory(appt.classCategory) === selectedCategory,
+    );
+  }, [allAppointmentData, selectedTrimesterClass]);
+
+  const filteredAppointmentsForPopularity = useMemo(() => {
+    if (!allAppointmentData) return [];
+    if (selectedPopularityClass === "ALL CLASSES") return allAppointmentData;
+    const selectedCategory = normalizeCategory(selectedPopularityClass);
+    return allAppointmentData.filter(
+      (appt) => normalizeCategory(appt.classCategory) === selectedCategory,
+    );
+  }, [allAppointmentData, selectedPopularityClass]);
+
+  console.log(allAppointmentData);
 
   const trimesterAttendance: Map<string, number> = new Map();
   const classesToCategory: Map<string, string> = new Map();
-  if (appointmentData) {
-    for (const appt of appointmentData) {
+  if (filteredAppointmentsForTrimester) {
+    for (const appt of filteredAppointmentsForTrimester) {
       if (appt.class && appt.classCategory) {
         classesToCategory.set(appt.class, appt.classCategory);
       }
@@ -232,7 +256,187 @@ export default function AcuityDashboardPage() {
   }
   console.log(trimesterAttendance);
 
-  // for each category, for each trimester, look up totals from map
+  const shouldGroupByWeek = useMemo(() => {
+    if (!dateRange?.from || !dateRange?.to) return true;
+    const from = DateTime.fromJSDate(dateRange.from);
+    const to = DateTime.fromJSDate(dateRange.to);
+    const diffInMonths = to.diff(from, "months").months;
+    return diffInMonths <= 3;
+  }, [dateRange]);
+
+  const groupedData = useMemo(() => {
+    if (!filteredAppointmentsForPopularity || filteredAppointmentsForPopularity.length === 0) {
+      return {
+        classData: [],
+        instructorData: [],
+        instructorTableData: [],
+      };
+    }
+
+    const classAttendanceByInterval = new Map<string, Map<string, number>>();
+    const instructorAttendanceByInterval = new Map<string, Map<string, number>>();
+    const instructorDataByClass = new Map<
+      string,
+      Map<
+        string,
+        {
+          count: number;
+          uniqueSessions: Set<string>;
+          classCategory: string;
+        }
+      >
+    >();
+
+    const getIntervalKey = (date: DateTime): string => {
+      if (shouldGroupByWeek) {
+        const weekStart = date.startOf("week");
+        return weekStart.toISODate() || "";
+      } else {
+        return date.toFormat("yyyy-MM");
+      }
+    };
+
+    for (const appt of filteredAppointmentsForPopularity) {
+      if (!appt.datetime) continue;
+
+      const apptDate = DateTime.fromISO(appt.datetime);
+      if (!apptDate.isValid) continue;
+
+      const intervalKey = getIntervalKey(apptDate);
+      const classCategory = normalizeCategory(appt.classCategory) || "UNKNOWN";
+      const className = appt.class || "UNKNOWN";
+      const instructor = appt.instructor || "UNKNOWN";
+
+      if (!classAttendanceByInterval.has(intervalKey)) {
+        classAttendanceByInterval.set(intervalKey, new Map<string, number>());
+      }
+      const classMap = classAttendanceByInterval.get(intervalKey)!;
+      classMap.set(
+        classCategory,
+        (classMap.get(classCategory) || 0) + 1,
+      );
+
+      if (!instructorAttendanceByInterval.has(intervalKey)) {
+        instructorAttendanceByInterval.set(
+          intervalKey,
+          new Map<string, number>(),
+        );
+      }
+      const instructorMap = instructorAttendanceByInterval.get(intervalKey)!;
+      instructorMap.set(
+        classCategory,
+        (instructorMap.get(classCategory) || 0) + 1,
+      );
+
+      if (!instructorDataByClass.has(className)) {
+        instructorDataByClass.set(className, new Map());
+      }
+      const classInstructorMap = instructorDataByClass.get(className)!;
+      if (!classInstructorMap.has(instructor)) {
+        classInstructorMap.set(instructor, {
+          count: 0,
+          uniqueSessions: new Set<string>(),
+          classCategory: classCategory,
+        });
+      }
+      const instructorStats = classInstructorMap.get(instructor)!;
+      instructorStats.count += 1;
+      const sessionKey = `${appt.datetime}`;
+      instructorStats.uniqueSessions.add(sessionKey);
+    }
+
+    const allIntervals = Array.from(classAttendanceByInterval.keys()).sort();
+    const classData = classFilterOptions
+      .filter((cat) => cat !== "ALL CLASSES")
+      .map((category) => {
+            const normalizedCategory = normalizeCategory(category);
+        return {
+          key: category,
+          data: allIntervals.map((intervalKey) => {
+            const date = shouldGroupByWeek
+              ? DateTime.fromISO(intervalKey).toJSDate()
+              : DateTime.fromFormat(intervalKey, "yyyy-MM")
+                  .startOf("month")
+                  .toJSDate();
+            const count =
+              classAttendanceByInterval.get(intervalKey)?.get(normalizedCategory) || 0;
+            return { key: date, data: count };
+          }),
+        };
+      });
+
+    const instructorData = classFilterOptions
+      .filter((cat) => cat !== "ALL CLASSES")
+      .map((category) => {
+            const normalizedCategory = normalizeCategory(category);
+        return {
+          key: category,
+          data: allIntervals.map((intervalKey) => {
+            const date = shouldGroupByWeek
+              ? DateTime.fromISO(intervalKey).toJSDate()
+              : DateTime.fromFormat(intervalKey, "yyyy-MM")
+                  .startOf("month")
+                  .toJSDate();
+            const count =
+              instructorAttendanceByInterval.get(intervalKey)?.get(normalizedCategory) || 0;
+            return { key: date, data: count };
+          }),
+        };
+      });
+
+    const instructorTableData: InstructorAttendance[] = Array.from(
+      instructorDataByClass.entries(),
+    ).map(([className, instructorMap]) => {
+      const firstInstructor = Array.from(instructorMap.values())[0];
+      const classCategory = firstInstructor?.classCategory || "UNKNOWN";
+
+      const instructors: Array<{
+        instructor: string;
+        avgAttendance: number;
+        numClasses: number;
+        totalAttendance: number;
+      }> = Array.from(instructorMap.entries()).map(
+        ([instructor, stats]) => {
+          const numClasses = stats.uniqueSessions.size;
+          const avgAttendance = numClasses > 0 ? stats.count / numClasses : 0;
+          return {
+            instructor,
+            avgAttendance: Math.round(avgAttendance * 100) / 100,
+            numClasses,
+            totalAttendance: stats.count,
+          };
+        },
+      );
+
+      const totalAttendance = instructors.reduce(
+        (sum, inst) => sum + inst.totalAttendance,
+        0,
+      );
+      const totalClasses = instructors.reduce(
+        (sum, inst) => sum + inst.numClasses,
+        0,
+      );
+      const avgAttendance =
+        totalClasses > 0 ? totalAttendance / totalClasses : 0;
+
+      return {
+        class: className.length > 15 ? className.slice(0, 15) + "..." : className,
+        category: classCategory,
+        avgAttendance: Math.round(avgAttendance * 100) / 100,
+        numClasses: totalClasses,
+        totalAttendance,
+        instructorNames: instructors.map((i) => i.instructor).join(", "),
+        instructors,
+      };
+    });
+
+    return {
+      classData,
+      instructorData,
+      instructorTableData,
+    };
+  }, [filteredAppointmentsForPopularity, shouldGroupByWeek, classFilterOptions]);
+
   const trimesterAttendanceData = classFilterOptions.map((category) => {
     const categoryLower = category.toLowerCase();
 
@@ -245,63 +449,11 @@ export default function AcuityDashboardPage() {
     };
   });
 
-  const allClassData = [
-    {
-      key: "POSTPARTUM CLASSES",
-      data: [
-        { key: new Date("2025-02-19"), data: 10 },
-        { key: new Date("2025-02-26"), data: 20 },
-        { key: new Date("2025-03-05"), data: 30 },
-        { key: new Date("2025-03-12"), data: 25 },
-        { key: new Date("2025-03-19"), data: 15 },
-      ],
-    },
-    {
-      key: "PRENATAL CLASSES",
-      data: [
-        { key: new Date("2025-02-19"), data: 8 },
-        { key: new Date("2025-02-26"), data: 15 },
-        { key: new Date("2025-03-05"), data: 22 },
-        { key: new Date("2025-03-12"), data: 18 },
-        { key: new Date("2025-03-19"), data: 12 },
-      ],
-    },
-    {
-      key: "INFANT MASSAGE",
-      data: [
-        { key: new Date("2025-02-19"), data: 1 },
-        { key: new Date("2025-02-26"), data: 2 },
-        { key: new Date("2025-03-05"), data: 3 },
-        { key: new Date("2025-03-12"), data: 4 },
-        { key: new Date("2025-03-19"), data: 5 },
-      ],
-    },
-    {
-      key: "PARENT GROUPS",
-      data: [
-        { key: new Date("2025-02-19"), data: 5 },
-        { key: new Date("2025-02-26"), data: 20 },
-        { key: new Date("2025-03-05"), data: 7 },
-        { key: new Date("2025-03-12"), data: 9 },
-        { key: new Date("2025-03-19"), data: 2 },
-      ],
-    },
-    {
-      key: "CHILDBIRTH CLASSES",
-      data: [
-        { key: new Date("2025-02-19"), data: 5 },
-        { key: new Date("2025-02-26"), data: 12 },
-        { key: new Date("2025-03-05"), data: 4 },
-        { key: new Date("2025-03-12"), data: 5 },
-        { key: new Date("2025-03-19"), data: 6 },
-      ],
-    },
-  ];
+  const allClassData = groupedData.classData;
 
   const allClassAttendanceData = classFilterOptions.map((category) => {
     return {
       key: category,
-      // for each class of the category, get totals
       data: Array.from(classesToCategory.entries()).map(([className]) => {
         const classKey = className.toLowerCase();
 
@@ -346,94 +498,14 @@ export default function AcuityDashboardPage() {
     };
   });
 
-  const instructorData: InstructorAttendance[] = [
-    {
-      class: "Prenatal R...",
-      category: "Postpartum",
-      avgAttendance: 30,
-      numClasses: 11,
-      totalAttendance: 11,
-      instructorNames: "Jane Doe, John Smith",
-      instructors: [
-        {
-          instructor: "Jane Doe",
-          avgAttendance: 15,
-          numClasses: 6,
-          totalAttendance: 90,
-        },
-        {
-          instructor: "John Smith",
-          avgAttendance: 15,
-          numClasses: 5,
-          totalAttendance: 75,
-        },
-      ],
-    },
-    {
-      class: "Baby Care",
-      category: "Prenatal",
-      avgAttendance: 15,
-      numClasses: 7,
-      totalAttendance: 7,
-      instructorNames: "Emily Davis",
-      instructors: [
-        {
-          instructor: "Emily Davis",
-          avgAttendance: 15,
-          numClasses: 7,
-          totalAttendance: 105,
-        },
-      ],
-    },
-    {
-      class: "Postpartum...",
-      category: "Postpartum",
-      avgAttendance: 32,
-      numClasses: 17,
-      totalAttendance: 10,
-      instructorNames: "Michael Brown",
-      instructors: [
-        {
-          instructor: "Michael Brown",
-          avgAttendance: 32,
-          numClasses: 17,
-          totalAttendance: 544,
-        },
-      ],
-    },
-    {
-      class: "Bottle & O...",
-      category: "Postpartum",
-      avgAttendance: 22,
-      numClasses: 1,
-      totalAttendance: 19,
-      instructorNames: "Sarah Lee",
-      instructors: [
-        {
-          instructor: "Sarah Lee",
-          avgAttendance: 22,
-          numClasses: 1,
-          totalAttendance: 22,
-        },
-      ],
-    },
-    {
-      class: "Starting S...",
-      category: "Postpartum",
-      avgAttendance: 32,
-      numClasses: 13,
-      totalAttendance: 15,
-      instructorNames: "David Wilson",
-      instructors: [
-        {
-          instructor: "David Wilson",
-          avgAttendance: 32,
-          numClasses: 13,
-          totalAttendance: 416,
-        },
-      ],
-    },
-  ];
+  const instructorData: InstructorAttendance[] = useMemo(() => {
+    const data = groupedData.instructorTableData;
+    if (selectedPopularityClass === "ALL CLASSES") return data;
+    const selectedCategory = normalizeCategory(selectedPopularityClass);
+    return data.filter(
+      (item) => normalizeCategory(item.category) === selectedCategory,
+    );
+  }, [groupedData.instructorTableData, selectedPopularityClass]);
 
   // Styles
   const centerItemsInDiv = "flex justify-between items-center";
@@ -508,58 +580,7 @@ export default function AcuityDashboardPage() {
     }
   };
 
-  const allInstructorData = [
-    {
-      key: "POSTPARTUM CLASSES",
-      data: [
-        { key: new Date("2025-02-19"), data: 10 },
-        { key: new Date("2025-02-26"), data: 20 },
-        { key: new Date("2025-03-05"), data: 30 },
-        { key: new Date("2025-03-12"), data: 25 },
-        { key: new Date("2025-03-19"), data: 15 },
-      ],
-    },
-    {
-      key: "PRENATAL CLASSES",
-      data: [
-        { key: new Date("2025-02-19"), data: 8 },
-        { key: new Date("2025-02-26"), data: 15 },
-        { key: new Date("2025-03-05"), data: 22 },
-        { key: new Date("2025-03-12"), data: 18 },
-        { key: new Date("2025-03-19"), data: 12 },
-      ],
-    },
-    {
-      key: "INFANT MASSAGE",
-      data: [
-        { key: new Date("2025-02-19"), data: 1 },
-        { key: new Date("2025-02-26"), data: 2 },
-        { key: new Date("2025-03-05"), data: 3 },
-        { key: new Date("2025-03-12"), data: 4 },
-        { key: new Date("2025-03-19"), data: 5 },
-      ],
-    },
-    {
-      key: "PARENT GROUPS",
-      data: [
-        { key: new Date("2025-02-19"), data: 5 },
-        { key: new Date("2025-02-26"), data: 20 },
-        { key: new Date("2025-03-05"), data: 7 },
-        { key: new Date("2025-03-12"), data: 9 },
-        { key: new Date("2025-03-19"), data: 2 },
-      ],
-    },
-    {
-      key: "CHILDBIRTH CLASSES",
-      data: [
-        { key: new Date("2025-02-19"), data: 5 },
-        { key: new Date("2025-02-26"), data: 12 },
-        { key: new Date("2025-03-05"), data: 4 },
-        { key: new Date("2025-03-12"), data: 5 },
-        { key: new Date("2025-03-19"), data: 6 },
-      ],
-    },
-  ];
+  const allInstructorData = groupedData.instructorData;
 
   const filteredInstructorData =
     selectedPopularityClass === "ALL CLASSES"
@@ -775,7 +796,10 @@ export default function AcuityDashboardPage() {
           ) : (
             <span>Attendance By Class & Instructor</span>
           )}
-          {popularityDisplay === "graph" ? <br /> : <></>} 2/19/25 - 3/19/25
+          {popularityDisplay === "graph" ? <br /> : <></>}{" "}
+          {dateRange?.from && dateRange?.to
+            ? formatDate(dateRange.from) + " - " + formatDate(dateRange.to)
+            : "All Data"}
         </span>
         {/* Class Popularity Over Time */}
         <div ref={classPopularityChartRef}>
