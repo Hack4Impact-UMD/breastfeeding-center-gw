@@ -1,8 +1,10 @@
 import { Response, Router, Request } from "express";
-import { getAllAcuityApptsInRange } from "../services/acuity";
+import {
+  getAllAcuityApptsInRange,
+  getAllAcuityAppointmentsForClient,
+} from "../services/acuity";
 import { AcuityAppointment } from "../types/acuityType";
 import { isAuthenticated } from "../middleware/authMiddleware";
-import { getAllAcuityAppointmentsForClient } from "../services/acuity";
 
 const router = Router();
 
@@ -14,7 +16,9 @@ router.get(
     const endDate = req.query.endDate as string;
 
     if (!startDate || !endDate) {
-      return res.status(400).json({ error: "startDate and endDate are required"});
+      return res
+        .status(400)
+        .json({ error: "startDate and endDate are required" });
     }
 
     const classCategory = req.query.classCategory as string;
@@ -42,10 +46,9 @@ router.get(
       return res.status(400).json({ error: "email is required" });
     }
 
-    const appointments = await
-getAllAcuityAppointmentsForClient(email);
+    const appointments = await getAllAcuityAppointmentsForClient(email);
     return res.status(200).send(appointments);
-  }
+  },
 );
 
 export default router;

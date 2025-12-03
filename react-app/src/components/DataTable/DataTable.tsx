@@ -200,7 +200,7 @@ export function DataTable<TData, TValue>({
                         className={`${
                           tableType === "clientList" ||
                           tableType === "clientsLost"
-                            ? "cursor-pointer group-hover:bg-[#F5BB4782] active:bg-[#F5BB4782] transition-colors"
+                            ? "cursor-pointer group-hover:bg-[#F5BB4782] group-active:bg-bcgw-yellow-dark transition-colors"
                             : ""
                         }`}
                       >

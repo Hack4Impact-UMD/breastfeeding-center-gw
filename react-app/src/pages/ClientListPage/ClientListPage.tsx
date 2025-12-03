@@ -20,7 +20,9 @@ const ClientList = () => {
         {/*headings*/}
         <div className={centerItemsInDiv}>
           <div>
-            <h1 className="font-bold text-3xl sm:text-4xl lg:text-5xl">Client List</h1>
+            <h1 className="font-bold text-3xl sm:text-4xl lg:text-5xl">
+              Client List
+            </h1>
           </div>
         </div>
 

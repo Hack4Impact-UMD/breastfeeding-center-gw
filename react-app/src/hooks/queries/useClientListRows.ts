@@ -7,7 +7,6 @@ import { getAllJaneApptsInRange } from "@/services/janeService";
 import { JaneAppt } from "@/types/JaneType";
 import { ClientTableRow } from "@/pages/ClientListPage/ClientListTableColumns";
 import { getAllAcuityApptsInRange } from "@/services/acuityService";
-//import { AcuityAppointment } from "@/types/AcuityType";
 
 export function useClientListRows() {
   return useQuery<ClientTableRow[]>({
@@ -20,7 +19,7 @@ export function useClientListRows() {
 
       const [janeAppointments, acuityAppoinments] = await Promise.all([
         getAllJaneApptsInRange(startDate!, endDate!),
-        getAllAcuityApptsInRange(startDate!, endDate!)
+        getAllAcuityApptsInRange(startDate!, endDate!),
       ]);
 
       // map matching client ids to their list of jane appts
@@ -48,9 +47,9 @@ export function useClientListRows() {
         firstName: client.firstName,
         lastName: client.lastName,
         email: client.email,
-        acuityClasses: client.email 
-        ? (acuityClassCounts.get(client.email.toLowerCase()) ?? 0) 
-        : "N/A",
+        acuityClasses: client.email
+          ? (acuityClassCounts.get(client.email.toLowerCase()) ?? 0)
+          : "N/A",
         janeConsults: client.janeId
           ? (clientAppts.get(client.id)?.length ?? 0)
           : "N/A",

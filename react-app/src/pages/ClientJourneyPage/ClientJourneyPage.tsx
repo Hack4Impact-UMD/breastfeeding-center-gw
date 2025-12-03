@@ -14,13 +14,10 @@ import { useClientByPatientId } from "@/hooks/queries/useClientById.ts";
 import Loading from "@/components/Loading.tsx";
 import { useJaneApptsForClient } from "@/hooks/queries/useJaneApptsForClient.ts";
 import { useAcuityApptsForClient } from "@/hooks/queries/useAcuityApptsForClient.ts";
-//import { AcuityAppointment } from "@/types/AcuityType.ts";
-import { DateTime } from "luxon";
 
 const ClientJourney = () => {
   //styles
   const centerItemsInDiv = "flex justify-between items-center";
-  // const dividingLine = "w-full h-1 border-t border-black-500 mt-3 mb-3"; 
   const tableSection = "py-3 space-y-3";
 
   const { id: clientId } = useParams();
@@ -39,7 +36,7 @@ const ClientJourney = () => {
     error,
   } = useJaneApptsForClient(clientId ?? "");
 
-  // get Acuity appts for the specific client 
+  // get Acuity appts for the specific client
   const {
     data: acuityApptData,
     isPending: isAcuityPending,
@@ -97,7 +94,7 @@ const ClientJourney = () => {
     acuityApptData?.map((appt) => ({
       class: appt.class,
       instructor: appt.instructor,
-      date: DateTime.fromISO(appt.datetime).toFormat("M/d/yy"),
+      date: appt.datetime,
     })) ?? [];
 
   if (!clientId) return <Navigate to="/" />;
@@ -108,7 +105,9 @@ const ClientJourney = () => {
         {/*headings*/}
         <div className={centerItemsInDiv}>
           <div>
-            <h1 className="font-bold text-3xl sm:text-4xl lg:text-5xl">Client Journey</h1>
+            <h1 className="font-bold text-3xl sm:text-4xl lg:text-5xl">
+              Client Journey
+            </h1>
           </div>
         </div>
 
@@ -122,8 +121,8 @@ const ClientJourney = () => {
             <div className="flex flex-col space-y-1 pt-1">
               <div className="text-left space-y-2 py-2 w-full max-w-md text-sm sm:text-base pt-3 pb-4">
                 <div>
-                  <strong className="pr-2">NAME:</strong> {clientInfo?.firstName}{" "}
-                  {clientInfo?.lastName}
+                  <strong className="pr-2">NAME:</strong>{" "}
+                  {clientInfo?.firstName} {clientInfo?.lastName}
                 </div>
                 <div>
                   <strong className="pr-2">CHILDREN:</strong>
@@ -140,7 +139,9 @@ const ClientJourney = () => {
             {/*tables section*/}
             <div>
               <div className={tableSection}>
-                <h2 className="font-bold text-base sm:text-3xl">Acuity Classes</h2>
+                <h2 className="font-bold text-base sm:text-3xl">
+                  Acuity Classes
+                </h2>
                 <DataTable
                   columns={acuityColumns}
                   data={acuityData}
@@ -150,7 +151,9 @@ const ClientJourney = () => {
               </div>
 
               <div className={tableSection}>
-                <h2 className="font-bold text-base sm:text-3xl">Jane Consults</h2>
+                <h2 className="font-bold text-base sm:text-3xl">
+                  Jane Consults
+                </h2>
                 <DataTable
                   columns={janeConsultsColumns}
                   data={formattedJaneConsultsData}
@@ -160,7 +163,9 @@ const ClientJourney = () => {
               </div>
 
               <div className={tableSection}>
-                <h2 className="font-bold text-base sm:text-3xl">Paysimple Rentals</h2>
+                <h2 className="font-bold text-base sm:text-3xl">
+                  Paysimple Rentals
+                </h2>
                 <DataTable
                   columns={paysimpleColumns}
                   data={samplePaysimple}
@@ -170,7 +175,9 @@ const ClientJourney = () => {
               </div>
 
               <div className={tableSection}>
-                <h2 className="font-bold text-base sm:text-3xl">One-Time Purchases</h2>
+                <h2 className="font-bold text-base sm:text-3xl">
+                  One-Time Purchases
+                </h2>
                 <DataTable
                   columns={oneTimePurchaseColumns}
                   data={sampleOTPs}

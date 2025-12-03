@@ -97,6 +97,11 @@ export const acuityColumns: ColumnDef<AcuityData>[] = [
         </Button>
       );
     },
+    cell: ({ row }) => {
+      const value = row.getValue<string>("date");
+      const dt = DateTime.fromISO(value);
+      return dt.isValid ? dt.toFormat("M/d/yy") : "N/A";
+    },
   },
 ];
 
