@@ -73,7 +73,9 @@ const ChangePhoneNumberPopup = ({
           <div className="sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4 min-h-[20px]">
             <div className="hidden sm:block"></div>
             {newPhone && !isPhoneValid && (
-              <p className="text-red-600 text-xs sm:text-sm">Phone number is invalid</p>
+              <p className="text-red-600 text-xs sm:text-sm">
+                Phone number is invalid
+              </p>
             )}
           </div>
 
@@ -95,7 +97,9 @@ const ChangePhoneNumberPopup = ({
             <div className="hidden sm:block"></div>
             {confirmNewPhone &&
               (newPhone === confirmNewPhone ? (
-                <p className="text-green-600 text-xs sm:text-sm">Phone number matches.</p>
+                <p className="text-green-600 text-xs sm:text-sm">
+                  Phone number matches.
+                </p>
               ) : (
                 <p className="text-red-600 text-xs sm:text-sm">
                   Phone number does not match.
@@ -120,7 +124,6 @@ const ChangePhoneNumberPopup = ({
           </Button>
         </div>
       </div>
-
     </Modal>
   );
 };

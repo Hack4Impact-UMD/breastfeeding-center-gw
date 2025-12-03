@@ -3,7 +3,8 @@ import { Slot } from "@radix-ui/react-slot";
 import { useExport } from "./ExportContext";
 import { Button } from "../ui/button";
 
-interface ExportTriggerProps extends React.ComponentPropsWithoutRef<typeof Button> {
+interface ExportTriggerProps
+  extends React.ComponentPropsWithoutRef<typeof Button> {
   asChild?: boolean;
 }
 
@@ -17,7 +18,7 @@ const ExportTrigger = React.forwardRef<HTMLButtonElement, ExportTriggerProps>(
         {children || "Export"}
       </Comp>
     );
-  }
+  },
 );
 
 export default ExportTrigger;

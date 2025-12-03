@@ -134,7 +134,13 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
     !!apptFile && errorType === "none" && !uploadMutation.isPending;
 
   return (
-    <Modal open={isOpen} onClose={handleClose} disabled={uploadMutation.isPending} height={350} width={500}>
+    <Modal
+      open={isOpen}
+      onClose={handleClose}
+      disabled={uploadMutation.isPending}
+      height={350}
+      width={500}
+    >
       <div className="flex justify-center items-center sm:block">
         <div className="flex flex-col bg-white rounded-2xl w-full h-auto overflow-y-auto sm:overflow-visible">
           {/* Header */}
@@ -143,10 +149,8 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
             <IoIosClose
               className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
               onClick={() => {
-                if (!uploadMutation.isPending)
-                  onClose()
-              }
-              }
+                if (!uploadMutation.isPending) onClose();
+              }}
               size={32}
             />
           </div>

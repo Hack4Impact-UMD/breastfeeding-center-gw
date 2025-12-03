@@ -17,7 +17,6 @@ import { useRegisterUser } from "@/hooks/mutations/useRegisterUser";
 import { Button } from "@/components/ui/button";
 import PronounsComboBox from "@/components/PronounsComboBox";
 
-
 export default function NewUserPage() {
   const { inviteId = "" } = useParams();
 
@@ -71,7 +70,7 @@ export default function NewUserPage() {
 
   if (error) {
     console.error("Error loading invite:", error);
-    return <Navigate to="/" />
+    return <Navigate to="/" />;
   }
 
   // Only show "Invalid Invite" screen if we actually got a real invite back
@@ -127,12 +126,13 @@ export default function NewUserPage() {
 
   return (
     <div className="flex flex-col items-center min-h-screen justify-center bg-white px-4">
+      <img
+        src="/bcgw-logo.png"
+        alt="logo"
+        className="w-24 h-24 md:w-20 md:h-20 mb-4"
+      />
 
-      <img src="/bcgw-logo.png" alt="logo" className="w-24 h-24 md:w-20 md:h-20 mb-4" />
-
-      <h1
-        className="font-semibold mb-8 text-center text-[30px] md:text-[28px] leading-snug"
-      >
+      <h1 className="font-semibold mb-8 text-center text-[30px] md:text-[28px] leading-snug">
         Welcome new user!
       </h1>
 
@@ -142,7 +142,6 @@ export default function NewUserPage() {
         autoComplete="off"
       >
         <div className="grid grid-cols-2 gap-4 w-full">
-
           {/* First Name */}
           <div>
             <label className="font-medium mb-1 flex items-center">
@@ -178,11 +177,7 @@ export default function NewUserPage() {
             </label>
             <PronounsComboBox pronouns={pronouns} onChange={setPronouns} />
           </div>
-
         </div>
-
-
-
 
         <div>
           <label className="font-medium mb-1 flex items-center">

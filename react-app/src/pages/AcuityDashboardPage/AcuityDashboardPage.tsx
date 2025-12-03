@@ -41,12 +41,12 @@ import { useAcuityApptsInRange } from "@/hooks/queries/useAcuityApptsInRange";
 import { DateTime } from "luxon";
 import { AcuityAppointment } from "@/types/AcuityType";
 
-function computeAttendanceByInterval(filteredAppointmentsForPopularity: AcuityAppointment[], shouldGroupByWeek: boolean) {
+function computeAttendanceByInterval(
+  filteredAppointmentsForPopularity: AcuityAppointment[],
+  shouldGroupByWeek: boolean,
+) {
   const classAttendanceByInterval = new Map<string, Map<string, number>>();
-  const instructorAttendanceByInterval = new Map<
-    string,
-    Map<string, number>
-  >();
+  const instructorAttendanceByInterval = new Map<string, Map<string, number>>();
   const instructorDataByClass = new Map<
     string,
     Map<
@@ -108,15 +108,14 @@ function computeAttendanceByInterval(filteredAppointmentsForPopularity: AcuityAp
   return {
     classAttendanceByInterval,
     instructorAttendanceByInterval,
-    instructorDataByClass
-  }
+    instructorDataByClass,
+  };
 }
 
 const normalizeCategory = (category: string | null | undefined): string => {
   if (!category) return "";
   return category.toUpperCase().trim();
 };
-
 
 const getIntervalKey = (date: DateTime, shouldGroupByWeek: boolean): string => {
   if (shouldGroupByWeek) {
@@ -145,14 +144,17 @@ export default function AcuityDashboardPage() {
   const [selectedPopularityClass, setSelectedPopularityClass] =
     useState("ALL CLASSES");
 
-  const classFilterOptions = useMemo(() => [
-    "ALL CLASSES",
-    "POSTPARTUM CLASSES",
-    "PRENATAL CLASSES",
-    "INFANT MASSAGE",
-    "PARENT GROUPS",
-    "CHILDBIRTH CLASSES",
-  ], []);
+  const classFilterOptions = useMemo(
+    () => [
+      "ALL CLASSES",
+      "POSTPARTUM CLASSES",
+      "PRENATAL CLASSES",
+      "INFANT MASSAGE",
+      "PARENT GROUPS",
+      "CHILDBIRTH CLASSES",
+    ],
+    [],
+  );
   const trimesters = [
     "FIRST TRIM",
     "SECOND TRIM",
@@ -226,19 +228,19 @@ export default function AcuityDashboardPage() {
         }
         const apptTime = DateTime.fromISO(appt.datetime);
         // get date that is closest to the appt date
-        let timeDiff = Math.abs(DateTime.fromISO(appt.babyDueDatesISO[0]).diff(
-          apptTime,
-          "weeks",
-        ).weeks);
+        let timeDiff = Math.abs(
+          DateTime.fromISO(appt.babyDueDatesISO[0]).diff(apptTime, "weeks")
+            .weeks,
+        );
         // set chosen baby date as first in array
         let chosenDate = DateTime.fromISO(appt.babyDueDatesISO[0]);
         // if there are multiple dates in the array, check for each
         for (let i = 1; i < appt.babyDueDatesISO.length; i++) {
           // get difference between curr date and appt time
-          const currDiff = Math.abs(DateTime.fromISO(appt.babyDueDatesISO[i]).diff(
-            apptTime,
-            "weeks",
-          ).weeks);
+          const currDiff = Math.abs(
+            DateTime.fromISO(appt.babyDueDatesISO[i]).diff(apptTime, "weeks")
+              .weeks,
+          );
           // if the time difference is less than the curr min, update
           chosenDate =
             currDiff < timeDiff
@@ -265,7 +267,9 @@ export default function AcuityDashboardPage() {
             );
             trimesterAttendance.set(
               `${appt.class?.toLowerCase()} FOURTH TRIM`,
-              trimesterAttendance.has(`${appt.class?.toLowerCase()} FOURTH TRIM`)
+              trimesterAttendance.has(
+                `${appt.class?.toLowerCase()} FOURTH TRIM`,
+              )
                 ? trimesterAttendance.get(
                   `${appt.class?.toLowerCase()} FOURTH TRIM`,
                 )! + 1
@@ -332,7 +336,9 @@ export default function AcuityDashboardPage() {
             );
             trimesterAttendance.set(
               `${appt.class?.toLowerCase()} SECOND TRIM`,
-              trimesterAttendance.has(`${appt.class?.toLowerCase()} SECOND TRIM`)
+              trimesterAttendance.has(
+                `${appt.class?.toLowerCase()} SECOND TRIM`,
+              )
                 ? trimesterAttendance.get(
                   `${appt.class?.toLowerCase()} SECOND TRIM`,
                 )! + 1
@@ -362,8 +368,8 @@ export default function AcuityDashboardPage() {
       }
     }
     console.log(trimesterAttendance);
-    return [trimesterAttendance, classesToCategory]
-  }, [filteredAppointmentsForTrimester])
+    return [trimesterAttendance, classesToCategory];
+  }, [filteredAppointmentsForTrimester]);
 
   const shouldGroupByWeek = useMemo(() => {
     if (!dateRange?.from || !dateRange?.to) return true;
@@ -373,8 +379,18 @@ export default function AcuityDashboardPage() {
     return diffInMonths <= 3;
   }, [dateRange]);
 
-  const { classAttendanceByInterval, instructorAttendanceByInterval, instructorDataByClass } = useMemo(() => computeAttendanceByInterval(filteredAppointmentsForPopularity, shouldGroupByWeek), [filteredAppointmentsForPopularity])
-
+  const {
+    classAttendanceByInterval,
+    instructorAttendanceByInterval,
+    instructorDataByClass,
+  } = useMemo(
+    () =>
+      computeAttendanceByInterval(
+        filteredAppointmentsForPopularity,
+        shouldGroupByWeek,
+      ),
+    [filteredAppointmentsForPopularity, shouldGroupByWeek],
+  );
 
   const groupedData = useMemo(() => {
     if (
@@ -481,7 +497,14 @@ export default function AcuityDashboardPage() {
       instructorData,
       instructorTableData,
     };
-  }, [filteredAppointmentsForPopularity, classAttendanceByInterval, classFilterOptions, instructorDataByClass, shouldGroupByWeek, instructorAttendanceByInterval]);
+  }, [
+    filteredAppointmentsForPopularity,
+    classAttendanceByInterval,
+    classFilterOptions,
+    instructorDataByClass,
+    shouldGroupByWeek,
+    instructorAttendanceByInterval,
+  ]);
 
   const trimesterAttendanceData = classFilterOptions.map((category) => {
     const categoryLower = category.toLowerCase();
@@ -621,8 +644,8 @@ export default function AcuityDashboardPage() {
             <div className="flex flex-row">
               <button
                 className={`${graphTableButtonStyle} ${attendanceDisplay == "graph"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#f5f5f5]"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
                   }`}
                 onClick={() => setAttendanceDisplay("graph")}
               >
@@ -630,8 +653,8 @@ export default function AcuityDashboardPage() {
               </button>
               <button
                 className={`${graphTableButtonStyle} ${attendanceDisplay == "table"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#f5f5f5]"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
                   }`}
                 onClick={() => setAttendanceDisplay("table")}
               >
@@ -778,8 +801,8 @@ export default function AcuityDashboardPage() {
           <div className="flex flex-row">
             <button
               className={`${graphTableButtonStyle} ${popularityDisplay == "graph"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#f5f5f5]"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
                 }`}
               onClick={() => setPopularityDisplay("graph")}
             >
@@ -787,8 +810,8 @@ export default function AcuityDashboardPage() {
             </button>
             <button
               className={`${graphTableButtonStyle} ${popularityDisplay == "table"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#f5f5f5]"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
                 }`}
               onClick={() => setPopularityDisplay("table")}
             >

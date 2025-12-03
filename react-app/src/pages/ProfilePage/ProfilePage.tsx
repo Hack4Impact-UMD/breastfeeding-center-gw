@@ -14,7 +14,11 @@ const ProfilePage = () => {
   const phone = profile?.phone ?? "";
   const pronouns = profile?.pronouns ?? "";
 
-  const initials = useMemo(() => `${firstName.charAt(0).toUpperCase()}${lastName.charAt(0).toUpperCase()}`, [firstName, lastName])
+  const initials = useMemo(
+    () =>
+      `${firstName.charAt(0).toUpperCase()}${lastName.charAt(0).toUpperCase()}`,
+    [firstName, lastName],
+  );
 
   const [editType, setEditType] = useState("Email");
   const [openConfirmPasswordModal, setOpenConfirmPasswordModal] =
@@ -54,9 +58,8 @@ const ProfilePage = () => {
             E-MAIL AND PHONE NUMBER
           </h5>
           <p className="text-sm text-gray-600 mb-4">
-            The linked email and phone number below will be used for signing
-            in and for two-factor authentication to help keep your account
-            secure.
+            The linked email and phone number below will be used for signing in
+            and for two-factor authentication to help keep your account secure.
           </p>
 
           <div className="flex justify-between items-center mb-2">
@@ -90,18 +93,16 @@ const ProfilePage = () => {
         <div className="bg-transparent md:bg-white md:border md:border-gray-300 md:rounded-md md:shadow-sm md:p-6 text-left">
           <h5 className="font-bold mb-4 text-base sm:text-lg">PASSWORD</h5>
           <p className="text-sm text-gray-600 mb-4">
-            Heads up! You will be asked to log in to dashboard again before
-            and after making any changes to your email address or password to
-            ensure a secure and complete update.
+            Heads up! You will be asked to log in to dashboard again before and
+            after making any changes to your email address or password to ensure
+            a secure and complete update.
           </p>
 
           <div className="flex justify-between items-center">
             <p className="font-semibold text-sm sm:text-base w-40">
               Current Password
             </p>
-            <p className="text-sm sm:text-base text-black flex-1">
-              **********
-            </p>
+            <p className="text-sm sm:text-base text-black flex-1">**********</p>
             <FaEdit
               className="cursor-pointer text-gray-600"
               onClick={() => {
