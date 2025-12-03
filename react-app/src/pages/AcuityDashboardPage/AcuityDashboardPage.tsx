@@ -226,19 +226,19 @@ export default function AcuityDashboardPage() {
         }
         const apptTime = DateTime.fromISO(appt.datetime);
         // get date that is closest to the appt date
-        let timeDiff = DateTime.fromISO(appt.babyDueDatesISO[0]).diff(
+        let timeDiff = Math.abs(DateTime.fromISO(appt.babyDueDatesISO[0]).diff(
           apptTime,
           "weeks",
-        ).weeks;
+        ).weeks);
         // set chosen baby date as first in array
         let chosenDate = DateTime.fromISO(appt.babyDueDatesISO[0]);
         // if there are multiple dates in the array, check for each
         for (let i = 1; i < appt.babyDueDatesISO.length; i++) {
           // get difference between curr date and appt time
-          const currDiff = DateTime.fromISO(appt.babyDueDatesISO[i]).diff(
+          const currDiff = Math.abs(DateTime.fromISO(appt.babyDueDatesISO[i]).diff(
             apptTime,
             "weeks",
-          ).weeks;
+          ).weeks);
           // if the time difference is less than the curr min, update
           chosenDate =
             currDiff < timeDiff
