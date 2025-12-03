@@ -34,7 +34,7 @@ export type OneTimePurchase = {
   platform: string;
 };
 
-export type Client = {
+export type ClientRow = {
   firstName: string;
   lastName: string;
   email: string;
@@ -363,7 +363,7 @@ export const oneTimePurchaseColumns: ColumnDef<OneTimePurchase>[] = [
   },
 ];
 
-export const clientListColumns: ColumnDef<Client>[] = [
+export const clientListColumns: ColumnDef<ClientRow>[] = [
   {
     accessorKey: "firstName",
     header: ({ column }) => {
