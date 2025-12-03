@@ -17,6 +17,53 @@ import ExportContent from "@/components/export/ExportContent.tsx";
 import ExportTrigger from "@/components/export/ExportTrigger.tsx";
 import ExportOnly from "@/components/export/ExportOnly.tsx";
 import { formatDate } from "@/lib/utils.ts";
+import type { Client } from "@/types/ClientType";
+
+
+const MS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
+
+/** Does this client have at least one baby born in the last 0–13 weeks? */
+function hasRecentBirth(client: Client, referenceDate: Date): boolean {
+  const babies: any[] = (client as any).baby ?? [];
+
+  if (!Array.isArray(babies) || babies.length === 0) return false;
+
+  return babies.some((baby) => {
+    if (!baby || !baby.dob) return false;
+
+    const dob = new Date(baby.dob as string);
+    if (isNaN(dob.getTime())) return false;
+
+    const diffWeeks =
+      (referenceDate.getTime() - dob.getTime()) / MS_PER_WEEK;
+
+    // 4th trimester: 0–13 weeks postpartum
+    return diffWeeks >= 0 && diffWeeks <= 13;
+  });
+}
+
+function filterClientsByRecentChildbirth(
+  clientsByNumVisits: { [key: number]: Client[] } | undefined,
+  endDate?: Date,
+  mode: "ALL CLIENTS" | "RECENT CHILDBIRTH" = "ALL CLIENTS",
+): { [key: number]: Client[] } | undefined {
+  if (!clientsByNumVisits) return undefined;
+  if (mode !== "RECENT CHILDBIRTH") return clientsByNumVisits;
+  if (!endDate) return clientsByNumVisits;
+
+  const refDate = endDate;
+  const result: { [key: number]: Client[] } = {};
+
+  Object.entries(clientsByNumVisits).forEach(([visitStr, clients]) => {
+    const visit = Number(visitStr);
+    result[visit] = (clients as Client[]).filter((client) =>
+      hasRecentBirth(client, refDate),
+    );
+  });
+
+  return result;
+}
+
 
 type JaneRetentionProps = {
   startDate?: Date | undefined;
@@ -47,7 +94,8 @@ function CustomBar(props: Partial<BarProps>) {
 }
 
 const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
-  const [selectedDropdown, setSelectedDropdown] = useState("ALL CLIENTS");
+  const [selectedDropdown, setSelectedDropdown] =
+    useState<"ALL CLIENTS" | "RECENT CHILDBIRTH">("ALL CLIENTS");
 
   const graphTableButtonStyle =
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer border border-gray-300";
@@ -55,7 +103,8 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
   const chartDiv =
     "flex flex-col items-center justify-center bg-white min-h-[400px] border-2 border-black p-5 mt-5 rounded-2xl";
 
-  const [retentionDisplay, setRetentionDisplay] = useState<string>("graph");
+  const [retentionDisplay, setRetentionDisplay] =
+    useState<string>("graph");
   const [openRow, setOpenRow] = useState<RetentionRate | null>(null);
 
   const dateRangeLabel =
@@ -69,9 +118,22 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
     error: retentionError,
   } = useRetentionData(startDate, endDate);
 
+  const filteredRetentionSource = useMemo(
+    () =>
+      filterClientsByRecentChildbirth(
+        rawRetentionData as { [key: number]: Client[] } | undefined,
+        endDate,
+        selectedDropdown,
+      ),
+    [rawRetentionData, endDate, selectedDropdown],
+  );
+
   const processedData = useMemo(
-    () => (rawRetentionData ? processRetentionData(rawRetentionData) : []),
-    [rawRetentionData],
+    () =>
+      filteredRetentionSource
+        ? processRetentionData(filteredRetentionSource)
+        : [],
+    [filteredRetentionSource],
   );
 
   const funnelData = useMemo(
@@ -114,24 +176,23 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
   return (
     <div className="flex-[0_0_48%] w-full lg:w-1/2">
       <Export title={`RetentionRate${dateRangeLabel}`}>
+        {/* toggle + export */}
         <div className={`${centerItemsInDiv} pt-4 mb-6`}>
           <div className="flex flex-row">
             <button
-              className={`${graphTableButtonStyle} ${
-                retentionDisplay === "graph"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#CED8E1]"
-              }`}
+              className={`${graphTableButtonStyle} ${retentionDisplay === "graph"
+                ? "bg-bcgw-gray-light"
+                : "bg-[#CED8E1]"
+                }`}
               onClick={() => setRetentionDisplay("graph")}
             >
               Graph
             </button>
             <button
-              className={`${graphTableButtonStyle} ${
-                retentionDisplay === "table"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#CED8E1]"
-              }`}
+              className={`${graphTableButtonStyle} ${retentionDisplay === "table"
+                ? "bg-bcgw-gray-light"
+                : "bg-[#CED8E1]"
+                }`}
               onClick={() => setRetentionDisplay("table")}
             >
               Table
@@ -151,9 +212,11 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
             </Button>
           </ExportTrigger>
         </div>
+
         <span className="self-start font-semibold text-2xl">
           Retention Rate: {dateRangeLabel}
         </span>
+
         <div className={retentionDisplay === "graph" ? chartDiv : ""}>
           {isRetentionLoading ? (
             <Loading />
@@ -165,11 +228,16 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
             </div>
           ) : retentionDisplay === "graph" ? (
             <>
+              {/* GRAPH VIEW – keep dropdown top-right in card */}
               <div className="self-end mb-4">
                 <SelectDropdown
                   options={["ALL CLIENTS", "RECENT CHILDBIRTH"]}
                   selected={selectedDropdown}
-                  onChange={setSelectedDropdown}
+                  onChange={(val) =>
+                    setSelectedDropdown(
+                      val as "ALL CLIENTS" | "RECENT CHILDBIRTH",
+                    )
+                  }
                 />
               </div>
               <ExportContent className="w-full">
@@ -178,29 +246,54 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
                     Client Retention
                   </h1>
                   <p className="text-base text-black">{dateRangeLabel}</p>
-                  <p className="text-gray-800 text-sm">{selectedDropdown}</p>
+                  <p className="text-gray-800 text-sm">
+                    {selectedDropdown}
+                  </p>
                 </ExportOnly>
                 <div className="w-full flex flex-col items-center justify-center mt-4">
                   <BarChart
                     height={300}
                     data={funnelData}
-                    series={<BarSeries layout="vertical" bar={<CustomBar />} />}
+                    series={
+                      <BarSeries layout="vertical" bar={<CustomBar />} />
+                    }
                   />
                 </div>
               </ExportContent>
             </>
           ) : (
             <>
+              {/* TABLE VIEW */}
               <div className="[&_td]:py-3 [&_th]:py-3">
                 <DataTable
-                  columns={makeRetentionRateColumns((row) => setOpenRow(row))}
+                  columns={makeRetentionRateColumns((row) =>
+                    setOpenRow(row),
+                  )}
                   data={retentionData}
                   tableType="default"
+                  tableHeaderExtras={
+                    <div className="flex justify-end px-4 h-9">
+                      <div className="w-64">
+                        <SelectDropdown
+                          options={["ALL CLIENTS", "RECENT CHILDBIRTH"]}
+                          selected={selectedDropdown}
+                          onChange={(val) =>
+                            setSelectedDropdown(
+                              val as "ALL CLIENTS" | "RECENT CHILDBIRTH",
+                            )
+                          }
+                        />
+                      </div>
+                    </div>
+                  }
                 />
               </div>
 
               {openRow && (
-                <ClientLostPopup openRow={openRow!} setOpenRow={setOpenRow} />
+                <ClientLostPopup
+                  openRow={openRow}
+                  setOpenRow={setOpenRow}
+                />
               )}
             </>
           )}

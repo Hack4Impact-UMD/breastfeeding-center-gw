@@ -144,22 +144,23 @@ export function DataTable<TData, TValue>({
       </div>
 
       <div className="border-2 rounded-none overflow-hidden">
-        {tableHeaderExtras && (
-          <div className="p-2 w-full bg-[#0C3D6B33] border-b">
-            {tableHeaderExtras}
-          </div>
-        )}
-
         <Table>
           <TableHeader
-            className={`${
-              tableType === "janeData" ||
-              tableType === "default" ||
-              tableType === "clientsLost"
+            className={`${tableType === "janeData" ||
+                tableType === "default" ||
+                tableType === "clientsLost"
                 ? "bg-[#0C3D6B33]"
                 : "bg-[#B9C4CE]"
-            }`}
+              }`}
           >
+            {tableHeaderExtras && (
+              <TableRow>
+                <TableHead colSpan={columns.length} className="p-0">
+                  {tableHeaderExtras}
+                </TableHead>
+              </TableRow>
+            )}
+
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -168,9 +169,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </TableHead>
                   );
                 })}
@@ -197,12 +198,11 @@ export function DataTable<TData, TValue>({
                     {row.getVisibleCells().map((cell) => (
                       <TableCell
                         key={cell.id}
-                        className={`${
-                          tableType === "clientList" ||
-                          tableType === "clientsLost"
+                        className={`${tableType === "clientList" ||
+                            tableType === "clientsLost"
                             ? "cursor-pointer group-hover:bg-gray-300 transition-colors"
                             : ""
-                        }`}
+                          }`}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
@@ -274,11 +274,10 @@ export function DataTable<TData, TValue>({
                     );
                   }
                 }}
-                className={`border-2 border-black w-8 h-8 text-center focus:outline-none focus:ring-2 focus:ring-[#0C3D6B] ${
-                  table.getPageCount() <= 1
+                className={`border-2 border-black w-8 h-8 text-center focus:outline-none focus:ring-2 focus:ring-[#0C3D6B] ${table.getPageCount() <= 1
                     ? "opacity-50 cursor-not-allowed"
                     : ""
-                }`}
+                  }`}
               />
             </div>
             <span className="text-base">of {table.getPageCount()}</span>
@@ -287,11 +286,10 @@ export function DataTable<TData, TValue>({
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
-              className={`rounded-none w-8 h-8 flex items-center justify-center border-2 ${
-                table.getCanPreviousPage()
+              className={`rounded-none w-8 h-8 flex items-center justify-center border-2 ${table.getCanPreviousPage()
                   ? "border-black text-[#222] cursor-pointer"
                   : "border-gray-300 text-gray-300 cursor-not-allowed"
-              }`}
+                }`}
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
               aria-label="Previous page"
@@ -305,11 +303,10 @@ export function DataTable<TData, TValue>({
             </Button>
             <Button
               variant="ghost"
-              className={`rounded-none w-8 h-8 flex items-center justify-center border-2 ${
-                table.getCanNextPage()
+              className={`rounded-none w-8 h-8 flex items-center justify-center border-2 ${table.getCanNextPage()
                   ? "border-black text-[#222] cursor-pointer"
                   : "border-gray-300 text-gray-300 cursor-not-allowed"
-              }`}
+                }`}
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
               aria-label="Next page"
