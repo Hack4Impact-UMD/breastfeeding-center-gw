@@ -192,7 +192,7 @@ export function DataTable<TData, TValue>({
                       }
                     }}
                     data-state={row.getIsSelected() ? "selected" : "unselected"}
-                    className="group data-[state=selected]:bg-gray-200 data-[state=unselected]:bg-white"
+                    className="group data-[state=selected]:bg-[#F5BB4782] data-[state=unselected]:bg-white"
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell
@@ -200,7 +200,7 @@ export function DataTable<TData, TValue>({
                         className={`${
                           tableType === "clientList" ||
                           tableType === "clientsLost"
-                            ? "cursor-pointer group-hover:bg-gray-300 transition-colors"
+                            ? "cursor-pointer group-hover:bg-[#F5BB4782] group-active:bg-bcgw-yellow-dark transition-colors"
                             : ""
                         }`}
                       >
