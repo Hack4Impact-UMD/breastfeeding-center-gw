@@ -31,10 +31,8 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
   };
 
   const handleClose = () => {
-    if (!uploadMutation.isPending) {
-      resetState();
-      onClose();
-    }
+    resetState();
+    onClose();
   };
 
   const [apptFile, setApptFile] = useState<File | null>(null);
@@ -136,7 +134,7 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
     !!apptFile && errorType === "none" && !uploadMutation.isPending;
 
   return (
-    <Modal open={isOpen} onClose={handleClose} height={350} width={500}>
+    <Modal open={isOpen} onClose={handleClose} disabled={uploadMutation.isPending} height={350} width={500}>
       <div className="flex justify-center items-center sm:block">
         <div className="flex flex-col bg-white rounded-2xl w-full h-auto overflow-y-auto sm:overflow-visible">
           {/* Header */}
@@ -144,7 +142,11 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
             <p className="text-base sm:text-lg">Jane File Upload</p>
             <IoIosClose
               className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
-              onClick={onClose}
+              onClick={() => {
+                if (!uploadMutation.isPending)
+                  onClose()
+              }
+              }
               size={32}
             />
           </div>
