@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useMemo } from "react";
 import {
   LineChart,
   LineSeries,
@@ -11,9 +11,16 @@ import {
   GradientStop,
   RangeLines,
   GuideBar,
+  BarLabel,
+  DiscreteLegend,
+  DiscreteLegendEntry,
+  schemes,
 } from "reaviz";
-import { toPng } from "html-to-image";
-import download from "downloadjs";
+import { Export } from "@/components/export/Export";
+import ExportTrigger from "@/components/export/ExportTrigger";
+import ExportContent from "@/components/export/ExportContent";
+import ExportOnly from "@/components/export/ExportOnly";
+import { formatDate } from "@/lib/utils";
 import {
   DateRangePicker,
   defaultPresets,
@@ -34,13 +41,13 @@ import { useAcuityApptsInRange } from "@/hooks/queries/useAcuityApptsInRange";
 import { DateTime } from "luxon";
 
 export default function AcuityDashboardPage() {
-  // const [allClasses, setAllClasses] = useState<any[]>([]);
   const [attendanceDisplay, setAttendanceDisplay] = useState<string>("graph");
   const [popularityDisplay, setPopularityDisplay] = useState<string>("graph");
-  const attendanceChartRef = useRef<HTMLDivElement>(null);
-  const classPopularityChartRef = useRef<HTMLDivElement>(null);
   const [openInstructorRow, setOpenInstructorRow] =
     useState<InstructorAttendance | null>(null);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(
+    defaultDateRange,
+  );
 
   const chartDiv =
     "flex flex-col items-center justify-start bg-white min-h-[400px] border-2 border-black p-5 mt-5 rounded-2xl";
@@ -66,9 +73,26 @@ export default function AcuityDashboardPage() {
     "FOURTH TRIM",
     "FIFTH TRIM",
   ];
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(
-    defaultDateRange,
-  );
+  const trimesterLegend = [
+    { key: "FIRST TRIM", color: "#FCD484" },
+    { key: "SECOND TRIM", color: "#FFAA00" },
+    { key: "THIRD TRIM", color: "#5DB9FF" },
+    { key: "FOURTH TRIM", color: "#1661A9" },
+    { key: "FIFTH TRIM", color: "#05182A" },
+  ];
+
+  const classColorScheme: Record<string, string> = {
+    "POSTPARTUM CLASSES": schemes.cybertron[0],
+    "PRENATAL CLASSES": schemes.cybertron[1],
+    "INFANT MASSAGE": schemes.cybertron[2],
+    "PARENT GROUPS": schemes.cybertron[3],
+    "CHILDBIRTH CLASSES": schemes.cybertron[4],
+  };
+
+  const dateRangeLabel =
+    dateRange?.from && dateRange?.to
+      ? `${formatDate(dateRange.from)} - ${formatDate(dateRange.to)}`
+      : "All Data";
 
   const normalizeCategory = (category: string | null | undefined): string => {
     if (!category) return "";
@@ -265,7 +289,10 @@ export default function AcuityDashboardPage() {
   }, [dateRange]);
 
   const groupedData = useMemo(() => {
-    if (!filteredAppointmentsForPopularity || filteredAppointmentsForPopularity.length === 0) {
+    if (
+      !filteredAppointmentsForPopularity ||
+      filteredAppointmentsForPopularity.length === 0
+    ) {
       return {
         classData: [],
         instructorData: [],
@@ -274,7 +301,10 @@ export default function AcuityDashboardPage() {
     }
 
     const classAttendanceByInterval = new Map<string, Map<string, number>>();
-    const instructorAttendanceByInterval = new Map<string, Map<string, number>>();
+    const instructorAttendanceByInterval = new Map<
+      string,
+      Map<string, number>
+    >();
     const instructorDataByClass = new Map<
       string,
       Map<
@@ -311,10 +341,7 @@ export default function AcuityDashboardPage() {
         classAttendanceByInterval.set(intervalKey, new Map<string, number>());
       }
       const classMap = classAttendanceByInterval.get(intervalKey)!;
-      classMap.set(
-        classCategory,
-        (classMap.get(classCategory) || 0) + 1,
-      );
+      classMap.set(classCategory, (classMap.get(classCategory) || 0) + 1);
 
       if (!instructorAttendanceByInterval.has(intervalKey)) {
         instructorAttendanceByInterval.set(
@@ -349,7 +376,7 @@ export default function AcuityDashboardPage() {
     const classData = classFilterOptions
       .filter((cat) => cat !== "ALL CLASSES")
       .map((category) => {
-            const normalizedCategory = normalizeCategory(category);
+        const normalizedCategory = normalizeCategory(category);
         return {
           key: category,
           data: allIntervals.map((intervalKey) => {
@@ -359,7 +386,9 @@ export default function AcuityDashboardPage() {
                   .startOf("month")
                   .toJSDate();
             const count =
-              classAttendanceByInterval.get(intervalKey)?.get(normalizedCategory) || 0;
+              classAttendanceByInterval
+                .get(intervalKey)
+                ?.get(normalizedCategory) || 0;
             return { key: date, data: count };
           }),
         };
@@ -368,7 +397,7 @@ export default function AcuityDashboardPage() {
     const instructorData = classFilterOptions
       .filter((cat) => cat !== "ALL CLASSES")
       .map((category) => {
-            const normalizedCategory = normalizeCategory(category);
+        const normalizedCategory = normalizeCategory(category);
         return {
           key: category,
           data: allIntervals.map((intervalKey) => {
@@ -378,7 +407,9 @@ export default function AcuityDashboardPage() {
                   .startOf("month")
                   .toJSDate();
             const count =
-              instructorAttendanceByInterval.get(intervalKey)?.get(normalizedCategory) || 0;
+              instructorAttendanceByInterval
+                .get(intervalKey)
+                ?.get(normalizedCategory) || 0;
             return { key: date, data: count };
           }),
         };
@@ -395,18 +426,16 @@ export default function AcuityDashboardPage() {
         avgAttendance: number;
         numClasses: number;
         totalAttendance: number;
-      }> = Array.from(instructorMap.entries()).map(
-        ([instructor, stats]) => {
-          const numClasses = stats.uniqueSessions.size;
-          const avgAttendance = numClasses > 0 ? stats.count / numClasses : 0;
-          return {
-            instructor,
-            avgAttendance: Math.round(avgAttendance * 100) / 100,
-            numClasses,
-            totalAttendance: stats.count,
-          };
-        },
-      );
+      }> = Array.from(instructorMap.entries()).map(([instructor, stats]) => {
+        const numClasses = stats.uniqueSessions.size;
+        const avgAttendance = numClasses > 0 ? stats.count / numClasses : 0;
+        return {
+          instructor,
+          avgAttendance: Math.round(avgAttendance * 100) / 100,
+          numClasses,
+          totalAttendance: stats.count,
+        };
+      });
 
       const totalAttendance = instructors.reduce(
         (sum, inst) => sum + inst.totalAttendance,
@@ -420,7 +449,8 @@ export default function AcuityDashboardPage() {
         totalClasses > 0 ? totalAttendance / totalClasses : 0;
 
       return {
-        class: className.length > 15 ? className.slice(0, 15) + "..." : className,
+        class:
+          className.length > 15 ? className.slice(0, 15) + "..." : className,
         category: classCategory,
         avgAttendance: Math.round(avgAttendance * 100) / 100,
         numClasses: totalClasses,
@@ -435,7 +465,11 @@ export default function AcuityDashboardPage() {
       instructorData,
       instructorTableData,
     };
-  }, [filteredAppointmentsForPopularity, shouldGroupByWeek, classFilterOptions]);
+  }, [
+    filteredAppointmentsForPopularity,
+    shouldGroupByWeek,
+    classFilterOptions,
+  ]);
 
   const trimesterAttendanceData = classFilterOptions.map((category) => {
     const categoryLower = category.toLowerCase();
@@ -512,44 +546,6 @@ export default function AcuityDashboardPage() {
   const graphTableButtonStyle =
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer";
 
-  // Fetch data on mount
-  // useEffect(() => {
-  // getClientAppointments()
-  //   .then((res) => {
-  //     // your API lives under res.result
-  //     const byId = res.result ?? res;
-  //     const clients = Object.values(byId);
-  //     // flatten out the `classes` array on each client
-  //     const flat = clients.flatMap((c) => c.classes || []);
-  //     console.log("🔹 total bookings:", flat.length, flat[0]);
-  //     setAllClasses(flat);
-  //   })
-  //   .catch(console.error);
-  // }, []);
-
-  // 3) pivot into Reaviz series
-  // const classOverTime = useMemo(() => {
-  //   const map = new Map();
-  //   allClasses.forEach((rec) => {
-  //     const dt =
-  //       typeof rec.date?.toDate === "function"
-  //         ? rec.date.toDate()
-  //         : new Date(rec.date);
-  //     const ts = Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate());
-  //     const key = rec.classType;
-  //     if (!map.has(key)) map.set(key, new Map());
-  //     const m = map.get(key);
-  //     m.set(ts, (m.get(ts) || 0) + 1);
-  //   });
-
-  //   return Array.from(map.entries()).map(([cls, m]) => ({
-  //     key: cls,
-  //     data: Array.from(m.entries())
-  //       .sort(([a], [b]) => a - b)
-  //       .map(([ts, count]) => ({ key: new Date(ts), data: count })),
-  //   }));
-  // }, [allClasses]);
-
   // Filter class data based on selection
   const filteredClassData =
     selectedPopularityClass === "ALL CLASSES"
@@ -562,24 +558,6 @@ export default function AcuityDashboardPage() {
       : allClassAttendanceData.filter((c) => c.key === selectedTrimesterClass);
 
   const barData = filteredClassBars[0]?.data ?? [];
-
-  const handleExport = async (
-    ref: React.RefObject<HTMLDivElement | null>,
-    filename: string,
-  ) => {
-    const element = ref.current;
-    if (!element) {
-      return;
-    }
-
-    try {
-      const dataUrl = await toPng(element);
-      download(dataUrl, `${filename}.png`);
-    } catch (error) {
-      console.error("Export failed:", error);
-    }
-  };
-
   const allInstructorData = groupedData.instructorData;
 
   const filteredInstructorData =
@@ -608,13 +586,6 @@ export default function AcuityDashboardPage() {
       />
     </div>
   );
-
-  const formatDate = (date: Date) =>
-    date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "numeric",
-      day: "numeric",
-    });
   return (
     <>
       <div className="flex flex-col py-14 px-10 sm:px-20 space-y-5">
@@ -633,128 +604,166 @@ export default function AcuityDashboardPage() {
             />
           </div>
         </div>
-        <div className={`${centerItemsInDiv} pt-4`}>
-          <div className="flex flex-row">
-            <button
-              className={`${graphTableButtonStyle} ${
-                attendanceDisplay == "graph"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#f5f5f5]"
-              }`}
-              onClick={() => setAttendanceDisplay("graph")}
-            >
-              Graph
-            </button>
-            <button
-              className={`${graphTableButtonStyle} ${
-                attendanceDisplay == "table"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#f5f5f5]"
-              }`}
-              onClick={() => setAttendanceDisplay("table")}
-            >
-              Table
-            </button>
-          </div>
-          <Button
-            variant={"outlineGray"}
-            className={
-              "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
-            }
-            onClick={() => handleExport(attendanceChartRef, "class_attendance")}
-          >
-            Export
-          </Button>
-        </div>
-        {/* Attendance by Trimester Bar Chart */}
-        <span className="self-start font-semibold text-2xl">
-          Class Attendance By Trimester,{" "}
-          {dateRange?.from && dateRange?.to
-            ? formatDate(dateRange.from) + " - " + formatDate(dateRange.to)
-            : "All Data"}
-          {attendanceDisplay === "graph" ? <br /> : <></>}
-        </span>
-        {attendanceDisplay === "graph" ? (
-          <div className={chartDiv} ref={attendanceChartRef}>
-            {/* Class dropdown */}
-            <div className="self-end mb-4">
-              <SelectDropdown
-                options={classFilterOptions}
-                selected={selectedTrimesterClass}
-                onChange={setSelectedTrimesterClass}
-              />
+        <Export title={`ClassAttendanceByTrimester${dateRangeLabel}`}>
+          <div className={`${centerItemsInDiv} pt-4`}>
+            <div className="flex flex-row">
+              <button
+                className={`${graphTableButtonStyle} ${
+                  attendanceDisplay == "graph"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
+                }`}
+                onClick={() => setAttendanceDisplay("graph")}
+              >
+                Graph
+              </button>
+              <button
+                className={`${graphTableButtonStyle} ${
+                  attendanceDisplay == "table"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
+                }`}
+                onClick={() => setAttendanceDisplay("table")}
+              >
+                Table
+              </button>
             </div>
+            <ExportTrigger disabled={attendanceDisplay !== "graph"} asChild>
+              <Button
+                variant={"outlineGray"}
+                className={
+                  "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
+                }
+              >
+                Export
+              </Button>
+            </ExportTrigger>
+          </div>
+          {/* Attendance by Trimester Bar Chart */}
+          <span className="self-start font-semibold text-2xl">
+            Class Attendance By Trimester,{" "}
+            {attendanceDisplay === "graph" ? <br /> : <></>}
+            {dateRangeLabel}
+          </span>
+          {attendanceDisplay === "graph" ? (
+            <div className={chartDiv}>
+              {/* Class dropdown */}
+              <div className="self-end mb-4">
+                <SelectDropdown
+                  options={classFilterOptions}
+                  selected={selectedTrimesterClass}
+                  onChange={setSelectedTrimesterClass}
+                />
+              </div>
 
-            <div className="w-full h-96">
-              {selectedTrimesterClass === "ALL CLASSES" ? (
-                /* stacked chart for all classes: */
-                <StackedBarChart
-                  height={350}
-                  data={trimesterAttendanceData}
-                  series={
-                    <StackedBarSeries
-                      bar={
-                        <Bar
-                          width={100}
-                          rx={0}
-                          ry={0}
-                          gradient={
-                            <Gradient
-                              stops={[
-                                <GradientStop
-                                  offset="5%"
-                                  stopOpacity={1.0}
-                                  key="start"
-                                />,
-                                <GradientStop
-                                  offset="90%"
-                                  stopOpacity={1.0}
-                                  key="end"
-                                />,
-                              ]}
-                            />
-                          }
-                          rangeLines={
-                            <RangeLines position="top" strokeWidth={3} />
-                          }
-                          guide={<GuideBar />}
-                        />
-                      }
-                      colorScheme={[
-                        "#FCD484",
-                        "#FFAA00",
-                        "#5DB9FF",
-                        "#1661A9",
-                        "#05182A",
-                      ]}
-                    />
-                  }
-                />
-              ) : (
-                /* single-series bar chart for one class: */
-                <BarChart
-                  height={350}
-                  data={barData}
-                  series={
-                    <BarSeries
-                      padding={0.1}
-                      colorScheme={"#F4BB47"}
-                      bar={<Bar rx={0} ry={0} style={{ fill: "#F4BB47" }} />}
-                    />
-                  }
-                />
-              )}
+              <ExportContent className="w-full h-96">
+                <ExportOnly className="mb-5">
+                  <h1 className="text-xl font-bold text-black">
+                    Class Attendance By Trimester
+                  </h1>
+                  <p className="text-base text-black">{dateRangeLabel}</p>
+                  <p className="text-gray-800 text-sm">
+                    {selectedTrimesterClass}
+                  </p>
+                </ExportOnly>
+                {selectedTrimesterClass === "ALL CLASSES" ? (
+                  /* stacked chart for all classes: */
+                  <StackedBarChart
+                    height={350}
+                    data={trimesterAttendanceData}
+                    series={
+                      <StackedBarSeries
+                        bar={
+                          <Bar
+                            width={100}
+                            rx={0}
+                            ry={0}
+                            label={
+                              <BarLabel
+                                position="center"
+                                fill="white"
+                                scale={20}
+                                className="z-20"
+                              />
+                            }
+                            gradient={
+                              <Gradient
+                                stops={[
+                                  <GradientStop
+                                    offset="5%"
+                                    stopOpacity={1.0}
+                                    key="start"
+                                  />,
+                                  <GradientStop
+                                    offset="90%"
+                                    stopOpacity={1.0}
+                                    key="end"
+                                  />,
+                                ]}
+                              />
+                            }
+                            rangeLines={
+                              <RangeLines position="top" strokeWidth={3} />
+                            }
+                            guide={<GuideBar />}
+                          />
+                        }
+                        colorScheme={trimesterLegend.map((i) => i.color)}
+                      />
+                    }
+                  />
+                ) : (
+                  /* single-series bar chart for one class: */
+                  <BarChart
+                    height={350}
+                    data={barData}
+                    series={
+                      <BarSeries
+                        padding={0.1}
+                        colorScheme={"#F4BB47"}
+                        bar={
+                          <Bar
+                            label={
+                              <BarLabel
+                                position="center"
+                                fill="white"
+                                scale={20}
+                                className="z-20"
+                              />
+                            }
+                            rx={0}
+                            ry={0}
+                            style={{ fill: "#F4BB47" }}
+                          />
+                        }
+                      />
+                    }
+                  />
+                )}
+                <div className="w-full flex items-center justify-center">
+                  <DiscreteLegend
+                    orientation="horizontal"
+                    entries={trimesterLegend.map((i) => (
+                      <DiscreteLegendEntry
+                        key={i.key}
+                        label={i.key}
+                        color={i.color}
+                      />
+                    ))}
+                  />
+                </div>
+              </ExportContent>
             </div>
-          </div>
-        ) : (
-          <DataTable
-            columns={trimesterColumns}
-            data={trimesterData}
-            tableType="default"
-            tableHeaderExtras={classAttendanceTableExtras}
-            pageSize={5}
-          />
-        )}
+          ) : (
+            <DataTable
+              columns={trimesterColumns}
+              data={trimesterData}
+              tableType="default"
+              tableHeaderExtras={classAttendanceTableExtras}
+              pageSize={5}
+            />
+          )}
+        </Export>
         <div className={`${centerItemsInDiv} pt-8`}>
           <div className="flex flex-row">
             <button
@@ -778,17 +787,16 @@ export default function AcuityDashboardPage() {
               Table
             </button>
           </div>
-          <Button
-            variant={"outlineGray"}
-            className={
-              "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
-            }
-            onClick={() =>
-              handleExport(classPopularityChartRef, "class_popularity")
-            }
-          >
-            Export
-          </Button>
+          {popularityDisplay === "table" && (
+            <Button
+              variant={"outlineGray"}
+              className={
+                "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
+              }
+            >
+              Export
+            </Button>
+          )}
         </div>
         <span className="self-start font-semibold text-2xl">
           {popularityDisplay === "graph" ? (
@@ -796,53 +804,139 @@ export default function AcuityDashboardPage() {
           ) : (
             <span>Attendance By Class & Instructor</span>
           )}
-          {popularityDisplay === "graph" ? <br /> : <></>}{" "}
-          {dateRange?.from && dateRange?.to
-            ? formatDate(dateRange.from) + " - " + formatDate(dateRange.to)
-            : "All Data"}
+          {popularityDisplay === "graph" ? <br /> : <></>}
+          {dateRangeLabel}
         </span>
         {/* Class Popularity Over Time */}
-        <div ref={classPopularityChartRef}>
+        <div>
           {popularityDisplay === "graph" ? (
             <>
-              <div className="text-2xl font-semibold">Class Popularity</div>
-              {/* Class dropdown */}
-              <div className={chartDiv}>
-                <div className="self-end mb-4">
-                  <SelectDropdown
-                    options={classFilterOptions}
-                    selected={selectedPopularityClass}
-                    onChange={setSelectedPopularityClass}
-                  />
-                </div>
-                <div className="w-full h-96">
-                  <LineChart
-                    height={300}
-                    data={filteredClassData}
-                    series={<LineSeries type="grouped" />}
-                  />
-                </div>
-              </div>
+              <Export title={`ClassPopularity${dateRangeLabel}`}>
+                <div className="flex flex-row items-center w-full">
+                  <div className="text-2xl font-semibold grow">
+                    Class Popularity
+                  </div>
 
-              <div className="mt-8 text-2xl font-semibold">
-                Instructor Popularity
-              </div>
-              <div className={chartDiv}>
-                <div className="self-end mb-4">
-                  <SelectDropdown
-                    options={classFilterOptions}
-                    selected={selectedPopularityClass}
-                    onChange={setSelectedPopularityClass}
-                  />
+                  <ExportTrigger asChild>
+                    <Button
+                      variant={"outlineGray"}
+                      className={
+                        "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
+                      }
+                    >
+                      Export
+                    </Button>
+                  </ExportTrigger>
                 </div>
-                <div className="w-full h-96">
-                  <LineChart
-                    height={300}
-                    data={filteredInstructorData}
-                    series={<LineSeries type="grouped" />}
-                  />
+                {/* Class dropdown */}
+                <div className={chartDiv}>
+                  <div className="self-end mb-4">
+                    <SelectDropdown
+                      options={classFilterOptions}
+                      selected={selectedPopularityClass}
+                      onChange={setSelectedPopularityClass}
+                    />
+                  </div>
+                  <ExportContent className="w-full h-96">
+                    <ExportOnly className="mb-5">
+                      <h1 className="text-xl font-bold text-black">
+                        Class Popularity{" "}
+                      </h1>
+                      <p className="text-base text-black">{dateRangeLabel}</p>
+                      <p className="text-gray-800 text-sm">
+                        {selectedPopularityClass}
+                      </p>
+                    </ExportOnly>
+                    <LineChart
+                      height={300}
+                      data={filteredClassData}
+                      series={
+                        <LineSeries
+                          colorScheme={(item) =>
+                            classColorScheme[item[0] ? item[0].key : item.key]
+                          }
+                          type="grouped"
+                        />
+                      }
+                    />
+                    <div className="w-full flex items-center justify-center">
+                      <DiscreteLegend
+                        orientation="horizontal"
+                        entries={filteredClassData.map((line) => (
+                          <DiscreteLegendEntry
+                            key={line.key}
+                            label={line.key}
+                            color={classColorScheme[line.key]}
+                          />
+                        ))}
+                      />
+                    </div>
+                  </ExportContent>
                 </div>
-              </div>
+              </Export>
+
+              <Export title={`InstructorPopularity${dateRangeLabel}`}>
+                <div className="mt-8 flex flex-row items-center w-full">
+                  <div className="text-2xl font-semibold grow">
+                    Instructor Popularity
+                  </div>
+
+                  <ExportTrigger asChild>
+                    <Button
+                      variant={"outlineGray"}
+                      className={
+                        "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
+                      }
+                    >
+                      Export
+                    </Button>
+                  </ExportTrigger>
+                </div>
+                <div className={chartDiv}>
+                  <div className="self-end mb-4">
+                    <SelectDropdown
+                      options={classFilterOptions}
+                      selected={selectedPopularityClass}
+                      onChange={setSelectedPopularityClass}
+                    />
+                  </div>
+                  <ExportContent className="w-full h-96">
+                    <ExportOnly className="mb-5">
+                      <h1 className="text-xl font-bold text-black">
+                        Instructor Popularity
+                      </h1>
+                      <p className="text-base text-black">{dateRangeLabel}</p>
+                      <p className="text-gray-800 text-sm">
+                        {selectedPopularityClass}
+                      </p>
+                    </ExportOnly>
+                    <LineChart
+                      height={300}
+                      data={filteredInstructorData}
+                      series={
+                        <LineSeries
+                          colorScheme={(item) =>
+                            classColorScheme[item[0] ? item[0].key : item.key]
+                          }
+                          type="grouped"
+                        />
+                      }
+                    />
+                    <div className="w-full flex items-center justify-center">
+                      <DiscreteLegend
+                        orientation="horizontal"
+                        entries={filteredInstructorData.map((line) => (
+                          <DiscreteLegendEntry
+                            key={line.key}
+                            label={line.key}
+                            color={classColorScheme[line.key]}
+                          />
+                        ))}
+                      />
+                    </div>
+                  </ExportContent>
+                </div>
+              </Export>
             </>
           ) : (
             <DataTable
