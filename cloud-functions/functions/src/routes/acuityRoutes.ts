@@ -23,7 +23,7 @@ router.get(
         classCategory !== "all classes"
       ) {
         appts = (await getAllAcuityApptsInRange(startDate, endDate)).filter(
-          (appt) => appt.classCategory!.toLowerCase() === classCategory,
+          (appt) => appt.classCategory?.toLowerCase() === classCategory,
         );
       } else {
         appts = await getAllAcuityApptsInRange(startDate, endDate);
