@@ -39,6 +39,93 @@ import SelectDropdown from "@/components/SelectDropdown";
 import { Button } from "@/components/ui/button";
 import { useAcuityApptsInRange } from "@/hooks/queries/useAcuityApptsInRange";
 import { DateTime } from "luxon";
+import { AcuityAppointment } from "@/types/AcuityType";
+
+function computeAttendanceByInterval(filteredAppointmentsForPopularity: AcuityAppointment[], shouldGroupByWeek: boolean) {
+  const classAttendanceByInterval = new Map<string, Map<string, number>>();
+  const instructorAttendanceByInterval = new Map<
+    string,
+    Map<string, number>
+  >();
+  const instructorDataByClass = new Map<
+    string,
+    Map<
+      string,
+      {
+        count: number;
+        uniqueSessions: Set<string>;
+        classCategory: string;
+      }
+    >
+  >();
+
+  for (const appt of filteredAppointmentsForPopularity) {
+    if (!appt.datetime) continue;
+
+    const apptDate = DateTime.fromISO(appt.datetime);
+    if (!apptDate.isValid) continue;
+
+    const intervalKey = getIntervalKey(apptDate, shouldGroupByWeek);
+    const classCategory = normalizeCategory(appt.classCategory) || "UNKNOWN";
+    const className = appt.class || "UNKNOWN";
+    const instructor = appt.instructor || "UNKNOWN";
+
+    if (!classAttendanceByInterval.has(intervalKey)) {
+      classAttendanceByInterval.set(intervalKey, new Map<string, number>());
+    }
+    const classMap = classAttendanceByInterval.get(intervalKey)!;
+    classMap.set(classCategory, (classMap.get(classCategory) || 0) + 1);
+
+    if (!instructorAttendanceByInterval.has(intervalKey)) {
+      instructorAttendanceByInterval.set(
+        intervalKey,
+        new Map<string, number>(),
+      );
+    }
+    const instructorMap = instructorAttendanceByInterval.get(intervalKey)!;
+    instructorMap.set(
+      classCategory,
+      (instructorMap.get(classCategory) || 0) + 1,
+    );
+
+    if (!instructorDataByClass.has(className)) {
+      instructorDataByClass.set(className, new Map());
+    }
+    const classInstructorMap = instructorDataByClass.get(className)!;
+    if (!classInstructorMap.has(instructor)) {
+      classInstructorMap.set(instructor, {
+        count: 0,
+        uniqueSessions: new Set<string>(),
+        classCategory: classCategory,
+      });
+    }
+    const instructorStats = classInstructorMap.get(instructor)!;
+    instructorStats.count += 1;
+    const sessionKey = `${appt.datetime}`;
+    instructorStats.uniqueSessions.add(sessionKey);
+  }
+
+  return {
+    classAttendanceByInterval,
+    instructorAttendanceByInterval,
+    instructorDataByClass
+  }
+}
+
+const normalizeCategory = (category: string | null | undefined): string => {
+  if (!category) return "";
+  return category.toUpperCase().trim();
+};
+
+
+const getIntervalKey = (date: DateTime, shouldGroupByWeek: boolean): string => {
+  if (shouldGroupByWeek) {
+    const weekStart = date.startOf("week");
+    return weekStart.toISODate() || "";
+  } else {
+    return date.toFormat("yyyy-MM");
+  }
+};
 
 export default function AcuityDashboardPage() {
   const [attendanceDisplay, setAttendanceDisplay] = useState<string>("graph");
@@ -93,11 +180,6 @@ export default function AcuityDashboardPage() {
     dateRange?.from && dateRange?.to
       ? `${formatDate(dateRange.from)} - ${formatDate(dateRange.to)}`
       : "All Data";
-
-  const normalizeCategory = (category: string | null | undefined): string => {
-    if (!category) return "";
-    return category.toUpperCase().trim();
-  };
 
   const {
     data: allAppointmentData,
@@ -279,6 +361,7 @@ export default function AcuityDashboardPage() {
         }
       }
     }
+    console.log(trimesterAttendance);
     return [trimesterAttendance, classesToCategory]
   }, [filteredAppointmentsForTrimester])
 
@@ -290,6 +373,9 @@ export default function AcuityDashboardPage() {
     return diffInMonths <= 3;
   }, [dateRange]);
 
+  const { classAttendanceByInterval, instructorAttendanceByInterval, instructorDataByClass } = useMemo(() => computeAttendanceByInterval(filteredAppointmentsForPopularity, shouldGroupByWeek), [filteredAppointmentsForPopularity])
+
+
   const groupedData = useMemo(() => {
     if (
       !filteredAppointmentsForPopularity ||
@@ -300,78 +386,6 @@ export default function AcuityDashboardPage() {
         instructorData: [],
         instructorTableData: [],
       };
-    }
-
-    const classAttendanceByInterval = new Map<string, Map<string, number>>();
-    const instructorAttendanceByInterval = new Map<
-      string,
-      Map<string, number>
-    >();
-    const instructorDataByClass = new Map<
-      string,
-      Map<
-        string,
-        {
-          count: number;
-          uniqueSessions: Set<string>;
-          classCategory: string;
-        }
-      >
-    >();
-
-    const getIntervalKey = (date: DateTime): string => {
-      if (shouldGroupByWeek) {
-        const weekStart = date.startOf("week");
-        return weekStart.toISODate() || "";
-      } else {
-        return date.toFormat("yyyy-MM");
-      }
-    };
-
-    for (const appt of filteredAppointmentsForPopularity) {
-      if (!appt.datetime) continue;
-
-      const apptDate = DateTime.fromISO(appt.datetime);
-      if (!apptDate.isValid) continue;
-
-      const intervalKey = getIntervalKey(apptDate);
-      const classCategory = normalizeCategory(appt.classCategory) || "UNKNOWN";
-      const className = appt.class || "UNKNOWN";
-      const instructor = appt.instructor || "UNKNOWN";
-
-      if (!classAttendanceByInterval.has(intervalKey)) {
-        classAttendanceByInterval.set(intervalKey, new Map<string, number>());
-      }
-      const classMap = classAttendanceByInterval.get(intervalKey)!;
-      classMap.set(classCategory, (classMap.get(classCategory) || 0) + 1);
-
-      if (!instructorAttendanceByInterval.has(intervalKey)) {
-        instructorAttendanceByInterval.set(
-          intervalKey,
-          new Map<string, number>(),
-        );
-      }
-      const instructorMap = instructorAttendanceByInterval.get(intervalKey)!;
-      instructorMap.set(
-        classCategory,
-        (instructorMap.get(classCategory) || 0) + 1,
-      );
-
-      if (!instructorDataByClass.has(className)) {
-        instructorDataByClass.set(className, new Map());
-      }
-      const classInstructorMap = instructorDataByClass.get(className)!;
-      if (!classInstructorMap.has(instructor)) {
-        classInstructorMap.set(instructor, {
-          count: 0,
-          uniqueSessions: new Set<string>(),
-          classCategory: classCategory,
-        });
-      }
-      const instructorStats = classInstructorMap.get(instructor)!;
-      instructorStats.count += 1;
-      const sessionKey = `${appt.datetime}`;
-      instructorStats.uniqueSessions.add(sessionKey);
     }
 
     const allIntervals = Array.from(classAttendanceByInterval.keys()).sort();
@@ -467,11 +481,7 @@ export default function AcuityDashboardPage() {
       instructorData,
       instructorTableData,
     };
-  }, [
-    filteredAppointmentsForPopularity,
-    shouldGroupByWeek,
-    classFilterOptions,
-  ]);
+  }, [filteredAppointmentsForPopularity, classAttendanceByInterval, classFilterOptions, instructorDataByClass, shouldGroupByWeek, instructorAttendanceByInterval]);
 
   const trimesterAttendanceData = classFilterOptions.map((category) => {
     const categoryLower = category.toLowerCase();
