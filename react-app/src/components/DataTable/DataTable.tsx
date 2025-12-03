@@ -147,10 +147,10 @@ export function DataTable<TData, TValue>({
         <Table>
           <TableHeader
             className={`${tableType === "janeData" ||
-                tableType === "default" ||
-                tableType === "clientsLost"
-                ? "bg-[#0C3D6B33]"
-                : "bg-[#B9C4CE]"
+              tableType === "default" ||
+              tableType === "clientsLost"
+              ? "bg-[#0C3D6B33]"
+              : "bg-[#B9C4CE]"
               }`}
           >
             {tableHeaderExtras && (
@@ -193,14 +193,14 @@ export function DataTable<TData, TValue>({
                       }
                     }}
                     data-state={row.getIsSelected() ? "selected" : "unselected"}
-                    className="group data-[state=selected]:bg-gray-200 data-[state=unselected]:bg-white"
+                    className="group data-[state=selected]:bg-[#F5BB4782] data-[state=unselected]:bg-white"
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell
                         key={cell.id}
                         className={`${tableType === "clientList" ||
                             tableType === "clientsLost"
-                            ? "cursor-pointer group-hover:bg-gray-300 transition-colors"
+                            ? "cursor-pointer group-hover:bg-[#F5BB4782] group-active:bg-bcgw-yellow-dark transition-colors"
                             : ""
                           }`}
                       >
@@ -275,8 +275,8 @@ export function DataTable<TData, TValue>({
                   }
                 }}
                 className={`border-2 border-black w-8 h-8 text-center focus:outline-none focus:ring-2 focus:ring-[#0C3D6B] ${table.getPageCount() <= 1
-                    ? "opacity-50 cursor-not-allowed"
-                    : ""
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
                   }`}
               />
             </div>
@@ -287,8 +287,8 @@ export function DataTable<TData, TValue>({
             <Button
               variant="ghost"
               className={`rounded-none w-8 h-8 flex items-center justify-center border-2 ${table.getCanPreviousPage()
-                  ? "border-black text-[#222] cursor-pointer"
-                  : "border-gray-300 text-gray-300 cursor-not-allowed"
+                ? "border-black text-[#222] cursor-pointer"
+                : "border-gray-300 text-gray-300 cursor-not-allowed"
                 }`}
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
@@ -304,8 +304,8 @@ export function DataTable<TData, TValue>({
             <Button
               variant="ghost"
               className={`rounded-none w-8 h-8 flex items-center justify-center border-2 ${table.getCanNextPage()
-                  ? "border-black text-[#222] cursor-pointer"
-                  : "border-gray-300 text-gray-300 cursor-not-allowed"
+                ? "border-black text-[#222] cursor-pointer"
+                : "border-gray-300 text-gray-300 cursor-not-allowed"
                 }`}
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}

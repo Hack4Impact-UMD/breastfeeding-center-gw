@@ -5,8 +5,8 @@ import { LuArrowUpDown } from "react-icons/lu";
 import { DateTime } from "luxon";
 
 export type AcuityData = {
-  class: string;
-  instructor: string;
+  class: string | null;
+  instructor: string | null;
   date: string;
 };
 
@@ -59,6 +59,10 @@ export const acuityColumns: ColumnDef<AcuityData>[] = [
         </Button>
       );
     },
+    cell: ({ row }) => {
+      const value = row.getValue<string | null>("class");
+      return value ?? "N/A";
+    },
   },
   {
     accessorKey: "instructor",
@@ -74,6 +78,10 @@ export const acuityColumns: ColumnDef<AcuityData>[] = [
         </Button>
       );
     },
+    cell: ({ row }) => {
+      const value = row.getValue<string | null>("instructor");
+      return value ?? "N/A";
+    },
   },
   {
     accessorKey: "date",
@@ -88,6 +96,11 @@ export const acuityColumns: ColumnDef<AcuityData>[] = [
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
       );
+    },
+    cell: ({ row }) => {
+      const value = row.getValue<string>("date");
+      const dt = DateTime.fromISO(value);
+      return dt.isValid ? dt.toFormat("M/d/yy") : "N/A";
     },
   },
 ];

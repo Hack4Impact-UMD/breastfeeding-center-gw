@@ -13,11 +13,11 @@ import { Navigate, useParams } from "react-router";
 import { useClientByPatientId } from "@/hooks/queries/useClientById.ts";
 import Loading from "@/components/Loading.tsx";
 import { useJaneApptsForClient } from "@/hooks/queries/useJaneApptsForClient.ts";
+import { useAcuityApptsForClient } from "@/hooks/queries/useAcuityApptsForClient.ts";
 
 const ClientJourney = () => {
   //styles
   const centerItemsInDiv = "flex justify-between items-center";
-  const dividingLine = "w-full h-1 border-t border-black-500 mt-3 mb-3";
   const tableSection = "py-3 space-y-3";
 
   const { id: clientId } = useParams();
@@ -36,18 +36,12 @@ const ClientJourney = () => {
     error,
   } = useJaneApptsForClient(clientId ?? "");
 
-  const sampleAcuityData: AcuityData[] = [
-    {
-      class: "Class A",
-      instructor: "A. Smith",
-      date: "3/01/24",
-    },
-    {
-      class: "Class B",
-      instructor: "A. Smith",
-      date: "3/01/23",
-    },
-  ];
+  // get Acuity appts for the specific client
+  const {
+    data: acuityApptData,
+    isPending: isAcuityPending,
+    error: acuityError,
+  } = useAcuityApptsForClient(clientInfo?.email ?? "");
 
   const samplePaysimple: PaySimpleRentals[] = [
     {
@@ -96,6 +90,13 @@ const ClientJourney = () => {
       };
     }) ?? [];
 
+  const acuityData: AcuityData[] =
+    acuityApptData?.map((appt) => ({
+      class: appt.class,
+      instructor: appt.instructor,
+      date: appt.datetime,
+    })) ?? [];
+
   if (!clientId) return <Navigate to="/" />;
 
   return (
@@ -104,27 +105,27 @@ const ClientJourney = () => {
         {/*headings*/}
         <div className={centerItemsInDiv}>
           <div>
-            <h1 className="font-bold text-4xl lg:text-5xl">Client Journey</h1>
+            <h1 className="font-bold text-3xl sm:text-4xl lg:text-5xl">
+              Client Journey
+            </h1>
           </div>
         </div>
 
-        {isClientInfoPending || isPending ? (
+        {isClientInfoPending || isPending || isAcuityPending ? (
           <Loading />
-        ) : clientInfoError || error ? (
+        ) : clientInfoError || error || acuityError ? (
           <Navigate to="/*" />
         ) : (
           <>
             {/*info section*/}
-            <div className="flex flex-col space-y-1">
-              <div className={dividingLine}></div> {/* dividing line */}
-              {/* Information in between lines */}
-              <div className="text-left space-y-2 px-3 py-2 w-full max-w-md">
+            <div className="flex flex-col space-y-1 pt-1">
+              <div className="text-left space-y-2 py-2 w-full max-w-md text-sm sm:text-base pt-3 pb-4">
                 <div>
-                  <strong>NAME:</strong> {clientInfo?.firstName}{" "}
-                  {clientInfo?.lastName}
+                  <strong className="pr-2">NAME:</strong>{" "}
+                  {clientInfo?.firstName} {clientInfo?.lastName}
                 </div>
                 <div>
-                  <strong>CHILDREN: </strong>
+                  <strong className="pr-2">CHILDREN:</strong>
                   {clientInfo?.baby.map((child, index) => (
                     <span key={index}>
                       {child.firstName} {child.lastName}
@@ -133,23 +134,26 @@ const ClientJourney = () => {
                   ))}
                 </div>
               </div>
-              <div className={dividingLine}></div> {/* dividing line */}
             </div>
 
             {/*tables section*/}
             <div>
               <div className={tableSection}>
-                <h2 className="font-bold">Acuity Classes</h2>
+                <h2 className="font-bold text-base sm:text-3xl">
+                  Acuity Classes
+                </h2>
                 <DataTable
                   columns={acuityColumns}
-                  data={sampleAcuityData}
+                  data={acuityData}
                   tableType="default"
                   pageSize={5}
                 />
               </div>
 
               <div className={tableSection}>
-                <h2 className="font-bold">JANE Consults</h2>
+                <h2 className="font-bold text-base sm:text-3xl">
+                  Jane Consults
+                </h2>
                 <DataTable
                   columns={janeConsultsColumns}
                   data={formattedJaneConsultsData}
@@ -159,7 +163,9 @@ const ClientJourney = () => {
               </div>
 
               <div className={tableSection}>
-                <h2 className="font-bold">Paysimple Rentals</h2>
+                <h2 className="font-bold text-base sm:text-3xl">
+                  Paysimple Rentals
+                </h2>
                 <DataTable
                   columns={paysimpleColumns}
                   data={samplePaysimple}
@@ -169,7 +175,9 @@ const ClientJourney = () => {
               </div>
 
               <div className={tableSection}>
-                <h2 className="font-bold">One-Time Purchases</h2>
+                <h2 className="font-bold text-base sm:text-3xl">
+                  One-Time Purchases
+                </h2>
                 <DataTable
                   columns={oneTimePurchaseColumns}
                   data={sampleOTPs}
