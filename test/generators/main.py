@@ -1,3 +1,4 @@
+#!/bin/python3
 import csv
 import random
 from datetime import datetime, timedelta
@@ -301,7 +302,7 @@ with open(APPT_FILE, "w", newline="") as f:
             for baby_guid in baby_guids:
                 patient_registry[baby_guid]["Last Visit"] = dt_str(last_appt_end)
 
-print(f"Generated appointment series for {args.num_appointments} clients in appointments.csv.")
+print(f"Generated appointment series for {args.num_appointments} parent clients in appointments.csv.")
 
 # --------------------------------------
 # WRITE CLIENTS CSV
