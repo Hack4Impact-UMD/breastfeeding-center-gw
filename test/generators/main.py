@@ -16,7 +16,7 @@ parser.add_argument(
     help="The number of past months to generate appointments over. Default is 3.",
 )
 parser.add_argument(
-    "--num-appointments",
+    "--num-appts",
     type=int,
     default=300,
     help="The number of parent appointments to generate. Default is 300.",
@@ -188,7 +188,7 @@ with open(APPT_FILE, "w", newline="") as f:
     writer.writerow(APPT_HEADERS)
 
     # Create a series of appointments for each of the number of clients specified.
-    for i in range(args.num_appointments):
+    for i in range(args.num_appts):
         # 1. Create family
         clinician = random.choice(STAFF)
         parent_guid = create_patient_and_register(is_baby=False)
@@ -302,7 +302,7 @@ with open(APPT_FILE, "w", newline="") as f:
             for baby_guid in baby_guids:
                 patient_registry[baby_guid]["Last Visit"] = dt_str(last_appt_end)
 
-print(f"Generated appointment series for {args.num_appointments} parent clients in appointments.csv.")
+print(f"Generated appointment series for {args.num_appts} parent clients in appointments.csv.")
 
 # --------------------------------------
 # WRITE CLIENTS CSV
