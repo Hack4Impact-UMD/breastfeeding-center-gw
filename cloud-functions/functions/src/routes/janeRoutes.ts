@@ -61,12 +61,20 @@ router.post(
       let clientsList: Client[] =
         await getAllFirebaseClients(referencedClientIds);
 
+      // use list of clients on firebase as the initial primary client ids
+      const primaryClientIds = new Set<string>(clientsList.map(c => c.id));
+
       logger.info("client list:");
       logger.info(clientsList);
 
       const janeIdToUUIDMap = new Map<string, string>();
       clientsList.forEach((c) => {
         if (c.janeId) janeIdToUUIDMap.set(c.janeId, c.id);
+        if (c.associatedClients) {
+          c.associatedClients.forEach(ac => {
+            if (ac.janeId) janeIdToUUIDMap.set(ac.janeId, ac.id);
+          });
+        }
       });
 
       const babiesMap: Map<string, Baby> = new Map();
@@ -143,9 +151,9 @@ router.post(
 
       // iterate through each group of appts with the same start time + clinician
       for (const appointments of appointments_map.values()) {
-        let parent = null; // Client type
+        const parents: Client[] = []; // Client type
         const babies: Baby[] = []; // list of baby type
-        let parentAppt: RawJaneAppt | null = null; // JaneAppt type, the parent's appointment
+        const parentAppts: Map<string, RawJaneAppt> = new Map(); // JaneAppt type, the parent's appointment
         const potentiallyMissing: string[] = [];
         let foundClientInGroup = false;
 
@@ -167,8 +175,8 @@ router.post(
           } else {
             // get the client info, either from firebase or the clients sheet if the client is not in the db yet
             if (clientMap.has(appt.janePatientNumber)) {
-              const client = clientMap.get(appt.janePatientNumber);
-              parent = client;
+              const client = clientMap.get(appt.janePatientNumber)!;
+              parents.push(client);
               foundClientInGroup = true;
             } else {
               // if the client is not in firebase or the clients sheet, we cannot add this appointment
@@ -180,7 +188,7 @@ router.post(
               }
               continue; // skip this appointment
             }
-            parentAppt = appt;
+            parentAppts.set(appt.janePatientNumber, appt);
           }
         }
         if (!foundClientInGroup) {
@@ -189,24 +197,54 @@ router.post(
 
         // add to the parent object's babies array using the babies matched with their appointment.
         // NOTE: only add the new babies if they do not already exist in the parent's baby array (check based on their ids)
-        const parentResolved = parent;
+        // use existing primary client if we have one, otherwise choose the last client
+        const parentResolved = parents.find(c => primaryClientIds.has(c.id)) ?? parents[parents.length - 1];
         if (!parentResolved) {
           continue;
         }
 
-        // merging parent existing baby list and new baby
-        // this implementation may be inefficient
+        primaryClientIds.add(parentResolved.id);
+
+        const associatedClients = parents.filter(p => p.janeId !== parentResolved.janeId);
+
+        // Merge new associated clients instead of overwriting.
+        if (!parentResolved.associatedClients) {
+          parentResolved.associatedClients = [];
+        }
+
+        associatedClients.forEach((client) => {
+          if (
+            !parentResolved.associatedClients.some(
+              (existingClient) => existingClient.janeId && client.janeId && existingClient.janeId === client.janeId
+            )
+          ) {
+            parentResolved.associatedClients.push(client);
+          }
+        });
+
+        const parentAppt = parentAppts.get(parentResolved.janeId!);
+
         if (!parentResolved.baby) {
           parentResolved.baby = [];
         }
 
-        babies.forEach((baby) => {
+        const allBabiesInGroup = [...babies];
+
+        associatedClients.forEach(client => {
+          if (client.baby) {
+            allBabiesInGroup.push(...client.baby);
+            client.baby = []; // Clear babies from associate to prevent duplication
+          }
+        });
+
+        // Merge all collected babies into the primary parent, avoiding duplicates
+        allBabiesInGroup.forEach((baby) => {
           if (
-            !parentResolved?.baby.some(
+            !parentResolved.baby.some(
               (existingBaby: { id: string }) => existingBaby.id === baby.id,
             )
           ) {
-            parentResolved?.baby.push(baby);
+            parentResolved.baby.push(baby);
           }
         });
 
