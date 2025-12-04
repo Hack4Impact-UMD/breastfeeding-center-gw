@@ -2,6 +2,26 @@ import csv
 import random
 from datetime import datetime, timedelta
 import faker
+import argparse
+
+# --------------------------------------
+# COMMAND LINE ARGUMENTS
+# --------------------------------------
+parser = argparse.ArgumentParser(description="Generate mock appointment and client data.")
+parser.add_argument(
+    "--months",
+    type=int,
+    default=3,
+    help="The number of past months to generate appointments over. Default is 3.",
+)
+parser.add_argument(
+    "--num-appointments",
+    type=int,
+    default=300,
+    help="The number of parent appointments to generate. Default is 300.",
+)
+args = parser.parse_args()
+
 
 fake = faker.Faker()
 
@@ -51,7 +71,7 @@ STAFF = ["Test", "Dr. Smith", "Nurse Johnson", "Theresa Brown"]
 REFERRAL_SOURCES = ["JANE", "Google", "Hospital", "Friend", "OBGYN"]
 
 NOW = datetime.now()
-ONE_MONTH_AGO = NOW - timedelta(days=30)
+APPOINTMENT_PERIOD_START = NOW - timedelta(days=args.months * 30)
 
 fake = faker.Faker()
 
@@ -61,8 +81,8 @@ patient_registry = {}
 # --------------------------------------
 # HELPERS
 # --------------------------------------
-def dt_last_month():
-    return fake.date_time_between(start_date=ONE_MONTH_AGO, end_date=NOW)
+def get_random_dt_in_period():
+    return fake.date_time_between(start_date=APPOINTMENT_PERIOD_START, end_date=NOW)
 
 def dt_str(dt):
     return dt.strftime("%Y-%m-%d %H:%M:%S -0500")
@@ -166,97 +186,122 @@ with open(APPT_FILE, "w", newline="") as f:
     writer = csv.writer(f)
     writer.writerow(APPT_HEADERS)
 
-    # Parent appointments
-    for i in range(500):  
-        global_id = next_id
-        next_id += 1
-
-        start = dt_last_month()
-        end = start + timedelta(hours=random.choice([1, 1.5, 2]))
+    # Create a series of appointments for each of the number of clients specified.
+    for i in range(args.num_appointments):
+        # 1. Create family
         clinician = random.choice(STAFF)
-
-        # Create parent
         parent_guid = create_patient_and_register(is_baby=False)
         parent = patient_registry[parent_guid]
 
-        parent["First Visit"] = dt_str(start)
-        parent["Last Visit"] = dt_str(end)
-
-        # Write parent appointment
-        writer.writerow([
-            global_id,
-            LOCATION,
-            dt_str(start),
-            dt_str(end),
-            parent_guid,
-            parent["Patient Number"],
-            "",
-            parent["First Name"],
-            parent["Preferred Name"],
-            parent["Last Name"],
-            random.choice(ADULT_TREATMENTS),
-            clinician,
-            "",
-            "",
-            "",
-            "true",
-            random.choice(["signed","unsigned"]),
-            "",
-            dt_str(dt_last_month()),
-            dt_str(dt_last_month()),
-            random.choice(["true","false"]),
-            "",
-            "",
-            "",
-            "",
-            parent["Referral Source"]
-        ])
-
-        # -------------------------
-        # Babies linked to parent
-        # -------------------------
+        baby_guids = []
         num_babies = random.randint(0, 2)
-
         for _ in range(num_babies):
             baby_guid = create_patient_and_register(is_baby=True, parent=parent)
             baby = patient_registry[baby_guid]
-
-            baby["First Visit"] = dt_str(start)
-            baby["Last Visit"] = dt_str(end)
             baby["Guardian Name"] = f"{parent['First Name']} {parent['Last Name']}"
+            baby_guids.append(baby_guid)
 
-            next_id += 1
+        # 2. Set up appointment series
+        appointments_to_create = []
+        first_appt_start = get_random_dt_in_period()
+        appointments_to_create.append(first_appt_start)
+
+        last_appt_end = None
+
+        if random.random() < 0.3: # 30% chance of recurring appointments
+            num_recurring = random.randint(1, 6)
+            for week_offset in range(1, num_recurring + 1):
+                next_appt_start = first_appt_start + timedelta(weeks=week_offset)
+                if next_appt_start < NOW:
+                    appointments_to_create.append(next_appt_start)
+                else:
+                    break
+
+        # 3. Write appointments for the series
+        for idx, start_time in enumerate(appointments_to_create):
+            is_first_visit = (idx == 0)
+            end_time = start_time + timedelta(hours=random.choice([1, 1.5, 2]))
+
+            # Keep track of first and last visit times for the client record
+            if is_first_visit:
+                parent["First Visit"] = dt_str(start_time)
+                for baby_guid in baby_guids:
+                    patient_registry[baby_guid]["First Visit"] = dt_str(start_time)
             
+            last_appt_end = end_time # continuously update, last one will stick
+
+            # Write parent appointment for this occurrence
+            global_id = next_id
+            next_id += 1
             writer.writerow([
-                next_id,
+                global_id,
                 LOCATION,
-                dt_str(start),
-                dt_str(end),
-                baby_guid,
-                baby["Patient Number"],
+                dt_str(start_time),
+                dt_str(end_time),
+                parent_guid,
+                parent["Patient Number"],
                 "",
-                baby["First Name"],
-                baby["Preferred Name"],
-                baby["Last Name"],
-                random.choice(BABY_TREATMENTS),
-                clinician,           # same clinician
-                "",
-                "",
-                "",
-                "false",
-                "",
-                "",
-                dt_str(dt_last_month()),
-                "",
-                "false",
+                parent["First Name"],
+                parent["Preferred Name"],
+                parent["Last Name"],
+                random.choice(ADULT_TREATMENTS),
+                clinician,
                 "",
                 "",
                 "",
+                "true" if is_first_visit else "false",
+                random.choice(["signed","unsigned"]),
                 "",
-                "Parent"
+                dt_str(get_random_dt_in_period()),
+                dt_str(get_random_dt_in_period()),
+                random.choice(["true","false"]),
+                "",
+                "",
+                "",
+                "",
+                parent["Referral Source"]
             ])
 
-print("appointments.csv generated.")
+            # Write baby appointments for this occurrence
+            for baby_guid in baby_guids:
+                baby = patient_registry[baby_guid]
+                next_id += 1
+                writer.writerow([
+                    next_id,
+                    LOCATION,
+                    dt_str(start_time),
+                    dt_str(end_time), # same start and end as parent
+                    baby_guid,
+                    baby["Patient Number"],
+                    "",
+                    baby["First Name"],
+                    baby["Preferred Name"],
+                    baby["Last Name"],
+                    random.choice(BABY_TREATMENTS),
+                    clinician,           # same clinician
+                    "",
+                    "",
+                    "",
+                    "false", # baby visit is never the 'first'
+                    "",
+                    "",
+                    dt_str(get_random_dt_in_period()),
+                    "",
+                    "false",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "Parent"
+                ])
+
+        # 4. Update last visit for the family
+        if last_appt_end:
+            parent["Last Visit"] = dt_str(last_appt_end)
+            for baby_guid in baby_guids:
+                patient_registry[baby_guid]["Last Visit"] = dt_str(last_appt_end)
+
+print(f"Generated appointment series for {args.num_appointments} clients in appointments.csv.")
 
 # --------------------------------------
 # WRITE CLIENTS CSV
