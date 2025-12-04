@@ -84,8 +84,8 @@ function computeAttendanceByInterval(
     }
     const instructorMap = instructorAttendanceByInterval.get(intervalKey)!;
     instructorMap.set(
-      classCategory,
-      (instructorMap.get(classCategory) || 0) + 1,
+      instructor,
+      (instructorMap.get(instructor) || 0) + 1,
     );
 
     if (!instructorDataByClass.has(className)) {
@@ -426,8 +426,9 @@ export default function AcuityDashboardPage() {
         };
       });
 
+
+    //TODO: Fix this somehow
     const instructorData = classFilterOptions
-      .filter((cat) => cat !== "ALL CLASSES")
       .map((category) => {
         const normalizedCategory = normalizeCategory(category);
         return {
@@ -644,8 +645,8 @@ export default function AcuityDashboardPage() {
             <div className="flex flex-row">
               <button
                 className={`${graphTableButtonStyle} ${attendanceDisplay == "graph"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
                   }`}
                 onClick={() => setAttendanceDisplay("graph")}
               >
@@ -653,8 +654,8 @@ export default function AcuityDashboardPage() {
               </button>
               <button
                 className={`${graphTableButtonStyle} ${attendanceDisplay == "table"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
                   }`}
                 onClick={() => setAttendanceDisplay("table")}
               >
@@ -801,8 +802,8 @@ export default function AcuityDashboardPage() {
           <div className="flex flex-row">
             <button
               className={`${graphTableButtonStyle} ${popularityDisplay == "graph"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#f5f5f5]"
+                ? "bg-bcgw-gray-light"
+                : "bg-[#f5f5f5]"
                 }`}
               onClick={() => setPopularityDisplay("graph")}
             >
@@ -810,8 +811,8 @@ export default function AcuityDashboardPage() {
             </button>
             <button
               className={`${graphTableButtonStyle} ${popularityDisplay == "table"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#f5f5f5]"
+                ? "bg-bcgw-gray-light"
+                : "bg-[#f5f5f5]"
                 }`}
               onClick={() => setPopularityDisplay("table")}
             >
