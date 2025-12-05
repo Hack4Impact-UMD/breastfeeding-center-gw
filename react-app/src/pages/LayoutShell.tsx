@@ -1,10 +1,23 @@
 import Header from "@/components/Header";
 import NavigationBar from "@/components/NavigationBar/NavigationBar";
 import MobileNavigationBar from "@/components/MobileNavigationBar";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import '@/components/Toasts/custom-toast.css';
+import { IoIosClose } from "react-icons/io";
 import { useState } from "react";
 import { Outlet } from "react-router";
 export default function LayoutShell() {
+  
   const [navBarOpen, setNavBarOpen] = useState(true);
+
+  const CloseButton = ({ closeToast }: any) => (
+    <IoIosClose 
+      onClick={closeToast}
+      className="text-white cursor-pointer"
+      size={28}
+    />
+  );
 
   return (
     <div className="w-full h-full">
@@ -30,6 +43,22 @@ export default function LayoutShell() {
           <Outlet />
         </div>
       </div>
+      
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick={true}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        closeButton={CloseButton}
+        icon={false} 
+      />
+      
     </div>
   );
 }
