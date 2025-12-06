@@ -224,7 +224,7 @@ const JaneDashboardPage = () => {
                   <span className="self-start font-semibold text-2xl mb-20">
                     Visit Breakdown: {dateRangeLabel}
                   </span>
-                  <div className="flex flex-col items-center justify-start bg-white min-h-[400px] border-2 border-black p-5 mt-5 rounded-2xl">
+                  <div className="flex flex-col items-center justify-start bg-white h-116 border-2 border-black p-5 mt-5 rounded-2xl">
                     <ExportContent
                       className={`w-full grow flex flex-col justify-center`}
                     >

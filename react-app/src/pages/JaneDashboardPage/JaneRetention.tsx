@@ -218,7 +218,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
                   }
                 />
               </div>
-              <ExportContent className="w-full">
+              <ExportContent className="w-full h-92">
                 <ExportOnly className="mb-5">
                   <h1 className="text-xl font-bold text-black">
                     Client Retention
