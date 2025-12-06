@@ -291,8 +291,7 @@ const JaneDashboardPage = () => {
                     Visit Breakdown: {dateRangeLabel}
                   </span>
                   <DataTable
-                    className="h-128"
-                    rowClassName="h-16 !border-b !border-b-black"
+                    rowClassName="h-16"
                     columns={visitBreakdownColumns}
                     data={visitBreakdownData}
                     tableType="default"
