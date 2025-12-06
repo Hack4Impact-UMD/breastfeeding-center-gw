@@ -249,19 +249,19 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
                   )}
                   data={retentionData}
                   tableType="default"
+                  className="h-128"
+                  rowClassName="h-16"
                   tableHeaderExtras={
-                    <div className="flex justify-end px-4 h-9">
-                      <div className="w-64">
-                        <SelectDropdown
-                          options={["ALL CLIENTS", "RECENT CHILDBIRTH"]}
-                          selected={selectedDropdown}
-                          onChange={(val) =>
-                            setSelectedDropdown(
-                              val as "ALL CLIENTS" | "RECENT CHILDBIRTH",
-                            )
-                          }
-                        />
-                      </div>
+                    <div className="flex w-full h-full items-center justify-end px-2">
+                      <SelectDropdown
+                        options={["ALL CLIENTS", "RECENT CHILDBIRTH"]}
+                        selected={selectedDropdown}
+                        onChange={(val) =>
+                          setSelectedDropdown(
+                            val as "ALL CLIENTS" | "RECENT CHILDBIRTH",
+                          )
+                        }
+                      />
                     </div>
                   }
                 />
