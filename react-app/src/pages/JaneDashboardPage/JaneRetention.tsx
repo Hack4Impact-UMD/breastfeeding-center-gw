@@ -79,7 +79,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer border border-gray-300";
   const centerItemsInDiv = "flex justify-between items-center";
   const chartDiv =
-    "flex flex-col items-center justify-center bg-white min-h-[400px] border-2 border-black p-5 mt-5 rounded-2xl";
+    "flex flex-col items-center justify-center bg-white min-h-116 border-2 border-black p-5 mt-5 rounded-2xl";
 
   const [retentionDisplay, setRetentionDisplay] =
     useState<string>("graph");
@@ -198,47 +198,49 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
         <div className={retentionDisplay === "graph" ? chartDiv : ""}>
           {isRetentionLoading ? (
             <Loading />
-          ) : noData ? (
-            <div className="w-full flex grow items-center justify-center p-2">
-              <p className="text-center">
-                No data. Check the selected date range.
-              </p>
-            </div>
           ) : retentionDisplay === "graph" ? (
-            <>
-              {/* GRAPH VIEW – keep dropdown top-right in card */}
-              <div className="self-end mb-4">
-                <SelectDropdown
-                  options={["ALL CLIENTS", "RECENT CHILDBIRTH"]}
-                  selected={selectedDropdown}
-                  onChange={(val) =>
-                    setSelectedDropdown(
-                      val as "ALL CLIENTS" | "RECENT CHILDBIRTH",
-                    )
-                  }
-                />
+            noData ? (
+              <div className="w-full flex grow items-center justify-center p-2">
+                <p className="text-center">
+                  No data. Check the selected date range.
+                </p>
               </div>
-              <ExportContent className="w-full h-92">
-                <ExportOnly className="mb-5">
-                  <h1 className="text-xl font-bold text-black">
-                    Client Retention
-                  </h1>
-                  <p className="text-base text-black">{dateRangeLabel}</p>
-                  <p className="text-gray-800 text-sm">
-                    {selectedDropdown}
-                  </p>
-                </ExportOnly>
-                <div className="w-full flex flex-col items-center justify-center mt-4">
-                  <BarChart
-                    height={300}
-                    data={funnelData}
-                    series={
-                      <BarSeries layout="vertical" bar={<CustomBar />} />
+            ) : (
+              <>
+                {/* GRAPH VIEW – keep dropdown top-right in card */}
+                <div className="self-end mb-4">
+                  <SelectDropdown
+                    options={["ALL CLIENTS", "RECENT CHILDBIRTH"]}
+                    selected={selectedDropdown}
+                    onChange={(val) =>
+                      setSelectedDropdown(
+                        val as "ALL CLIENTS" | "RECENT CHILDBIRTH",
+                      )
                     }
                   />
                 </div>
-              </ExportContent>
-            </>
+                <ExportContent className="w-full h-92">
+                  <ExportOnly className="mb-5">
+                    <h1 className="text-xl font-bold text-black">
+                      Client Retention
+                    </h1>
+                    <p className="text-base text-black">{dateRangeLabel}</p>
+                    <p className="text-gray-800 text-sm">
+                      {selectedDropdown}
+                    </p>
+                  </ExportOnly>
+                  <div className="w-full flex flex-col items-center justify-center mt-4">
+                    <BarChart
+                      height={300}
+                      data={funnelData}
+                      series={
+                        <BarSeries layout="vertical" bar={<CustomBar />} />
+                      }
+                    />
+                  </div>
+                </ExportContent>
+              </>
+            )
           ) : (
             <>
               {/* TABLE VIEW */}

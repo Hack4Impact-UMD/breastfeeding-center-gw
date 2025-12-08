@@ -2,17 +2,17 @@ import { toast } from "react-toastify";
 import { IoIosClose } from "react-icons/io";
 import alertIcon from '@/assets/alert.png';
 
-type AlertToastProps = {
+type WarningToastProps = {
   message: string;
   closeToast?: () => void;
 };
 
-export function AlertToast({ message, closeToast }: AlertToastProps) {
+export function WarningToast({ message, closeToast }: WarningToastProps) {
   return (
     <div className="bg-slate-800 text-white rounded-xl shadow-lg p-4 flex items-center gap-3 max-w-[400px] w-full">
-      <img 
+      <img
         src={alertIcon}
-        alt="alert" 
+        alt="alert"
         className="w-5 h-5 flex-shrink-0"
       />
       <div className="flex-1 text-[15px] break-words">{message}</div>
@@ -25,10 +25,14 @@ export function AlertToast({ message, closeToast }: AlertToastProps) {
   );
 }
 
-export function showAlertToast(message: string, autoClose: number = 5000) {
-  toast.warning(<AlertToast message={message} />, {
+export function showWarningToast(message: string, autoClose: number = 5000) {
+  toast.warning(<WarningToast message={message} />, {
     position: "bottom-right",
     closeButton: false,
+    style: {
+      padding: 0,
+      backgroundColor: "transparent"
+    },
     hideProgressBar: true,
     icon: false,
     autoClose: autoClose,

@@ -10,9 +10,9 @@ type ErrorToastProps = {
 export function ErrorToast({ message, closeToast }: ErrorToastProps) {
   return (
     <div className="bg-slate-800 text-white rounded-xl shadow-lg p-4 flex items-center gap-3 max-w-[400px] w-full">
-      <img 
+      <img
         src={errorIcon}
-        alt="error" 
+        alt="error"
         className="w-5 h-5 flex-shrink-0"
       />
       <div className="flex-1 text-[15px] break-words">{message}</div>
@@ -29,6 +29,10 @@ export function showErrorToast(message: string, autoClose: number = 5000) {
   toast.error(<ErrorToast message={message} />, {
     position: "bottom-right",
     closeButton: false,
+    style: {
+      padding: 0,
+      backgroundColor: "transparent"
+    },
     hideProgressBar: true,
     icon: false,
     autoClose: autoClose,
