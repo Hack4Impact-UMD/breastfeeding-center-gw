@@ -13,6 +13,7 @@ import { janeIDDataColumns } from "./JaneDataTableColumns.tsx";
 import { DateRange } from "react-day-picker";
 import { useState } from "react";
 import { Button } from "@/components/ui/button.tsx";
+
 const JaneDataPage = () => {
   // style
   const centerItemsInDiv = "flex justify-between items-center";
@@ -55,7 +56,6 @@ const JaneDataPage = () => {
             />
           </div>
         </div>
-
         {/* UPLOAD BUTTON */}
         <div className={`${centerItemsInDiv} basis-20xs mt-4 mb-4`}>
           <Button

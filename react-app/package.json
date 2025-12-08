@@ -43,6 +43,7 @@
     "react-phone-number-input": "^3.4.13",
     "react-router": "^7.2.0",
     "react-router-dom": "^7.2.0",
+    "react-toastify": "^11.0.5",
     "react-tooltip": "^5.29.1",
     "reaviz": "^16.0.4",
     "tailwind-merge": "^3.2.0",
