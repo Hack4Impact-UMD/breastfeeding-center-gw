@@ -1,4 +1,5 @@
 import { axiosClient } from "@/lib/utils";
+import { AcuityAppointment } from "@/types/AcuityType";
 
 interface RawClassInfo {
   date: Date;
@@ -27,6 +28,24 @@ Write functions to retrieve the following information
 /*
  * Get all appointments
  */
+export async function getAllAcuityApptsInRange(startDate: string, endDate: string): Promise<AcuityAppointment[]> {
+  const axios = await axiosClient();
+  const response = await axios.get("/acuity/appointments", {
+    params: { startDate, endDate }
+  });
+  return response.data as AcuityAppointment[];
+}
+
+export async function getAllAcuityApptsForClient(
+  email: string
+): Promise<AcuityAppointment[]> {
+  const axios = await axiosClient();
+  const response = await axios.get("/acuity/appointments/client", {
+    params: { email }
+  });
+  return response.data as AcuityAppointment[];
+}
+
 
 export async function getAppointments() {
   const axios = await axiosClient();

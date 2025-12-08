@@ -1,4 +1,3 @@
-"use client";
 import { useNavigate } from "react-router-dom";
 import { SearchIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { FiTrash } from "react-icons/fi";
@@ -27,6 +26,7 @@ import {
 import { Button } from "../ui/button";
 import { ClientTableRow } from "@/pages/ClientListPage/ClientListTableColumns";
 import { useAuth } from "@/auth/AuthProvider";
+import { cn } from "@/lib/utils";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -36,6 +36,8 @@ interface DataTableProps<TData, TValue> {
   tableHeaderExtras?: React.ReactNode;
   pageSize?: number;
   paginate?: boolean;
+  className?: string;
+  rowClassName?: string;
 }
 
 export function DataTable<TData, TValue>({
@@ -46,6 +48,8 @@ export function DataTable<TData, TValue>({
   tableHeaderExtras,
   pageSize = 10,
   paginate = true,
+  className = "",
+  rowClassName = ""
 }: DataTableProps<TData, TValue>) {
   const auth = useAuth();
   const [globalFilter, setGlobalFilter] = useState("");
@@ -143,34 +147,46 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
 
-      <div className="border-2 rounded-none overflow-hidden">
+      <div className={cn("border-2 rounded-none overflow-hidden bg-white", className)}>
         {tableHeaderExtras && (
-          <div className="p-2 w-full bg-[#0C3D6B33] border-b">
+          <div
+            className={
+              cn(
+                "w-full border-b border-black",
+                `${tableType === "janeData" ||
+                  tableType === "default" ||
+                  tableType === "clientsLost"
+                  ? "bg-[#0C3D6B33]"
+                  : "bg-[#B9C4CE]"
+                }`,
+                rowClassName
+              )
+            }
+          >
             {tableHeaderExtras}
           </div>
         )}
-
         <Table>
           <TableHeader
-            className={`${
-              tableType === "janeData" ||
+            className={`${tableType === "janeData" ||
               tableType === "default" ||
               tableType === "clientsLost"
-                ? "bg-[#0C3D6B33]"
-                : "bg-[#B9C4CE]"
-            }`}
+              ? "bg-[#0C3D6B33]"
+              : "bg-[#B9C4CE]"
+              }`}
           >
+
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow className={rowClassName} key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id} className="align-left p-0">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </TableHead>
                   );
                 })}
@@ -192,17 +208,16 @@ export function DataTable<TData, TValue>({
                       }
                     }}
                     data-state={row.getIsSelected() ? "selected" : "unselected"}
-                    className="group data-[state=selected]:bg-gray-200 data-[state=unselected]:bg-white"
+                    className={cn("group data-[state=selected]:bg-[#F5BB4782] data-[state=unselected]:bg-white", rowClassName)}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell
                         key={cell.id}
-                        className={`${
-                          tableType === "clientList" ||
+                        className={`${tableType === "clientList" ||
                           tableType === "clientsLost"
-                            ? "cursor-pointer group-hover:bg-gray-300 transition-colors"
-                            : ""
-                        }`}
+                          ? "cursor-pointer group-hover:bg-[#F5BB4782] group-active:bg-bcgw-yellow-dark transition-colors"
+                          : ""
+                          }`}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
@@ -214,7 +229,7 @@ export function DataTable<TData, TValue>({
                 );
               })
             ) : (
-              <TableRow>
+              <TableRow className={rowClassName}>
                 <TableCell
                   colSpan={columns.length}
                   className="h-24 text-center"
@@ -274,11 +289,10 @@ export function DataTable<TData, TValue>({
                     );
                   }
                 }}
-                className={`border-2 border-black w-8 h-8 text-center focus:outline-none focus:ring-2 focus:ring-[#0C3D6B] ${
-                  table.getPageCount() <= 1
-                    ? "opacity-50 cursor-not-allowed"
-                    : ""
-                }`}
+                className={`border-2 border-black w-8 h-8 text-center focus:outline-none focus:ring-2 focus:ring-[#0C3D6B] ${table.getPageCount() <= 1
+                  ? "opacity-50 cursor-not-allowed"
+                  : ""
+                  }`}
               />
             </div>
             <span className="text-base">of {table.getPageCount()}</span>
@@ -287,11 +301,10 @@ export function DataTable<TData, TValue>({
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
-              className={`rounded-none w-8 h-8 flex items-center justify-center border-2 ${
-                table.getCanPreviousPage()
-                  ? "border-black text-[#222] cursor-pointer"
-                  : "border-gray-300 text-gray-300 cursor-not-allowed"
-              }`}
+              className={`rounded-none w-8 h-8 flex items-center justify-center border-2 ${table.getCanPreviousPage()
+                ? "border-black text-[#222] cursor-pointer"
+                : "border-gray-300 text-gray-300 cursor-not-allowed"
+                }`}
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
               aria-label="Previous page"
@@ -305,11 +318,10 @@ export function DataTable<TData, TValue>({
             </Button>
             <Button
               variant="ghost"
-              className={`rounded-none w-8 h-8 flex items-center justify-center border-2 ${
-                table.getCanNextPage()
-                  ? "border-black text-[#222] cursor-pointer"
-                  : "border-gray-300 text-gray-300 cursor-not-allowed"
-              }`}
+              className={`rounded-none w-8 h-8 flex items-center justify-center border-2 ${table.getCanNextPage()
+                ? "border-black text-[#222] cursor-pointer"
+                : "border-gray-300 text-gray-300 cursor-not-allowed"
+                }`}
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
               aria-label="Next page"

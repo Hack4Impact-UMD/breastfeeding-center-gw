@@ -1,8 +1,6 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useMemo } from "react";
 import ClientLostPopup from "./ClientLostPopup.tsx";
 import { BarChart, BarSeries, BarProps, Bar, BarLabel } from "reaviz";
-import { toPng } from "html-to-image";
-import download from "downloadjs";
 import {
   LostClient,
   RetentionRate,
@@ -14,6 +12,36 @@ import { DataTable } from "@/components/DataTable/DataTable";
 import { Button } from "@/components/ui/button.tsx";
 import SelectDropdown from "@/components/SelectDropdown.tsx";
 import Loading from "@/components/Loading.tsx";
+import { Export } from "@/components/export/Export.tsx";
+import ExportContent from "@/components/export/ExportContent.tsx";
+import ExportTrigger from "@/components/export/ExportTrigger.tsx";
+import ExportOnly from "@/components/export/ExportOnly.tsx";
+import { formatDate } from "@/lib/utils.ts";
+import type { Client } from "@/types/ClientType";
+import { hasRecentBirth } from "@/lib/clientUtils.ts";
+
+function filterClients(
+  clientsByNumVisits: { [key: number]: Client[] } | undefined,
+  endDate?: Date,
+  mode: "ALL CLIENTS" | "RECENT CHILDBIRTH" = "ALL CLIENTS",
+): { [key: number]: Client[] } | undefined {
+  if (!clientsByNumVisits) return undefined;
+  if (mode !== "RECENT CHILDBIRTH") return clientsByNumVisits;
+  if (!endDate) return clientsByNumVisits;
+
+  const refDate = endDate;
+  const result: { [key: number]: Client[] } = {};
+
+  Object.entries(clientsByNumVisits).forEach(([visitStr, clients]) => {
+    const visit = Number(visitStr);
+    result[visit] = clients.filter((client) =>
+      hasRecentBirth(client, refDate),
+    );
+  });
+
+  return result;
+}
+
 
 type JaneRetentionProps = {
   startDate?: Date | undefined;
@@ -44,40 +72,23 @@ function CustomBar(props: Partial<BarProps>) {
 }
 
 const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
-  const [selectedDropdown, setSelectedDropdown] = useState("ALL CLIENTS");
-  const funnelChartRef = useRef<HTMLDivElement>(null);
+  const [selectedDropdown, setSelectedDropdown] =
+    useState<"ALL CLIENTS" | "RECENT CHILDBIRTH">("ALL CLIENTS");
 
   const graphTableButtonStyle =
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer border border-gray-300";
   const centerItemsInDiv = "flex justify-between items-center";
   const chartDiv =
-    "flex flex-col items-center justify-start bg-white min-h-[400px] border-2 border-black p-5 mt-5 rounded-2xl";
+    "flex flex-col items-center justify-center bg-white min-h-[400px] border-2 border-black p-5 mt-5 rounded-2xl";
 
-  const [retentionDisplay, setRetentionDisplay] = useState<string>("graph");
+  const [retentionDisplay, setRetentionDisplay] =
+    useState<string>("graph");
   const [openRow, setOpenRow] = useState<RetentionRate | null>(null);
 
-  const handleExport = async (
-    ref: React.RefObject<HTMLDivElement | null>,
-    filename: string,
-  ) => {
-    const element = ref.current;
-    if (!element) {
-      return;
-    }
-    try {
-      const dataUrl = await toPng(element);
-      download(dataUrl, `${filename}.png`);
-    } catch (error) {
-      console.error("Export failed:", error);
-    }
-  };
-
-  const formatDate = (date: Date) =>
-    date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "numeric",
-      day: "numeric",
-    });
+  const dateRangeLabel =
+    startDate && endDate
+      ? formatDate(startDate) + " - " + formatDate(endDate)
+      : "All Data";
 
   const {
     data: rawRetentionData,
@@ -85,9 +96,22 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
     error: retentionError,
   } = useRetentionData(startDate, endDate);
 
+  const filteredRetentionSource = useMemo(
+    () =>
+      filterClients(
+        rawRetentionData as { [key: number]: Client[] } | undefined,
+        endDate,
+        selectedDropdown,
+      ),
+    [rawRetentionData, endDate, selectedDropdown],
+  );
+
   const processedData = useMemo(
-    () => (rawRetentionData ? processRetentionData(rawRetentionData) : []),
-    [rawRetentionData],
+    () =>
+      filteredRetentionSource
+        ? processRetentionData(filteredRetentionSource)
+        : [],
+    [filteredRetentionSource],
   );
 
   const funnelData = useMemo(
@@ -120,88 +144,139 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
     [processedData],
   );
 
+  const noData = useMemo(
+    () => !funnelData.some((d) => d.data > 0),
+    [funnelData],
+  );
+
   if (retentionError) return <div>Error loading retention data</div>;
 
   return (
     <div className="flex-[0_0_48%] w-full lg:w-1/2">
-      <div className={`${centerItemsInDiv} pt-4 mb-6`}>
-        <div className="flex flex-row">
-          <button
-            className={`${graphTableButtonStyle} ${
-              retentionDisplay === "graph"
+      <Export title={`RetentionRate${dateRangeLabel}`}>
+        {/* toggle + export */}
+        <div className={`${centerItemsInDiv} pt-4 mb-6`}>
+          <div className="flex flex-row">
+            <button
+              className={`${graphTableButtonStyle} ${retentionDisplay === "graph"
                 ? "bg-bcgw-gray-light"
                 : "bg-[#CED8E1]"
-            }`}
-            onClick={() => setRetentionDisplay("graph")}
-          >
-            Graph
-          </button>
-          <button
-            className={`${graphTableButtonStyle} ${
-              retentionDisplay === "table"
+                }`}
+              onClick={() => setRetentionDisplay("graph")}
+            >
+              Graph
+            </button>
+            <button
+              className={`${graphTableButtonStyle} ${retentionDisplay === "table"
                 ? "bg-bcgw-gray-light"
                 : "bg-[#CED8E1]"
-            }`}
-            onClick={() => setRetentionDisplay("table")}
+                }`}
+              onClick={() => setRetentionDisplay("table")}
+            >
+              Table
+            </button>
+          </div>
+          <ExportTrigger
+            disabled={retentionDisplay !== "graph" || noData}
+            asChild
           >
-            Table
-          </button>
+            <Button
+              variant={"outlineGray"}
+              className={
+                "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
+              }
+            >
+              Export
+            </Button>
+          </ExportTrigger>
         </div>
-        <Button
-          variant={"outlineGray"}
-          className={
-            "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
-          }
-          onClick={() => handleExport(funnelChartRef, "visit_breakdown")}
-        >
-          Export
-        </Button>
-      </div>
-      <span className="self-start font-semibold text-2xl">
-        Retention Rate:{" "}
-        {startDate && endDate
-          ? formatDate(startDate) + " - " + formatDate(endDate)
-          : "All Data"}
-      </span>
-      <div
-        className={retentionDisplay === "graph" ? chartDiv : ""}
-        ref={funnelChartRef}
-      >
-        {isRetentionLoading ? (
-          <Loading />
-        ) : retentionDisplay === "graph" ? (
-          <>
-            <div className="self-end mb-4">
-              <SelectDropdown
-                options={["ALL CLIENTS", "RECENT CHILDBIRTH"]}
-                selected={selectedDropdown}
-                onChange={setSelectedDropdown}
-              />
-            </div>
-            <div className="w-full">
-              <BarChart
-                height={300}
-                data={funnelData}
-                series={<BarSeries layout="vertical" bar={<CustomBar />} />}
-              />
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="[&_td]:py-3 [&_th]:py-3">
-              <DataTable
-                columns={makeRetentionRateColumns((row) => setOpenRow(row))}
-                data={retentionData}
-                tableType="default"
-              />
-            </div>
 
-            {openRow && (
-              <ClientLostPopup openRow={openRow!} setOpenRow={setOpenRow} />
-            )}
-          </>
-        )}
-      </div>
+        <span className="self-start font-semibold text-2xl">
+          Retention Rate: {dateRangeLabel}
+        </span>
+
+        <div className={retentionDisplay === "graph" ? chartDiv : ""}>
+          {isRetentionLoading ? (
+            <Loading />
+          ) : noData ? (
+            <div className="w-full flex grow items-center justify-center p-2">
+              <p className="text-center">
+                No data. Check the selected date range.
+              </p>
+            </div>
+          ) : retentionDisplay === "graph" ? (
+            <>
+              {/* GRAPH VIEW – keep dropdown top-right in card */}
+              <div className="self-end mb-4">
+                <SelectDropdown
+                  options={["ALL CLIENTS", "RECENT CHILDBIRTH"]}
+                  selected={selectedDropdown}
+                  onChange={(val) =>
+                    setSelectedDropdown(
+                      val as "ALL CLIENTS" | "RECENT CHILDBIRTH",
+                    )
+                  }
+                />
+              </div>
+              <ExportContent className="w-full h-92">
+                <ExportOnly className="mb-5">
+                  <h1 className="text-xl font-bold text-black">
+                    Client Retention
+                  </h1>
+                  <p className="text-base text-black">{dateRangeLabel}</p>
+                  <p className="text-gray-800 text-sm">
+                    {selectedDropdown}
+                  </p>
+                </ExportOnly>
+                <div className="w-full flex flex-col items-center justify-center mt-4">
+                  <BarChart
+                    height={300}
+                    data={funnelData}
+                    series={
+                      <BarSeries layout="vertical" bar={<CustomBar />} />
+                    }
+                  />
+                </div>
+              </ExportContent>
+            </>
+          ) : (
+            <>
+              {/* TABLE VIEW */}
+              <div className="[&_td]:py-3 [&_th]:py-3">
+                <DataTable
+                  columns={makeRetentionRateColumns((row) =>
+                    setOpenRow(row),
+                  )}
+                  data={retentionData}
+                  tableType="default"
+                  className="h-128"
+                  rowClassName="h-16"
+                  tableHeaderExtras={
+                    <div className="flex w-full h-full items-center justify-end px-2">
+                      <SelectDropdown
+                        options={["ALL CLIENTS", "RECENT CHILDBIRTH"]}
+                        selected={selectedDropdown}
+                        onChange={(val) =>
+                          setSelectedDropdown(
+                            val as "ALL CLIENTS" | "RECENT CHILDBIRTH",
+                          )
+                        }
+                      />
+                    </div>
+                  }
+                />
+              </div>
+
+              {openRow && (
+                <ClientLostPopup
+                  openRow={openRow}
+                  setOpenRow={setOpenRow}
+                />
+              )}
+            </>
+          )}
+        </div>
+      </Export>
     </div>
   );
 };
