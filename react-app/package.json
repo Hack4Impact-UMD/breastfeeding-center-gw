@@ -24,7 +24,7 @@
     "@react-aria/datepicker": "^3.14.2",
     "@react-stately/datepicker": "^3.14.0",
     "@remixicon/react": "^4.6.0",
-    "@tailwindcss/vite": "^4.0.15",
+    "@tailwindcss/vite": "^4.1.12",
     "@tanstack/react-query": "^5.90.2",
     "@tanstack/react-table": "^8.21.3",
     "axios": "^1.7.9",
@@ -58,7 +58,7 @@
     "@types/node": "^22.15.0",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^5.0.1",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",
@@ -67,6 +67,6 @@
     "tw-animate-css": "^1.2.8",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.22.0",
-    "vite": "^6.1.0"
+    "vite": "^7.1.3"
   }
 }
