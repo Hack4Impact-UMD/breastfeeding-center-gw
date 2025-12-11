@@ -10,7 +10,7 @@ export async function needsReauth() {
   const authTime = DateTime.fromISO(token.authTime);
   const timeSinceAuth = authTime.diffNow().as("minutes");
 
-  return timeSinceAuth >= MAX_AUTH_AGE_MIN;
+  return timeSinceAuth > MAX_AUTH_AGE_MIN;
 }
 
 export async function reauthRequested(respError: AxiosError) {
