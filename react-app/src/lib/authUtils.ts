@@ -13,6 +13,6 @@ export async function needsReauth() {
   return timeSinceAuth > MAX_AUTH_AGE_MIN;
 }
 
-export async function reauthRequested(respError: AxiosError) {
+export function reauthRequested(respError: AxiosError) {
   return respError.response?.data === "reauth"
 }
