@@ -8,7 +8,7 @@ export async function needsReauth() {
   const token = await auth.currentUser?.getIdTokenResult()
   if (!token?.authTime) return true;
   const authTime = DateTime.fromISO(token.authTime);
-  const timeSinceAuth = authTime.diffNow().as("minutes");
+  const timeSinceAuth = -authTime.diffNow().as("minutes"); //NOTE: need - here since diff is in the past
 
   return timeSinceAuth > MAX_AUTH_AGE_MIN;
 }
