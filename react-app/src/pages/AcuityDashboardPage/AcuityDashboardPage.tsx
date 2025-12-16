@@ -136,9 +136,7 @@ export default function AcuityDashboardPage() {
     "flex flex-col items-center justify-start bg-white min-h-[400px] border-2 border-black p-5 mt-5 rounded-2xl";
 
   // ── CLASS dropdown state & data ───────────────────────────────
-  const [selectedTrimesterClass, setSelectedTrimesterClass] =
-    useState("ALL CLASSES");
-  const [selectedPopularityClass, setSelectedPopularityClass] =
+  const [selectedClassCategory, setSelectedClassCategory] =
     useState("ALL CLASSES");
 
   const classFilterOptions = useMemo(
@@ -181,26 +179,26 @@ export default function AcuityDashboardPage() {
   } = useAcuityApptsInRange(
     dateRange?.from?.toISOString(),
     dateRange?.to?.toISOString(),
-    selectedTrimesterClass,
+    selectedClassCategory,
   );
 
   const filteredAppointmentsForTrimester = useMemo(() => {
     if (!allAppointmentData) return [];
-    if (selectedTrimesterClass === "ALL CLASSES") return allAppointmentData;
-    const selectedCategory = normalizeCategory(selectedTrimesterClass);
+    if (selectedClassCategory === "ALL CLASSES") return allAppointmentData;
+    const selectedCategory = normalizeCategory(selectedClassCategory);
     return allAppointmentData.filter(
       (appt) => normalizeCategory(appt.classCategory) === selectedCategory,
     );
-  }, [allAppointmentData, selectedTrimesterClass]);
+  }, [allAppointmentData, selectedClassCategory]);
 
   const filteredAppointmentsForPopularity = useMemo(() => {
     if (!allAppointmentData) return [];
-    if (selectedPopularityClass === "ALL CLASSES") return allAppointmentData;
-    const selectedCategory = normalizeCategory(selectedPopularityClass);
+    if (selectedClassCategory === "ALL CLASSES") return allAppointmentData;
+    const selectedCategory = normalizeCategory(selectedClassCategory);
     return allAppointmentData.filter(
       (appt) => normalizeCategory(appt.classCategory) === selectedCategory,
     );
-  }, [allAppointmentData, selectedPopularityClass]);
+  }, [allAppointmentData, selectedClassCategory]);
 
   console.log(allAppointmentData);
 
@@ -561,12 +559,12 @@ export default function AcuityDashboardPage() {
 
   const instructorData: InstructorAttendance[] = useMemo(() => {
     const data = groupedData.instructorTableData;
-    if (selectedPopularityClass === "ALL CLASSES") return data;
-    const selectedCategory = normalizeCategory(selectedPopularityClass);
+    if (selectedClassCategory === "ALL CLASSES") return data;
+    const selectedCategory = normalizeCategory(selectedClassCategory);
     return data.filter(
       (item) => normalizeCategory(item.category) === selectedCategory,
     );
-  }, [groupedData.instructorTableData, selectedPopularityClass]);
+  }, [groupedData.instructorTableData, selectedClassCategory]);
 
   // Styles
   const centerItemsInDiv = "flex justify-between items-center";
@@ -575,31 +573,31 @@ export default function AcuityDashboardPage() {
 
   // Filter class data based on selection
   const filteredClassData =
-    selectedPopularityClass === "ALL CLASSES"
+    selectedClassCategory === "ALL CLASSES"
       ? allClassData
-      : allClassData.filter((item) => item.key === selectedPopularityClass);
+      : allClassData.filter((item) => item.key === selectedClassCategory);
 
   const filteredClassBars =
-    selectedTrimesterClass === "ALL CLASSES"
+    selectedClassCategory === "ALL CLASSES"
       ? []
-      : allClassAttendanceData.filter((c) => c.key === selectedTrimesterClass);
+      : allClassAttendanceData.filter((c) => c.key === selectedClassCategory);
 
   const barData = filteredClassBars[0]?.data ?? [];
   const allInstructorData = groupedData.instructorData;
 
   const filteredInstructorData =
-    selectedPopularityClass === "ALL CLASSES"
+    selectedClassCategory === "ALL CLASSES"
       ? allInstructorData
       : allInstructorData.filter(
-        (item) => item.key === selectedPopularityClass,
+        (item) => item.key === selectedClassCategory,
       );
 
   const classAttendanceTableExtras = (
-    <div className="w-full flex justify-end">
+    <div className="w-full flex justify-end p-2">
       <SelectDropdown
         options={classFilterOptions}
-        selected={selectedTrimesterClass}
-        onChange={setSelectedTrimesterClass}
+        selected={selectedClassCategory}
+        onChange={setSelectedClassCategory}
       />
     </div>
   );
@@ -608,8 +606,8 @@ export default function AcuityDashboardPage() {
     <div className="w-full flex justify-end">
       <SelectDropdown
         options={classFilterOptions}
-        selected={selectedPopularityClass}
-        onChange={setSelectedPopularityClass}
+        selected={selectedClassCategory}
+        onChange={setSelectedClassCategory}
       />
     </div>
   );
@@ -636,8 +634,8 @@ export default function AcuityDashboardPage() {
             <div className="flex flex-row">
               <button
                 className={`${graphTableButtonStyle} ${attendanceDisplay == "graph"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
                   }`}
                 onClick={() => setAttendanceDisplay("graph")}
               >
@@ -645,8 +643,8 @@ export default function AcuityDashboardPage() {
               </button>
               <button
                 className={`${graphTableButtonStyle} ${attendanceDisplay == "table"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
                   }`}
                 onClick={() => setAttendanceDisplay("table")}
               >
@@ -676,8 +674,8 @@ export default function AcuityDashboardPage() {
               <div className="self-end mb-4">
                 <SelectDropdown
                   options={classFilterOptions}
-                  selected={selectedTrimesterClass}
-                  onChange={setSelectedTrimesterClass}
+                  selected={selectedClassCategory}
+                  onChange={setSelectedClassCategory}
                 />
               </div>
 
@@ -688,10 +686,10 @@ export default function AcuityDashboardPage() {
                   </h1>
                   <p className="text-base text-black">{dateRangeLabel}</p>
                   <p className="text-gray-800 text-sm">
-                    {selectedTrimesterClass}
+                    {selectedClassCategory}
                   </p>
                 </ExportOnly>
-                {selectedTrimesterClass === "ALL CLASSES" ? (
+                {selectedClassCategory === "ALL CLASSES" ? (
                   /* stacked chart for all classes: */
                   <StackedBarChart
                     height={350}
@@ -793,8 +791,8 @@ export default function AcuityDashboardPage() {
           <div className="flex flex-row">
             <button
               className={`${graphTableButtonStyle} ${popularityDisplay == "graph"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#f5f5f5]"
+                ? "bg-bcgw-gray-light"
+                : "bg-[#f5f5f5]"
                 }`}
               onClick={() => setPopularityDisplay("graph")}
             >
@@ -802,8 +800,8 @@ export default function AcuityDashboardPage() {
             </button>
             <button
               className={`${graphTableButtonStyle} ${popularityDisplay == "table"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#f5f5f5]"
+                ? "bg-bcgw-gray-light"
+                : "bg-[#f5f5f5]"
                 }`}
               onClick={() => setPopularityDisplay("table")}
             >
@@ -856,8 +854,8 @@ export default function AcuityDashboardPage() {
                   <div className="self-end mb-4">
                     <SelectDropdown
                       options={classFilterOptions}
-                      selected={selectedPopularityClass}
-                      onChange={setSelectedPopularityClass}
+                      selected={selectedClassCategory}
+                      onChange={setSelectedClassCategory}
                     />
                   </div>
                   <ExportContent className="w-full h-96">
@@ -867,7 +865,7 @@ export default function AcuityDashboardPage() {
                       </h1>
                       <p className="text-base text-black">{dateRangeLabel}</p>
                       <p className="text-gray-800 text-sm">
-                        {selectedPopularityClass}
+                        {selectedClassCategory}
                       </p>
                     </ExportOnly>
                     <LineChart
@@ -919,8 +917,8 @@ export default function AcuityDashboardPage() {
                   <div className="self-end mb-4">
                     <SelectDropdown
                       options={classFilterOptions}
-                      selected={selectedPopularityClass}
-                      onChange={setSelectedPopularityClass}
+                      selected={selectedClassCategory}
+                      onChange={setSelectedClassCategory}
                     />
                   </div>
                   <ExportContent className="w-full h-96">
@@ -930,7 +928,7 @@ export default function AcuityDashboardPage() {
                       </h1>
                       <p className="text-base text-black">{dateRangeLabel}</p>
                       <p className="text-gray-800 text-sm">
-                        {selectedPopularityClass}
+                        {selectedClassCategory}
                       </p>
                     </ExportOnly>
                     <LineChart
