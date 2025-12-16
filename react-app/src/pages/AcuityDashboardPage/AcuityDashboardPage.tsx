@@ -252,8 +252,8 @@ export default function AcuityDashboardPage() {
                 `${appt.classCategory?.toLowerCase()} FOURTH TRIM`,
               )
                 ? trimesterAttendance.get(
-                    `${appt.classCategory?.toLowerCase()} FOURTH TRIM`,
-                  )! + 1
+                  `${appt.classCategory?.toLowerCase()} FOURTH TRIM`,
+                )! + 1
                 : 1,
             );
             trimesterAttendance.set(
@@ -262,8 +262,8 @@ export default function AcuityDashboardPage() {
                 `${appt.class?.toLowerCase()} FOURTH TRIM`,
               )
                 ? trimesterAttendance.get(
-                    `${appt.class?.toLowerCase()} FOURTH TRIM`,
-                  )! + 1
+                  `${appt.class?.toLowerCase()} FOURTH TRIM`,
+                )! + 1
                 : 1,
             );
           } else {
@@ -273,16 +273,16 @@ export default function AcuityDashboardPage() {
                 `${appt.classCategory?.toLowerCase()} FIFTH TRIM`,
               )
                 ? trimesterAttendance.get(
-                    `${appt.classCategory?.toLowerCase()} FIFTH TRIM`,
-                  )! + 1
+                  `${appt.classCategory?.toLowerCase()} FIFTH TRIM`,
+                )! + 1
                 : 1,
             );
             trimesterAttendance.set(
               `${appt.class?.toLowerCase()} FIFTH TRIM`,
               trimesterAttendance.has(`${appt.class?.toLowerCase()} FIFTH TRIM`)
                 ? trimesterAttendance.get(
-                    `${appt.class?.toLowerCase()} FIFTH TRIM`,
-                  )! + 1
+                  `${appt.class?.toLowerCase()} FIFTH TRIM`,
+                )! + 1
                 : 1,
             );
           }
@@ -301,16 +301,16 @@ export default function AcuityDashboardPage() {
                 `${appt.classCategory?.toLowerCase()} THIRD TRIM`,
               )
                 ? trimesterAttendance.get(
-                    `${appt.classCategory?.toLowerCase()} THIRD TRIM`,
-                  )! + 1
+                  `${appt.classCategory?.toLowerCase()} THIRD TRIM`,
+                )! + 1
                 : 1,
             );
             trimesterAttendance.set(
               `${appt.class?.toLowerCase()} THIRD TRIM`,
               trimesterAttendance.has(`${appt.class?.toLowerCase()} THIRD TRIM`)
                 ? trimesterAttendance.get(
-                    `${appt.class?.toLowerCase()} THIRD TRIM`,
-                  )! + 1
+                  `${appt.class?.toLowerCase()} THIRD TRIM`,
+                )! + 1
                 : 1,
             );
           } else if (weeksIntoPregnancy >= 15) {
@@ -321,8 +321,8 @@ export default function AcuityDashboardPage() {
                 `${appt.classCategory?.toLowerCase()} SECOND TRIM`,
               )
                 ? trimesterAttendance.get(
-                    `${appt.classCategory?.toLowerCase()} SECOND TRIM`,
-                  )! + 1
+                  `${appt.classCategory?.toLowerCase()} SECOND TRIM`,
+                )! + 1
                 : 1,
             );
             trimesterAttendance.set(
@@ -331,8 +331,8 @@ export default function AcuityDashboardPage() {
                 `${appt.class?.toLowerCase()} SECOND TRIM`,
               )
                 ? trimesterAttendance.get(
-                    `${appt.class?.toLowerCase()} SECOND TRIM`,
-                  )! + 1
+                  `${appt.class?.toLowerCase()} SECOND TRIM`,
+                )! + 1
                 : 1,
             );
           } else {
@@ -342,16 +342,16 @@ export default function AcuityDashboardPage() {
                 `${appt.classCategory?.toLowerCase()} FIRST TRIM`,
               )
                 ? trimesterAttendance.get(
-                    `${appt.classCategory?.toLowerCase()} FIRST TRIM`,
-                  )! + 1
+                  `${appt.classCategory?.toLowerCase()} FIRST TRIM`,
+                )! + 1
                 : 1,
             );
             trimesterAttendance.set(
               `${appt.class?.toLowerCase()} FIRST TRIM`,
               trimesterAttendance.has(`${appt.class?.toLowerCase()} FIRST TRIM`)
                 ? trimesterAttendance.get(
-                    `${appt.class?.toLowerCase()} FIRST TRIM`,
-                  )! + 1
+                  `${appt.class?.toLowerCase()} FIRST TRIM`,
+                )! + 1
                 : 1,
             );
           }
@@ -406,8 +406,8 @@ export default function AcuityDashboardPage() {
             const date = shouldGroupByWeek
               ? DateTime.fromISO(intervalKey).toJSDate()
               : DateTime.fromFormat(intervalKey, "yyyy-MM")
-                  .startOf("month")
-                  .toJSDate();
+                .startOf("month")
+                .toJSDate();
             const count =
               classAttendanceByInterval
                 .get(intervalKey)
@@ -426,8 +426,8 @@ export default function AcuityDashboardPage() {
           const date = shouldGroupByWeek
             ? DateTime.fromISO(intervalKey).toJSDate()
             : DateTime.fromFormat(intervalKey, "yyyy-MM")
-                .startOf("month")
-                .toJSDate();
+              .startOf("month")
+              .toJSDate();
           const count =
             instructorAttendanceByInterval
               .get(intervalKey)
@@ -496,17 +496,19 @@ export default function AcuityDashboardPage() {
     instructorAttendanceByInterval,
   ]);
 
-  const trimesterAttendanceData = classFilterOptions.map((category) => {
-    const categoryLower = category.toLowerCase();
+  const trimesterAttendanceData = classFilterOptions
+    .filter(cat => cat !== "ALL CLASSES")
+    .map((category) => {
+      const categoryLower = category.toLowerCase();
 
-    return {
-      key: category,
-      data: trimesterLegend.map((trimester) => ({
-        key: trimester.key,
-        data: trimesterAttendance.get(`${categoryLower} ${trimester.key}`) ?? 0,
-      })),
-    };
-  });
+      return {
+        key: category,
+        data: trimesterLegend.map((trimester) => ({
+          key: trimester.key,
+          data: trimesterAttendance.get(`${categoryLower} ${trimester.key}`) ?? 0,
+        })),
+      };
+    });
 
   const allClassData = groupedData.classData;
 
@@ -589,8 +591,8 @@ export default function AcuityDashboardPage() {
     selectedPopularityClass === "ALL CLASSES"
       ? allInstructorData
       : allInstructorData.filter(
-          (item) => item.key === selectedPopularityClass,
-        );
+        (item) => item.key === selectedPopularityClass,
+      );
 
   const classAttendanceTableExtras = (
     <div className="w-full flex justify-end">
@@ -633,21 +635,19 @@ export default function AcuityDashboardPage() {
           <div className={`${centerItemsInDiv} pt-4`}>
             <div className="flex flex-row">
               <button
-                className={`${graphTableButtonStyle} ${
-                  attendanceDisplay == "graph"
+                className={`${graphTableButtonStyle} ${attendanceDisplay == "graph"
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
-                }`}
+                  }`}
                 onClick={() => setAttendanceDisplay("graph")}
               >
                 Graph
               </button>
               <button
-                className={`${graphTableButtonStyle} ${
-                  attendanceDisplay == "table"
+                className={`${graphTableButtonStyle} ${attendanceDisplay == "table"
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
-                }`}
+                  }`}
                 onClick={() => setAttendanceDisplay("table")}
               >
                 Table
@@ -792,21 +792,19 @@ export default function AcuityDashboardPage() {
         <div className={`${centerItemsInDiv} pt-8`}>
           <div className="flex flex-row">
             <button
-              className={`${graphTableButtonStyle} ${
-                popularityDisplay == "graph"
+              className={`${graphTableButtonStyle} ${popularityDisplay == "graph"
                   ? "bg-bcgw-gray-light"
                   : "bg-[#f5f5f5]"
-              }`}
+                }`}
               onClick={() => setPopularityDisplay("graph")}
             >
               Graph
             </button>
             <button
-              className={`${graphTableButtonStyle} ${
-                popularityDisplay == "table"
+              className={`${graphTableButtonStyle} ${popularityDisplay == "table"
                   ? "bg-bcgw-gray-light"
                   : "bg-[#f5f5f5]"
-              }`}
+                }`}
               onClick={() => setPopularityDisplay("table")}
             >
               Table
