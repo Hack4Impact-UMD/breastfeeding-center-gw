@@ -1,6 +1,8 @@
 import { Response, Router, Request } from "express";
-// import { isAuthenticated } from "../middleware/authMiddleware";
-import { getAllAcuityApptsInRange } from "../services/acuity";
+import {
+  getAllAcuityApptsInRange,
+  getAllAcuityAppointmentsForClient,
+} from "../services/acuity";
 import { AcuityAppointment } from "../types/acuityType";
 import { isAuthenticated } from "../middleware/authMiddleware";
 import { logger } from "firebase-functions";
@@ -15,6 +17,13 @@ router.get(
       const startDate = req.query.startDate as string;
       const endDate = req.query.endDate as string;
       const classCategory = req.query.classCategory ? (req.query.classCategory as string).toLowerCase() : undefined;
+
+      if (!startDate || !endDate) {
+        return res
+          .status(400)
+          .json({ error: "startDate and endDate are required" });
+      }
+
 
       let appts: AcuityAppointment[] = [];
       if (
@@ -34,6 +43,21 @@ router.get(
       logger.error("Error fetching appointments:", e);
       return res.status(500).send((e as Error).message);
     }
+  },
+);
+
+router.get(
+  "/appointments/client",
+  [isAuthenticated],
+  async (req: Request, res: Response) => {
+    const email = req.query.email as string;
+
+    if (!email) {
+      return res.status(400).json({ error: "email is required" });
+    }
+
+    const appointments = await getAllAcuityAppointmentsForClient(email);
+    return res.status(200).send(appointments);
   },
 );
 

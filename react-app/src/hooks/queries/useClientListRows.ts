@@ -6,6 +6,7 @@ import { DateTime } from "luxon";
 import { getAllJaneApptsInRange } from "@/services/janeService";
 import { JaneAppt } from "@/types/JaneType";
 import { ClientTableRow } from "@/pages/ClientListPage/ClientListTableColumns";
+import { getAllAcuityApptsInRange } from "@/services/acuityService";
 
 export function useClientListRows() {
   return useQuery<ClientTableRow[]>({
@@ -16,15 +17,27 @@ export function useClientListRows() {
       const startDate = oneMonthAgo.startOf("day").toISO();
       const endDate = now.endOf("day").toISO();
 
-      const appointments = await getAllJaneApptsInRange(startDate!, endDate!);
+      const [janeAppointments, acuityAppoinments] = await Promise.all([
+        getAllJaneApptsInRange(startDate!, endDate!),
+        getAllAcuityApptsInRange(startDate!, endDate!),
+      ]);
+
       // map matching client ids to their list of jane appts
       const clientAppts: Map<string, JaneAppt[]> = new Map();
-      for (const appt of appointments) {
+      for (const appt of janeAppointments) {
         if (!clientAppts.get(appt.clientId)) {
           clientAppts.set(appt.clientId, []);
         }
 
         clientAppts.get(appt.clientId)!.push(appt);
+      }
+
+      const acuityClassCounts: Map<string, number> = new Map();
+      for (const appt of acuityAppoinments) {
+        if (!appt.email) continue;
+        const email = appt.email.toLowerCase();
+        const currentCount = acuityClassCounts.get(email) || 0;
+        acuityClassCounts.set(email, currentCount + 1);
       }
 
       const clients = await getAllClients();
@@ -34,7 +47,9 @@ export function useClientListRows() {
         firstName: client.firstName,
         lastName: client.lastName,
         email: client.email,
-        acuityClasses: 0,
+        acuityClasses: client.email
+          ? (acuityClassCounts.get(client.email.toLowerCase()) ?? 0)
+          : "N/A",
         janeConsults: client.janeId
           ? (clientAppts.get(client.id)?.length ?? 0)
           : "N/A",
