@@ -17,8 +17,6 @@ export async function getAllAcuityApptsInRange(
     const queryString = params.toString();
     const url = `/acuity/appointments${queryString ? `?${queryString}` : ""}`;
 
-    console.log(url);
-
     const response = await axios.get(url);
     return response.data;
   } catch (error) {

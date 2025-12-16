@@ -40,6 +40,7 @@ import { Button } from "@/components/ui/button";
 import { useAcuityApptsInRange } from "@/hooks/queries/useAcuityApptsInRange";
 import { DateTime } from "luxon";
 import { AcuityAppointment } from "@/types/AcuityType";
+import Loading from "@/components/Loading";
 
 function computeAttendanceByInterval(
   filteredAppointmentsForPopularity: AcuityAppointment[],
@@ -174,8 +175,8 @@ export default function AcuityDashboardPage() {
 
   const {
     data: allAppointmentData,
-    // isPending: isApptDataPending,
-    // error: apptError,
+    isPending: isApptDataPending,
+    error: apptError,
   } = useAcuityApptsInRange(
     dateRange?.from?.toISOString(),
     dateRange?.to?.toISOString(),
@@ -613,7 +614,7 @@ export default function AcuityDashboardPage() {
   );
   return (
     <>
-      <div className="flex flex-col py-14 px-10 sm:px-20 space-y-5">
+      <div className="flex flex-col h-full py-14 px-10 sm:px-20 space-y-5">
         <div className={centerItemsInDiv}>
           <div>
             <h1 className="font-bold text-4xl lg:text-5xl">ACUITY</h1>
@@ -629,346 +630,360 @@ export default function AcuityDashboardPage() {
             />
           </div>
         </div>
-        <Export title={`ClassAttendanceByTrimester${dateRangeLabel}`}>
-          <div className={`${centerItemsInDiv} pt-4`}>
-            <div className="flex flex-row">
-              <button
-                className={`${graphTableButtonStyle} ${attendanceDisplay == "graph"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#f5f5f5]"
-                  }`}
-                onClick={() => setAttendanceDisplay("graph")}
-              >
-                Graph
-              </button>
-              <button
-                className={`${graphTableButtonStyle} ${attendanceDisplay == "table"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#f5f5f5]"
-                  }`}
-                onClick={() => setAttendanceDisplay("table")}
-              >
-                Table
-              </button>
-            </div>
-            <ExportTrigger disabled={attendanceDisplay !== "graph"} asChild>
-              <Button
-                variant={"outlineGray"}
-                className={
-                  "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
-                }
-              >
-                Export
-              </Button>
-            </ExportTrigger>
+
+        {isApptDataPending ? (
+          <div className="grow flex items-center justify-center">
+            <Loading />
           </div>
-          {/* Attendance by Trimester Bar Chart */}
-          <span className="self-start font-semibold text-2xl">
-            Class Attendance By Trimester,{" "}
-            {attendanceDisplay === "graph" ? <br /> : <></>}
-            {dateRangeLabel}
-          </span>
-          {attendanceDisplay === "graph" ? (
-            <div className={chartDiv}>
-              {/* Class dropdown */}
-              <div className="self-end mb-4">
-                <SelectDropdown
-                  options={classFilterOptions}
-                  selected={selectedClassCategory}
-                  onChange={setSelectedClassCategory}
-                />
+        ) : apptError ? (
+          <div className="grow flex items-center justify-center">
+            <p className="text-center">Failed to fetch Acuity data: {apptError.message}</p>
+          </div>
+        ) : (
+          <>
+            <Export title={`ClassAttendanceByTrimester${dateRangeLabel}`}>
+              <div className={`${centerItemsInDiv} pt-4`}>
+                <div className="flex flex-row">
+                  <button
+                    className={`${graphTableButtonStyle} ${attendanceDisplay == "graph"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#f5f5f5]"
+                      }`}
+                    onClick={() => setAttendanceDisplay("graph")}
+                  >
+                    Graph
+                  </button>
+                  <button
+                    className={`${graphTableButtonStyle} ${attendanceDisplay == "table"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#f5f5f5]"
+                      }`}
+                    onClick={() => setAttendanceDisplay("table")}
+                  >
+                    Table
+                  </button>
+                </div>
+                <ExportTrigger disabled={attendanceDisplay !== "graph"} asChild>
+                  <Button
+                    variant={"outlineGray"}
+                    className={
+                      "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
+                    }
+                  >
+                    Export
+                  </Button>
+                </ExportTrigger>
               </div>
+              {/* Attendance by Trimester Bar Chart */}
+              <span className="self-start font-semibold text-2xl">
+                Class Attendance By Trimester,{" "}
+                {attendanceDisplay === "graph" ? <br /> : <></>}
+                {dateRangeLabel}
+              </span>
+              {attendanceDisplay === "graph" ? (
+                <div className={chartDiv}>
+                  {/* Class dropdown */}
+                  <div className="self-end mb-4">
+                    <SelectDropdown
+                      options={classFilterOptions}
+                      selected={selectedClassCategory}
+                      onChange={setSelectedClassCategory}
+                    />
+                  </div>
 
-              <ExportContent className="w-full h-96">
-                <ExportOnly className="mb-5">
-                  <h1 className="text-xl font-bold text-black">
-                    Class Attendance By Trimester
-                  </h1>
-                  <p className="text-base text-black">{dateRangeLabel}</p>
-                  <p className="text-gray-800 text-sm">
-                    {selectedClassCategory}
-                  </p>
-                </ExportOnly>
-                {selectedClassCategory === "ALL CLASSES" ? (
-                  /* stacked chart for all classes: */
-                  <StackedBarChart
-                    height={350}
-                    data={trimesterAttendanceData}
-                    series={
-                      <StackedBarSeries
-                        bar={
-                          <Bar
-                            width={100}
-                            rx={0}
-                            ry={0}
-                            label={
-                              <BarLabel
-                                position="center"
-                                fill="white"
-                                scale={20}
-                                className="z-20"
+                  <ExportContent className="w-full h-96">
+                    <ExportOnly className="mb-5">
+                      <h1 className="text-xl font-bold text-black">
+                        Class Attendance By Trimester
+                      </h1>
+                      <p className="text-base text-black">{dateRangeLabel}</p>
+                      <p className="text-gray-800 text-sm">
+                        {selectedClassCategory}
+                      </p>
+                    </ExportOnly>
+                    {selectedClassCategory === "ALL CLASSES" ? (
+                      /* stacked chart for all classes: */
+                      <StackedBarChart
+                        height={350}
+                        data={trimesterAttendanceData}
+                        series={
+                          <StackedBarSeries
+                            bar={
+                              <Bar
+                                width={100}
+                                rx={0}
+                                ry={0}
+                                label={
+                                  <BarLabel
+                                    position="center"
+                                    fill="white"
+                                    scale={20}
+                                    className="z-20"
+                                  />
+                                }
+                                gradient={
+                                  <Gradient
+                                    stops={[
+                                      <GradientStop
+                                        offset="5%"
+                                        stopOpacity={1.0}
+                                        key="start"
+                                      />,
+                                      <GradientStop
+                                        offset="90%"
+                                        stopOpacity={1.0}
+                                        key="end"
+                                      />,
+                                    ]}
+                                  />
+                                }
+                                rangeLines={
+                                  <RangeLines position="top" strokeWidth={3} />
+                                }
+                                guide={<GuideBar />}
                               />
                             }
-                            gradient={
-                              <Gradient
-                                stops={[
-                                  <GradientStop
-                                    offset="5%"
-                                    stopOpacity={1.0}
-                                    key="start"
-                                  />,
-                                  <GradientStop
-                                    offset="90%"
-                                    stopOpacity={1.0}
-                                    key="end"
-                                  />,
-                                ]}
-                              />
-                            }
-                            rangeLines={
-                              <RangeLines position="top" strokeWidth={3} />
-                            }
-                            guide={<GuideBar />}
-                          />
-                        }
-                        colorScheme={trimesterLegend.map((i) => i.color)}
-                      />
-                    }
-                  />
-                ) : (
-                  /* single-series bar chart for one class: */
-                  <BarChart
-                    height={350}
-                    data={barData}
-                    series={
-                      <BarSeries
-                        padding={0.1}
-                        colorScheme={"#F4BB47"}
-                        bar={
-                          <Bar
-                            label={
-                              <BarLabel
-                                position="center"
-                                fill="white"
-                                scale={20}
-                                className="z-20"
-                              />
-                            }
-                            rx={0}
-                            ry={0}
-                            style={{ fill: "#F4BB47" }}
+                            colorScheme={trimesterLegend.map((i) => i.color)}
                           />
                         }
                       />
-                    }
-                  />
-                )}
-                <div className="w-full flex items-center justify-center">
-                  <DiscreteLegend
-                    orientation="horizontal"
-                    entries={trimesterLegend.map((i) => (
-                      <DiscreteLegendEntry
-                        key={i.key}
-                        label={i.key}
-                        color={i.color}
+                    ) : (
+                      /* single-series bar chart for one class: */
+                      <BarChart
+                        height={350}
+                        data={barData}
+                        series={
+                          <BarSeries
+                            padding={0.1}
+                            colorScheme={"#F4BB47"}
+                            bar={
+                              <Bar
+                                label={
+                                  <BarLabel
+                                    position="center"
+                                    fill="white"
+                                    scale={20}
+                                    className="z-20"
+                                  />
+                                }
+                                rx={0}
+                                ry={0}
+                                style={{ fill: "#F4BB47" }}
+                              />
+                            }
+                          />
+                        }
                       />
-                    ))}
-                  />
+                    )}
+                    <div className="w-full flex items-center justify-center">
+                      <DiscreteLegend
+                        orientation="horizontal"
+                        entries={trimesterLegend.map((i) => (
+                          <DiscreteLegendEntry
+                            key={i.key}
+                            label={i.key}
+                            color={i.color}
+                          />
+                        ))}
+                      />
+                    </div>
+                  </ExportContent>
                 </div>
-              </ExportContent>
+              ) : (
+                <DataTable
+                  columns={trimesterColumns}
+                  data={trimesterData}
+                  tableType="default"
+                  tableHeaderExtras={classAttendanceTableExtras}
+                  pageSize={5}
+                />
+              )}
+            </Export>
+            <div className={`${centerItemsInDiv} pt-8`}>
+              <div className="flex flex-row">
+                <button
+                  className={`${graphTableButtonStyle} ${popularityDisplay == "graph"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
+                    }`}
+                  onClick={() => setPopularityDisplay("graph")}
+                >
+                  Graph
+                </button>
+                <button
+                  className={`${graphTableButtonStyle} ${popularityDisplay == "table"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
+                    }`}
+                  onClick={() => setPopularityDisplay("table")}
+                >
+                  Table
+                </button>
+              </div>
+              {popularityDisplay === "table" && (
+                <Button
+                  variant={"outlineGray"}
+                  className={
+                    "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
+                  }
+                >
+                  Export
+                </Button>
+              )}
             </div>
-          ) : (
-            <DataTable
-              columns={trimesterColumns}
-              data={trimesterData}
-              tableType="default"
-              tableHeaderExtras={classAttendanceTableExtras}
-              pageSize={5}
-            />
-          )}
-        </Export>
-        <div className={`${centerItemsInDiv} pt-8`}>
-          <div className="flex flex-row">
-            <button
-              className={`${graphTableButtonStyle} ${popularityDisplay == "graph"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#f5f5f5]"
-                }`}
-              onClick={() => setPopularityDisplay("graph")}
-            >
-              Graph
-            </button>
-            <button
-              className={`${graphTableButtonStyle} ${popularityDisplay == "table"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#f5f5f5]"
-                }`}
-              onClick={() => setPopularityDisplay("table")}
-            >
-              Table
-            </button>
-          </div>
-          {popularityDisplay === "table" && (
-            <Button
-              variant={"outlineGray"}
-              className={
-                "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
-              }
-            >
-              Export
-            </Button>
-          )}
-        </div>
-        <span className="self-start font-semibold text-2xl">
-          {popularityDisplay === "graph" ? (
-            <span>Class and Instructor Popularity Over Time</span>
-          ) : (
-            <span>Attendance By Class & Instructor</span>
-          )}
-          {popularityDisplay === "graph" ? <br /> : <></>}
-          {dateRangeLabel}
-        </span>
-        {/* Class Popularity Over Time */}
-        <div>
-          {popularityDisplay === "graph" ? (
-            <>
-              <Export title={`ClassPopularity${dateRangeLabel}`}>
-                <div className="flex flex-row items-center w-full">
-                  <div className="text-2xl font-semibold grow">
-                    Class Popularity
-                  </div>
+            <span className="self-start font-semibold text-2xl">
+              {popularityDisplay === "graph" ? (
+                <span>Class and Instructor Popularity Over Time</span>
+              ) : (
+                <span>Attendance By Class & Instructor</span>
+              )}
+              {popularityDisplay === "graph" ? <br /> : <></>}
+              {dateRangeLabel}
+            </span>
+            {/* Class Popularity Over Time */}
+            <div>
+              {popularityDisplay === "graph" ? (
+                <>
+                  <Export title={`ClassPopularity${dateRangeLabel}`}>
+                    <div className="flex flex-row items-center w-full">
+                      <div className="text-2xl font-semibold grow">
+                        Class Popularity
+                      </div>
 
-                  <ExportTrigger asChild>
-                    <Button
-                      variant={"outlineGray"}
-                      className={
-                        "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
-                      }
-                    >
-                      Export
-                    </Button>
-                  </ExportTrigger>
-                </div>
-                {/* Class dropdown */}
-                <div className={chartDiv}>
-                  <div className="self-end mb-4">
-                    <SelectDropdown
-                      options={classFilterOptions}
-                      selected={selectedClassCategory}
-                      onChange={setSelectedClassCategory}
-                    />
-                  </div>
-                  <ExportContent className="w-full h-96">
-                    <ExportOnly className="mb-5">
-                      <h1 className="text-xl font-bold text-black">
-                        Class Popularity{" "}
-                      </h1>
-                      <p className="text-base text-black">{dateRangeLabel}</p>
-                      <p className="text-gray-800 text-sm">
-                        {selectedClassCategory}
-                      </p>
-                    </ExportOnly>
-                    <LineChart
-                      height={300}
-                      data={filteredClassData}
-                      series={
-                        <LineSeries
-                          colorScheme={(item) =>
-                            classColorScheme[item[0] ? item[0].key : item.key]
+                      <ExportTrigger asChild>
+                        <Button
+                          variant={"outlineGray"}
+                          className={
+                            "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
                           }
-                          type="grouped"
-                        />
-                      }
-                    />
-                    <div className="w-full flex items-center justify-center">
-                      <DiscreteLegend
-                        orientation="horizontal"
-                        entries={filteredClassData.map((line) => (
-                          <DiscreteLegendEntry
-                            key={line.key}
-                            label={line.key}
-                            color={classColorScheme[line.key]}
-                          />
-                        ))}
-                      />
+                        >
+                          Export
+                        </Button>
+                      </ExportTrigger>
                     </div>
-                  </ExportContent>
-                </div>
-              </Export>
+                    {/* Class dropdown */}
+                    <div className={chartDiv}>
+                      <div className="self-end mb-4">
+                        <SelectDropdown
+                          options={classFilterOptions}
+                          selected={selectedClassCategory}
+                          onChange={setSelectedClassCategory}
+                        />
+                      </div>
+                      <ExportContent className="w-full h-96">
+                        <ExportOnly className="mb-5">
+                          <h1 className="text-xl font-bold text-black">
+                            Class Popularity{" "}
+                          </h1>
+                          <p className="text-base text-black">{dateRangeLabel}</p>
+                          <p className="text-gray-800 text-sm">
+                            {selectedClassCategory}
+                          </p>
+                        </ExportOnly>
+                        <LineChart
+                          height={300}
+                          data={filteredClassData}
+                          series={
+                            <LineSeries
+                              colorScheme={(item) =>
+                                classColorScheme[item[0] ? item[0].key : item.key]
+                              }
+                              type="grouped"
+                            />
+                          }
+                        />
+                        <div className="w-full flex items-center justify-center">
+                          <DiscreteLegend
+                            orientation="horizontal"
+                            entries={filteredClassData.map((line) => (
+                              <DiscreteLegendEntry
+                                key={line.key}
+                                label={line.key}
+                                color={classColorScheme[line.key]}
+                              />
+                            ))}
+                          />
+                        </div>
+                      </ExportContent>
+                    </div>
+                  </Export>
 
-              <Export title={`InstructorPopularity${dateRangeLabel}`}>
-                <div className="mt-8 flex flex-row items-center w-full">
-                  <div className="text-2xl font-semibold grow">
-                    Instructor Popularity
-                  </div>
-
-                  <ExportTrigger asChild>
-                    <Button
-                      variant={"outlineGray"}
-                      className={
-                        "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
-                      }
-                    >
-                      Export
-                    </Button>
-                  </ExportTrigger>
-                </div>
-                <div className={chartDiv}>
-                  <div className="self-end mb-4">
-                    <SelectDropdown
-                      options={classFilterOptions}
-                      selected={selectedClassCategory}
-                      onChange={setSelectedClassCategory}
-                    />
-                  </div>
-                  <ExportContent className="w-full h-96">
-                    <ExportOnly className="mb-5">
-                      <h1 className="text-xl font-bold text-black">
+                  <Export title={`InstructorPopularity${dateRangeLabel}`}>
+                    <div className="mt-8 flex flex-row items-center w-full">
+                      <div className="text-2xl font-semibold grow">
                         Instructor Popularity
-                      </h1>
-                      <p className="text-base text-black">{dateRangeLabel}</p>
-                      <p className="text-gray-800 text-sm">
-                        {selectedClassCategory}
-                      </p>
-                    </ExportOnly>
-                    <LineChart
-                      height={300}
-                      data={filteredInstructorData}
-                      series={
-                        <LineSeries
-                          colorScheme={(item) =>
-                            classColorScheme[item[0] ? item[0].key : item.key]
+                      </div>
+
+                      <ExportTrigger asChild>
+                        <Button
+                          variant={"outlineGray"}
+                          className={
+                            "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
                           }
-                          type="grouped"
-                        />
-                      }
-                    />
-                    <div className="w-full flex items-center justify-center">
-                      <DiscreteLegend
-                        orientation="horizontal"
-                        entries={filteredInstructorData.map((line) => (
-                          <DiscreteLegendEntry
-                            key={line.key}
-                            label={line.key}
-                            color={classColorScheme[line.key]}
-                          />
-                        ))}
-                      />
+                        >
+                          Export
+                        </Button>
+                      </ExportTrigger>
                     </div>
-                  </ExportContent>
-                </div>
-              </Export>
-            </>
-          ) : (
-            <DataTable
-              columns={instructorColumns((row) => setOpenInstructorRow(row))}
-              data={instructorData}
-              tableType="default"
-              tableHeaderExtras={classPopularityTableExtras}
-              pageSize={5}
-            />
-          )}
-        </div>
+                    <div className={chartDiv}>
+                      <div className="self-end mb-4">
+                        <SelectDropdown
+                          options={classFilterOptions}
+                          selected={selectedClassCategory}
+                          onChange={setSelectedClassCategory}
+                        />
+                      </div>
+                      <ExportContent className="w-full h-96">
+                        <ExportOnly className="mb-5">
+                          <h1 className="text-xl font-bold text-black">
+                            Instructor Popularity
+                          </h1>
+                          <p className="text-base text-black">{dateRangeLabel}</p>
+                          <p className="text-gray-800 text-sm">
+                            {selectedClassCategory}
+                          </p>
+                        </ExportOnly>
+                        <LineChart
+                          height={300}
+                          data={filteredInstructorData}
+                          series={
+                            <LineSeries
+                              colorScheme={(item) =>
+                                classColorScheme[item[0] ? item[0].key : item.key]
+                              }
+                              type="grouped"
+                            />
+                          }
+                        />
+                        <div className="w-full flex items-center justify-center">
+                          <DiscreteLegend
+                            orientation="horizontal"
+                            entries={filteredInstructorData.map((line) => (
+                              <DiscreteLegendEntry
+                                key={line.key}
+                                label={line.key}
+                                color={classColorScheme[line.key]}
+                              />
+                            ))}
+                          />
+                        </div>
+                      </ExportContent>
+                    </div>
+                  </Export>
+                </>
+              ) : (
+                <DataTable
+                  columns={instructorColumns((row) => setOpenInstructorRow(row))}
+                  data={instructorData}
+                  tableType="default"
+                  tableHeaderExtras={classPopularityTableExtras}
+                  pageSize={5}
+                />
+              )}
+            </div>
+          </>
+        )
+        }
       </div>
       <InstructorPopup
         openRow={openInstructorRow}
