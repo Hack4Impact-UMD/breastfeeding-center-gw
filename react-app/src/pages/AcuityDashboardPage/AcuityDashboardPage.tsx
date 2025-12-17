@@ -5,8 +5,6 @@ import {
   StackedBarChart,
   StackedBarSeries,
   Bar,
-  BarChart,
-  BarSeries,
   Gradient,
   GradientStop,
   RangeLines,
