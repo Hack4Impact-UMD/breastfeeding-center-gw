@@ -174,7 +174,7 @@ export default function AcuityDashboardPage() {
       : "All Data";
 
   const {
-    data: allAppointmentData,
+    data: appointmentData,
     isPending: isApptDataPending,
     error: apptError,
   } = useAcuityApptsInRange(
@@ -183,25 +183,9 @@ export default function AcuityDashboardPage() {
     selectedClassCategory,
   );
 
-  const filteredAppointmentsForTrimester = useMemo(() => {
-    if (!allAppointmentData) return [];
-    if (selectedClassCategory === "ALL CLASSES") return allAppointmentData;
-    const selectedCategory = normalizeCategory(selectedClassCategory);
-    return allAppointmentData.filter(
-      (appt) => normalizeCategory(appt.classCategory) === selectedCategory,
-    );
-  }, [allAppointmentData, selectedClassCategory]);
-
-  const filteredAppointmentsForPopularity = useMemo(() => {
-    if (!allAppointmentData) return [];
-    if (selectedClassCategory === "ALL CLASSES") return allAppointmentData;
-    const selectedCategory = normalizeCategory(selectedClassCategory);
-    return allAppointmentData.filter(
-      (appt) => normalizeCategory(appt.classCategory) === selectedCategory,
-    );
-  }, [allAppointmentData, selectedClassCategory]);
-
-  console.log(allAppointmentData);
+  //NOTE: acuity appts are already filtered from the api response
+  const filteredAppointmentsForTrimester = useMemo(() => appointmentData ?? [], [appointmentData]);
+  const filteredAppointmentsForPopularity = useMemo(() => appointmentData ?? [], [appointmentData]);
 
   const [trimesterAttendance, classesToCategory] = useMemo(() => {
     const trimesterAttendance: Map<string, number> = new Map();
@@ -517,17 +501,20 @@ export default function AcuityDashboardPage() {
       data: Array.from(classesToCategory.entries()).map(([className]) => {
         const classKey = className.toLowerCase();
 
-        const first = trimesterAttendance.get(`${classKey} FIRST TRIM`) ?? 0;
-        const second = trimesterAttendance.get(`${classKey} SECOND TRIM`) ?? 0;
-        const third = trimesterAttendance.get(`${classKey} THIRD TRIM`) ?? 0;
-        const fourth = trimesterAttendance.get(`${classKey} FOURTH TRIM`) ?? 0;
-        const fifth = trimesterAttendance.get(`${classKey} FIFTH TRIM`) ?? 0;
-
-        const total = first + second + third + fourth + fifth;
+        // const first = trimesterAttendance.get(`${classKey} FIRST TRIM`) ?? 0;
+        // const second = trimesterAttendance.get(`${classKey} SECOND TRIM`) ?? 0;
+        // const third = trimesterAttendance.get(`${classKey} THIRD TRIM`) ?? 0;
+        // const fourth = trimesterAttendance.get(`${classKey} FOURTH TRIM`) ?? 0;
+        // const fifth = trimesterAttendance.get(`${classKey} FIFTH TRIM`) ?? 0;
+        //
+        // const total = first + second + third + fourth + fifth;
 
         return {
           key: className,
-          data: total,
+          data: trimesterLegend.map((trimester) => ({
+            key: trimester.key,
+            data: trimesterAttendance.get(`${classKey} ${trimester.key}`) ?? 0,
+          })),
         };
       }),
     };
@@ -749,13 +736,13 @@ export default function AcuityDashboardPage() {
                       />
                     ) : (
                       /* single-series bar chart for one class: */
-                      <BarChart
+                      <StackedBarChart
                         height={350}
                         data={barData}
                         series={
-                          <BarSeries
+                          <StackedBarSeries
+                            colorScheme={trimesterLegend.map((i) => i.color)}
                             padding={0.1}
-                            colorScheme={"#F4BB47"}
                             bar={
                               <Bar
                                 label={
@@ -768,7 +755,22 @@ export default function AcuityDashboardPage() {
                                 }
                                 rx={0}
                                 ry={0}
-                                style={{ fill: "#F4BB47" }}
+                                gradient={
+                                  <Gradient
+                                    stops={[
+                                      <GradientStop
+                                        offset="5%"
+                                        stopOpacity={1.0}
+                                        key="start"
+                                      />,
+                                      <GradientStop
+                                        offset="90%"
+                                        stopOpacity={1.0}
+                                        key="end"
+                                      />,
+                                    ]}
+                                  />
+                                }
                               />
                             }
                           />

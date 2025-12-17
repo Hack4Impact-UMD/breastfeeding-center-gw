@@ -26,7 +26,7 @@ export default function LayoutShell() {
         <span className="hidden md:block">
           <Header />
         </span>
-        <div className="mt-14 md:mt-0">
+        <div className="mt-14 md:mt-0 h-full">
           <Outlet />
         </div>
       </div>
