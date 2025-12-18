@@ -104,7 +104,7 @@ export function computeTrimesterAttendanceBreakdown(
             : 1,
         );
       } else if (weeksIntoPregnancy >= 15) {
-        // 15-18 is second
+        // 15-28 is second
         trimesterAttendance.set(
           `${appt.classCategory?.toLowerCase()} SECOND TRIM`,
           trimesterAttendance.has(
@@ -211,7 +211,7 @@ export type AcuityAttendanceBreakdown = Map<
 >;
 
 export function computeAttendanceBreakdown(
-  appt: AcuityAppointment[],
+  appts: AcuityAppointment[],
   shouldGroupByWeek: boolean,
 ) {
   // <interval, <classCategory, <class, <instructor, attendance>>>
@@ -220,7 +220,7 @@ export function computeAttendanceBreakdown(
     Map<string, Map<string, Map<string, number>>>
   >();
 
-  appt.forEach((appt) => {
+  appts.forEach((appt) => {
     if (!appt.datetime) return;
 
     const apptDate = DateTime.fromISO(appt.datetime);

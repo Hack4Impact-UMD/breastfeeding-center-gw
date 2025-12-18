@@ -41,7 +41,9 @@ router.get(
       return res.status(200).json(appts);
     } catch (e) {
       logger.error("Error fetching appointments:", e);
-      return res.status(500).send((e as Error).message);
+      return res.status(500).send({
+        error: "Failed to fetch acuity appointments"
+      });
     }
   },
 );

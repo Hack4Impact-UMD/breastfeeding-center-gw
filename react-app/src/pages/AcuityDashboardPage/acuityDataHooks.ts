@@ -233,7 +233,7 @@ export function useTrimesterTableData(trimesterAttendance: Map<string, number>, 
         const total = first + second + third + fourth + fifth;
 
         return {
-          class: className.slice(0, 15) + "...",
+          class: className.length > 15 ? className.slice(0, 15) + "..." : className,
           category,
           first,
           second,

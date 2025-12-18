@@ -45,6 +45,31 @@ import {
 } from "@/lib/acuityUtils";
 import { useAllInstructorData as useInstructorPopularityData, useCategoryAttendanceData, useClassAttendanceByTrimesterData, useClassAttendanceData, useInstructorTableData, useTrimesterAttendanceData as useCategoryAttendanceByTrimesterData, useTrimesterTableData } from "./acuityDataHooks";
 
+const CLASS_FILTER_OPTIONS = [
+  "ALL CLASSES",
+  "POSTPARTUM CLASSES",
+  "PRENATAL CLASSES",
+  "INFANT MASSAGE",
+  "PARENT GROUPS",
+  "CHILDBIRTH CLASSES",
+]
+
+const TRIMESTER_LEGEND = [
+  { key: "FIRST TRIM", color: "#FCD484" },
+  { key: "SECOND TRIM", color: "#FFAA00" },
+  { key: "THIRD TRIM", color: "#5DB9FF" },
+  { key: "FOURTH TRIM", color: "#1661A9" },
+  { key: "FIFTH TRIM", color: "#05182A" },
+]
+
+const CLASS_CAT_COLOR_SCHEME: Record<string, string> = {
+  "POSTPARTUM CLASSES": schemes.cybertron[0],
+  "PRENATAL CLASSES": schemes.cybertron[1],
+  "INFANT MASSAGE": schemes.cybertron[2],
+  "PARENT GROUPS": schemes.cybertron[3],
+  "CHILDBIRTH CLASSES": schemes.cybertron[4],
+};
+
 export default function AcuityDashboardPage() {
   const [attendanceDisplay, setAttendanceDisplay] = useState<string>("graph");
   const [popularityDisplay, setPopularityDisplay] = useState<string>("graph");
@@ -60,37 +85,6 @@ export default function AcuityDashboardPage() {
   // ── CLASS dropdown state & data ───────────────────────────────
   const [selectedClassCategory, setSelectedClassCategory] =
     useState("ALL CLASSES");
-
-  const classFilterOptions = useMemo(
-    () => [
-      "ALL CLASSES",
-      "POSTPARTUM CLASSES",
-      "PRENATAL CLASSES",
-      "INFANT MASSAGE",
-      "PARENT GROUPS",
-      "CHILDBIRTH CLASSES",
-    ],
-    [],
-  );
-
-  const trimesterLegend = useMemo(
-    () => [
-      { key: "FIRST TRIM", color: "#FCD484" },
-      { key: "SECOND TRIM", color: "#FFAA00" },
-      { key: "THIRD TRIM", color: "#5DB9FF" },
-      { key: "FOURTH TRIM", color: "#1661A9" },
-      { key: "FIFTH TRIM", color: "#05182A" },
-    ],
-    [],
-  );
-
-  const classCatColorScheme: Record<string, string> = {
-    "POSTPARTUM CLASSES": schemes.cybertron[0],
-    "PRENATAL CLASSES": schemes.cybertron[1],
-    "INFANT MASSAGE": schemes.cybertron[2],
-    "PARENT GROUPS": schemes.cybertron[3],
-    "CHILDBIRTH CLASSES": schemes.cybertron[4],
-  };
 
   const dateRangeLabel =
     dateRange?.from && dateRange?.to
@@ -188,15 +182,15 @@ export default function AcuityDashboardPage() {
 
   const classAttendanceData = useClassAttendanceData(attendanceBreakdown, allClasses, allIntervals, classesToCategory, shouldGroupByWeek);
 
-  const categoryAttendanceData = useCategoryAttendanceData(attendanceBreakdown, classFilterOptions, allIntervals, shouldGroupByWeek);
+  const categoryAttendanceData = useCategoryAttendanceData(attendanceBreakdown, CLASS_FILTER_OPTIONS, allIntervals, shouldGroupByWeek);
 
   const instructorPopularityGraphData = useInstructorPopularityData(attendanceBreakdown, allInstructors, allIntervals, shouldGroupByWeek);
 
   const instructorTableData: InstructorAttendance[] = useInstructorTableData(instructorDataByClass);
 
-  const trimesterAttendanceGraphDataByCategory = useCategoryAttendanceByTrimesterData(trimesterAttendance, classFilterOptions, trimesterLegend);
+  const trimesterAttendanceGraphDataByCategory = useCategoryAttendanceByTrimesterData(trimesterAttendance, CLASS_FILTER_OPTIONS, TRIMESTER_LEGEND);
 
-  const trimesterAttendanceGraphDataByClass = useClassAttendanceByTrimesterData(trimesterAttendance, classesToCategory, trimesterLegend);
+  const trimesterAttendanceGraphDataByClass = useClassAttendanceByTrimesterData(trimesterAttendance, classesToCategory, TRIMESTER_LEGEND);
 
   const trimesterTableData: TrimesterAttendance[] = useTrimesterTableData(trimesterAttendance, classesToCategory);
 
@@ -215,7 +209,7 @@ export default function AcuityDashboardPage() {
   const classAttendanceTableExtras = (
     <div className="w-full flex justify-end p-2">
       <SelectDropdown
-        options={classFilterOptions}
+        options={CLASS_FILTER_OPTIONS}
         selected={selectedClassCategory}
         onChange={setSelectedClassCategory}
       />
@@ -225,7 +219,7 @@ export default function AcuityDashboardPage() {
   const classPopularityTableExtras = (
     <div className="w-full flex justify-end">
       <SelectDropdown
-        options={classFilterOptions}
+        options={CLASS_FILTER_OPTIONS}
         selected={selectedClassCategory}
         onChange={setSelectedClassCategory}
       />
@@ -306,7 +300,7 @@ export default function AcuityDashboardPage() {
                   {/* Class dropdown */}
                   <div className="self-end mb-4">
                     <SelectDropdown
-                      options={classFilterOptions}
+                      options={CLASS_FILTER_OPTIONS}
                       selected={selectedClassCategory}
                       onChange={setSelectedClassCategory}
                     />
@@ -364,7 +358,7 @@ export default function AcuityDashboardPage() {
                                 guide={<GuideBar />}
                               />
                             }
-                            colorScheme={trimesterLegend.map((i) => i.color)}
+                            colorScheme={TRIMESTER_LEGEND.map((i) => i.color)}
                           />
                         }
                       />
@@ -375,7 +369,7 @@ export default function AcuityDashboardPage() {
                         data={trimesterAttendanceGraphDataByClass}
                         series={
                           <StackedBarSeries
-                            colorScheme={trimesterLegend.map((i) => i.color)}
+                            colorScheme={TRIMESTER_LEGEND.map((i) => i.color)}
                             padding={0.1}
                             bar={
                               <Bar
@@ -414,7 +408,7 @@ export default function AcuityDashboardPage() {
                     <div className="w-full flex items-center justify-center">
                       <DiscreteLegend
                         orientation="horizontal"
-                        entries={trimesterLegend.map((i) => (
+                        entries={TRIMESTER_LEGEND.map((i) => (
                           <DiscreteLegendEntry
                             key={i.key}
                             label={i.key}
@@ -501,7 +495,7 @@ export default function AcuityDashboardPage() {
                     <div className={chartDiv}>
                       <div className="self-end mb-4">
                         <SelectDropdown
-                          options={classFilterOptions}
+                          options={CLASS_FILTER_OPTIONS}
                           selected={selectedClassCategory}
                           onChange={setSelectedClassCategory}
                         />
@@ -525,7 +519,7 @@ export default function AcuityDashboardPage() {
                             <LineSeries
                               colorScheme={(item) =>
                                 (selectedClassCategory === "ALL CLASSES"
-                                  ? classCatColorScheme
+                                  ? CLASS_CAT_COLOR_SCHEME
                                   : classColorScheme)[
                                 item[0] ? item[0].key : item.key
                                 ]
@@ -543,7 +537,7 @@ export default function AcuityDashboardPage() {
                                 label={line.key}
                                 color={
                                   (selectedClassCategory === "ALL CLASSES"
-                                    ? classCatColorScheme
+                                    ? CLASS_CAT_COLOR_SCHEME
                                     : classColorScheme)[line.key]
                                 }
                               />
@@ -574,7 +568,7 @@ export default function AcuityDashboardPage() {
                     <div className={chartDiv}>
                       <div className="self-end mb-4">
                         <SelectDropdown
-                          options={classFilterOptions}
+                          options={CLASS_FILTER_OPTIONS}
                           selected={selectedClassCategory}
                           onChange={setSelectedClassCategory}
                         />
