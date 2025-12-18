@@ -194,28 +194,22 @@ export function useTrimesterAttendanceData(trimesterAttendance: Map<string, numb
 }
 
 
-export function useClassAttendanceByTrimesterData(trimesterAttendance: Map<string, number>, classFilterOptions: string[], classesToCategory: Map<string, string>, trimesterLegend: Array<{ key: string, color: string }>) {
+export function useClassAttendanceByTrimesterData(trimesterAttendance: Map<string, number>, classesToCategory: Map<string, string>, trimesterLegend: Array<{ key: string, color: string }>) {
   return useMemo(
     () =>
-      classFilterOptions.map((category) => {
-        return {
-          key: category,
-          data: Array.from(classesToCategory.entries()).map(([className]) => {
-            const classKey = className.toLowerCase();
+      Array.from(classesToCategory.entries()).map(([className]) => {
+        const classKey = className.toLowerCase();
 
-            return {
-              key: className,
-              data: trimesterLegend.map((trimester) => ({
-                key: trimester.key,
-                data:
-                  trimesterAttendance.get(`${classKey} ${trimester.key}`) ?? 0,
-              })),
-            };
-          }),
+        return {
+          key: className,
+          data: trimesterLegend.map((trimester) => ({
+            key: trimester.key,
+            data:
+              trimesterAttendance.get(`${classKey} ${trimester.key}`) ?? 0,
+          })),
         };
       }),
     [
-      classFilterOptions,
       classesToCategory,
       trimesterAttendance,
       trimesterLegend,

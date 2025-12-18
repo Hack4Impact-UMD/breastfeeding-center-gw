@@ -196,7 +196,7 @@ export default function AcuityDashboardPage() {
 
   const trimesterAttendanceGraphDataByCategory = useTrimesterAttendanceData(trimesterAttendance, classFilterOptions, trimesterLegend);
 
-  const classAttendanceByTrimesterData = useClassAttendanceByTrimesterData(trimesterAttendance, classFilterOptions, classesToCategory, trimesterLegend);
+  const trimesterAttendanceGraphDataByClass = useClassAttendanceByTrimesterData(trimesterAttendance, classesToCategory, trimesterLegend);
 
   const trimesterTableData: TrimesterAttendance[] = useTrimesterTableData(trimesterAttendance, classesToCategory);
 
@@ -211,14 +211,6 @@ export default function AcuityDashboardPage() {
       ? categoryAttendanceData
       : classAttendanceData;
 
-  const filteredClassBars =
-    selectedClassCategory === "ALL CLASSES"
-      ? []
-      : classAttendanceByTrimesterData.filter(
-        (c) => c.key === selectedClassCategory,
-      );
-
-  const trimesterAttendanceGraphDataByClass = filteredClassBars[0]?.data ?? [];
 
   const classAttendanceTableExtras = (
     <div className="w-full flex justify-end p-2">
