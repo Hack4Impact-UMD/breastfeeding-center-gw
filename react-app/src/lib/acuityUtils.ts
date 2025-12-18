@@ -1,153 +1,84 @@
 import { AcuityAppointment } from "@/types/AcuityType";
 import { DateTime } from "luxon";
 
-//TODO: Putting class keys and category keys in the same map isn't ideal, should probably be separated at some point
-export function computeTrimesterAttendanceBreakdown(
+function getTrimester(appt: AcuityAppointment): string | null {
+  // skip babies with no due dates
+  if (appt.babyDueDatesISO.length === 0) {
+    return null;
+  }
+  const apptTime = DateTime.fromISO(appt.datetime);
+  // get date that is closest to the appt date
+  let chosenDate = DateTime.fromISO(appt.babyDueDatesISO[0]);
+  let timeDiff = Math.abs(chosenDate.diff(apptTime, "weeks").weeks);
+
+  // if there are multiple dates in the array, check for each
+  for (let i = 1; i < appt.babyDueDatesISO.length; i++) {
+    const currentDate = DateTime.fromISO(appt.babyDueDatesISO[i]);
+    // get difference between curr date and appt time
+    const currDiff = Math.abs(currentDate.diff(apptTime, "weeks").weeks);
+    // if the time difference is less than the curr min, update
+    if (currDiff < timeDiff) {
+      chosenDate = currentDate;
+      timeDiff = currDiff;
+    }
+  }
+
+  // calculate trimester
+  // if the date has already passed, assume that it's a birth date
+  if (chosenDate < apptTime) {
+    const diff = apptTime.diff(chosenDate, "weeks").weeks;
+    // first three months is fourth trimester
+    if (diff <= 12) {
+      return "FOURTH TRIM";
+    } else {
+      return "FIFTH TRIM";
+    }
+  } else {
+    // if not, it is a due date
+    // pregnancy typically 40 weeks, find "start" of pregnancy
+    const pregnancyStart = chosenDate.minus({ weeks: 40 });
+    // subtract start date from due date and round
+    const weeksIntoPregnancy = Math.floor(
+      apptTime.diff(pregnancyStart, "weeks").weeks,
+    );
+    if (weeksIntoPregnancy >= 29) {
+      return "THIRD TRIM";
+    } else if (weeksIntoPregnancy >= 15) {
+      // 15-28 is second
+      return "SECOND TRIM";
+    } else {
+      return "FIRST TRIM";
+    }
+  }
+}
+
+export function computeTrimesterBreakdownByCategory(
   appointmentData: AcuityAppointment[],
 ) {
   const trimesterAttendance: Map<string, number> = new Map();
   for (const appt of appointmentData ?? []) {
-    // skip babies with no due dates
-    if (appt.babyDueDatesISO.length === 0) {
-      continue;
-    }
-    const apptTime = DateTime.fromISO(appt.datetime);
-    // get date that is closest to the appt date
-    let timeDiff = Math.abs(
-      DateTime.fromISO(appt.babyDueDatesISO[0]).diff(apptTime, "weeks").weeks,
-    );
-    // set chosen baby date as first in array
-    let chosenDate = DateTime.fromISO(appt.babyDueDatesISO[0]);
-    // if there are multiple dates in the array, check for each
-    for (let i = 1; i < appt.babyDueDatesISO.length; i++) {
-      // get difference between curr date and appt time
-      const currDiff = Math.abs(
-        DateTime.fromISO(appt.babyDueDatesISO[i]).diff(apptTime, "weeks").weeks,
-      );
-      // if the time difference is less than the curr min, update
-      chosenDate =
-        currDiff < timeDiff
-          ? DateTime.fromISO(appt.babyDueDatesISO[i])
-          : chosenDate;
-      timeDiff = Math.min(timeDiff, currDiff);
-    }
-
-    // calculate trimester
-    // if the date has already passed, assume that it's a birth date
-    if (chosenDate < apptTime) {
-      const diff = apptTime.diff(chosenDate, "weeks").weeks;
-      // first three months is fourth trimester
-      if (diff <= 12) {
-        trimesterAttendance.set(
-          `${appt.classCategory?.toLowerCase()} FOURTH TRIM`,
-          trimesterAttendance.has(
-            `${appt.classCategory?.toLowerCase()} FOURTH TRIM`,
-          )
-            ? trimesterAttendance.get(
-              `${appt.classCategory?.toLowerCase()} FOURTH TRIM`,
-            )! + 1
-            : 1,
-        );
-        trimesterAttendance.set(
-          `${appt.class?.toLowerCase()} FOURTH TRIM`,
-          trimesterAttendance.has(`${appt.class?.toLowerCase()} FOURTH TRIM`)
-            ? trimesterAttendance.get(
-              `${appt.class?.toLowerCase()} FOURTH TRIM`,
-            )! + 1
-            : 1,
-        );
-      } else {
-        trimesterAttendance.set(
-          `${appt.classCategory?.toLowerCase()} FIFTH TRIM`,
-          trimesterAttendance.has(
-            `${appt.classCategory?.toLowerCase()} FIFTH TRIM`,
-          )
-            ? trimesterAttendance.get(
-              `${appt.classCategory?.toLowerCase()} FIFTH TRIM`,
-            )! + 1
-            : 1,
-        );
-        trimesterAttendance.set(
-          `${appt.class?.toLowerCase()} FIFTH TRIM`,
-          trimesterAttendance.has(`${appt.class?.toLowerCase()} FIFTH TRIM`)
-            ? trimesterAttendance.get(
-              `${appt.class?.toLowerCase()} FIFTH TRIM`,
-            )! + 1
-            : 1,
-        );
-      }
-    } else {
-      // if not, it is a due date
-      // pregnancy typically 40 weeks, find "start" of pregnancy
-      const pregnancyStart = chosenDate.minus({ weeks: 40 });
-      // subtract start date from due date and round
-      const weeksIntoPregnancy = Math.floor(
-        apptTime.diff(pregnancyStart, "weeks").weeks,
-      );
-      if (weeksIntoPregnancy >= 29) {
-        trimesterAttendance.set(
-          `${appt.classCategory?.toLowerCase()} THIRD TRIM`,
-          trimesterAttendance.has(
-            `${appt.classCategory?.toLowerCase()} THIRD TRIM`,
-          )
-            ? trimesterAttendance.get(
-              `${appt.classCategory?.toLowerCase()} THIRD TRIM`,
-            )! + 1
-            : 1,
-        );
-        trimesterAttendance.set(
-          `${appt.class?.toLowerCase()} THIRD TRIM`,
-          trimesterAttendance.has(`${appt.class?.toLowerCase()} THIRD TRIM`)
-            ? trimesterAttendance.get(
-              `${appt.class?.toLowerCase()} THIRD TRIM`,
-            )! + 1
-            : 1,
-        );
-      } else if (weeksIntoPregnancy >= 15) {
-        // 15-28 is second
-        trimesterAttendance.set(
-          `${appt.classCategory?.toLowerCase()} SECOND TRIM`,
-          trimesterAttendance.has(
-            `${appt.classCategory?.toLowerCase()} SECOND TRIM`,
-          )
-            ? trimesterAttendance.get(
-              `${appt.classCategory?.toLowerCase()} SECOND TRIM`,
-            )! + 1
-            : 1,
-        );
-        trimesterAttendance.set(
-          `${appt.class?.toLowerCase()} SECOND TRIM`,
-          trimesterAttendance.has(`${appt.class?.toLowerCase()} SECOND TRIM`)
-            ? trimesterAttendance.get(
-              `${appt.class?.toLowerCase()} SECOND TRIM`,
-            )! + 1
-            : 1,
-        );
-      } else {
-        trimesterAttendance.set(
-          `${appt.classCategory?.toLowerCase()} FIRST TRIM`,
-          trimesterAttendance.has(
-            `${appt.classCategory?.toLowerCase()} FIRST TRIM`,
-          )
-            ? trimesterAttendance.get(
-              `${appt.classCategory?.toLowerCase()} FIRST TRIM`,
-            )! + 1
-            : 1,
-        );
-        trimesterAttendance.set(
-          `${appt.class?.toLowerCase()} FIRST TRIM`,
-          trimesterAttendance.has(`${appt.class?.toLowerCase()} FIRST TRIM`)
-            ? trimesterAttendance.get(
-              `${appt.class?.toLowerCase()} FIRST TRIM`,
-            )! + 1
-            : 1,
-        );
-      }
+    const trimester = getTrimester(appt);
+    if (trimester) {
+      const key = `${appt.classCategory?.toLowerCase()} ${trimester}`;
+      trimesterAttendance.set(key, (trimesterAttendance.get(key) ?? 0) + 1);
     }
   }
   return trimesterAttendance;
 }
 
+export function computeTrimesterBreakdownByClass(
+  appointmentData: AcuityAppointment[],
+) {
+  const trimesterAttendance: Map<string, number> = new Map();
+  for (const appt of appointmentData ?? []) {
+    const trimester = getTrimester(appt);
+    if (trimester) {
+      const key = `${appt.class?.toLowerCase()} ${trimester}`;
+      trimesterAttendance.set(key, (trimesterAttendance.get(key) ?? 0) + 1);
+    }
+  }
+  return trimesterAttendance;
+}
 export type InstructorDataByClass = Map<
   string,
   Map<

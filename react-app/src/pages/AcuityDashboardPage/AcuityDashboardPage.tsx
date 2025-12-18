@@ -41,7 +41,8 @@ import Loading from "@/components/Loading";
 import {
   computeAttendanceBreakdown,
   computeInstructorDataByClass,
-  computeTrimesterAttendanceBreakdown,
+  computeTrimesterBreakdownByCategory,
+  computeTrimesterBreakdownByClass,
 } from "@/lib/acuityUtils";
 import { useAllInstructorData as useInstructorPopularityData, useCategoryAttendanceData, useClassAttendanceByTrimesterData, useClassAttendanceData, useInstructorTableData, useTrimesterAttendanceData as useCategoryAttendanceByTrimesterData, useTrimesterTableData } from "./acuityDataHooks";
 import { assignColorScheme } from "@/lib/colorUtils";
@@ -154,9 +155,23 @@ export default function AcuityDashboardPage() {
     return map;
   }, [appointmentData]);
 
-  const trimesterAttendance = useMemo(
-    () => computeTrimesterAttendanceBreakdown(appointmentData ?? []),
+  const trimesterAttendanceByCategory = useMemo(
+    () => computeTrimesterBreakdownByCategory(appointmentData ?? []),
     [appointmentData],
+  );
+
+  const trimesterAttendanceByClass = useMemo(
+    () => computeTrimesterBreakdownByClass(appointmentData ?? []),
+    [appointmentData],
+  );
+
+  const trimesterAttendanceForTable = useMemo(
+    () =>
+      new Map([
+        ...trimesterAttendanceByCategory,
+        ...trimesterAttendanceByClass,
+      ]),
+    [trimesterAttendanceByCategory, trimesterAttendanceByClass],
   );
 
   const instructorDataByClass = useMemo(
@@ -164,13 +179,42 @@ export default function AcuityDashboardPage() {
     [appointmentData],
   );
 
-  const classAttendanceData = useClassAttendanceData(attendanceBreakdown, allClasses, allIntervals, classesToCategory, shouldGroupByWeek);
-  const categoryAttendanceData = useCategoryAttendanceData(attendanceBreakdown, CLASS_FILTER_OPTIONS, allIntervals, shouldGroupByWeek);
-  const instructorPopularityGraphData = useInstructorPopularityData(attendanceBreakdown, allInstructors, allIntervals, shouldGroupByWeek);
-  const instructorTableData: InstructorAttendance[] = useInstructorTableData(instructorDataByClass);
-  const trimesterAttendanceGraphDataByCategory = useCategoryAttendanceByTrimesterData(trimesterAttendance, CLASS_FILTER_OPTIONS, TRIMESTER_LEGEND);
-  const trimesterAttendanceGraphDataByClass = useClassAttendanceByTrimesterData(trimesterAttendance, classesToCategory, TRIMESTER_LEGEND);
-  const trimesterTableData: TrimesterAttendance[] = useTrimesterTableData(trimesterAttendance, classesToCategory);
+  const classAttendanceData = useClassAttendanceData(
+    attendanceBreakdown,
+    allClasses,
+    allIntervals,
+    classesToCategory,
+    shouldGroupByWeek,
+  );
+  const categoryAttendanceData = useCategoryAttendanceData(
+    attendanceBreakdown,
+    CLASS_FILTER_OPTIONS,
+    allIntervals,
+    shouldGroupByWeek,
+  );
+  const instructorPopularityGraphData = useInstructorPopularityData(
+    attendanceBreakdown,
+    allInstructors,
+    allIntervals,
+    shouldGroupByWeek,
+  );
+  const instructorTableData: InstructorAttendance[] =
+    useInstructorTableData(instructorDataByClass);
+  const trimesterAttendanceGraphDataByCategory =
+    useCategoryAttendanceByTrimesterData(
+      trimesterAttendanceByCategory,
+      CLASS_FILTER_OPTIONS,
+      TRIMESTER_LEGEND,
+    );
+  const trimesterAttendanceGraphDataByClass = useClassAttendanceByTrimesterData(
+    trimesterAttendanceByClass,
+    classesToCategory,
+    TRIMESTER_LEGEND,
+  );
+  const trimesterTableData: TrimesterAttendance[] = useTrimesterTableData(
+    trimesterAttendanceForTable,
+    classesToCategory,
+  );
 
   // Styles
   const centerItemsInDiv = "flex justify-between items-center";
