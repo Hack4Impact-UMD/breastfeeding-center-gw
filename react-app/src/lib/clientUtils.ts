@@ -14,8 +14,7 @@ export function hasRecentBirth(client: Client, referenceDate: Date): boolean {
     const dob = new Date(baby.dob as string);
     if (isNaN(dob.getTime())) return false;
 
-    const diffWeeks =
-      (referenceDate.getTime() - dob.getTime()) / MS_PER_WEEK;
+    const diffWeeks = (referenceDate.getTime() - dob.getTime()) / MS_PER_WEEK;
 
     // 4th trimester: 0–13 weeks postpartum
     return diffWeeks >= 0 && diffWeeks <= 13;

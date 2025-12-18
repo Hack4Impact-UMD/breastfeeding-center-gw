@@ -113,7 +113,11 @@ function App() {
                         <Button variant={"yellow"} size="lg" disabled>
                           TEST
                         </Button>
-                        <Button onClick={() => showErrorToast("Hello world")} variant={"yellow"} className="rounded-full">
+                        <Button
+                          onClick={() => showErrorToast("Hello world")}
+                          variant={"yellow"}
+                          className="rounded-full"
+                        >
                           toast
                         </Button>
                       </div>
