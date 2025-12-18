@@ -44,7 +44,15 @@ import {
   computeTrimesterBreakdownByCategory,
   computeTrimesterBreakdownByClass,
 } from "@/lib/acuityUtils";
-import { useAllInstructorData as useInstructorPopularityData, useCategoryAttendanceData, useClassAttendanceByTrimesterData, useClassAttendanceData, useInstructorTableData, useTrimesterAttendanceData as useCategoryAttendanceByTrimesterData, useTrimesterTableData } from "./acuityDataHooks";
+import {
+  useAllInstructorData as useInstructorPopularityData,
+  useCategoryAttendanceData,
+  useClassAttendanceByTrimesterData,
+  useClassAttendanceData,
+  useInstructorTableData,
+  useTrimesterAttendanceData as useCategoryAttendanceByTrimesterData,
+  useTrimesterTableData,
+} from "./acuityDataHooks";
 import { assignColorScheme } from "@/lib/colorUtils";
 
 const CLASS_FILTER_OPTIONS = [
@@ -54,7 +62,7 @@ const CLASS_FILTER_OPTIONS = [
   "INFANT MASSAGE",
   "PARENT GROUPS",
   "CHILDBIRTH CLASSES",
-]
+];
 
 const TRIMESTER_LEGEND = [
   { key: "FIRST TRIM", color: "#FCD484" },
@@ -62,7 +70,7 @@ const TRIMESTER_LEGEND = [
   { key: "THIRD TRIM", color: "#5DB9FF" },
   { key: "FOURTH TRIM", color: "#1661A9" },
   { key: "FIFTH TRIM", color: "#05182A" },
-]
+];
 
 const CLASS_CAT_COLOR_SCHEME: Record<string, string> = {
   "POSTPARTUM CLASSES": schemes.cybertron[0],
@@ -141,8 +149,14 @@ export default function AcuityDashboardPage() {
     [appointmentData],
   );
 
-  const instructorColorScheme = useMemo(() => assignColorScheme(allInstructors, schemes.unifyviz), [allInstructors]);
-  const classColorScheme = useMemo(() => assignColorScheme(allClasses, schemes.unifyviz), [allClasses]);
+  const instructorColorScheme = useMemo(
+    () => assignColorScheme(allInstructors, schemes.unifyviz),
+    [allInstructors],
+  );
+  const classColorScheme = useMemo(
+    () => assignColorScheme(allClasses, schemes.unifyviz),
+    [allClasses],
+  );
 
   const classesToCategory = useMemo(() => {
     const map: Map<string, string> = new Map();
@@ -164,7 +178,6 @@ export default function AcuityDashboardPage() {
     () => computeTrimesterBreakdownByClass(appointmentData ?? []),
     [appointmentData],
   );
-
 
   const instructorDataByClass = useMemo(
     () => computeInstructorDataByClass(appointmentData ?? []),
@@ -190,8 +203,9 @@ export default function AcuityDashboardPage() {
     allIntervals,
     shouldGroupByWeek,
   );
-  const instructorTableData: InstructorAttendance[] =
-    useInstructorTableData(instructorDataByClass);
+  const instructorTableData: InstructorAttendance[] = useInstructorTableData(
+    instructorDataByClass,
+  );
   const trimesterAttendanceGraphDataByCategory =
     useCategoryAttendanceByTrimesterData(
       trimesterAttendanceByCategory,
@@ -218,7 +232,6 @@ export default function AcuityDashboardPage() {
     selectedClassCategory === "ALL CLASSES"
       ? categoryAttendanceData
       : classAttendanceData;
-
 
   const classAttendanceTableExtras = (
     <div className="w-full flex justify-end p-2">
@@ -274,19 +287,21 @@ export default function AcuityDashboardPage() {
               <div className={`${centerItemsInDiv} pt-4`}>
                 <div className="flex flex-row">
                   <button
-                    className={`${graphTableButtonStyle} ${attendanceDisplay == "graph"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#f5f5f5]"
-                      }`}
+                    className={`${graphTableButtonStyle} ${
+                      attendanceDisplay == "graph"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#f5f5f5]"
+                    }`}
                     onClick={() => setAttendanceDisplay("graph")}
                   >
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${attendanceDisplay == "table"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#f5f5f5]"
-                      }`}
+                    className={`${graphTableButtonStyle} ${
+                      attendanceDisplay == "table"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#f5f5f5]"
+                    }`}
                     onClick={() => setAttendanceDisplay("table")}
                   >
                     Table
@@ -332,7 +347,11 @@ export default function AcuityDashboardPage() {
                     </ExportOnly>
                     <StackedBarChart
                       height={350}
-                      data={selectedClassCategory === "ALL CLASSES" ? trimesterAttendanceGraphDataByCategory : trimesterAttendanceGraphDataByClass}
+                      data={
+                        selectedClassCategory === "ALL CLASSES"
+                          ? trimesterAttendanceGraphDataByCategory
+                          : trimesterAttendanceGraphDataByClass
+                      }
                       series={
                         <StackedBarSeries
                           bar={
@@ -401,19 +420,21 @@ export default function AcuityDashboardPage() {
             <div className={`${centerItemsInDiv} pt-8`}>
               <div className="flex flex-row">
                 <button
-                  className={`${graphTableButtonStyle} ${popularityDisplay == "graph"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
-                    }`}
+                  className={`${graphTableButtonStyle} ${
+                    popularityDisplay == "graph"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#f5f5f5]"
+                  }`}
                   onClick={() => setPopularityDisplay("graph")}
                 >
                   Graph
                 </button>
                 <button
-                  className={`${graphTableButtonStyle} ${popularityDisplay == "table"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
-                    }`}
+                  className={`${graphTableButtonStyle} ${
+                    popularityDisplay == "table"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#f5f5f5]"
+                  }`}
                   onClick={() => setPopularityDisplay("table")}
                 >
                   Table
@@ -490,7 +511,7 @@ export default function AcuityDashboardPage() {
                                 (selectedClassCategory === "ALL CLASSES"
                                   ? CLASS_CAT_COLOR_SCHEME
                                   : classColorScheme)[
-                                item[0] ? item[0].key : item.key
+                                  item[0] ? item[0].key : item.key
                                 ]
                               }
                               type="grouped"
@@ -500,17 +521,19 @@ export default function AcuityDashboardPage() {
                         <div className="w-full flex items-center justify-center">
                           <DiscreteLegend
                             orientation="horizontal"
-                            entries={filteredClassPopularityGraphData.map((line) => (
-                              <DiscreteLegendEntry
-                                key={line.key}
-                                label={line.key}
-                                color={
-                                  (selectedClassCategory === "ALL CLASSES"
-                                    ? CLASS_CAT_COLOR_SCHEME
-                                    : classColorScheme)[line.key]
-                                }
-                              />
-                            ))}
+                            entries={filteredClassPopularityGraphData.map(
+                              (line) => (
+                                <DiscreteLegendEntry
+                                  key={line.key}
+                                  label={line.key}
+                                  color={
+                                    (selectedClassCategory === "ALL CLASSES"
+                                      ? CLASS_CAT_COLOR_SCHEME
+                                      : classColorScheme)[line.key]
+                                  }
+                                />
+                              ),
+                            )}
                           />
                         </div>
                       </ExportContent>
@@ -571,13 +594,15 @@ export default function AcuityDashboardPage() {
                         <div className="w-full flex items-center justify-center">
                           <DiscreteLegend
                             orientation="horizontal"
-                            entries={instructorPopularityGraphData.map((line) => (
-                              <DiscreteLegendEntry
-                                key={line.key}
-                                label={line.key}
-                                color={instructorColorScheme[line.key]}
-                              />
-                            ))}
+                            entries={instructorPopularityGraphData.map(
+                              (line) => (
+                                <DiscreteLegendEntry
+                                  key={line.key}
+                                  label={line.key}
+                                  color={instructorColorScheme[line.key]}
+                                />
+                              ),
+                            )}
                           />
                         </div>
                       </ExportContent>

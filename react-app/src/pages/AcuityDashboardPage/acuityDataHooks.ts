@@ -1,8 +1,18 @@
-import { AcuityAttendanceBreakdown, InstructorDataByClass, normalizeCategory } from "@/lib/acuityUtils";
+import {
+  AcuityAttendanceBreakdown,
+  InstructorDataByClass,
+  normalizeCategory,
+} from "@/lib/acuityUtils";
 import { DateTime } from "luxon";
 import { useMemo } from "react";
 
-export function useClassAttendanceData(attendanceBreakdown: AcuityAttendanceBreakdown, allClasses: string[], allIntervals: string[], classesToCategory: Map<string, string>, shouldGroupByWeek: boolean) {
+export function useClassAttendanceData(
+  attendanceBreakdown: AcuityAttendanceBreakdown,
+  allClasses: string[],
+  allIntervals: string[],
+  classesToCategory: Map<string, string>,
+  shouldGroupByWeek: boolean,
+) {
   return useMemo(
     () =>
       allClasses.map((className) => {
@@ -12,8 +22,8 @@ export function useClassAttendanceData(attendanceBreakdown: AcuityAttendanceBrea
             const date = shouldGroupByWeek
               ? DateTime.fromISO(intervalKey).toJSDate()
               : DateTime.fromFormat(intervalKey, "yyyy-MM")
-                .startOf("month")
-                .toJSDate();
+                  .startOf("month")
+                  .toJSDate();
 
             const attendanceForInterval = attendanceBreakdown.get(intervalKey);
 
@@ -38,10 +48,14 @@ export function useClassAttendanceData(attendanceBreakdown: AcuityAttendanceBrea
       shouldGroupByWeek,
     ],
   );
-
 }
 
-export function useCategoryAttendanceData(attendanceBreakdown: AcuityAttendanceBreakdown, classFilterOptions: string[], allIntervals: string[], shouldGroupByWeek: boolean) {
+export function useCategoryAttendanceData(
+  attendanceBreakdown: AcuityAttendanceBreakdown,
+  classFilterOptions: string[],
+  allIntervals: string[],
+  shouldGroupByWeek: boolean,
+) {
   return useMemo(
     () =>
       classFilterOptions
@@ -54,8 +68,8 @@ export function useCategoryAttendanceData(attendanceBreakdown: AcuityAttendanceB
               const date = shouldGroupByWeek
                 ? DateTime.fromISO(intervalKey).toJSDate()
                 : DateTime.fromFormat(intervalKey, "yyyy-MM")
-                  .startOf("month")
-                  .toJSDate();
+                    .startOf("month")
+                    .toJSDate();
 
               const attendanceForInterval =
                 attendanceBreakdown.get(intervalKey);
@@ -76,10 +90,14 @@ export function useCategoryAttendanceData(attendanceBreakdown: AcuityAttendanceB
         }),
     [allIntervals, classFilterOptions, attendanceBreakdown, shouldGroupByWeek],
   );
-
 }
 
-export function useAllInstructorData(attendanceBreakdown: AcuityAttendanceBreakdown, allInstructors: string[], allIntervals: string[], shouldGroupByWeek: boolean) {
+export function useAllInstructorData(
+  attendanceBreakdown: AcuityAttendanceBreakdown,
+  allInstructors: string[],
+  allIntervals: string[],
+  shouldGroupByWeek: boolean,
+) {
   return useMemo(
     () =>
       allInstructors.map((instructor) => {
@@ -89,8 +107,8 @@ export function useAllInstructorData(attendanceBreakdown: AcuityAttendanceBreakd
             const date = shouldGroupByWeek
               ? DateTime.fromISO(intervalKey).toJSDate()
               : DateTime.fromFormat(intervalKey, "yyyy-MM")
-                .startOf("month")
-                .toJSDate();
+                  .startOf("month")
+                  .toJSDate();
             const attendanceForInterval = attendanceBreakdown.get(intervalKey);
 
             if (!attendanceForInterval) return { key: date, data: 0 };
@@ -111,10 +129,11 @@ export function useAllInstructorData(attendanceBreakdown: AcuityAttendanceBreakd
       }),
     [allInstructors, allIntervals, attendanceBreakdown, shouldGroupByWeek],
   );
-
 }
 
-export function useInstructorTableData(instructorDataByClass: InstructorDataByClass) {
+export function useInstructorTableData(
+  instructorDataByClass: InstructorDataByClass,
+) {
   return useMemo(
     () =>
       Array.from(instructorDataByClass.entries()).map(
@@ -168,10 +187,13 @@ export function useInstructorTableData(instructorDataByClass: InstructorDataByCl
       ),
     [instructorDataByClass],
   );
-
 }
 
-export function useTrimesterAttendanceData(trimesterAttendance: Map<string, number>, classFilterOptions: string[], trimesterLegend: Array<{ key: string, color: string }>) {
+export function useTrimesterAttendanceData(
+  trimesterAttendance: Map<string, number>,
+  classFilterOptions: string[],
+  trimesterLegend: Array<{ key: string; color: string }>,
+) {
   return useMemo(
     () =>
       classFilterOptions
@@ -190,11 +212,14 @@ export function useTrimesterAttendanceData(trimesterAttendance: Map<string, numb
           };
         }),
     [classFilterOptions, trimesterAttendance, trimesterLegend],
-  )
+  );
 }
 
-
-export function useClassAttendanceByTrimesterData(trimesterAttendance: Map<string, number>, classesToCategory: Map<string, string>, trimesterLegend: Array<{ key: string, color: string }>) {
+export function useClassAttendanceByTrimesterData(
+  trimesterAttendance: Map<string, number>,
+  classesToCategory: Map<string, string>,
+  trimesterLegend: Array<{ key: string; color: string }>,
+) {
   return useMemo(
     () =>
       Array.from(classesToCategory.entries()).map(([className]) => {
@@ -204,21 +229,18 @@ export function useClassAttendanceByTrimesterData(trimesterAttendance: Map<strin
           key: className,
           data: trimesterLegend.map((trimester) => ({
             key: trimester.key,
-            data:
-              trimesterAttendance.get(`${classKey} ${trimester.key}`) ?? 0,
+            data: trimesterAttendance.get(`${classKey} ${trimester.key}`) ?? 0,
           })),
         };
       }),
-    [
-      classesToCategory,
-      trimesterAttendance,
-      trimesterLegend,
-    ],
+    [classesToCategory, trimesterAttendance, trimesterLegend],
   );
-
 }
 
-export function useTrimesterTableData(trimesterAttendance: Map<string, number>, classesToCategory: Map<string, string>) {
+export function useTrimesterTableData(
+  trimesterAttendance: Map<string, number>,
+  classesToCategory: Map<string, string>,
+) {
   return useMemo(
     () =>
       Array.from(classesToCategory.entries()).map(([className, category]) => {
@@ -233,7 +255,8 @@ export function useTrimesterTableData(trimesterAttendance: Map<string, number>, 
         const total = first + second + third + fourth + fifth;
 
         return {
-          class: className.length > 15 ? className.slice(0, 15) + "..." : className,
+          class:
+            className.length > 15 ? className.slice(0, 15) + "..." : className,
           category,
           first,
           second,
@@ -245,5 +268,4 @@ export function useTrimesterTableData(trimesterAttendance: Map<string, number>, 
       }),
     [classesToCategory, trimesterAttendance],
   );
-
 }
