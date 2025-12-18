@@ -43,16 +43,16 @@ export function computeTrimesterAttendance(
             `${appt.classCategory?.toLowerCase()} FOURTH TRIM`,
           )
             ? trimesterAttendance.get(
-                `${appt.classCategory?.toLowerCase()} FOURTH TRIM`,
-              )! + 1
+              `${appt.classCategory?.toLowerCase()} FOURTH TRIM`,
+            )! + 1
             : 1,
         );
         trimesterAttendance.set(
           `${appt.class?.toLowerCase()} FOURTH TRIM`,
           trimesterAttendance.has(`${appt.class?.toLowerCase()} FOURTH TRIM`)
             ? trimesterAttendance.get(
-                `${appt.class?.toLowerCase()} FOURTH TRIM`,
-              )! + 1
+              `${appt.class?.toLowerCase()} FOURTH TRIM`,
+            )! + 1
             : 1,
         );
       } else {
@@ -62,16 +62,16 @@ export function computeTrimesterAttendance(
             `${appt.classCategory?.toLowerCase()} FIFTH TRIM`,
           )
             ? trimesterAttendance.get(
-                `${appt.classCategory?.toLowerCase()} FIFTH TRIM`,
-              )! + 1
+              `${appt.classCategory?.toLowerCase()} FIFTH TRIM`,
+            )! + 1
             : 1,
         );
         trimesterAttendance.set(
           `${appt.class?.toLowerCase()} FIFTH TRIM`,
           trimesterAttendance.has(`${appt.class?.toLowerCase()} FIFTH TRIM`)
             ? trimesterAttendance.get(
-                `${appt.class?.toLowerCase()} FIFTH TRIM`,
-              )! + 1
+              `${appt.class?.toLowerCase()} FIFTH TRIM`,
+            )! + 1
             : 1,
         );
       }
@@ -90,16 +90,16 @@ export function computeTrimesterAttendance(
             `${appt.classCategory?.toLowerCase()} THIRD TRIM`,
           )
             ? trimesterAttendance.get(
-                `${appt.classCategory?.toLowerCase()} THIRD TRIM`,
-              )! + 1
+              `${appt.classCategory?.toLowerCase()} THIRD TRIM`,
+            )! + 1
             : 1,
         );
         trimesterAttendance.set(
           `${appt.class?.toLowerCase()} THIRD TRIM`,
           trimesterAttendance.has(`${appt.class?.toLowerCase()} THIRD TRIM`)
             ? trimesterAttendance.get(
-                `${appt.class?.toLowerCase()} THIRD TRIM`,
-              )! + 1
+              `${appt.class?.toLowerCase()} THIRD TRIM`,
+            )! + 1
             : 1,
         );
       } else if (weeksIntoPregnancy >= 15) {
@@ -110,16 +110,16 @@ export function computeTrimesterAttendance(
             `${appt.classCategory?.toLowerCase()} SECOND TRIM`,
           )
             ? trimesterAttendance.get(
-                `${appt.classCategory?.toLowerCase()} SECOND TRIM`,
-              )! + 1
+              `${appt.classCategory?.toLowerCase()} SECOND TRIM`,
+            )! + 1
             : 1,
         );
         trimesterAttendance.set(
           `${appt.class?.toLowerCase()} SECOND TRIM`,
           trimesterAttendance.has(`${appt.class?.toLowerCase()} SECOND TRIM`)
             ? trimesterAttendance.get(
-                `${appt.class?.toLowerCase()} SECOND TRIM`,
-              )! + 1
+              `${appt.class?.toLowerCase()} SECOND TRIM`,
+            )! + 1
             : 1,
         );
       } else {
@@ -129,16 +129,16 @@ export function computeTrimesterAttendance(
             `${appt.classCategory?.toLowerCase()} FIRST TRIM`,
           )
             ? trimesterAttendance.get(
-                `${appt.classCategory?.toLowerCase()} FIRST TRIM`,
-              )! + 1
+              `${appt.classCategory?.toLowerCase()} FIRST TRIM`,
+            )! + 1
             : 1,
         );
         trimesterAttendance.set(
           `${appt.class?.toLowerCase()} FIRST TRIM`,
           trimesterAttendance.has(`${appt.class?.toLowerCase()} FIRST TRIM`)
             ? trimesterAttendance.get(
-                `${appt.class?.toLowerCase()} FIRST TRIM`,
-              )! + 1
+              `${appt.class?.toLowerCase()} FIRST TRIM`,
+            )! + 1
             : 1,
         );
       }
@@ -192,7 +192,7 @@ export function computeInstructorDataByClass(
   return instructorDataByClass;
 }
 
-export function computeAttendanceMap(
+export function computeAttendanceBreakdown(
   appt: AcuityAppointment[],
   shouldGroupByWeek: boolean,
 ) {

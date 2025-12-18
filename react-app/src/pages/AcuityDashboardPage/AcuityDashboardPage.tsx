@@ -39,11 +39,12 @@ import { useAcuityApptsInRange } from "@/hooks/queries/useAcuityApptsInRange";
 import { DateTime } from "luxon";
 import Loading from "@/components/Loading";
 import {
-  computeAttendanceMap,
+  computeAttendanceBreakdown,
   computeInstructorDataByClass,
   computeTrimesterAttendance,
   normalizeCategory,
 } from "@/lib/acuityUtils";
+import app from "@/config/firebase";
 
 export default function AcuityDashboardPage() {
   const [attendanceDisplay, setAttendanceDisplay] = useState<string>("graph");
@@ -73,15 +74,15 @@ export default function AcuityDashboardPage() {
     [],
   );
 
-  const trimesterLegend = [
+  const trimesterLegend = useMemo(() => [
     { key: "FIRST TRIM", color: "#FCD484" },
     { key: "SECOND TRIM", color: "#FFAA00" },
     { key: "THIRD TRIM", color: "#5DB9FF" },
     { key: "FOURTH TRIM", color: "#1661A9" },
     { key: "FIFTH TRIM", color: "#05182A" },
-  ];
+  ], []);
 
-  const classColorScheme: Record<string, string> = {
+  const classCatColorScheme: Record<string, string> = {
     "POSTPARTUM CLASSES": schemes.cybertron[0],
     "PRENATAL CLASSES": schemes.cybertron[1],
     "INFANT MASSAGE": schemes.cybertron[2],
@@ -104,6 +105,19 @@ export default function AcuityDashboardPage() {
     selectedClassCategory,
   );
 
+  const shouldGroupByWeek = useMemo(() => {
+    if (!dateRange?.from || !dateRange?.to) return true;
+    const from = DateTime.fromJSDate(dateRange.from);
+    const to = DateTime.fromJSDate(dateRange.to);
+    const diffInMonths = to.diff(from, "months").months;
+    return diffInMonths <= 3;
+  }, [dateRange]);
+
+  const attendanceBreakdown = useMemo(
+    () => computeAttendanceBreakdown(appointmentData ?? [], shouldGroupByWeek),
+    [appointmentData, shouldGroupByWeek],
+  );
+
   const allInstructors = useMemo(
     () => [
       ...new Set(
@@ -115,6 +129,13 @@ export default function AcuityDashboardPage() {
     [appointmentData],
   );
 
+  const allIntervals = useMemo(
+    () => Array.from(attendanceBreakdown.keys()).sort(),
+    [attendanceBreakdown],
+  );
+
+  const allClasses = useMemo(() => [...new Set(appointmentData?.map(appt => appt.class).filter(c => c !== null))], [appointmentData])
+
   const instructorColorScheme = useMemo(() => {
     const colors: Record<string, string> = {};
     const scheme = schemes.unifyviz as string[];
@@ -124,6 +145,17 @@ export default function AcuityDashboardPage() {
     });
     return colors;
   }, [allInstructors]);
+
+
+  const classColorScheme = useMemo(() => {
+    const colors: Record<string, string> = {};
+    const scheme = schemes.unifyviz as string[];
+    allClasses.forEach((c) => {
+      const hash = [...c].reduce((p, v) => p * v.charCodeAt(0), 1);
+      colors[c] = scheme[hash % scheme.length];
+    });
+    return colors;
+  }, [allClasses]);
 
   const classesToCategory = useMemo(() => {
     const map: Map<string, string> = new Map();
@@ -141,29 +173,44 @@ export default function AcuityDashboardPage() {
     [appointmentData],
   );
 
-  const shouldGroupByWeek = useMemo(() => {
-    if (!dateRange?.from || !dateRange?.to) return true;
-    const from = DateTime.fromJSDate(dateRange.from);
-    const to = DateTime.fromJSDate(dateRange.to);
-    const diffInMonths = to.diff(from, "months").months;
-    return diffInMonths <= 3;
-  }, [dateRange]);
 
-  const instructorAttendanceByInterval = useMemo(
-    () => computeAttendanceMap(appointmentData ?? [], shouldGroupByWeek),
-    [appointmentData, shouldGroupByWeek],
-  );
   const instructorDataByClass = useMemo(
     () => computeInstructorDataByClass(appointmentData ?? []),
     [appointmentData],
   );
 
-  const allIntervals = useMemo(
-    () => Array.from(instructorAttendanceByInterval.keys()).sort(),
-    [instructorAttendanceByInterval],
+  const classAttendanceData = useMemo(
+    () =>
+      allClasses
+        .map((className) => {
+          return {
+            key: className,
+            data: allIntervals.map((intervalKey) => {
+              const date = shouldGroupByWeek
+                ? DateTime.fromISO(intervalKey).toJSDate()
+                : DateTime.fromFormat(intervalKey, "yyyy-MM")
+                  .startOf("month")
+                  .toJSDate();
+
+              const attendanceForInterval =
+                attendanceBreakdown.get(intervalKey);
+
+              let count = 0;
+              const cat = normalizeCategory(classesToCategory.get(className)) ?? "UNKNOWN"
+              const attendanceForCat = attendanceForInterval?.get(cat);
+              const attendanceForClass = attendanceForCat?.get(className);
+              for (const instructor of attendanceForClass?.keys() ?? []) {
+                const attendance = attendanceForClass?.get(instructor) ?? 0;
+                count += attendance;
+              }
+              return { key: date, data: count };
+            }),
+          };
+        }),
+    [allClasses, allIntervals, classesToCategory, attendanceBreakdown, shouldGroupByWeek],
   );
 
-  const allClassData = useMemo(
+  const categoryAttendanceData = useMemo(
     () =>
       classFilterOptions
         .filter((cat) => cat !== "ALL CLASSES")
@@ -175,15 +222,14 @@ export default function AcuityDashboardPage() {
               const date = shouldGroupByWeek
                 ? DateTime.fromISO(intervalKey).toJSDate()
                 : DateTime.fromFormat(intervalKey, "yyyy-MM")
-                    .startOf("month")
-                    .toJSDate();
+                  .startOf("month")
+                  .toJSDate();
 
               const attendanceForInterval =
-                instructorAttendanceByInterval.get(intervalKey);
+                attendanceBreakdown.get(intervalKey);
 
               let count = 0;
-              const attendanceForCat =
-                attendanceForInterval?.get(normalizedCategory);
+              const attendanceForCat = attendanceForInterval?.get(normalizedCategory);
               for (const className of attendanceForCat?.keys() ?? []) {
                 const attendanceForClass = attendanceForCat?.get(className);
                 for (const instructor of attendanceForClass?.keys() ?? []) {
@@ -198,7 +244,7 @@ export default function AcuityDashboardPage() {
     [
       allIntervals,
       classFilterOptions,
-      instructorAttendanceByInterval,
+      attendanceBreakdown,
       shouldGroupByWeek,
     ],
   );
@@ -212,10 +258,10 @@ export default function AcuityDashboardPage() {
             const date = shouldGroupByWeek
               ? DateTime.fromISO(intervalKey).toJSDate()
               : DateTime.fromFormat(intervalKey, "yyyy-MM")
-                  .startOf("month")
-                  .toJSDate();
+                .startOf("month")
+                .toJSDate();
             const attendanceForInterval =
-              instructorAttendanceByInterval.get(intervalKey);
+              attendanceBreakdown.get(intervalKey);
 
             if (!attendanceForInterval) return { key: date, data: 0 };
 
@@ -236,7 +282,7 @@ export default function AcuityDashboardPage() {
     [
       allInstructors,
       allIntervals,
-      instructorAttendanceByInterval,
+      attendanceBreakdown,
       shouldGroupByWeek,
     ],
   );
@@ -315,7 +361,7 @@ export default function AcuityDashboardPage() {
     [classFilterOptions, trimesterAttendance, trimesterLegend],
   );
 
-  const allClassAttendanceData = useMemo(
+  const classAttendanceByTrimesterData = useMemo(
     () =>
       classFilterOptions.map((category) => {
         return {
@@ -386,13 +432,13 @@ export default function AcuityDashboardPage() {
   // Filter class data based on selection
   const filteredClassData =
     selectedClassCategory === "ALL CLASSES"
-      ? allClassData
-      : allClassData.filter((item) => item.key === selectedClassCategory);
+      ? categoryAttendanceData
+      : classAttendanceData;
 
   const filteredClassBars =
     selectedClassCategory === "ALL CLASSES"
       ? []
-      : allClassAttendanceData.filter((c) => c.key === selectedClassCategory);
+      : classAttendanceByTrimesterData.filter((c) => c.key === selectedClassCategory);
 
   const barData = filteredClassBars[0]?.data ?? [];
 
@@ -450,21 +496,19 @@ export default function AcuityDashboardPage() {
               <div className={`${centerItemsInDiv} pt-4`}>
                 <div className="flex flex-row">
                   <button
-                    className={`${graphTableButtonStyle} ${
-                      attendanceDisplay == "graph"
-                        ? "bg-bcgw-gray-light"
-                        : "bg-[#f5f5f5]"
-                    }`}
+                    className={`${graphTableButtonStyle} ${attendanceDisplay == "graph"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#f5f5f5]"
+                      }`}
                     onClick={() => setAttendanceDisplay("graph")}
                   >
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${
-                      attendanceDisplay == "table"
-                        ? "bg-bcgw-gray-light"
-                        : "bg-[#f5f5f5]"
-                    }`}
+                    className={`${graphTableButtonStyle} ${attendanceDisplay == "table"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#f5f5f5]"
+                      }`}
                     onClick={() => setAttendanceDisplay("table")}
                   >
                     Table
@@ -624,21 +668,19 @@ export default function AcuityDashboardPage() {
             <div className={`${centerItemsInDiv} pt-8`}>
               <div className="flex flex-row">
                 <button
-                  className={`${graphTableButtonStyle} ${
-                    popularityDisplay == "graph"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#f5f5f5]"
-                  }`}
+                  className={`${graphTableButtonStyle} ${popularityDisplay == "graph"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
+                    }`}
                   onClick={() => setPopularityDisplay("graph")}
                 >
                   Graph
                 </button>
                 <button
-                  className={`${graphTableButtonStyle} ${
-                    popularityDisplay == "table"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#f5f5f5]"
-                  }`}
+                  className={`${graphTableButtonStyle} ${popularityDisplay == "table"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
+                    }`}
                   onClick={() => setPopularityDisplay("table")}
                 >
                   Table
@@ -712,8 +754,8 @@ export default function AcuityDashboardPage() {
                           series={
                             <LineSeries
                               colorScheme={(item) =>
-                                classColorScheme[
-                                  item[0] ? item[0].key : item.key
+                                (selectedClassCategory === "ALL CLASSES" ? classCatColorScheme : classColorScheme)[
+                                item[0] ? item[0].key : item.key
                                 ]
                               }
                               type="grouped"
@@ -727,7 +769,7 @@ export default function AcuityDashboardPage() {
                               <DiscreteLegendEntry
                                 key={line.key}
                                 label={line.key}
-                                color={classColorScheme[line.key]}
+                                color={(selectedClassCategory === "ALL CLASSES" ? classCatColorScheme : classColorScheme)[line.key]}
                               />
                             ))}
                           />
