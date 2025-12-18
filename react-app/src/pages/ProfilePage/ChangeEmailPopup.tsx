@@ -83,7 +83,9 @@ const ChangeEmailPopup = ({
             <div className="sm:grid sm:grid-cols-[170px_1fr] sm:gap-x-2 sm:min-h-[30px]">
               <div className="hidden sm:block"></div>
               {showEmailInvalidError && newEmail && (
-                <p className="text-red-600 text-xs sm:text-sm">Please enter a valid email</p>
+                <p className="text-red-600 text-xs sm:text-sm">
+                  Please enter a valid email
+                </p>
               )}
             </div>
 
@@ -109,9 +111,13 @@ const ChangeEmailPopup = ({
               <div className="hidden sm:block"></div>
               {confirmNewEmail &&
                 (newEmail === confirmNewEmail ? (
-                  <p className="text-green-600 text-xs sm:text-sm">Email matches.</p>
+                  <p className="text-green-600 text-xs sm:text-sm">
+                    Email matches.
+                  </p>
                 ) : (
-                  <p className="text-red-600 text-xs sm:text-sm">Emails do not match.</p>
+                  <p className="text-red-600 text-xs sm:text-sm">
+                    Emails do not match.
+                  </p>
                 ))}
             </div>
           </div>

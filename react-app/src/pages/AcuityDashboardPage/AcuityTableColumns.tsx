@@ -131,9 +131,7 @@ export function instructorColumns(
     {
       accessorKey: "instructorNames",
       header: ({ column }) => {
-        return (
-          <ColumnSortButton column={column}>Instructors</ColumnSortButton>
-        );
+        return <ColumnSortButton column={column}>Instructors</ColumnSortButton>;
       },
       cell: ({ row }) => {
         const r = row.original as InstructorAttendance;

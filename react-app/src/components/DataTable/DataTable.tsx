@@ -49,7 +49,7 @@ export function DataTable<TData, TValue>({
   pageSize = 10,
   paginate = true,
   className = "",
-  rowClassName = ""
+  rowClassName = "",
 }: DataTableProps<TData, TValue>) {
   const auth = useAuth();
   const [globalFilter, setGlobalFilter] = useState("");
@@ -147,35 +147,39 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
 
-      <div className={cn("border-2 rounded-none overflow-hidden bg-white", className)}>
+      <div
+        className={cn(
+          "border-2 rounded-none overflow-hidden bg-white",
+          className,
+        )}
+      >
         {tableHeaderExtras && (
           <div
-            className={
-              cn(
-                "w-full border-b border-black",
-                `${tableType === "janeData" ||
-                  tableType === "default" ||
-                  tableType === "clientsLost"
+            className={cn(
+              "w-full border-b border-black",
+              `${
+                tableType === "janeData" ||
+                tableType === "default" ||
+                tableType === "clientsLost"
                   ? "bg-[#0C3D6B33]"
                   : "bg-[#B9C4CE]"
-                }`,
-                rowClassName
-              )
-            }
+              }`,
+              rowClassName,
+            )}
           >
             {tableHeaderExtras}
           </div>
         )}
         <Table>
           <TableHeader
-            className={`${tableType === "janeData" ||
+            className={`${
+              tableType === "janeData" ||
               tableType === "default" ||
               tableType === "clientsLost"
-              ? "bg-[#0C3D6B33]"
-              : "bg-[#B9C4CE]"
-              }`}
+                ? "bg-[#0C3D6B33]"
+                : "bg-[#B9C4CE]"
+            }`}
           >
-
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow className={rowClassName} key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -184,9 +188,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   );
                 })}
@@ -208,16 +212,20 @@ export function DataTable<TData, TValue>({
                       }
                     }}
                     data-state={row.getIsSelected() ? "selected" : "unselected"}
-                    className={cn("group data-[state=selected]:bg-[#F5BB4782] data-[state=unselected]:bg-white", rowClassName)}
+                    className={cn(
+                      "group data-[state=selected]:bg-[#F5BB4782] data-[state=unselected]:bg-white",
+                      rowClassName,
+                    )}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell
                         key={cell.id}
-                        className={`${tableType === "clientList" ||
+                        className={`${
+                          tableType === "clientList" ||
                           tableType === "clientsLost"
-                          ? "cursor-pointer group-hover:bg-[#F5BB4782] group-active:bg-bcgw-yellow-dark transition-colors"
-                          : ""
-                          }`}
+                            ? "cursor-pointer group-hover:bg-[#F5BB4782] group-active:bg-bcgw-yellow-dark transition-colors"
+                            : ""
+                        }`}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,
@@ -289,10 +297,11 @@ export function DataTable<TData, TValue>({
                     );
                   }
                 }}
-                className={`border-2 border-black w-8 h-8 text-center focus:outline-none focus:ring-2 focus:ring-[#0C3D6B] ${table.getPageCount() <= 1
-                  ? "opacity-50 cursor-not-allowed"
-                  : ""
-                  }`}
+                className={`border-2 border-black w-8 h-8 text-center focus:outline-none focus:ring-2 focus:ring-[#0C3D6B] ${
+                  table.getPageCount() <= 1
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                }`}
               />
             </div>
             <span className="text-base">of {table.getPageCount()}</span>
@@ -301,10 +310,11 @@ export function DataTable<TData, TValue>({
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
-              className={`rounded-none w-8 h-8 flex items-center justify-center border-2 ${table.getCanPreviousPage()
-                ? "border-black text-[#222] cursor-pointer"
-                : "border-gray-300 text-gray-300 cursor-not-allowed"
-                }`}
+              className={`rounded-none w-8 h-8 flex items-center justify-center border-2 ${
+                table.getCanPreviousPage()
+                  ? "border-black text-[#222] cursor-pointer"
+                  : "border-gray-300 text-gray-300 cursor-not-allowed"
+              }`}
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
               aria-label="Previous page"
@@ -318,10 +328,11 @@ export function DataTable<TData, TValue>({
             </Button>
             <Button
               variant="ghost"
-              className={`rounded-none w-8 h-8 flex items-center justify-center border-2 ${table.getCanNextPage()
-                ? "border-black text-[#222] cursor-pointer"
-                : "border-gray-300 text-gray-300 cursor-not-allowed"
-                }`}
+              className={`rounded-none w-8 h-8 flex items-center justify-center border-2 ${
+                table.getCanNextPage()
+                  ? "border-black text-[#222] cursor-pointer"
+                  : "border-gray-300 text-gray-300 cursor-not-allowed"
+              }`}
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
               aria-label="Next page"

@@ -24,7 +24,10 @@ const TwoFAPopup = ({
     onClose();
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number,
+  ) => {
     const value = e.target.value;
     if (!/^[0-9]$/.test(value)) return;
 
@@ -35,7 +38,10 @@ const TwoFAPopup = ({
     if (index < 5) setActiveIndex(index + 1);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    index: number,
+  ) => {
     if (e.key === "Backspace") {
       const newOtp = [...otp];
       if (otp[index] === "") {
@@ -73,7 +79,6 @@ const TwoFAPopup = ({
       </button>
 
       <div className="flex flex-col items-center justify-center px-6 sm:px-12">
-
         <p className="mt-2 mb-6 text-xl sm:text-3xl font-semibold text-center font-Montserrat">
           Two-Factor Authentication
         </p>
@@ -104,7 +109,8 @@ const TwoFAPopup = ({
         )}
 
         <p className="text-center text-sm sm:text-lg leading-6 mb-6 mx-6">
-          The verification code has been sent to your phone. Enter the code to continue.
+          The verification code has been sent to your phone. Enter the code to
+          continue.
         </p>
 
         <button
@@ -134,10 +140,8 @@ const TwoFAPopup = ({
 
   return (
     <Modal open={openModal} onClose={handleClose} height={520} width={550}>
-  <div className="bg-white rounded-2xl shadow-lg p-6 w-full">
-    {twoFA}
-  </div>
-</Modal>
+      <div className="bg-white rounded-2xl shadow-lg p-6 w-full">{twoFA}</div>
+    </Modal>
   );
 };
 

@@ -80,14 +80,14 @@ type RangeProps = OmitKeys<DayPickerRangeProps, KeysToOmit>;
 
 type CalendarProps =
   | ({
-    mode: "single";
-  } & SingleProps)
+      mode: "single";
+    } & SingleProps)
   | ({
-    mode?: undefined;
-  } & SingleProps)
+      mode?: undefined;
+    } & SingleProps)
   | ({
-    mode: "range";
-  } & RangeProps);
+      mode: "range";
+    } & RangeProps);
 
 const Calendar = ({
   mode = "single",
@@ -199,7 +199,7 @@ const Calendar = ({
                       !previousMonth ||
                       (fromDate &&
                         addYears(currentMonth, -1).getTime() <
-                        fromDate.getTime())
+                          fromDate.getTime())
                     }
                     aria-label="Go to previous year"
                     onClick={goToPreviousYear}
@@ -294,10 +294,8 @@ const Calendar = ({
                     {
                       "bg-bcgw-yellow-dark": !selected,
                       "bg-white!": selected,
-                      "bg-gray-400!":
-                        selected && range_middle,
-                      "bg-gray-400 text-gray-400":
-                        disabled,
+                      "bg-gray-400!": selected && range_middle,
+                      "bg-gray-400 text-gray-400": disabled,
                     },
                   )}
                 />

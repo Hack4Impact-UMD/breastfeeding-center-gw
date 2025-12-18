@@ -34,14 +34,11 @@ function filterClients(
 
   Object.entries(clientsByNumVisits).forEach(([visitStr, clients]) => {
     const visit = Number(visitStr);
-    result[visit] = clients.filter((client) =>
-      hasRecentBirth(client, refDate),
-    );
+    result[visit] = clients.filter((client) => hasRecentBirth(client, refDate));
   });
 
   return result;
 }
-
 
 type JaneRetentionProps = {
   startDate?: Date | undefined;
@@ -72,8 +69,9 @@ function CustomBar(props: Partial<BarProps>) {
 }
 
 const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
-  const [selectedDropdown, setSelectedDropdown] =
-    useState<"ALL CLIENTS" | "RECENT CHILDBIRTH">("ALL CLIENTS");
+  const [selectedDropdown, setSelectedDropdown] = useState<
+    "ALL CLIENTS" | "RECENT CHILDBIRTH"
+  >("ALL CLIENTS");
 
   const graphTableButtonStyle =
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer border border-gray-300";
@@ -81,8 +79,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
   const chartDiv =
     "flex flex-col items-center justify-center bg-white min-h-116 border-2 border-black p-5 mt-5 rounded-2xl";
 
-  const [retentionDisplay, setRetentionDisplay] =
-    useState<string>("graph");
+  const [retentionDisplay, setRetentionDisplay] = useState<string>("graph");
   const [openRow, setOpenRow] = useState<RetentionRate | null>(null);
 
   const dateRangeLabel =
@@ -158,19 +155,21 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
         <div className={`${centerItemsInDiv} pt-4 mb-6`}>
           <div className="flex flex-row">
             <button
-              className={`${graphTableButtonStyle} ${retentionDisplay === "graph"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#CED8E1]"
-                }`}
+              className={`${graphTableButtonStyle} ${
+                retentionDisplay === "graph"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#CED8E1]"
+              }`}
               onClick={() => setRetentionDisplay("graph")}
             >
               Graph
             </button>
             <button
-              className={`${graphTableButtonStyle} ${retentionDisplay === "table"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#CED8E1]"
-                }`}
+              className={`${graphTableButtonStyle} ${
+                retentionDisplay === "table"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#CED8E1]"
+              }`}
               onClick={() => setRetentionDisplay("table")}
             >
               Table
@@ -225,9 +224,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
                       Client Retention
                     </h1>
                     <p className="text-base text-black">{dateRangeLabel}</p>
-                    <p className="text-gray-800 text-sm">
-                      {selectedDropdown}
-                    </p>
+                    <p className="text-gray-800 text-sm">{selectedDropdown}</p>
                   </ExportOnly>
                   <div className="w-full flex flex-col items-center justify-center mt-4">
                     <BarChart
@@ -246,9 +243,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
               {/* TABLE VIEW */}
               <div className="[&_td]:py-3 [&_th]:py-3">
                 <DataTable
-                  columns={makeRetentionRateColumns((row) =>
-                    setOpenRow(row),
-                  )}
+                  columns={makeRetentionRateColumns((row) => setOpenRow(row))}
                   data={retentionData}
                   tableType="default"
                   className="h-128"
@@ -270,10 +265,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
               </div>
 
               {openRow && (
-                <ClientLostPopup
-                  openRow={openRow}
-                  setOpenRow={setOpenRow}
-                />
+                <ClientLostPopup openRow={openRow} setOpenRow={setOpenRow} />
               )}
             </>
           )}

@@ -59,14 +59,14 @@ function App() {
                 path="/register-success"
                 element={<RegisterSuccessPage />}
               />
-              <Route path="/register/:inviteId" element={
-                <RequireNoAuth>
-
-                  <NewUserPage />
-                </RequireNoAuth>
-              } />
-
-
+              <Route
+                path="/register/:inviteId"
+                element={
+                  <RequireNoAuth>
+                    <NewUserPage />
+                  </RequireNoAuth>
+                }
+              />
 
               <Route
                 element={
@@ -113,7 +113,11 @@ function App() {
                         <Button variant={"yellow"} size="lg" disabled>
                           TEST
                         </Button>
-                        <Button onClick={() => showErrorToast("Hello world")} variant={"yellow"} className="rounded-full">
+                        <Button
+                          onClick={() => showErrorToast("Hello world")}
+                          variant={"yellow"}
+                          className="rounded-full"
+                        >
                           toast
                         </Button>
                       </div>

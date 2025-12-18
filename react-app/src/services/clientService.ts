@@ -11,4 +11,3 @@ export async function getAllClients(): Promise<Client[]> {
     throw error;
   }
 }
-

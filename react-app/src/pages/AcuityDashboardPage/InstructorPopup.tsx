@@ -5,10 +5,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import ColumnSortButton from "@/components/DataTable/ColumnSortButton";
 
-import {
-  InstructorAttendance,
-  InstructorData,
-} from "./AcuityTableColumns";
+import { InstructorAttendance, InstructorData } from "./AcuityTableColumns";
 
 type InstructorPopupProps = {
   openRow: InstructorAttendance | null;
@@ -24,43 +21,40 @@ const InstructorPopup = ({ openRow, setOpenRow }: InstructorPopupProps) => {
     {
       accessorKey: "instructor",
       header: ({ column }) => (
-        <ColumnSortButton column={column}>
-          Instructor
-        </ColumnSortButton>
+        <ColumnSortButton column={column}>Instructor</ColumnSortButton>
       ),
       cell: ({ row }) => row.getValue("instructor"),
     },
     {
       accessorKey: "avgAttendance",
       header: ({ column }) => (
-        <ColumnSortButton column={column}>
-          Avg. Attend.
-        </ColumnSortButton>
+        <ColumnSortButton column={column}>Avg. Attend.</ColumnSortButton>
       ),
       cell: ({ row }) => row.getValue("avgAttendance"),
     },
     {
       accessorKey: "numClasses",
       header: ({ column }) => (
-        <ColumnSortButton column={column}>
-          Num. Classes
-        </ColumnSortButton>
+        <ColumnSortButton column={column}>Num. Classes</ColumnSortButton>
       ),
       cell: ({ row }) => row.getValue("numClasses"),
     },
     {
       accessorKey: "totalAttendance",
       header: ({ column }) => (
-        <ColumnSortButton column={column}>
-          Total Attend.
-        </ColumnSortButton>
+        <ColumnSortButton column={column}>Total Attend.</ColumnSortButton>
       ),
       cell: ({ row }) => row.getValue("totalAttendance"),
     },
   ];
 
   return (
-    <Modal open={openRow !== null} onClose={handleClose} height={425} width={600}>
+    <Modal
+      open={openRow !== null}
+      onClose={handleClose}
+      height={425}
+      width={600}
+    >
       <div className="flex flex-col h-full relative">
         <div className="flex justify-between items-center my-2 mx-4">
           <p className="text-lg">Instructor Data for {openRow?.class}</p>

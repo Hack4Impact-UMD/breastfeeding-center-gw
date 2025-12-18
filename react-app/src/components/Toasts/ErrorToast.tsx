@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 import { IoIosClose } from "react-icons/io";
-import errorIcon from '@/assets/error.png';
+import errorIcon from "@/assets/error.png";
 
 type ErrorToastProps = {
   message: string;
@@ -10,11 +10,7 @@ type ErrorToastProps = {
 export function ErrorToast({ message, closeToast }: ErrorToastProps) {
   return (
     <div className="bg-slate-800 text-white rounded-xl shadow-lg p-4 flex items-center gap-3 max-w-[400px] w-full">
-      <img
-        src={errorIcon}
-        alt="error"
-        className="w-5 h-5 flex-shrink-0"
-      />
+      <img src={errorIcon} alt="error" className="w-5 h-5 flex-shrink-0" />
       <div className="flex-1 text-[15px] break-words">{message}</div>
       <IoIosClose
         onClick={closeToast}
@@ -31,7 +27,7 @@ export function showErrorToast(message: string, autoClose: number = 5000) {
     closeButton: false,
     style: {
       padding: 0,
-      backgroundColor: "transparent"
+      backgroundColor: "transparent",
     },
     hideProgressBar: true,
     icon: false,
