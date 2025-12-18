@@ -316,95 +316,50 @@ export default function AcuityDashboardPage() {
                         {selectedClassCategory}
                       </p>
                     </ExportOnly>
-                    {selectedClassCategory === "ALL CLASSES" ? (
-                      /* stacked chart for all classes: */
-                      <StackedBarChart
-                        height={350}
-                        data={trimesterAttendanceGraphDataByCategory}
-                        series={
-                          <StackedBarSeries
-                            bar={
-                              <Bar
-                                width={100}
-                                rx={0}
-                                ry={0}
-                                label={
-                                  <BarLabel
-                                    position="center"
-                                    fill="white"
-                                    scale={20}
-                                    className="z-20"
-                                  />
-                                }
-                                gradient={
-                                  <Gradient
-                                    stops={[
-                                      <GradientStop
-                                        offset="5%"
-                                        stopOpacity={1.0}
-                                        key="start"
-                                      />,
-                                      <GradientStop
-                                        offset="90%"
-                                        stopOpacity={1.0}
-                                        key="end"
-                                      />,
-                                    ]}
-                                  />
-                                }
-                                rangeLines={
-                                  <RangeLines position="top" strokeWidth={3} />
-                                }
-                                guide={<GuideBar />}
-                              />
-                            }
-                            colorScheme={TRIMESTER_LEGEND.map((i) => i.color)}
-                          />
-                        }
-                      />
-                    ) : (
-                      /* single-series bar chart for one class: */
-                      <StackedBarChart
-                        height={350}
-                        data={trimesterAttendanceGraphDataByClass}
-                        series={
-                          <StackedBarSeries
-                            colorScheme={TRIMESTER_LEGEND.map((i) => i.color)}
-                            padding={0.1}
-                            bar={
-                              <Bar
-                                label={
-                                  <BarLabel
-                                    position="center"
-                                    fill="white"
-                                    scale={20}
-                                    className="z-20"
-                                  />
-                                }
-                                rx={0}
-                                ry={0}
-                                gradient={
-                                  <Gradient
-                                    stops={[
-                                      <GradientStop
-                                        offset="5%"
-                                        stopOpacity={1.0}
-                                        key="start"
-                                      />,
-                                      <GradientStop
-                                        offset="90%"
-                                        stopOpacity={1.0}
-                                        key="end"
-                                      />,
-                                    ]}
-                                  />
-                                }
-                              />
-                            }
-                          />
-                        }
-                      />
-                    )}
+                    <StackedBarChart
+                      height={350}
+                      data={selectedClassCategory === "ALL CLASSES" ? trimesterAttendanceGraphDataByCategory : trimesterAttendanceGraphDataByClass}
+                      series={
+                        <StackedBarSeries
+                          bar={
+                            <Bar
+                              width={100}
+                              rx={0}
+                              ry={0}
+                              label={
+                                <BarLabel
+                                  position="center"
+                                  fill="white"
+                                  scale={20}
+                                  className="z-20"
+                                />
+                              }
+                              gradient={
+                                <Gradient
+                                  stops={[
+                                    <GradientStop
+                                      offset="5%"
+                                      stopOpacity={1.0}
+                                      key="start"
+                                    />,
+                                    <GradientStop
+                                      offset="90%"
+                                      stopOpacity={1.0}
+                                      key="end"
+                                    />,
+                                  ]}
+                                />
+                              }
+                              rangeLines={
+                                <RangeLines position="top" strokeWidth={3} />
+                              }
+                              guide={<GuideBar />}
+                            />
+                          }
+                          colorScheme={TRIMESTER_LEGEND.map((i) => i.color)}
+                        />
+                      }
+                    />
                     <div className="w-full flex items-center justify-center">
                       <DiscreteLegend
                         orientation="horizontal"
