@@ -2,7 +2,7 @@ import { AcuityAppointment } from "@/types/AcuityType";
 import { DateTime } from "luxon";
 
 //TODO: Putting class keys and category keys in the same map isn't ideal, should probably be separated at some point
-export function computeTrimesterAttendance(
+export function computeTrimesterAttendanceBreakdown(
   appointmentData: AcuityAppointment[],
 ) {
   const trimesterAttendance: Map<string, number> = new Map();

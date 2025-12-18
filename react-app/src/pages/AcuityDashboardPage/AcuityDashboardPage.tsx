@@ -41,7 +41,7 @@ import Loading from "@/components/Loading";
 import {
   computeAttendanceBreakdown,
   computeInstructorDataByClass,
-  computeTrimesterAttendance,
+  computeTrimesterAttendanceBreakdown,
 } from "@/lib/acuityUtils";
 import { useAllInstructorData, useCategoryAttendanceData, useClassAttendanceByTrimesterData, useClassAttendanceData, useInstructorTableData, useTrimesterAttendanceData, useTrimesterTableData } from "./acuityDataHooks";
 
@@ -177,7 +177,7 @@ export default function AcuityDashboardPage() {
   }, [appointmentData]);
 
   const trimesterAttendance = useMemo(
-    () => computeTrimesterAttendance(appointmentData ?? []),
+    () => computeTrimesterAttendanceBreakdown(appointmentData ?? []),
     [appointmentData],
   );
 
@@ -190,11 +190,11 @@ export default function AcuityDashboardPage() {
 
   const categoryAttendanceData = useCategoryAttendanceData(attendanceBreakdown, classFilterOptions, allIntervals, shouldGroupByWeek);
 
-  const allInstructorData = useAllInstructorData(attendanceBreakdown, allInstructors, allIntervals, shouldGroupByWeek);
+  const instructorPopularityGraphData = useAllInstructorData(attendanceBreakdown, allInstructors, allIntervals, shouldGroupByWeek);
 
   const instructorTableData: InstructorAttendance[] = useInstructorTableData(instructorDataByClass);
 
-  const trimesterAttendanceData = useTrimesterAttendanceData(trimesterAttendance, classFilterOptions, trimesterLegend);
+  const trimesterAttendanceGraphDataByCategory = useTrimesterAttendanceData(trimesterAttendance, classFilterOptions, trimesterLegend);
 
   const classAttendanceByTrimesterData = useClassAttendanceByTrimesterData(trimesterAttendance, classFilterOptions, classesToCategory, trimesterLegend);
 
@@ -206,7 +206,7 @@ export default function AcuityDashboardPage() {
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer";
 
   // Filter class data based on selection
-  const filteredClassData =
+  const filteredClassPopularityGraphData =
     selectedClassCategory === "ALL CLASSES"
       ? categoryAttendanceData
       : classAttendanceData;
@@ -218,7 +218,7 @@ export default function AcuityDashboardPage() {
         (c) => c.key === selectedClassCategory,
       );
 
-  const barData = filteredClassBars[0]?.data ?? [];
+  const trimesterAttendanceGraphDataByClass = filteredClassBars[0]?.data ?? [];
 
   const classAttendanceTableExtras = (
     <div className="w-full flex justify-end p-2">
@@ -334,7 +334,7 @@ export default function AcuityDashboardPage() {
                       /* stacked chart for all classes: */
                       <StackedBarChart
                         height={350}
-                        data={trimesterAttendanceData}
+                        data={trimesterAttendanceGraphDataByCategory}
                         series={
                           <StackedBarSeries
                             bar={
@@ -380,7 +380,7 @@ export default function AcuityDashboardPage() {
                       /* single-series bar chart for one class: */
                       <StackedBarChart
                         height={350}
-                        data={barData}
+                        data={trimesterAttendanceGraphDataByClass}
                         series={
                           <StackedBarSeries
                             colorScheme={trimesterLegend.map((i) => i.color)}
@@ -528,7 +528,7 @@ export default function AcuityDashboardPage() {
                         </ExportOnly>
                         <LineChart
                           height={300}
-                          data={filteredClassData}
+                          data={filteredClassPopularityGraphData}
                           series={
                             <LineSeries
                               colorScheme={(item) =>
@@ -545,7 +545,7 @@ export default function AcuityDashboardPage() {
                         <div className="w-full flex items-center justify-center">
                           <DiscreteLegend
                             orientation="horizontal"
-                            entries={filteredClassData.map((line) => (
+                            entries={filteredClassPopularityGraphData.map((line) => (
                               <DiscreteLegendEntry
                                 key={line.key}
                                 label={line.key}
@@ -601,7 +601,7 @@ export default function AcuityDashboardPage() {
                         </ExportOnly>
                         <LineChart
                           height={300}
-                          data={allInstructorData}
+                          data={instructorPopularityGraphData}
                           series={
                             <LineSeries
                               colorScheme={(item) =>
@@ -616,7 +616,7 @@ export default function AcuityDashboardPage() {
                         <div className="w-full flex items-center justify-center">
                           <DiscreteLegend
                             orientation="horizontal"
-                            entries={allInstructorData.map((line) => (
+                            entries={instructorPopularityGraphData.map((line) => (
                               <DiscreteLegendEntry
                                 key={line.key}
                                 label={line.key}
