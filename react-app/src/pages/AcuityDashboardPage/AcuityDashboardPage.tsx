@@ -43,7 +43,7 @@ import {
   computeInstructorDataByClass,
   computeTrimesterAttendanceBreakdown,
 } from "@/lib/acuityUtils";
-import { useAllInstructorData, useCategoryAttendanceData, useClassAttendanceByTrimesterData, useClassAttendanceData, useInstructorTableData, useTrimesterAttendanceData, useTrimesterTableData } from "./acuityDataHooks";
+import { useAllInstructorData as useInstructorPopularityData, useCategoryAttendanceData, useClassAttendanceByTrimesterData, useClassAttendanceData, useInstructorTableData, useTrimesterAttendanceData as useCategoryAttendanceByTrimesterData, useTrimesterTableData } from "./acuityDataHooks";
 
 export default function AcuityDashboardPage() {
   const [attendanceDisplay, setAttendanceDisplay] = useState<string>("graph");
@@ -190,11 +190,11 @@ export default function AcuityDashboardPage() {
 
   const categoryAttendanceData = useCategoryAttendanceData(attendanceBreakdown, classFilterOptions, allIntervals, shouldGroupByWeek);
 
-  const instructorPopularityGraphData = useAllInstructorData(attendanceBreakdown, allInstructors, allIntervals, shouldGroupByWeek);
+  const instructorPopularityGraphData = useInstructorPopularityData(attendanceBreakdown, allInstructors, allIntervals, shouldGroupByWeek);
 
   const instructorTableData: InstructorAttendance[] = useInstructorTableData(instructorDataByClass);
 
-  const trimesterAttendanceGraphDataByCategory = useTrimesterAttendanceData(trimesterAttendance, classFilterOptions, trimesterLegend);
+  const trimesterAttendanceGraphDataByCategory = useCategoryAttendanceByTrimesterData(trimesterAttendance, classFilterOptions, trimesterLegend);
 
   const trimesterAttendanceGraphDataByClass = useClassAttendanceByTrimesterData(trimesterAttendance, classesToCategory, trimesterLegend);
 
