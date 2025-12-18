@@ -165,14 +165,6 @@ export default function AcuityDashboardPage() {
     [appointmentData],
   );
 
-  const trimesterAttendanceForTable = useMemo(
-    () =>
-      new Map([
-        ...trimesterAttendanceByCategory,
-        ...trimesterAttendanceByClass,
-      ]),
-    [trimesterAttendanceByCategory, trimesterAttendanceByClass],
-  );
 
   const instructorDataByClass = useMemo(
     () => computeInstructorDataByClass(appointmentData ?? []),
@@ -212,7 +204,7 @@ export default function AcuityDashboardPage() {
     TRIMESTER_LEGEND,
   );
   const trimesterTableData: TrimesterAttendance[] = useTrimesterTableData(
-    trimesterAttendanceForTable,
+    trimesterAttendanceByClass,
     classesToCategory,
   );
 

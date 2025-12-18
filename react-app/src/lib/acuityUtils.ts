@@ -59,7 +59,7 @@ export function computeTrimesterBreakdownByCategory(
   for (const appt of appointmentData ?? []) {
     const trimester = getTrimester(appt);
     if (trimester) {
-      const key = `${appt.classCategory?.toLowerCase()} ${trimester}`;
+      const key = `${appt.classCategory?.toLowerCase() ?? "UNKNOWN"} ${trimester}`;
       trimesterAttendance.set(key, (trimesterAttendance.get(key) ?? 0) + 1);
     }
   }
@@ -73,7 +73,7 @@ export function computeTrimesterBreakdownByClass(
   for (const appt of appointmentData ?? []) {
     const trimester = getTrimester(appt);
     if (trimester) {
-      const key = `${appt.class?.toLowerCase()} ${trimester}`;
+      const key = `${appt.class?.toLowerCase() ?? "UNKNOWN"} ${trimester}`;
       trimesterAttendance.set(key, (trimesterAttendance.get(key) ?? 0) + 1);
     }
   }
