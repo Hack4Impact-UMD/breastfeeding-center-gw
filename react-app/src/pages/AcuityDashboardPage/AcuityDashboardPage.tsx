@@ -44,6 +44,7 @@ import {
   computeTrimesterAttendanceBreakdown,
 } from "@/lib/acuityUtils";
 import { useAllInstructorData as useInstructorPopularityData, useCategoryAttendanceData, useClassAttendanceByTrimesterData, useClassAttendanceData, useInstructorTableData, useTrimesterAttendanceData as useCategoryAttendanceByTrimesterData, useTrimesterTableData } from "./acuityDataHooks";
+import { assignColorScheme } from "@/lib/colorUtils";
 
 const CLASS_FILTER_OPTIONS = [
   "ALL CLASSES",
@@ -139,25 +140,8 @@ export default function AcuityDashboardPage() {
     [appointmentData],
   );
 
-  const instructorColorScheme = useMemo(() => {
-    const colors: Record<string, string> = {};
-    const scheme = schemes.unifyviz as string[];
-    allInstructors.forEach((inst) => {
-      const hash = [...inst].reduce((p, v) => p * v.charCodeAt(0), 1);
-      colors[inst] = scheme[hash % scheme.length];
-    });
-    return colors;
-  }, [allInstructors]);
-
-  const classColorScheme = useMemo(() => {
-    const colors: Record<string, string> = {};
-    const scheme = schemes.unifyviz as string[];
-    allClasses.forEach((c) => {
-      const hash = [...c].reduce((p, v) => p * v.charCodeAt(0), 1);
-      colors[c] = scheme[hash % scheme.length];
-    });
-    return colors;
-  }, [allClasses]);
+  const instructorColorScheme = useMemo(() => assignColorScheme(allInstructors, schemes.unifyviz), [allInstructors]);
+  const classColorScheme = useMemo(() => assignColorScheme(allClasses, schemes.unifyviz), [allClasses]);
 
   const classesToCategory = useMemo(() => {
     const map: Map<string, string> = new Map();
@@ -181,17 +165,11 @@ export default function AcuityDashboardPage() {
   );
 
   const classAttendanceData = useClassAttendanceData(attendanceBreakdown, allClasses, allIntervals, classesToCategory, shouldGroupByWeek);
-
   const categoryAttendanceData = useCategoryAttendanceData(attendanceBreakdown, CLASS_FILTER_OPTIONS, allIntervals, shouldGroupByWeek);
-
   const instructorPopularityGraphData = useInstructorPopularityData(attendanceBreakdown, allInstructors, allIntervals, shouldGroupByWeek);
-
   const instructorTableData: InstructorAttendance[] = useInstructorTableData(instructorDataByClass);
-
   const trimesterAttendanceGraphDataByCategory = useCategoryAttendanceByTrimesterData(trimesterAttendance, CLASS_FILTER_OPTIONS, TRIMESTER_LEGEND);
-
   const trimesterAttendanceGraphDataByClass = useClassAttendanceByTrimesterData(trimesterAttendance, classesToCategory, TRIMESTER_LEGEND);
-
   const trimesterTableData: TrimesterAttendance[] = useTrimesterTableData(trimesterAttendance, classesToCategory);
 
   // Styles
