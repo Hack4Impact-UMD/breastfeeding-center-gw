@@ -231,7 +231,7 @@ export default function AcuityDashboardPage() {
   );
 
   const classPopularityTableExtras = (
-    <div className="w-full flex justify-end">
+    <div className="w-full flex justify-end p-2">
       <SelectDropdown
         options={CLASS_FILTER_OPTIONS}
         selected={selectedClassCategory}
