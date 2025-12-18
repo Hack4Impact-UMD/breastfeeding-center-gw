@@ -45,7 +45,7 @@ function computeAttendanceByInterval(
   shouldGroupByWeek: boolean,
 ) {
   const classAttendanceByInterval = new Map<string, Map<string, number>>();
-  const instructorAttendanceByInterval = new Map<string, Map<string, number>>();
+  const instructorAttendanceByInterval = computeInstructorAttendanceByInterval(filteredAppointmentsForPopularity, shouldGroupByWeek);
   const instructorDataByClass = new Map<
     string,
     Map<
@@ -75,15 +75,6 @@ function computeAttendanceByInterval(
     const classMap = classAttendanceByInterval.get(intervalKey)!;
     classMap.set(classCategory, (classMap.get(classCategory) || 0) + 1);
 
-    if (!instructorAttendanceByInterval.has(intervalKey)) {
-      instructorAttendanceByInterval.set(
-        intervalKey,
-        new Map<string, number>(),
-      );
-    }
-    const instructorMap = instructorAttendanceByInterval.get(intervalKey)!;
-    instructorMap.set(instructor, (instructorMap.get(instructor) || 0) + 1);
-
     if (!instructorDataByClass.has(className)) {
       instructorDataByClass.set(className, new Map());
     }
@@ -106,6 +97,47 @@ function computeAttendanceByInterval(
     instructorAttendanceByInterval,
     instructorDataByClass,
   };
+}
+
+function computeInstructorAttendanceByInterval(appt: AcuityAppointment[], shouldGroupByWeek: boolean) {
+  // <interval, <classCategory, <class, <instructor, attendance>>>
+  const instructorAttendanceByInterval = new Map<
+    string,
+    Map<
+      string,
+      Map<
+        string,
+        Map<
+          string,
+          number
+        >
+      >
+    >
+  >();
+
+  appt.forEach(appt => {
+    if (!appt.datetime) return;
+
+    const apptDate = DateTime.fromISO(appt.datetime);
+    if (!apptDate.isValid) return;
+
+    const intervalKey = getIntervalKey(apptDate, shouldGroupByWeek);
+    const classCategory = normalizeCategory(appt.classCategory) || "UNKNOWN";
+    const className = appt.class || "UNKNOWN";
+    const instructor = appt.instructor || "UNKNOWN";
+
+    const attendanceForInterval = instructorAttendanceByInterval.get(intervalKey) ?? new Map();
+    const attendanceForCategory = attendanceForInterval.get(classCategory) ?? new Map();
+    const attendanceForClass = attendanceForCategory.get(className) ?? new Map();
+    const attendanceForInstructor = attendanceForClass.get(instructor) ?? 0;
+
+    attendanceForClass.set(instructor, attendanceForInstructor + 1);
+    attendanceForCategory.set(className, attendanceForClass);
+    attendanceForInterval.set(classCategory, attendanceForCategory);
+    instructorAttendanceByInterval.set(intervalKey, attendanceForInterval);
+  })
+
+  return instructorAttendanceByInterval;
 }
 
 const normalizeCategory = (category: string | null | undefined): string => {
@@ -166,6 +198,7 @@ export default function AcuityDashboardPage() {
     "CHILDBIRTH CLASSES": schemes.cybertron[4],
   };
 
+
   const dateRangeLabel =
     dateRange?.from && dateRange?.to
       ? `${formatDate(dateRange.from)} - ${formatDate(dateRange.to)}`
@@ -180,6 +213,18 @@ export default function AcuityDashboardPage() {
     dateRange?.to?.toISOString(),
     selectedClassCategory,
   );
+
+  const allInstructors = useMemo(() => [...new Set(appointmentData?.map(appt => appt.instructor).filter(i => i !== null))], [appointmentData]);
+
+  const instructorColorScheme = useMemo(() => {
+    const colors: Record<string, string> = {};
+    const scheme = schemes.unifyviz as string[];
+    allInstructors.forEach(inst => {
+      const hash = [...inst].reduce((p, v) => p * v.charCodeAt(0), 1);
+      colors[inst] = scheme[hash % scheme.length]
+    })
+    return colors;
+  }, [allInstructors]);
 
   //NOTE: acuity appts are already filtered from the api response
   const filteredAppointmentsForTrimester = useMemo(() => appointmentData ?? [], [appointmentData]);
@@ -399,20 +444,29 @@ export default function AcuityDashboardPage() {
       });
 
     //TODO: Fix this somehow
-    const instructorData = classFilterOptions.map((category) => {
-      const normalizedCategory = normalizeCategory(category);
+    const instructorData = allInstructors.map((instructor) => {
       return {
-        key: category,
+        key: instructor,
         data: allIntervals.map((intervalKey) => {
           const date = shouldGroupByWeek
             ? DateTime.fromISO(intervalKey).toJSDate()
             : DateTime.fromFormat(intervalKey, "yyyy-MM")
               .startOf("month")
               .toJSDate();
-          const count =
-            instructorAttendanceByInterval
-              .get(intervalKey)
-              ?.get(normalizedCategory) || 0;
+          const attendanceForInterval = instructorAttendanceByInterval.get(intervalKey);
+
+          if (!attendanceForInterval) return { key: date, data: 0 }
+
+          let count = 0;
+          for (const cat of attendanceForInterval.keys()) {
+            const attendanceForCat = attendanceForInterval.get(cat);
+            for (const className of (attendanceForCat?.keys() ?? [])) {
+              const attendanceForClass = attendanceForCat?.get(className);
+              const attendance = attendanceForClass?.get(instructor) ?? 0;
+              count += attendance;
+            }
+          }
+
           return { key: date, data: count };
         }),
       };
@@ -468,14 +522,7 @@ export default function AcuityDashboardPage() {
       instructorData,
       instructorTableData,
     };
-  }, [
-    filteredAppointmentsForPopularity,
-    classAttendanceByInterval,
-    classFilterOptions,
-    instructorDataByClass,
-    shouldGroupByWeek,
-    instructorAttendanceByInterval,
-  ]);
+  }, [filteredAppointmentsForPopularity, classAttendanceByInterval, classFilterOptions, allInstructors, instructorDataByClass, shouldGroupByWeek, instructorAttendanceByInterval]);
 
   const trimesterAttendanceData = classFilterOptions
     .filter(cat => cat !== "ALL CLASSES")
@@ -498,14 +545,6 @@ export default function AcuityDashboardPage() {
       key: category,
       data: Array.from(classesToCategory.entries()).map(([className]) => {
         const classKey = className.toLowerCase();
-
-        // const first = trimesterAttendance.get(`${classKey} FIRST TRIM`) ?? 0;
-        // const second = trimesterAttendance.get(`${classKey} SECOND TRIM`) ?? 0;
-        // const third = trimesterAttendance.get(`${classKey} THIRD TRIM`) ?? 0;
-        // const fourth = trimesterAttendance.get(`${classKey} FOURTH TRIM`) ?? 0;
-        // const fifth = trimesterAttendance.get(`${classKey} FIFTH TRIM`) ?? 0;
-        //
-        // const total = first + second + third + fourth + fifth;
 
         return {
           key: className,
@@ -571,12 +610,6 @@ export default function AcuityDashboardPage() {
   const barData = filteredClassBars[0]?.data ?? [];
   const allInstructorData = groupedData.instructorData;
 
-  const filteredInstructorData =
-    selectedClassCategory === "ALL CLASSES"
-      ? allInstructorData
-      : allInstructorData.filter(
-        (item) => item.key === selectedClassCategory,
-      );
 
   const classAttendanceTableExtras = (
     <div className="w-full flex justify-end p-2">
@@ -945,12 +978,10 @@ export default function AcuityDashboardPage() {
                         </ExportOnly>
                         <LineChart
                           height={300}
-                          data={filteredInstructorData}
+                          data={allInstructorData}
                           series={
                             <LineSeries
-                              colorScheme={(item) =>
-                                classColorScheme[item[0] ? item[0].key : item.key]
-                              }
+                              colorScheme={(item) => item[0] ? instructorColorScheme[item[0].key] : instructorColorScheme[item.key]}
                               type="grouped"
                             />
                           }
@@ -958,11 +989,11 @@ export default function AcuityDashboardPage() {
                         <div className="w-full flex items-center justify-center">
                           <DiscreteLegend
                             orientation="horizontal"
-                            entries={filteredInstructorData.map((line) => (
+                            entries={allInstructorData.map((line) => (
                               <DiscreteLegendEntry
                                 key={line.key}
                                 label={line.key}
-                                color={classColorScheme[line.key]}
+                                color={instructorColorScheme[line.key]}
                               />
                             ))}
                           />
