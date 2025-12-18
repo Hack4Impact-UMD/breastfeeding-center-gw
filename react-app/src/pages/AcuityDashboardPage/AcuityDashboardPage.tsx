@@ -42,8 +42,8 @@ import {
   computeAttendanceBreakdown,
   computeInstructorDataByClass,
   computeTrimesterAttendance,
-  normalizeCategory,
 } from "@/lib/acuityUtils";
+import { useAllInstructorData, useCategoryAttendanceData, useClassAttendanceByTrimesterData, useClassAttendanceData, useInstructorTableData, useTrimesterAttendanceData, useTrimesterTableData } from "./acuityDataHooks";
 
 export default function AcuityDashboardPage() {
   const [attendanceDisplay, setAttendanceDisplay] = useState<string>("graph");
@@ -186,245 +186,19 @@ export default function AcuityDashboardPage() {
     [appointmentData],
   );
 
-  const classAttendanceData = useMemo(
-    () =>
-      allClasses.map((className) => {
-        return {
-          key: className,
-          data: allIntervals.map((intervalKey) => {
-            const date = shouldGroupByWeek
-              ? DateTime.fromISO(intervalKey).toJSDate()
-              : DateTime.fromFormat(intervalKey, "yyyy-MM")
-                  .startOf("month")
-                  .toJSDate();
+  const classAttendanceData = useClassAttendanceData(attendanceBreakdown, allClasses, allIntervals, classesToCategory, shouldGroupByWeek);
 
-            const attendanceForInterval = attendanceBreakdown.get(intervalKey);
+  const categoryAttendanceData = useCategoryAttendanceData(attendanceBreakdown, classFilterOptions, allIntervals, shouldGroupByWeek);
 
-            let count = 0;
-            const cat =
-              normalizeCategory(classesToCategory.get(className)) ?? "UNKNOWN";
-            const attendanceForCat = attendanceForInterval?.get(cat);
-            const attendanceForClass = attendanceForCat?.get(className);
-            for (const instructor of attendanceForClass?.keys() ?? []) {
-              const attendance = attendanceForClass?.get(instructor) ?? 0;
-              count += attendance;
-            }
-            return { key: date, data: count };
-          }),
-        };
-      }),
-    [
-      allClasses,
-      allIntervals,
-      classesToCategory,
-      attendanceBreakdown,
-      shouldGroupByWeek,
-    ],
-  );
+  const allInstructorData = useAllInstructorData(attendanceBreakdown, allInstructors, allIntervals, shouldGroupByWeek);
 
-  const categoryAttendanceData = useMemo(
-    () =>
-      classFilterOptions
-        .filter((cat) => cat !== "ALL CLASSES")
-        .map((category) => {
-          const normalizedCategory = normalizeCategory(category);
-          return {
-            key: category,
-            data: allIntervals.map((intervalKey) => {
-              const date = shouldGroupByWeek
-                ? DateTime.fromISO(intervalKey).toJSDate()
-                : DateTime.fromFormat(intervalKey, "yyyy-MM")
-                    .startOf("month")
-                    .toJSDate();
+  const instructorTableData: InstructorAttendance[] = useInstructorTableData(instructorDataByClass);
 
-              const attendanceForInterval =
-                attendanceBreakdown.get(intervalKey);
+  const trimesterAttendanceData = useTrimesterAttendanceData(trimesterAttendance, classFilterOptions, trimesterLegend);
 
-              let count = 0;
-              const attendanceForCat =
-                attendanceForInterval?.get(normalizedCategory);
-              for (const className of attendanceForCat?.keys() ?? []) {
-                const attendanceForClass = attendanceForCat?.get(className);
-                for (const instructor of attendanceForClass?.keys() ?? []) {
-                  const attendance = attendanceForClass?.get(instructor) ?? 0;
-                  count += attendance;
-                }
-              }
-              return { key: date, data: count };
-            }),
-          };
-        }),
-    [allIntervals, classFilterOptions, attendanceBreakdown, shouldGroupByWeek],
-  );
+  const classAttendanceByTrimesterData = useClassAttendanceByTrimesterData(trimesterAttendance, classFilterOptions, classesToCategory, trimesterLegend);
 
-  const allInstructorData = useMemo(
-    () =>
-      allInstructors.map((instructor) => {
-        return {
-          key: instructor,
-          data: allIntervals.map((intervalKey) => {
-            const date = shouldGroupByWeek
-              ? DateTime.fromISO(intervalKey).toJSDate()
-              : DateTime.fromFormat(intervalKey, "yyyy-MM")
-                  .startOf("month")
-                  .toJSDate();
-            const attendanceForInterval = attendanceBreakdown.get(intervalKey);
-
-            if (!attendanceForInterval) return { key: date, data: 0 };
-
-            let count = 0;
-            for (const cat of attendanceForInterval.keys()) {
-              const attendanceForCat = attendanceForInterval.get(cat);
-              for (const className of attendanceForCat?.keys() ?? []) {
-                const attendanceForClass = attendanceForCat?.get(className);
-                const attendance = attendanceForClass?.get(instructor) ?? 0;
-                count += attendance;
-              }
-            }
-
-            return { key: date, data: count };
-          }),
-        };
-      }),
-    [allInstructors, allIntervals, attendanceBreakdown, shouldGroupByWeek],
-  );
-
-  const instructorTableData: InstructorAttendance[] = useMemo(
-    () =>
-      Array.from(instructorDataByClass.entries()).map(
-        ([className, instructorMap]) => {
-          const firstInstructor = Array.from(instructorMap.values())[0];
-          const classCategory = firstInstructor?.classCategory || "UNKNOWN";
-
-          const instructors: Array<{
-            instructor: string;
-            avgAttendance: number;
-            numClasses: number;
-            totalAttendance: number;
-          }> = Array.from(instructorMap.entries()).map(
-            ([instructor, stats]) => {
-              const numClasses = stats.uniqueSessions.size;
-              const avgAttendance =
-                numClasses > 0 ? stats.count / numClasses : 0;
-              return {
-                instructor,
-                avgAttendance: Math.round(avgAttendance * 100) / 100,
-                numClasses,
-                totalAttendance: stats.count,
-              };
-            },
-          );
-
-          const totalAttendance = instructors.reduce(
-            (sum, inst) => sum + inst.totalAttendance,
-            0,
-          );
-          const totalClasses = instructors.reduce(
-            (sum, inst) => sum + inst.numClasses,
-            0,
-          );
-          const avgAttendance =
-            totalClasses > 0 ? totalAttendance / totalClasses : 0;
-
-          return {
-            class:
-              className.length > 15
-                ? className.slice(0, 15) + "..."
-                : className,
-            category: classCategory,
-            avgAttendance: Math.round(avgAttendance * 100) / 100,
-            numClasses: totalClasses,
-            totalAttendance,
-            instructorNames: instructors.map((i) => i.instructor).join(", "),
-            instructors,
-          };
-        },
-      ),
-    [instructorDataByClass],
-  );
-
-  const trimesterAttendanceData = useMemo(
-    () =>
-      classFilterOptions
-        .filter((cat) => cat !== "ALL CLASSES")
-        .map((category) => {
-          const categoryLower = category.toLowerCase();
-
-          return {
-            key: category,
-            data: trimesterLegend.map((trimester) => ({
-              key: trimester.key,
-              data:
-                trimesterAttendance.get(`${categoryLower} ${trimester.key}`) ??
-                0,
-            })),
-          };
-        }),
-    [classFilterOptions, trimesterAttendance, trimesterLegend],
-  );
-
-  const classAttendanceByTrimesterData = useMemo(
-    () =>
-      classFilterOptions.map((category) => {
-        return {
-          key: category,
-          data: Array.from(classesToCategory.entries()).map(([className]) => {
-            const classKey = className.toLowerCase();
-
-            return {
-              key: className,
-              data: trimesterLegend.map((trimester) => ({
-                key: trimester.key,
-                data:
-                  trimesterAttendance.get(`${classKey} ${trimester.key}`) ?? 0,
-              })),
-            };
-          }),
-        };
-      }),
-    [
-      classFilterOptions,
-      classesToCategory,
-      trimesterAttendance,
-      trimesterLegend,
-    ],
-  );
-
-  const trimesterData: TrimesterAttendance[] = useMemo(
-    () =>
-      Array.from(classesToCategory.entries()).map(([className, category]) => {
-        const classKey = className.toLowerCase();
-
-        const first = trimesterAttendance.get(`${classKey} FIRST TRIM`) ?? 0;
-        const second = trimesterAttendance.get(`${classKey} SECOND TRIM`) ?? 0;
-        const third = trimesterAttendance.get(`${classKey} THIRD TRIM`) ?? 0;
-        const fourth = trimesterAttendance.get(`${classKey} FOURTH TRIM`) ?? 0;
-        const fifth = trimesterAttendance.get(`${classKey} FIFTH TRIM`) ?? 0;
-
-        const total = first + second + third + fourth + fifth;
-
-        return {
-          class: className.slice(0, 15) + "...",
-          category,
-          first,
-          second,
-          third,
-          fourth,
-          fifth,
-          total,
-        };
-      }),
-    [classesToCategory, trimesterAttendance],
-  );
-
-  const instructorData: InstructorAttendance[] = useMemo(() => {
-    const data = instructorTableData;
-    if (selectedClassCategory === "ALL CLASSES") return data;
-    const selectedCategory = normalizeCategory(selectedClassCategory);
-    return data.filter(
-      (item) => normalizeCategory(item.category) === selectedCategory,
-    );
-  }, [instructorTableData, selectedClassCategory]);
+  const trimesterTableData: TrimesterAttendance[] = useTrimesterTableData(trimesterAttendance, classesToCategory);
 
   // Styles
   const centerItemsInDiv = "flex justify-between items-center";
@@ -441,8 +215,8 @@ export default function AcuityDashboardPage() {
     selectedClassCategory === "ALL CLASSES"
       ? []
       : classAttendanceByTrimesterData.filter(
-          (c) => c.key === selectedClassCategory,
-        );
+        (c) => c.key === selectedClassCategory,
+      );
 
   const barData = filteredClassBars[0]?.data ?? [];
 
@@ -500,21 +274,19 @@ export default function AcuityDashboardPage() {
               <div className={`${centerItemsInDiv} pt-4`}>
                 <div className="flex flex-row">
                   <button
-                    className={`${graphTableButtonStyle} ${
-                      attendanceDisplay == "graph"
-                        ? "bg-bcgw-gray-light"
-                        : "bg-[#f5f5f5]"
-                    }`}
+                    className={`${graphTableButtonStyle} ${attendanceDisplay == "graph"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#f5f5f5]"
+                      }`}
                     onClick={() => setAttendanceDisplay("graph")}
                   >
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${
-                      attendanceDisplay == "table"
-                        ? "bg-bcgw-gray-light"
-                        : "bg-[#f5f5f5]"
-                    }`}
+                    className={`${graphTableButtonStyle} ${attendanceDisplay == "table"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#f5f5f5]"
+                      }`}
                     onClick={() => setAttendanceDisplay("table")}
                   >
                     Table
@@ -664,7 +436,7 @@ export default function AcuityDashboardPage() {
               ) : (
                 <DataTable
                   columns={trimesterColumns}
-                  data={trimesterData}
+                  data={trimesterTableData}
                   tableType="default"
                   tableHeaderExtras={classAttendanceTableExtras}
                   pageSize={5}
@@ -674,21 +446,19 @@ export default function AcuityDashboardPage() {
             <div className={`${centerItemsInDiv} pt-8`}>
               <div className="flex flex-row">
                 <button
-                  className={`${graphTableButtonStyle} ${
-                    popularityDisplay == "graph"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#f5f5f5]"
-                  }`}
+                  className={`${graphTableButtonStyle} ${popularityDisplay == "graph"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
+                    }`}
                   onClick={() => setPopularityDisplay("graph")}
                 >
                   Graph
                 </button>
                 <button
-                  className={`${graphTableButtonStyle} ${
-                    popularityDisplay == "table"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#f5f5f5]"
-                  }`}
+                  className={`${graphTableButtonStyle} ${popularityDisplay == "table"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
+                    }`}
                   onClick={() => setPopularityDisplay("table")}
                 >
                   Table
@@ -765,7 +535,7 @@ export default function AcuityDashboardPage() {
                                 (selectedClassCategory === "ALL CLASSES"
                                   ? classCatColorScheme
                                   : classColorScheme)[
-                                  item[0] ? item[0].key : item.key
+                                item[0] ? item[0].key : item.key
                                 ]
                               }
                               type="grouped"
@@ -864,7 +634,7 @@ export default function AcuityDashboardPage() {
                   columns={instructorColumns((row) =>
                     setOpenInstructorRow(row),
                   )}
-                  data={instructorData}
+                  data={instructorTableData}
                   tableType="default"
                   tableHeaderExtras={classPopularityTableExtras}
                   pageSize={5}
