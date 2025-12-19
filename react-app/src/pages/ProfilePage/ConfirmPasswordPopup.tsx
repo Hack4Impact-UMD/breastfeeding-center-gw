@@ -5,6 +5,9 @@ import ChangeEmailPopup from "./ChangeEmailPopup";
 import ChangePhoneNumberPopup from "./ChangePhoneNumberPopup";
 import ChangePasswordPopup from "./ChangePasswordPopup";
 import { Button } from "@/components/ui/button";
+// import { AuthError } from "firebase/auth";
+import { reauthenticateUser } from "@/services/authService";
+import { FirebaseError } from "firebase/app";
 
 const ConfirmPasswordPopup = ({
   open,
@@ -14,15 +17,13 @@ const ConfirmPasswordPopup = ({
   phone,
 }: {
   open: boolean;
-  onClose: any;
-  editType: string;
+  onClose: () => void;
+  editType: "Email" | "Phone" | "Password";
   email: string;
   phone: string;
 }) => {
   const [currentPasswordInput, setCurrentPasswordInput] = useState("");
-  //@ts-expect-error
-  const [currentPassword, setCurrentPassword] = useState("abc");
-  const [showIncorrectPassword, setShowIncorrectPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [openEmailModal, setOpenEmailModal] = useState(false);
   const [openPhoneModal, setOpenPhoneModal] = useState(false);
   const [openPasswordModal, setOpenPasswordModal] = useState(false);
@@ -30,23 +31,40 @@ const ConfirmPasswordPopup = ({
   const handleOnClose = () => {
     onClose();
     setCurrentPasswordInput("");
-    setShowIncorrectPassword(false);
+    setErrorMessage("");
   };
 
-  const handleNextFromCurrent = () => {
-    if (currentPasswordInput === currentPassword) {
-      if (editType == "Email") {
-        setOpenEmailModal(true);
-      } else if (editType == "Phone") {
-        setOpenPhoneModal(true);
+  const handleNextFromCurrent = async () => {
+    try {
+      await reauthenticateUser(currentPasswordInput)
+    } catch (err) {
+      if (err instanceof FirebaseError) {
+        if (err.code === "auth/wrong-password") {
+          setErrorMessage("Incorrect password.");
+          setCurrentPasswordInput("");
+        } else if (err.code === "auth/too-many-attempts") {
+          setErrorMessage("Too many failed attempts.");
+          setCurrentPasswordInput("");
+        } else {
+          setCurrentPasswordInput("");
+          setErrorMessage("Failed to authenticate.");
+        }
       } else {
-        setOpenPasswordModal(true);
+        setCurrentPasswordInput("");
+        setErrorMessage("Something went wrong. Try again later.");
       }
-      handleOnClose();
-    } else {
-      setShowIncorrectPassword(true);
-      setCurrentPasswordInput("");
+      console.error(err);
+      return;
     }
+
+    if (editType == "Email") {
+      setOpenEmailModal(true);
+    } else if (editType == "Phone") {
+      setOpenPhoneModal(true);
+    } else {
+      setOpenPasswordModal(true);
+    }
+    handleOnClose();
   };
 
   const ModalHeader = ({ onClose }: { onClose: () => void }) => (
@@ -108,11 +126,11 @@ const ConfirmPasswordPopup = ({
             </div>
 
             {/* Error message - only show when there's an error */}
-            {showIncorrectPassword && (
+            {errorMessage.length > 0 && (
               <div className="sm:grid sm:grid-cols-[190px_1fr] sm:gap-x-2 mt-1">
                 <div className="hidden sm:block"></div>
                 <p className="text-red-600 text-xs sm:text-sm">
-                  Password is incorrect
+                  {errorMessage}
                 </p>
               </div>
             )}

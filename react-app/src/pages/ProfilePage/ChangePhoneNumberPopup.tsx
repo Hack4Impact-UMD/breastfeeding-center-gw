@@ -70,7 +70,7 @@ const ChangePhoneNumberPopup = ({
           </div>
 
           {/* Phone validation error */}
-          <div className="sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4 min-h-[20px]">
+          <div className="sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4 min-h-5">
             <div className="hidden sm:block"></div>
             {newPhone && !isPhoneValid && (
               <p className="text-red-600 text-xs sm:text-sm">
@@ -93,7 +93,7 @@ const ChangePhoneNumberPopup = ({
           </div>
 
           {/* Phone match status */}
-          <div className="sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4 min-h-[20px]">
+          <div className="sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4 min-h-5">
             <div className="hidden sm:block"></div>
             {confirmNewPhone &&
               (newPhone === confirmNewPhone ? (

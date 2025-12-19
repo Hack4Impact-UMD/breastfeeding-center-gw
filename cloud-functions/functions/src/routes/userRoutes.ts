@@ -5,6 +5,7 @@ import { USERS_COLLECTION } from "../types/collections";
 import { Role, RoleLevels, User } from "../types/userType";
 import { logger } from "firebase-functions";
 import { CollectionReference } from "firebase-admin/firestore";
+import { sessionAge } from "../middleware/sessionAge";
 
 const router = Router();
 
@@ -115,7 +116,7 @@ router.put(
 // update the current user's email
 router.put(
   "/me/email",
-  [isAuthenticated],
+  [isAuthenticated, sessionAge(5)],
   async (req: Request, res: Response) => {
     const { oldEmail, newEmail } = req.body as {
       oldEmail: string;
@@ -147,6 +148,44 @@ router.put(
     });
 
     return res.status(200).send("Email successfully updated!");
+  },
+);
+
+// update the current user's phone number
+router.put(
+  "/me/phone",
+  [isAuthenticated, sessionAge(5)],
+  async (req: Request, res: Response) => {
+    const { oldPhone, newPhone } = req.body as {
+      oldPhone: string;
+      newPhone: string;
+    };
+
+    if (!oldPhone || !newPhone) return res.status(400).send("Missing fields!");
+
+    const userPhone = req.token!.phone_number;
+    const userId = req.token!.uid;
+
+    if (userPhone !== oldPhone) {
+      logger.warn("Attempt to update phone number using mismatched old phone number!");
+      logger.warn(`old phone: ${oldPhone}, user phone: ${userPhone}`);
+      return res.status(401).send("Unauthorized phone!");
+    }
+
+    const usersCollection = db.collection(
+      USERS_COLLECTION,
+    ) as CollectionReference<User>;
+    const userDoc = usersCollection.doc(userId);
+
+    await userDoc.update({
+      phone: newPhone,
+    });
+
+    await auth.updateUser(userId, {
+      phoneNumber: newPhone,
+    });
+
+    return res.status(200).send("Phone number successfully updated!");
   },
 );
 
