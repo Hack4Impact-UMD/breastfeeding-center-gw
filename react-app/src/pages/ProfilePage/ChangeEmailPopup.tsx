@@ -31,8 +31,8 @@ const ChangeEmailPopup = ({
     setShowEmailMatchError(!isMatch);
     setShowEmailInvalidError(!isEmailValid);
 
-    if (isMatch && isEmailValid) {
-      updateEmail({ oldEmail: profile!.email, newEmail: newEmail })
+    if (isMatch && isEmailValid && profile?.email) {
+      updateEmail({ oldEmail: profile.email, newEmail: newEmail })
       setConfirmNewEmail("");
     }
   };

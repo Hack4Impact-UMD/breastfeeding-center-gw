@@ -29,7 +29,6 @@ const ChangePhoneNumberPopup = ({
     const isPhoneValid = isValidPhoneNumber(newPhone);
 
     if (isMatch && isPhoneValid) {
-      console.log("Updated phone to:", newPhone);
       updatePhone({ newPhone });
     }
   };

@@ -5,7 +5,6 @@ import ChangeEmailPopup from "./ChangeEmailPopup";
 import ChangePhoneNumberPopup from "./ChangePhoneNumberPopup";
 import ChangePasswordPopup from "./ChangePasswordPopup";
 import { Button } from "@/components/ui/button";
-// import { AuthError } from "firebase/auth";
 import { reauthenticateUser } from "@/services/authService";
 import { FirebaseError } from "firebase/app";
 
