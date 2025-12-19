@@ -287,21 +287,19 @@ export default function AcuityDashboardPage() {
               <div className={`${centerItemsInDiv} pt-4`}>
                 <div className="flex flex-row">
                   <button
-                    className={`${graphTableButtonStyle} ${
-                      attendanceDisplay == "graph"
+                    className={`${graphTableButtonStyle} ${attendanceDisplay == "graph"
                         ? "bg-bcgw-gray-light"
                         : "bg-[#f5f5f5]"
-                    }`}
+                      }`}
                     onClick={() => setAttendanceDisplay("graph")}
                   >
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${
-                      attendanceDisplay == "table"
+                    className={`${graphTableButtonStyle} ${attendanceDisplay == "table"
                         ? "bg-bcgw-gray-light"
                         : "bg-[#f5f5f5]"
-                    }`}
+                      }`}
                     onClick={() => setAttendanceDisplay("table")}
                   >
                     Table
@@ -420,21 +418,19 @@ export default function AcuityDashboardPage() {
             <div className={`${centerItemsInDiv} pt-8`}>
               <div className="flex flex-row">
                 <button
-                  className={`${graphTableButtonStyle} ${
-                    popularityDisplay == "graph"
+                  className={`${graphTableButtonStyle} ${popularityDisplay == "graph"
                       ? "bg-bcgw-gray-light"
                       : "bg-[#f5f5f5]"
-                  }`}
+                    }`}
                   onClick={() => setPopularityDisplay("graph")}
                 >
                   Graph
                 </button>
                 <button
-                  className={`${graphTableButtonStyle} ${
-                    popularityDisplay == "table"
+                  className={`${graphTableButtonStyle} ${popularityDisplay == "table"
                       ? "bg-bcgw-gray-light"
                       : "bg-[#f5f5f5]"
-                  }`}
+                    }`}
                   onClick={() => setPopularityDisplay("table")}
                 >
                   Table
@@ -453,11 +449,11 @@ export default function AcuityDashboardPage() {
             </div>
             <span className="self-start font-semibold text-2xl">
               {popularityDisplay === "graph" ? (
-                <span>Class and Instructor Popularity Over Time</span>
+                <span>Class and Instructor Popularity Over Time,</span>
               ) : (
-                <span>Attendance By Class & Instructor</span>
+                <span>Attendance By Class & Instructor,</span>
               )}
-              {popularityDisplay === "graph" ? <br /> : <></>}
+              {popularityDisplay === "graph" ? <br /> : <>{" "}</>}
               {dateRangeLabel}
             </span>
             {/* Class Popularity Over Time */}
@@ -511,7 +507,7 @@ export default function AcuityDashboardPage() {
                                 (selectedClassCategory === "ALL CLASSES"
                                   ? CLASS_CAT_COLOR_SCHEME
                                   : classColorScheme)[
-                                  item[0] ? item[0].key : item.key
+                                item[0] ? item[0].key : item.key
                                 ]
                               }
                               type="grouped"
