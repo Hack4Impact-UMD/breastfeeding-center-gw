@@ -12,7 +12,6 @@ const ChangePhoneNumberPopup = ({
 }: {
   open: boolean;
   onClose: () => void;
-  initialPhone: string;
 }) => {
   const [newPhone, setNewPhone] = useState("");
   const [confirmNewPhone, setConfirmNewPhone] = useState("");

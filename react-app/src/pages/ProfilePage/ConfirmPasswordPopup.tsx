@@ -152,12 +152,10 @@ const ConfirmPasswordPopup = ({
       <ChangePhoneNumberPopup
         open={openPhoneModal}
         onClose={() => setOpenPhoneModal(false)}
-        initialPhone={phone}
       />
       <ChangeEmailPopup
         open={openEmailModal}
         onClose={() => setOpenEmailModal(false)}
-        initialEmail={email}
       />
       <ChangePasswordPopup
         open={openPasswordModal}

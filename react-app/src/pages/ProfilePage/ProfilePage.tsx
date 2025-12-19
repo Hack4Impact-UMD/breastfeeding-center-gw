@@ -125,8 +125,6 @@ const ProfilePage = () => {
         open={openConfirmPasswordModal}
         onClose={() => setOpenConfirmPasswordModal(false)}
         editType={editType}
-        email={email}
-        phone={phone}
       />
     </div>
   );

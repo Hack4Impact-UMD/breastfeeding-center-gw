@@ -160,8 +160,6 @@ router.put(
       newPhone: string;
     };
 
-    logger.info(newPhone)
-
     if (!newPhone) return res.status(400).send("Missing fields!");
 
     const userId = req.token!.uid;

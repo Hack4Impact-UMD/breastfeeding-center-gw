@@ -11,7 +11,6 @@ const ChangeEmailPopup = ({
 }: {
   open: boolean;
   onClose: () => void;
-  initialEmail: string;
 }) => {
   const { profile } = useAuth()
   const { mutate: updateEmail, isPending } = useUpdateUserEmail(() => onClose())
