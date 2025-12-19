@@ -1,5 +1,6 @@
 import { showErrorToast } from "@/components/Toasts/ErrorToast";
 import { showSuccessToast } from "@/components/Toasts/SuccessToast";
+import { auth } from "@/config/firebase";
 import queries from "@/queries";
 import { updateCurrentUserEmail } from "@/services/userService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -12,6 +13,7 @@ export function useUpdateUserEmail(onSettled: () => void = () => { }) {
     mutationFn: ({ oldEmail, newEmail }: { oldEmail: string, newEmail: string }) => updateCurrentUserEmail(newEmail, oldEmail),
     onSettled: async () => {
       await queryClient.invalidateQueries({ queryKey: queries.users._def });
+      await auth.currentUser?.getIdToken(true);
       onSettled()
     },
     onSuccess() {

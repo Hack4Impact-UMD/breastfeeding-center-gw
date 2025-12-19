@@ -36,10 +36,9 @@ export async function updateCurrentUserEmail(
   });
 }
 
-export async function updateCurrentUserPhone(oldPhone: string, newPhone: string) {
+export async function updateCurrentUserPhone(newPhone: string) {
   const axios = await axiosClient();
   await axios.put("/users/me/phone", {
-    oldPhone,
     newPhone,
   });
 }

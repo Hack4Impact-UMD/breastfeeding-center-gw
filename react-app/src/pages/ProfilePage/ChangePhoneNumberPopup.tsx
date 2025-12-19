@@ -4,19 +4,26 @@ import { isValidPhoneNumber } from "react-phone-number-input";
 import Modal from "../../components/Modal";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { Button } from "@/components/ui/button";
+import { useUpdateUserPhone } from "@/hooks/mutations/useUpdateUserPhone";
 
 const ChangePhoneNumberPopup = ({
   open,
   onClose,
-  initialPhone,
 }: {
   open: boolean;
   onClose: () => void;
   initialPhone: string;
 }) => {
-  const [, setPhone] = useState(initialPhone);
   const [newPhone, setNewPhone] = useState("");
   const [confirmNewPhone, setConfirmNewPhone] = useState("");
+
+  const { mutate: updatePhone, isPending } = useUpdateUserPhone(() => handleClose())
+
+  const handleClose = () => {
+    setNewPhone("");
+    setConfirmNewPhone("");
+    onClose();
+  }
 
   const handleNewPhoneSubmit = () => {
     const isMatch = newPhone === confirmNewPhone;
@@ -24,10 +31,7 @@ const ChangePhoneNumberPopup = ({
 
     if (isMatch && isPhoneValid) {
       console.log("Updated phone to:", newPhone);
-      setPhone(newPhone);
-      setNewPhone("");
-      setConfirmNewPhone("");
-      onClose();
+      updatePhone({ newPhone });
     }
   };
 
@@ -116,7 +120,8 @@ const ChangePhoneNumberPopup = ({
               !newPhone ||
               !confirmNewPhone ||
               !doPhoneNumbersMatch ||
-              !isPhoneValid
+              !isPhoneValid ||
+              isPending
             }
             onClick={handleNewPhoneSubmit}
           >
