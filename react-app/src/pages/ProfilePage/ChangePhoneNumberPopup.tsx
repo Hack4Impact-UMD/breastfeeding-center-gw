@@ -4,30 +4,32 @@ import { isValidPhoneNumber } from "react-phone-number-input";
 import Modal from "../../components/Modal";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { Button } from "@/components/ui/button";
+import { useUpdateUserPhone } from "@/hooks/mutations/useUpdateUserPhone";
 
 const ChangePhoneNumberPopup = ({
   open,
   onClose,
-  initialPhone,
 }: {
   open: boolean;
   onClose: () => void;
-  initialPhone: string;
 }) => {
-  const [, setPhone] = useState(initialPhone);
   const [newPhone, setNewPhone] = useState("");
   const [confirmNewPhone, setConfirmNewPhone] = useState("");
+
+  const { mutate: updatePhone, isPending } = useUpdateUserPhone(() => handleClose())
+
+  const handleClose = () => {
+    setNewPhone("");
+    setConfirmNewPhone("");
+    onClose();
+  }
 
   const handleNewPhoneSubmit = () => {
     const isMatch = newPhone === confirmNewPhone;
     const isPhoneValid = isValidPhoneNumber(newPhone);
 
     if (isMatch && isPhoneValid) {
-      console.log("Updated phone to:", newPhone);
-      setPhone(newPhone);
-      setNewPhone("");
-      setConfirmNewPhone("");
-      onClose();
+      updatePhone({ newPhone });
     }
   };
 
@@ -70,7 +72,7 @@ const ChangePhoneNumberPopup = ({
           </div>
 
           {/* Phone validation error */}
-          <div className="sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4 min-h-[20px]">
+          <div className="sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4 min-h-5">
             <div className="hidden sm:block"></div>
             {newPhone && !isPhoneValid && (
               <p className="text-red-600 text-xs sm:text-sm">
@@ -93,7 +95,7 @@ const ChangePhoneNumberPopup = ({
           </div>
 
           {/* Phone match status */}
-          <div className="sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4 min-h-[20px]">
+          <div className="sm:grid sm:grid-cols-[210px_1fr] sm:gap-x-4 min-h-5">
             <div className="hidden sm:block"></div>
             {confirmNewPhone &&
               (newPhone === confirmNewPhone ? (
@@ -116,7 +118,8 @@ const ChangePhoneNumberPopup = ({
               !newPhone ||
               !confirmNewPhone ||
               !doPhoneNumbersMatch ||
-              !isPhoneValid
+              !isPhoneValid ||
+              isPending
             }
             onClick={handleNewPhoneSubmit}
           >

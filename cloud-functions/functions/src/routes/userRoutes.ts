@@ -5,6 +5,7 @@ import { USERS_COLLECTION } from "../types/collections";
 import { Role, RoleLevels, User } from "../types/userType";
 import { logger } from "firebase-functions";
 import { CollectionReference } from "firebase-admin/firestore";
+import { sessionAge } from "../middleware/sessionAge";
 
 const router = Router();
 
@@ -115,7 +116,7 @@ router.put(
 // update the current user's email
 router.put(
   "/me/email",
-  [isAuthenticated],
+  [isAuthenticated, sessionAge(5)],
   async (req: Request, res: Response) => {
     const { oldEmail, newEmail } = req.body as {
       oldEmail: string;
@@ -147,6 +148,36 @@ router.put(
     });
 
     return res.status(200).send("Email successfully updated!");
+  },
+);
+
+// update the current user's phone number
+router.put(
+  "/me/phone",
+  [isAuthenticated, sessionAge(5)],
+  async (req: Request, res: Response) => {
+    const { newPhone } = req.body as {
+      newPhone: string;
+    };
+
+    if (!newPhone) return res.status(400).send("Missing fields!");
+
+    const userId = req.token!.uid;
+
+    const usersCollection = db.collection(
+      USERS_COLLECTION,
+    ) as CollectionReference<User>;
+    const userDoc = usersCollection.doc(userId);
+
+    await auth.updateUser(userId, {
+      phoneNumber: newPhone,
+    });
+
+    await userDoc.update({
+      phone: newPhone,
+    });
+
+    return res.status(200).send("Phone number successfully updated!");
   },
 );
 

@@ -3,7 +3,7 @@ import { IoIosClose } from "react-icons/io";
 import Modal from "../../components/Modal";
 import { Button } from "@/components/ui/button";
 import PronounsComboBox from "@/components/PronounsComboBox";
-import { useUpdateCurrentUserNamePronouns } from "@/hooks/mutations/useUpdateCurrentUserNamePronouns";
+import { useUpdateUserNamePronouns } from "@/hooks/mutations/useUpdateUserNamePronouns";
 
 const ChangeNamePronounsPopup = ({
   open,
@@ -18,7 +18,7 @@ const ChangeNamePronounsPopup = ({
   initialLastName: string;
   initialPronouns: string;
 }) => {
-  const { mutate: updateNamePronouns } = useUpdateCurrentUserNamePronouns();
+  const { mutate: updateNamePronouns, isPending } = useUpdateUserNamePronouns(() => onClose());
   const [firstName, setFirstName] = useState(initialFirstName);
   const [lastName, setLastName] = useState(initialLastName);
   const [pronouns, setPronouns] = useState(initialPronouns);
@@ -37,7 +37,6 @@ const ChangeNamePronounsPopup = ({
       lastName: lastName,
       pronouns: pronouns,
     });
-    onClose();
   };
 
   const ModalHeader = ({ onClose }: { onClose: () => void }) => (
@@ -105,7 +104,7 @@ const ChangeNamePronounsPopup = ({
             <Button
               variant="yellow"
               className="w-full sm:w-auto py-4 px-6 text-sm sm:text-base"
-              disabled={isSaveDisabled}
+              disabled={isSaveDisabled || isPending}
               onClick={handleSave}
             >
               Save

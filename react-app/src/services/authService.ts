@@ -8,8 +8,7 @@ import {
   type AuthError,
   type User,
 } from "firebase/auth";
-import { auth, functions } from "../config/firebase";
-import { httpsCallable } from "firebase/functions";
+import { auth } from "../config/firebase";
 import { axiosClient } from "@/lib/utils";
 
 /*
@@ -46,26 +45,6 @@ export function authenticateUserEmailAndPassword(
   });
 }
 
-export function updateUserEmail(
-  oldEmail: string,
-  currentEmail: string,
-): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const updateUserEmailCloudFunction = httpsCallable(
-      functions,
-      "updateUserEmail",
-    );
-
-    updateUserEmailCloudFunction({ email: oldEmail, newEmail: currentEmail })
-      .then(async () => {
-        resolve();
-      })
-      .catch((error) => {
-        console.log(error);
-        reject(error);
-      });
-  });
-}
 
 /*
   Updates the logged-in user's password.
@@ -144,4 +123,17 @@ export function logOut(): Promise<void> {
         reject(error);
       });
   });
+}
+
+export async function reauthenticateUser(pass: string) {
+  const user = auth.currentUser;
+  if (!user || !user.email) throw new Error("Not authenticated!");
+
+  const cred = EmailAuthProvider.credential(user.email, pass);
+
+  return await reauthenticateWithCredential(user, cred);
+}
+
+export async function sendPasswordReset(email: string) {
+  return await sendPasswordResetEmail(auth, email);
 }
