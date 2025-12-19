@@ -13,14 +13,10 @@ const ConfirmPasswordPopup = ({
   open,
   onClose,
   editType,
-  email,
-  phone,
 }: {
   open: boolean;
   onClose: () => void;
   editType: "Email" | "Phone" | "Password";
-  email: string;
-  phone: string;
 }) => {
   const [currentPasswordInput, setCurrentPasswordInput] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
