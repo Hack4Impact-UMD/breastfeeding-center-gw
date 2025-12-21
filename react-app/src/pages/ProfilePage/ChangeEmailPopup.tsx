@@ -2,17 +2,18 @@ import { useState } from "react";
 import { IoIosClose } from "react-icons/io";
 import Modal from "../../components/Modal";
 import { Button } from "@/components/ui/button";
+import { useUpdateUserEmail } from "@/hooks/mutations/useUpdateUserEmail";
+import { useAuth } from "@/auth/AuthProvider";
 
 const ChangeEmailPopup = ({
   open,
   onClose,
-  initialEmail,
 }: {
   open: boolean;
   onClose: () => void;
-  initialEmail: string;
 }) => {
-  const [, setEmail] = useState(initialEmail); // display value
+  const { profile } = useAuth()
+  const { mutate: updateEmail, isPending } = useUpdateUserEmail(() => onClose())
   const [newEmail, setNewEmail] = useState(""); // value while changing email & used for checks
   const [confirmNewEmail, setConfirmNewEmail] = useState("");
   const [, setShowEmailMatchError] = useState(false);
@@ -30,11 +31,9 @@ const ChangeEmailPopup = ({
     setShowEmailMatchError(!isMatch);
     setShowEmailInvalidError(!isEmailValid);
 
-    if (isMatch && isEmailValid) {
-      console.log("Updated email to:", newEmail);
-      setEmail(newEmail);
+    if (isMatch && isEmailValid && profile?.email) {
+      updateEmail({ oldEmail: profile.email, newEmail: newEmail })
       setConfirmNewEmail("");
-      onClose();
     }
   };
 
@@ -58,9 +57,10 @@ const ChangeEmailPopup = ({
         <div className="flex flex-col bg-white rounded-2xl w-full h-auto overflow-y-auto sm:overflow-visible">
           <ModalHeader onClose={() => onClose()} />
 
-          <div className="flex flex-col m-4 sm:m-8 mb-2 text-left">
+          <div className="flex flex-col p-4 mb-2 text-left">
+            <p>Note: Changing your email will automatically log you out of your account.</p>
             {/* New Email Input */}
-            <div className="flex flex-col sm:grid sm:grid-cols-[170px_1fr] sm:gap-x-2">
+            <div className="flex flex-col sm:grid sm:grid-cols-[170px_1fr] sm:gap-x-2 mt-6">
               <label className="text-sm font-medium mb-1 sm:mb-0 sm:content-center">
                 Enter New Email:
               </label>
@@ -90,7 +90,7 @@ const ChangeEmailPopup = ({
             </div>
 
             {/* Confirm Email Input */}
-            <div className="flex flex-col sm:grid sm:grid-cols-[170px_1fr] sm:gap-x-2 mt-3 sm:mt-4">
+            <div className="flex flex-col sm:grid sm:grid-cols-[170px_1fr] sm:gap-x-2">
               <label className="text-sm font-medium mb-1 sm:mb-0 sm:content-center">
                 Confirm New Email:
               </label>
@@ -122,7 +122,7 @@ const ChangeEmailPopup = ({
             </div>
           </div>
 
-          <div className="flex justify-center sm:justify-end mx-4 sm:mx-8 mb-4 sm:mb-8">
+          <div className="flex justify-center sm:justify-end mx-4 sm:mx-8 mb-4">
             <Button
               variant={"yellow"}
               className="w-full sm:w-auto py-4 px-6 text-sm sm:text-base"
@@ -130,7 +130,8 @@ const ChangeEmailPopup = ({
                 !newEmail ||
                 !confirmNewEmail ||
                 newEmail !== confirmNewEmail ||
-                showEmailInvalidError
+                showEmailInvalidError ||
+                isPending
               }
               onClick={handleNewEmailSubmit}
             >

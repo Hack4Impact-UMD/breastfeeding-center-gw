@@ -23,10 +23,25 @@ import RequireNoAuth from "./auth/RequireNoAuth";
 import { axiosClient } from "./lib/utils";
 import { getClientByPatientId } from "./services/janeService";
 import LayoutShell from "./pages/LayoutShell";
+import { ToastContainer } from "react-toastify";
+import { showErrorToast } from "./components/Toasts/ErrorToast";
 
 function App() {
   return (
     <TooltipProvider>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick={true}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        icon={false}
+      />
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <AuthProvider>
@@ -98,8 +113,12 @@ function App() {
                         <Button variant={"yellow"} size="lg" disabled>
                           TEST
                         </Button>
-                        <Button variant={"yellow"} className="rounded-full">
-                          TEST
+                        <Button
+                          onClick={() => showErrorToast("Hello world")}
+                          variant={"yellow"}
+                          className="rounded-full"
+                        >
+                          toast
                         </Button>
                       </div>
                       <div className="space-x-3">

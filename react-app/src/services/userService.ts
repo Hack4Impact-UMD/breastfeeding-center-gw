@@ -36,6 +36,13 @@ export async function updateCurrentUserEmail(
   });
 }
 
+export async function updateCurrentUserPhone(newPhone: string) {
+  const axios = await axiosClient();
+  await axios.put("/users/me/phone", {
+    newPhone,
+  });
+}
+
 export async function updateUserRole(id: string, role: Role) {
   const axios = await axiosClient();
   await axios.put(`/users/id/${id}/role`, {

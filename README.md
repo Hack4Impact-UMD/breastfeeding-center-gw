@@ -34,7 +34,7 @@ Authentication, Database, and Hosting: [Firebase](https://firebase.google.com/)
 **APIs:**
 - [Mailchimp](https://mailchimp.com/developer/marketing/docs/fundamentals/)
 - [Acuity](https://developers.acuityscheduling.com/)
-- [Paysimple](https://documentation.paysimple.com/docs/welcome)
+- [Booqable](https://developers.booqable.com/)
 - [Square](https://developer.squareup.com/reference/square) (potentially less important?)
 - [Paypal](https://developer.paypal.com/api/rest/)
 - [Jane](https://jane.app/) (imported via Excel sheet converted to JSON)
@@ -44,7 +44,7 @@ Authentication, Database, and Hosting: [Firebase](https://firebase.google.com/)
     flowchart TD
         mc[(Jane)] --> back
         ac[(Acuity)] --> back
-        ps[(Paysimple)] --> back
+        ps[(Booqable)] --> back
         sq[(Square)] --> back
         pp[(Paypal)] --> back
         back[Firebase] --> front

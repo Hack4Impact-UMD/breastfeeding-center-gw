@@ -1,7 +1,5 @@
 import { useState, useRef } from "react";
 import { BarChart, BarSeries, Bar, BarProps } from "reaviz";
-import { toPng } from "html-to-image";
-import download from "downloadjs";
 import {
   DateRangePicker,
   defaultPresets,
@@ -115,23 +113,6 @@ export default function PaysimpleDashboardPage() {
     { item: "Medela Babychecker Scale", durationMonths: 3 },
   ];
 
-  const handleExport = async (
-    ref: React.RefObject<HTMLDivElement | null>,
-    filename: string,
-  ) => {
-    const element = ref.current;
-    if (!element) {
-      return;
-    }
-
-    try {
-      const dataUrl = await toPng(element);
-      download(dataUrl, `${filename}.png`);
-    } catch (error) {
-      console.error("Export failed:", error);
-    }
-  };
-
   return (
     <>
       <div className="flex flex-col py-14 px-10 sm:px-20 space-y-5">
@@ -176,7 +157,6 @@ export default function PaysimpleDashboardPage() {
             className={
               "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
             }
-            onClick={() => handleExport(rentalChartRef, "rental_duration")}
           >
             Export
           </Button>

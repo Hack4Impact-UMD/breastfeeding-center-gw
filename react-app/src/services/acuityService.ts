@@ -17,12 +17,20 @@ export async function getAllAcuityApptsInRange(
     const queryString = params.toString();
     const url = `/acuity/appointments${queryString ? `?${queryString}` : ""}`;
 
-    console.log(url);
-
     const response = await axios.get(url);
     return response.data;
   } catch (error) {
     console.error("Error fetching Acuity appointments:", error);
     throw error;
   }
+}
+
+export async function getAllAcuityApptsForClient(
+  email: string,
+): Promise<AcuityAppointment[]> {
+  const axios = await axiosClient();
+  const response = await axios.get("/acuity/appointments/client", {
+    params: { email },
+  });
+  return response.data as AcuityAppointment[];
 }

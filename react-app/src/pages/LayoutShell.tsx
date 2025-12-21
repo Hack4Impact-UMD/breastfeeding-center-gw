@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import NavigationBar from "@/components/NavigationBar/NavigationBar";
 import MobileNavigationBar from "@/components/MobileNavigationBar";
+import "react-toastify/dist/ReactToastify.css";
 import { useState } from "react";
 import { Outlet } from "react-router";
 export default function LayoutShell() {
@@ -26,7 +27,7 @@ export default function LayoutShell() {
         <span className="hidden md:block">
           <Header />
         </span>
-        <div className="mt-14 md:mt-0">
+        <div className="mt-14 md:mt-0 h-full">
           <Outlet />
         </div>
       </div>
