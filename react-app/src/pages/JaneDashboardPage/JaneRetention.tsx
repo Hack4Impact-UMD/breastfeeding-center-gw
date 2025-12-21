@@ -79,7 +79,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
   const chartDiv =
     "flex flex-col items-center justify-center bg-white min-h-116 border-2 border-black p-5 mt-5 rounded-2xl";
 
-  const [retentionDisplay, setRetentionDisplay] = useState<string>("graph");
+  const [retentionDisplay, setRetentionDisplay] = useState<"graph" | "table">("graph");
   const [openRow, setOpenRow] = useState<RetentionRate | null>(null);
 
   const dateRangeLabel =
@@ -155,21 +155,19 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
         <div className={`${centerItemsInDiv} pt-4 mb-6`}>
           <div className="flex flex-row">
             <button
-              className={`${graphTableButtonStyle} ${
-                retentionDisplay === "graph"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#CED8E1]"
-              }`}
+              className={`${graphTableButtonStyle} ${retentionDisplay === "graph"
+                ? "bg-bcgw-gray-light"
+                : "bg-[#CED8E1]"
+                }`}
               onClick={() => setRetentionDisplay("graph")}
             >
               Graph
             </button>
             <button
-              className={`${graphTableButtonStyle} ${
-                retentionDisplay === "table"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#CED8E1]"
-              }`}
+              className={`${graphTableButtonStyle} ${retentionDisplay === "table"
+                ? "bg-bcgw-gray-light"
+                : "bg-[#CED8E1]"
+                }`}
               onClick={() => setRetentionDisplay("table")}
             >
               Table
