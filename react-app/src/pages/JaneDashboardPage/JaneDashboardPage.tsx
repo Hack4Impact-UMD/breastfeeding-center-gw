@@ -19,6 +19,7 @@ import { Export } from "@/components/export/Export.tsx";
 import ExportTrigger from "@/components/export/ExportTrigger.tsx";
 import ExportOnly from "@/components/export/ExportOnly.tsx";
 import { formatDate } from "@/lib/utils.ts";
+import { exportCsv } from "@/lib/tableExportUtils.ts";
 
 function BreakdownPieChartLabels(chartData: { key: string; data: number }[]) {
   if (chartData.length === 0) return <></>;
@@ -76,7 +77,7 @@ const JaneDashboardPage = () => {
     dateRange?.to?.toISOString(),
   );
 
-  const [visitDisplay, setVisitDisplay] = useState<string>("graph");
+  const [visitDisplay, setVisitDisplay] = useState<"table" | "graph">("graph");
 
   const chartColors = ["#f4bb47", "#05182a", "#3A8D8E"];
 
@@ -186,39 +187,51 @@ const JaneDashboardPage = () => {
               <div className="flex items-center justify-between w-full pt-4 mb-6">
                 <div className="flex flex-row ">
                   <button
-                    className={`${graphTableButtonStyle} ${
-                      visitDisplay === "graph"
-                        ? "bg-bcgw-gray-light"
-                        : "bg-[#CED8E1]"
-                    }`}
+                    className={`${graphTableButtonStyle} ${visitDisplay === "graph"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#CED8E1]"
+                      }`}
                     onClick={() => setVisitDisplay("graph")}
                   >
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${
-                      visitDisplay === "table"
-                        ? "bg-bcgw-gray-light"
-                        : "bg-[#CED8E1]"
-                    }`}
+                    className={`${graphTableButtonStyle} ${visitDisplay === "table"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#CED8E1]"
+                      }`}
                     onClick={() => setVisitDisplay("table")}
                   >
                     Table
                   </button>
                 </div>
-                <ExportTrigger
-                  disabled={chartData.length === 0 || isLoading}
-                  asChild
-                >
-                  <Button
-                    variant={"outlineGray"}
-                    className={
-                      "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
-                    }
-                  >
-                    Export
-                  </Button>
-                </ExportTrigger>
+                {(visitDisplay === "table") ?
+                  (
+                    <Button
+                      variant={"outlineGray"}
+                      className={
+                        "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
+                      }
+                      onClick={() => exportCsv(visitBreakdownData, `jane_visit_breakdown_${dateRange?.from?.toISOString()}_${dateRange?.to?.toISOString()}`)}
+                    >
+                      Export
+                    </Button>
+                  ) : (
+                    <ExportTrigger
+                      disabled={chartData.length === 0 || isLoading}
+                      asChild
+                    >
+                      <Button
+                        variant={"outlineGray"}
+                        className={
+                          "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
+                        }
+                      >
+                        Export
+                      </Button>
+                    </ExportTrigger>
+                  )
+                }
               </div>
 
               {visitDisplay === "graph" ? (
