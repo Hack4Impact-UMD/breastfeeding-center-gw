@@ -1,4 +1,5 @@
 import { download, generateCsv, mkConfig } from "export-to-csv";
+import sanitize from "sanitize-filename"
 
 
 type CsvPrimitive = string | number | boolean | null | undefined;
@@ -34,7 +35,7 @@ const flattenObject = (
 export const exportCsv = (jsonData: Record<string, unknown>[], fileName?: string) => {
   const csvConfig = mkConfig({
     useKeysAsHeaders: true,
-    filename: fileName
+    filename: fileName ? sanitize(fileName) : undefined
   });
 
   const generator = generateCsv(csvConfig);
