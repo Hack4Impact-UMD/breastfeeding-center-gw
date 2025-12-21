@@ -33,6 +33,7 @@
     "cmdk": "^1.1.1",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.7",
+    "export-to-csv": "^1.4.0",
     "firebase": "^11.3.1",
     "lucide-react": "^0.503.0",
     "luxon": "^3.6.1",
@@ -46,6 +47,7 @@
     "react-toastify": "^11.0.5",
     "react-tooltip": "^5.29.1",
     "reaviz": "^16.0.4",
+    "sanitize-filename": "^1.6.3",
     "tailwind-merge": "^3.2.0",
     "tailwind-variants": "^1.0.0",
     "tailwindcss": "^4.0.15"

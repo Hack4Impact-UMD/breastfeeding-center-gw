@@ -5,6 +5,7 @@ import { DataTable } from "@/components/DataTable/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import ColumnSortButton from "@/components/DataTable/ColumnSortButton";
+import { exportCsv } from "@/lib/tableExportUtils";
 
 type ClientLostPopupProps = {
   openRow: RetentionRate;
@@ -69,7 +70,9 @@ const ClientLostPopup = ({ openRow, setOpenRow }: ClientLostPopupProps) => {
 
         <div className="pt-4 pb-8 px-8">
           <div className="flex justify-end mb-0">
-            <Button variant={"outlineGray"} className="rounded-full text-lg">
+            <Button variant={"outlineGray"} className="rounded-full text-lg"
+              onClick={() => exportCsv(openRow?.clients ?? [], `jane_clients_lost_${openRow.visit}`)}
+            >
               Export
             </Button>
           </div>

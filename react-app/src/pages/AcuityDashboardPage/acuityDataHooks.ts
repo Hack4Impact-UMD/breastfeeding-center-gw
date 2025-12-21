@@ -22,8 +22,8 @@ export function useClassAttendanceData(
             const date = shouldGroupByWeek
               ? DateTime.fromISO(intervalKey).toJSDate()
               : DateTime.fromFormat(intervalKey, "yyyy-MM")
-                  .startOf("month")
-                  .toJSDate();
+                .startOf("month")
+                .toJSDate();
 
             const attendanceForInterval = attendanceBreakdown.get(intervalKey);
 
@@ -68,8 +68,8 @@ export function useCategoryAttendanceData(
               const date = shouldGroupByWeek
                 ? DateTime.fromISO(intervalKey).toJSDate()
                 : DateTime.fromFormat(intervalKey, "yyyy-MM")
-                    .startOf("month")
-                    .toJSDate();
+                  .startOf("month")
+                  .toJSDate();
 
               const attendanceForInterval =
                 attendanceBreakdown.get(intervalKey);
@@ -107,8 +107,8 @@ export function useAllInstructorData(
             const date = shouldGroupByWeek
               ? DateTime.fromISO(intervalKey).toJSDate()
               : DateTime.fromFormat(intervalKey, "yyyy-MM")
-                  .startOf("month")
-                  .toJSDate();
+                .startOf("month")
+                .toJSDate();
             const attendanceForInterval = attendanceBreakdown.get(intervalKey);
 
             if (!attendanceForInterval) return { key: date, data: 0 };
@@ -172,10 +172,7 @@ export function useInstructorTableData(
             totalClasses > 0 ? totalAttendance / totalClasses : 0;
 
           return {
-            class:
-              className.length > 15
-                ? className.slice(0, 15) + "..."
-                : className,
+            class: className,
             category: classCategory,
             avgAttendance: Math.round(avgAttendance * 100) / 100,
             numClasses: totalClasses,
@@ -255,8 +252,7 @@ export function useTrimesterTableData(
         const total = first + second + third + fourth + fifth;
 
         return {
-          class:
-            className.length > 15 ? className.slice(0, 15) + "..." : className,
+          class: className,
           category,
           first,
           second,

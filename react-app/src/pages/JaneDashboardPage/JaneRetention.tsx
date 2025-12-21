@@ -19,6 +19,7 @@ import ExportOnly from "@/components/export/ExportOnly.tsx";
 import { formatDate } from "@/lib/utils.ts";
 import type { Client } from "@/types/ClientType";
 import { hasRecentBirth } from "@/lib/clientUtils.ts";
+import { exportCsv } from "@/lib/tableExportUtils.ts";
 
 function filterClients(
   clientsByNumVisits: { [key: number]: Client[] } | undefined,
@@ -79,7 +80,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
   const chartDiv =
     "flex flex-col items-center justify-center bg-white min-h-116 border-2 border-black p-5 mt-5 rounded-2xl";
 
-  const [retentionDisplay, setRetentionDisplay] = useState<string>("graph");
+  const [retentionDisplay, setRetentionDisplay] = useState<"graph" | "table">("graph");
   const [openRow, setOpenRow] = useState<RetentionRate | null>(null);
 
   const dateRangeLabel =
@@ -155,39 +156,52 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
         <div className={`${centerItemsInDiv} pt-4 mb-6`}>
           <div className="flex flex-row">
             <button
-              className={`${graphTableButtonStyle} ${
-                retentionDisplay === "graph"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#CED8E1]"
-              }`}
+              className={`${graphTableButtonStyle} ${retentionDisplay === "graph"
+                ? "bg-bcgw-gray-light"
+                : "bg-[#CED8E1]"
+                }`}
               onClick={() => setRetentionDisplay("graph")}
             >
               Graph
             </button>
             <button
-              className={`${graphTableButtonStyle} ${
-                retentionDisplay === "table"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#CED8E1]"
-              }`}
+              className={`${graphTableButtonStyle} ${retentionDisplay === "table"
+                ? "bg-bcgw-gray-light"
+                : "bg-[#CED8E1]"
+                }`}
               onClick={() => setRetentionDisplay("table")}
             >
               Table
             </button>
           </div>
-          <ExportTrigger
-            disabled={retentionDisplay !== "graph" || noData}
-            asChild
-          >
-            <Button
-              variant={"outlineGray"}
-              className={
-                "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
-              }
-            >
-              Export
-            </Button>
-          </ExportTrigger>
+          {
+            (retentionDisplay === "table") ? (
+              <Button
+                variant={"outlineGray"}
+                className={
+                  "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
+                }
+                onClick={() => exportCsv(retentionData, `jane_retention_${startDate?.toISOString()}_${endDate?.toISOString()}_${selectedDropdown}`)}
+              >
+                Export
+              </Button>
+            ) : (
+              <ExportTrigger
+                disabled={retentionDisplay !== "graph" || noData}
+                asChild
+              >
+                <Button
+                  variant={"outlineGray"}
+                  className={
+                    "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
+                  }
+                >
+                  Export
+                </Button>
+              </ExportTrigger>
+            )
+
+          }
         </div>
 
         <span className="self-start font-semibold text-2xl">
@@ -270,8 +284,8 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
             </>
           )}
         </div>
-      </Export>
-    </div>
+      </Export >
+    </div >
   );
 };
 
