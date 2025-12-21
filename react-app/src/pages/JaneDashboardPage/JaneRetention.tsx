@@ -19,6 +19,7 @@ import ExportOnly from "@/components/export/ExportOnly.tsx";
 import { formatDate } from "@/lib/utils.ts";
 import type { Client } from "@/types/ClientType";
 import { hasRecentBirth } from "@/lib/clientUtils.ts";
+import { exportCsv } from "@/lib/tableExportUtils.ts";
 
 function filterClients(
   clientsByNumVisits: { [key: number]: Client[] } | undefined,
@@ -173,19 +174,34 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
               Table
             </button>
           </div>
-          <ExportTrigger
-            disabled={retentionDisplay !== "graph" || noData}
-            asChild
-          >
-            <Button
-              variant={"outlineGray"}
-              className={
-                "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
-              }
-            >
-              Export
-            </Button>
-          </ExportTrigger>
+          {
+            (retentionDisplay === "table") ? (
+              <Button
+                variant={"outlineGray"}
+                className={
+                  "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
+                }
+                onClick={() => exportCsv(retentionData, `jane_retention_${startDate?.toISOString()}_${endDate?.toISOString()}_${selectedDropdown}`)}
+              >
+                Export
+              </Button>
+            ) : (
+              <ExportTrigger
+                disabled={retentionDisplay !== "graph" || noData}
+                asChild
+              >
+                <Button
+                  variant={"outlineGray"}
+                  className={
+                    "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
+                  }
+                >
+                  Export
+                </Button>
+              </ExportTrigger>
+            )
+
+          }
         </div>
 
         <span className="self-start font-semibold text-2xl">
@@ -268,8 +284,8 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
             </>
           )}
         </div>
-      </Export>
-    </div>
+      </Export >
+    </div >
   );
 };
 

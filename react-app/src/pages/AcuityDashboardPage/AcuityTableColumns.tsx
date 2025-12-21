@@ -19,9 +19,13 @@ export const trimesterColumns: ColumnDef<TrimesterAttendance>[] = [
     header: ({ column }) => {
       return <ColumnSortButton column={column}>Class</ColumnSortButton>;
     },
-    cell: ({ row }) => (
-      <span className="font-bold">{row.getValue("class")}</span>
-    ),
+    cell: ({ row }) => {
+      const className: string = row.getValue("class");
+
+      return (
+        <span className="font-bold">{className.length > 15 ? className.slice(0, 15) + "..." : className}</span>
+      )
+    },
   },
   {
     accessorKey: "category",
@@ -94,9 +98,13 @@ export function instructorColumns(
       header: ({ column }) => {
         return <ColumnSortButton column={column}>Class</ColumnSortButton>;
       },
-      cell: ({ row }) => (
-        <span className="font-bold">{row.getValue("class")}</span>
-      ),
+      cell: ({ row }) => {
+        const className: string = row.getValue("class");
+
+        return (
+          <span className="font-bold">{className.length > 15 ? className.slice(0, 15) + "..." : className}</span>
+        )
+      },
     },
     {
       accessorKey: "category",

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import ColumnSortButton from "@/components/DataTable/ColumnSortButton";
 
 import { InstructorAttendance, InstructorData } from "./AcuityTableColumns";
+import { exportCsv } from "@/lib/tableExportUtils";
 
 type InstructorPopupProps = {
   openRow: InstructorAttendance | null;
@@ -71,7 +72,9 @@ const InstructorPopup = ({ openRow, setOpenRow }: InstructorPopupProps) => {
 
         <div className="pt-4 pb-8 px-8">
           <div className="flex justify-end mb-0">
-            <Button variant={"outlineGray"} className="rounded-full text-lg">
+            <Button variant={"outlineGray"} className="rounded-full text-lg"
+              onClick={() => exportCsv(openRow?.instructors ?? [], `acuity_instructors_${openRow?.class}`)}
+            >
               Export
             </Button>
           </div>
