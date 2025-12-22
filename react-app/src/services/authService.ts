@@ -15,7 +15,6 @@ import {
 } from "firebase/auth";
 import { auth } from "../config/firebase";
 import { axiosClient } from "@/lib/utils";
-import { CurrencyIcon } from "lucide-react";
 
 /*
  * Creates a admin user

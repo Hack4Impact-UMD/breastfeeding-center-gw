@@ -4,7 +4,7 @@ import {
   type User as AuthUser,
   type IdTokenResult,
 } from "firebase/auth";
-import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { auth } from "../config/firebase";
 import { User as UserProfile } from "@/types/UserType";
 import { getUserById } from "@/services/userService";
