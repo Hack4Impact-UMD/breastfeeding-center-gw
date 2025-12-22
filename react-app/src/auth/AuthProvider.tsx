@@ -1,4 +1,5 @@
 import {
+  MultiFactorInfo,
   onIdTokenChanged,
   type User as AuthUser,
   type IdTokenResult,
@@ -7,6 +8,7 @@ import React, { createContext, useCallback, useContext, useEffect, useState } fr
 import { auth } from "../config/firebase";
 import { User as UserProfile } from "@/types/UserType";
 import { getUserById } from "@/services/userService";
+import { getEnrolledMFAMethods } from "@/services/authService";
 
 interface Props {
   children: React.JSX.Element;
@@ -18,7 +20,8 @@ interface AuthContextType {
   token: IdTokenResult | null;
   loading: boolean;
   isAuthed: boolean;
-  refreshAuth: () => Promise<void>
+  refreshAuth: () => Promise<void>,
+  mfaMethods: MultiFactorInfo[]
 }
 
 const refreshAuth = async () => {
@@ -33,7 +36,8 @@ const AuthContext = createContext<AuthContextType>({
   profile: null,
   token: null,
   isAuthed: false,
-  refreshAuth
+  refreshAuth,
+  mfaMethods: []
 });
 
 // Updates the AuthContext and re-renders children when the user changes.
@@ -46,7 +50,8 @@ export const AuthProvider = ({ children }: Props): React.ReactElement => {
     authUser: null,
     profile: null,
     isAuthed: false,
-    refreshAuth
+    refreshAuth,
+    mfaMethods: []
   });
 
   useEffect(() => {
@@ -71,7 +76,8 @@ export const AuthProvider = ({ children }: Props): React.ReactElement => {
             loading: false,
             profile: null,
             isAuthed: false,
-            refreshAuth
+            refreshAuth,
+            mfaMethods: []
           });
         } else {
           setAuthState({
@@ -80,7 +86,8 @@ export const AuthProvider = ({ children }: Props): React.ReactElement => {
             loading: false,
             profile,
             isAuthed: true,
-            refreshAuth
+            refreshAuth,
+            mfaMethods: getEnrolledMFAMethods()
           });
         }
       } else {
@@ -90,7 +97,8 @@ export const AuthProvider = ({ children }: Props): React.ReactElement => {
           loading: false,
           profile: null,
           isAuthed: false,
-          refreshAuth
+          refreshAuth,
+          mfaMethods: []
         });
       }
     });

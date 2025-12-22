@@ -15,6 +15,7 @@ import {
 } from "firebase/auth";
 import { auth } from "../config/firebase";
 import { axiosClient } from "@/lib/utils";
+import { CurrencyIcon } from "lucide-react";
 
 /*
  * Creates a admin user
@@ -134,4 +135,12 @@ export function initRecaptchaVerifier() {
   });
   verifier.render();
   return verifier;
+}
+
+export function getEnrolledMFAMethods() {
+  if (!auth.currentUser) throw new Error("Not authenticated");
+  const multiFactorUser = multiFactor(auth.currentUser);
+  const options = multiFactorUser.enrolledFactors;
+
+  return options;
 }
