@@ -67,6 +67,7 @@ export default function MfaEnrollPage() {
     if (await needsReauth()) {
       showWarningToast("Enrollment took too long. You need to log back in.");
       logOut();
+      return;
     }
 
     setIsEnrolling(true);
