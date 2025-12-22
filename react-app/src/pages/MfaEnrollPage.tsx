@@ -5,13 +5,14 @@ import { auth } from "@/config/firebase";
 import primaryLogo from "../assets/bcgw-logo.png";
 import { useAuth } from "@/auth/AuthProvider";
 import { showErrorToast } from "@/components/Toasts/ErrorToast";
-import { isMfaEnrolled } from "@/services/authService";
+import { isMfaEnrolled, logOut } from "@/services/authService";
 import { Navigate } from "react-router";
 import Loading from "@/components/Loading";
 import EnterPhoneNumberModal from "./MfaEnrollPage/EnterPhoneNumberModal";
 import { showSuccessToast } from "@/components/Toasts/SuccessToast";
 import TwoFAPopup from "@/components/TwoFAPopup";
 import { updateCurrentUserPhone } from "@/services/userService";
+import { showWarningToast } from "@/components/Toasts/WarningToast";
 
 export default function MfaEnrollPage() {
   const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
@@ -21,6 +22,17 @@ export default function MfaEnrollPage() {
   const [isEnrolling, setIsEnrolling] = useState(false);
   const [verificationId, setVerificationId] = useState<string | null>(null);
   const [mfaDisplayName, setMfaDisplayName] = useState<string | null>(null);
+
+  useEffect(() => {
+    const ref = setTimeout(() => {
+      logOut()
+      showWarningToast("5 minute timeout reached. Logging out.")
+    }, 1000 * 60 * 5)
+
+    return () => {
+      clearTimeout(ref)
+    }
+  }, [])
 
   useEffect(() => {
     if (!recaptchaVerifierRef.current) {
@@ -70,9 +82,9 @@ export default function MfaEnrollPage() {
         session: mfaSession,
       };
 
-      await updateCurrentUserPhone(phoneNumber);
       const phoneAuthProvider = new PhoneAuthProvider(auth);
       const newVerificationId = await phoneAuthProvider.verifyPhoneNumber(phoneInfoOptions, verifier);
+      await updateCurrentUserPhone(phoneNumber);
 
       setVerificationId(newVerificationId);
       setMfaDisplayName(displayName);
