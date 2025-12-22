@@ -5,8 +5,8 @@ import { auth } from "@/config/firebase";
 import primaryLogo from "../assets/bcgw-logo.png";
 import { useAuth } from "@/auth/AuthProvider";
 import { showErrorToast } from "@/components/Toasts/ErrorToast";
-import { isMfaEnrolled, logOut } from "@/services/authService";
-import { Navigate, useNavigate } from "react-router";
+import { initRecaptchaVerifier, isMfaEnrolled, logOut } from "@/services/authService";
+import { Navigate } from "react-router";
 import Loading from "@/components/Loading";
 import EnterPhoneNumberModal from "./MfaEnrollPage/EnterPhoneNumberModal";
 import { showSuccessToast } from "@/components/Toasts/SuccessToast";
@@ -18,7 +18,6 @@ import { needsReauth } from "@/lib/authUtils";
 export default function MfaEnrollPage() {
   const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
   const { authUser, loading, isAuthed } = useAuth();
-  const navigate = useNavigate();
   const [isPhoneModalOpen, setPhoneModalOpen] = useState(false);
   const [isCodeModalOpen, setCodeModalOpen] = useState(false);
   const [isEnrolling, setIsEnrolling] = useState(false);
@@ -27,26 +26,12 @@ export default function MfaEnrollPage() {
 
   useEffect(() => {
     if (!recaptchaVerifierRef.current) {
-      recaptchaVerifierRef.current = new RecaptchaVerifier(auth, "recaptcha-container", {
-        size: "invisible",
-        callback: (response: unknown) => {
-          console.log("reCAPTCHA solved:", response);
-        },
-        "expired-callback": () => {
-          console.log("reCAPTCHA expired");
-        },
-      });
-      recaptchaVerifierRef.current.render().catch((err) => {
-        console.error("reCAPTCHA render error", err);
-        showErrorToast("Failed to initialize reCAPTCHA. Please refresh the page.");
-      });
+      recaptchaVerifierRef.current = initRecaptchaVerifier();
     }
 
     return () => {
-      const recaptchaContainer = document.getElementById("recaptcha-container");
-      if (recaptchaContainer) {
-        recaptchaContainer.innerHTML = "";
-      }
+      recaptchaVerifierRef.current?.clear();
+      recaptchaVerifierRef.current = null;
     };
   }, []);
 
@@ -91,11 +76,12 @@ export default function MfaEnrollPage() {
     } catch (error) {
       console.error("Error sending verification code:", error);
       showErrorToast("Failed to send verification code. Please try again.");
-      navigate(0);
     } finally {
       setIsEnrolling(false);
+      recaptchaVerifierRef.current?.clear();
+      recaptchaVerifierRef.current = initRecaptchaVerifier();
     }
-  }, [authUser, navigate]);
+  }, [authUser]);
 
   const handleVerificationCodeSubmit = useCallback(async (verificationCode: string) => {
     if (!authUser || !verificationId || !mfaDisplayName) {

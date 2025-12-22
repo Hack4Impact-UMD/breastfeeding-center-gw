@@ -10,11 +10,10 @@ import { Button } from "@/components/ui/button";
 import { auth } from "@/config/firebase";
 import Select2FAMethodModal from "./Select2FAMethodModal";
 import { showSuccessToast } from "@/components/Toasts/SuccessToast";
-import { useNavigate } from "react-router";
+import { showErrorToast } from "@/components/Toasts/ErrorToast";
 
 const LoginPage = () => {
   const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [visibility, setVisibility] = useState(false);
@@ -90,7 +89,6 @@ const LoginPage = () => {
   }, [email, password, regex]);
 
   const handle2FASelection = useCallback(async (hint: MultiFactorInfo) => {
-    setSelect2FAModalOpen(false);
     if (!resolver || !recaptchaVerifierRef.current) {
       setError("An error occurred during 2FA setup. Please try again.");
       return;
@@ -99,19 +97,23 @@ const LoginPage = () => {
     setShowLoading(true);
     try {
       const newVerificationId = await sendSMSMFACode(hint, recaptchaVerifierRef.current, resolver);
+
       setVerificationId(newVerificationId);
+      setSelect2FAModalOpen(false);
       setOpen2FAModal(true);
+
       showSuccessToast("Verification code sent!")
       recaptchaVerifierRef.current.clear();
       recaptchaVerifierRef.current = initRecaptchaVerifier()
     } catch (error) {
-      setError("Failed to send verification code. Please try again.");
+      showErrorToast("Failed to send verification code. Please try again.");
       console.error(error)
-      navigate(0);
+      recaptchaVerifierRef.current.clear();
+      recaptchaVerifierRef.current = initRecaptchaVerifier();
     } finally {
       setShowLoading(false);
     }
-  }, [navigate, resolver]);
+  }, [resolver]);
 
   const handle2FACodeSubmit = useCallback(async (verificationCode: string) => {
     if (!resolver || !verificationId) {

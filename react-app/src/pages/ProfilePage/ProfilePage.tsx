@@ -114,6 +114,27 @@ const ProfilePage = () => {
             />
           </div>
         </div>
+
+        <div className="bg-transparent md:bg-white md:border md:border-gray-300 md:rounded-md md:shadow-sm md:p-6 text-left">
+          <h5 className="font-bold mb-4 text-base sm:text-lg">2FA Methods</h5>
+          <p className="text-sm text-gray-600 mb-4">
+            The 2FA Methods associated with your account are listed below.
+          </p>
+
+          <div className="flex justify-between items-center">
+            <p className="font-semibold text-sm sm:text-base w-40">
+              Current Password
+            </p>
+            <p className="text-sm sm:text-base text-black flex-1">**********</p>
+            <FaEdit
+              className="cursor-pointer text-gray-600"
+              onClick={() => {
+                setEditType("Password");
+                setOpenConfirmPasswordModal(true);
+              }}
+            />
+          </div>
+        </div>
       </>
 
       <ChangeNamePronounsPopup
