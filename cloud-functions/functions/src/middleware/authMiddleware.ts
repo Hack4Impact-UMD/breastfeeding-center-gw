@@ -50,13 +50,13 @@ export async function isAuthenticated(
     const decodedIdToken = await admin.auth().verifyIdToken(idToken);
     // logger.log("ID Token correctly decoded", { uid: decodedIdToken.uid });
 
-    if (!decodedIdToken.email_verified) {
-      logger.warn(
-        `Email not verified! Rejecting request!`,
-      );
-      res.status(403).send("Email not verified!");
-      return;
-    }
+    // if (!decodedIdToken.email_verified) {
+    //   logger.warn(
+    //     `Email not verified! Rejecting request!`,
+    //   );
+    //   res.status(403).send("Email not verified!");
+    //   return;
+    // }
 
     req.token = decodedIdToken;
     next();
