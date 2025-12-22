@@ -6,7 +6,7 @@ import primaryLogo from "../assets/bcgw-logo.png";
 import { useAuth } from "@/auth/AuthProvider";
 import { showErrorToast } from "@/components/Toasts/ErrorToast";
 import { isMfaEnrolled, logOut } from "@/services/authService";
-import { Navigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import Loading from "@/components/Loading";
 import EnterPhoneNumberModal from "./MfaEnrollPage/EnterPhoneNumberModal";
 import { showSuccessToast } from "@/components/Toasts/SuccessToast";
@@ -18,6 +18,7 @@ import { needsReauth } from "@/lib/authUtils";
 export default function MfaEnrollPage() {
   const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
   const { authUser, loading, isAuthed } = useAuth();
+  const navigate = useNavigate();
   const [isPhoneModalOpen, setPhoneModalOpen] = useState(false);
   const [isCodeModalOpen, setCodeModalOpen] = useState(false);
   const [isEnrolling, setIsEnrolling] = useState(false);
@@ -90,10 +91,11 @@ export default function MfaEnrollPage() {
     } catch (error) {
       console.error("Error sending verification code:", error);
       showErrorToast("Failed to send verification code. Please try again.");
+      navigate(0);
     } finally {
       setIsEnrolling(false);
     }
-  }, [authUser]);
+  }, [authUser, navigate]);
 
   const handleVerificationCodeSubmit = useCallback(async (verificationCode: string) => {
     if (!authUser || !verificationId || !mfaDisplayName) {
