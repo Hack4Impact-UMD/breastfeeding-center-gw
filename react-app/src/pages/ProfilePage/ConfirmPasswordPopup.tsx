@@ -1,12 +1,18 @@
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { IoIosClose } from "react-icons/io";
 import Modal from "../../components/Modal";
 import ChangeEmailPopup from "./ChangeEmailPopup";
 import ChangePhoneNumberPopup from "./ChangePhoneNumberPopup";
 import ChangePasswordPopup from "./ChangePasswordPopup";
 import { Button } from "@/components/ui/button";
-import { reauthenticateUser } from "@/services/authService";
+import { initRecaptchaVerifier, reauthenticateUser, sendSMSMFACode, verifySMSMFACode } from "@/services/authService";
 import { FirebaseError } from "firebase/app";
+import { AuthError, getMultiFactorResolver, MultiFactorError, MultiFactorInfo, MultiFactorResolver, RecaptchaVerifier } from "firebase/auth";
+import Select2FAMethodModal from "../LoginPage/Select2FAMethodModal";
+import TwoFAPopup from "@/components/TwoFAPopup";
+import { auth } from "@/config/firebase";
+import { showSuccessToast } from "@/components/Toasts/SuccessToast";
+import { showErrorToast } from "@/components/Toasts/ErrorToast";
 
 const ConfirmPasswordPopup = ({
   open,
@@ -22,24 +28,50 @@ const ConfirmPasswordPopup = ({
   const [openEmailModal, setOpenEmailModal] = useState(false);
   const [openPhoneModal, setOpenPhoneModal] = useState(false);
   const [openPasswordModal, setOpenPasswordModal] = useState(false);
+  const [resolver, setResolver] = useState<MultiFactorResolver | null>(null);
+  const [isSelect2FAModalOpen, setSelect2FAModalOpen] = useState(false);
+  const [open2FAModal, setOpen2FAModal] = useState<boolean>(false);
 
-  const handleOnClose = () => {
+  const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
+  const [showLoading, setShowLoading] = useState(false);
+  const [verificationId, setVerificationId] = useState<string>();
+
+  useEffect(() => {
+    if (!recaptchaVerifierRef.current) {
+      recaptchaVerifierRef.current = initRecaptchaVerifier();
+    }
+
+    return () => {
+      if (recaptchaVerifierRef.current) {
+        recaptchaVerifierRef.current.clear();
+        recaptchaVerifierRef.current = null;
+      }
+    };
+  }, []);
+
+  const handleOnClose = useCallback(() => {
     onClose();
     setCurrentPasswordInput("");
     setErrorMessage("");
-  };
+  }, [onClose]);
 
   const handleNextFromCurrent = async () => {
     try {
       await reauthenticateUser(currentPasswordInput);
     } catch (err) {
       if (err instanceof FirebaseError) {
-        if (err.code === "auth/wrong-password") {
+        const code = (err as AuthError).code;
+        console.log(code);
+        if (code === "auth/wrong-password") {
           setErrorMessage("Incorrect password.");
           setCurrentPasswordInput("");
-        } else if (err.code === "auth/too-many-attempts") {
+        } else if (code === "auth/too-many-attempts") {
           setErrorMessage("Too many failed attempts.");
           setCurrentPasswordInput("");
+        } else if (code === "auth/multi-factor-auth-required") {
+          const mfaResolver = getMultiFactorResolver(auth, err as MultiFactorError);
+          setResolver(mfaResolver);
+          setSelect2FAModalOpen(true);
         } else {
           setCurrentPasswordInput("");
           setErrorMessage("Failed to authenticate.");
@@ -61,6 +93,57 @@ const ConfirmPasswordPopup = ({
     }
     handleOnClose();
   };
+
+  const handle2FASelection = useCallback(async (hint: MultiFactorInfo) => {
+    setSelect2FAModalOpen(false);
+    if (!resolver || !recaptchaVerifierRef.current) {
+      showErrorToast("An error occurred during 2FA setup. Please try again.");
+      return;
+    }
+
+    setShowLoading(true);
+    try {
+      const newVerificationId = await sendSMSMFACode(hint, recaptchaVerifierRef.current, resolver);
+      setVerificationId(newVerificationId);
+      setOpen2FAModal(true);
+      showSuccessToast("Verification code sent!")
+
+      // reinit recaptcha verifier
+      recaptchaVerifierRef.current.clear();
+      recaptchaVerifierRef.current = initRecaptchaVerifier()
+    } catch (error) {
+      showErrorToast("Failed to send verification code. Please try again.");
+      console.error(error)
+    } finally {
+      setShowLoading(false);
+    }
+  }, [resolver]);
+
+  const handle2FACodeSubmit = useCallback(async (verificationCode: string) => {
+    if (!resolver || !verificationId) {
+      showErrorToast("An error occurred. Please try again.");
+      return;
+    }
+    setShowLoading(true);
+    try {
+      await verifySMSMFACode(verificationId, verificationCode, resolver);
+      setOpen2FAModal(false);
+      showSuccessToast("Code verified successfully!")
+      if (editType == "Email") {
+        setOpenEmailModal(true);
+      } else if (editType == "Phone") {
+        setOpenPhoneModal(true);
+      } else {
+        setOpenPasswordModal(true);
+      }
+      handleOnClose();
+    } catch (error) {
+      showErrorToast("Invalid verification code. Please try again.");
+      console.error(error)
+    } finally {
+      setShowLoading(false);
+    }
+  }, [editType, handleOnClose, resolver, verificationId]);
 
   const ModalHeader = ({ onClose }: { onClose: () => void }) => (
     <>
@@ -144,6 +227,17 @@ const ConfirmPasswordPopup = ({
         </div>
       </Modal>
 
+      <Select2FAMethodModal
+        open={isSelect2FAModalOpen}
+        onClose={() => setSelect2FAModalOpen(false)}
+        onSelect={handle2FASelection}
+        hints={resolver ? resolver.hints : []}
+      />
+      <TwoFAPopup
+        open={open2FAModal}
+        onCodeSubmit={handle2FACodeSubmit}
+        disabled={showLoading}
+      />
       <ChangePhoneNumberPopup
         open={openPhoneModal}
         onClose={() => setOpenPhoneModal(false)}
