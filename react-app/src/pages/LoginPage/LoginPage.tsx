@@ -10,9 +10,11 @@ import { Button } from "@/components/ui/button";
 import { auth } from "@/config/firebase";
 import Select2FAMethodModal from "./Select2FAMethodModal";
 import { showSuccessToast } from "@/components/Toasts/SuccessToast";
+import { useNavigate } from "react-router";
 
 const LoginPage = () => {
   const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [visibility, setVisibility] = useState(false);
@@ -110,6 +112,7 @@ const LoginPage = () => {
     } catch (error) {
       setError("Failed to send verification code. Please try again.");
       console.error(error)
+      navigate(0);
     } finally {
       setShowLoading(false);
     }
