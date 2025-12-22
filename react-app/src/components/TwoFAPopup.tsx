@@ -13,9 +13,7 @@ const TwoFAPopup = ({
 }) => {
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
   const [activeIndex, setActiveIndex] = useState(0);
-  const [error, setError] = useState(false);
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
-
 
   useEffect(() => {
     inputRefs.current[activeIndex]?.focus();
@@ -52,12 +50,6 @@ const TwoFAPopup = ({
 
   const handleClick = (index: number) => setActiveIndex(index);
 
-  // const handleResendCode = () => {
-  //   setOtp(new Array(6).fill(""));
-  //   setActiveIndex(0);
-  //   setError(false);
-  //   onCodeResend();
-  // };
 
   const allFilled = otp.every((digit) => digit !== "");
 
@@ -85,12 +77,6 @@ const TwoFAPopup = ({
             />
           ))}
         </div>
-
-        {error && (
-          <p className="text-red-500 text-center text-xs sm:text-sm mb-2">
-            Two-factor authentication code is incorrect
-          </p>
-        )}
 
         <p className="text-center text-sm sm:text-lg leading-6 mb-6 mx-6">
           The verification code has been sent to your phone. Enter the code to
