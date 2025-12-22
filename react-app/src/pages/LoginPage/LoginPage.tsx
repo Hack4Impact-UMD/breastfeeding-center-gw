@@ -1,4 +1,4 @@
-import { FormEvent, MouseEvent, useState, useRef, useEffect, useCallback } from "react";
+import { FormEvent, MouseEvent, useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import Logo from "../../assets/bcgw-logo.png";
 import Loading from "../../components/Loading";
@@ -13,7 +13,7 @@ import { showSuccessToast } from "@/components/Toasts/SuccessToast";
 import { showErrorToast } from "@/components/Toasts/ErrorToast";
 
 const LoginPage = () => {
-  const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const regex = useMemo(() => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, []);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [visibility, setVisibility] = useState(false);
@@ -206,7 +206,7 @@ const LoginPage = () => {
         {/* error message */}
         <p
           className={
-            error ? "mt-2 text-red-500 text-center" : " mt-2 invisible h-[24px]"
+            error ? "mt-2 text-red-500 text-center" : "mt-2 invisible h-6"
           }
         >
           {error}
