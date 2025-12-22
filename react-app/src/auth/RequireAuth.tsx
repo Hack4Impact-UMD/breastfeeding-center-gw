@@ -17,6 +17,8 @@ const RequireAuth: React.FC<Props> = ({ children }) => {
     );
   } else if (!authContext.authUser) {
     return <Navigate to="/login" state={{ redir: window.location.pathname }} />;
+  } else if (!authContext.authUser.emailVerified) {
+    return <Navigate to="/verify" />
   }
 
   return <AuthProvider>{children}</AuthProvider>;

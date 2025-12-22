@@ -7,6 +7,7 @@ import {
   sendPasswordResetEmail,
   type AuthError,
   type User,
+  multiFactor,
 } from "firebase/auth";
 import { auth } from "../config/firebase";
 import { axiosClient } from "@/lib/utils";
@@ -135,4 +136,11 @@ export async function reauthenticateUser(pass: string) {
 
 export async function sendPasswordReset(email: string) {
   return await sendPasswordResetEmail(auth, email);
+}
+
+export function isMfaEnrolled(user: User) {
+  const multifactor = multiFactor(user);
+  const enrolledFactors = multifactor.enrolledFactors
+
+  return enrolledFactors && enrolledFactors.length > 0;
 }
