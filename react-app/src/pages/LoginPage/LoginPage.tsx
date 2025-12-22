@@ -126,10 +126,11 @@ const LoginPage = () => {
       await verifySMSMFACode(verificationId, verificationCode, resolver);
       // AuthProvider will redirect on successful sign in
       setOpen2FAModal(false);
+      // it takes some time to fetch profile info, show loading before redirect
+      setShowLoading(true);
     } catch (error) {
       setError("Invalid verification code. Please try again.");
       console.error(error)
-    } finally {
       setShowLoading(false);
     }
   }, [resolver, verificationId]);
