@@ -13,6 +13,7 @@ import { showSuccessToast } from "@/components/Toasts/SuccessToast";
 import TwoFAPopup from "@/components/TwoFAPopup";
 import { updateCurrentUserPhone } from "@/services/userService";
 import { showWarningToast } from "@/components/Toasts/WarningToast";
+import { needsReauth } from "@/lib/authUtils";
 
 export default function MfaEnrollPage() {
   const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
@@ -22,17 +23,6 @@ export default function MfaEnrollPage() {
   const [isEnrolling, setIsEnrolling] = useState(false);
   const [verificationId, setVerificationId] = useState<string | null>(null);
   const [mfaDisplayName, setMfaDisplayName] = useState<string | null>(null);
-
-  useEffect(() => {
-    const ref = setTimeout(() => {
-      logOut()
-      showWarningToast("5 minute timeout reached. Logging out.")
-    }, 1000 * 60 * 5)
-
-    return () => {
-      clearTimeout(ref)
-    }
-  }, [])
 
   useEffect(() => {
     if (!recaptchaVerifierRef.current) {
@@ -72,6 +62,11 @@ export default function MfaEnrollPage() {
     if (!verifier) {
       showErrorToast("Recaptcha verifier not initialized. Please refresh.");
       return;
+    }
+
+    if (await needsReauth()) {
+      showWarningToast("Enrollment took too long. You need to log back in.");
+      logOut();
     }
 
     setIsEnrolling(true);
