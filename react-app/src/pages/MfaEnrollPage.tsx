@@ -1,6 +1,114 @@
+import { Button } from "@/components/ui/button";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { multiFactor, PhoneAuthProvider, PhoneMultiFactorGenerator, RecaptchaVerifier } from "firebase/auth";
+import { auth } from "@/config/firebase";
 import primaryLogo from "../assets/bcgw-logo.png";
+import { useAuth } from "@/auth/AuthProvider";
+import { showErrorToast } from "@/components/Toasts/ErrorToast";
+import { isMfaEnrolled } from "@/services/authService";
+import { Navigate } from "react-router";
+import Loading from "@/components/Loading";
+import EnterPhoneNumberModal from "./MfaEnrollPage/EnterPhoneNumberModal";
+import { showSuccessToast } from "@/components/Toasts/SuccessToast";
+import TwoFAPopup from "@/components/TwoFAPopup";
 
 export default function MfaEnrollPage() {
+  const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
+  const { authUser, loading, isAuthed } = useAuth();
+  const [isPhoneModalOpen, setPhoneModalOpen] = useState(false);
+  const [isCodeModalOpen, setCodeModalOpen] = useState(false);
+  const [isEnrolling, setIsEnrolling] = useState(false);
+  const [verificationId, setVerificationId] = useState<string | null>(null);
+  const [mfaDisplayName, setMfaDisplayName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!recaptchaVerifierRef.current) {
+      recaptchaVerifierRef.current = new RecaptchaVerifier(auth, "recaptcha-container", {
+        size: "invisible",
+        callback: (response: unknown) => {
+          console.log("reCAPTCHA solved:", response);
+        },
+        "expired-callback": () => {
+          console.log("reCAPTCHA expired");
+        },
+      });
+      recaptchaVerifierRef.current.render().catch((err) => {
+        console.error("reCAPTCHA render error", err);
+        showErrorToast("Failed to initialize reCAPTCHA. Please refresh the page.");
+      });
+    }
+
+    return () => {
+      const recaptchaContainer = document.getElementById("recaptcha-container");
+      if (recaptchaContainer) {
+        recaptchaContainer.innerHTML = "";
+      }
+    };
+  }, []);
+
+  const handleEnrollClick = () => {
+    setPhoneModalOpen(true);
+  };
+
+  const handlePhoneNumberSubmit = useCallback(async (phoneNumber: string, displayName: string) => {
+    if (!authUser) {
+      showErrorToast("Not authenticated!");
+      return;
+    }
+    const verifier = recaptchaVerifierRef.current;
+    if (!verifier) {
+      showErrorToast("Recaptcha verifier not initialized. Please refresh.");
+      return;
+    }
+
+    setIsEnrolling(true);
+    try {
+      const mfaSession = await multiFactor(authUser).getSession();
+      const phoneInfoOptions = {
+        phoneNumber,
+        session: mfaSession,
+      };
+
+      const phoneAuthProvider = new PhoneAuthProvider(auth);
+      const newVerificationId = await phoneAuthProvider.verifyPhoneNumber(phoneInfoOptions, verifier);
+
+      setVerificationId(newVerificationId);
+      setMfaDisplayName(displayName);
+      setPhoneModalOpen(false);
+      setCodeModalOpen(true);
+      showSuccessToast("Verification code sent!");
+    } catch (error) {
+      console.error("Error sending verification code:", error);
+      showErrorToast("Failed to send verification code. Please try again.");
+    } finally {
+      setIsEnrolling(false);
+    }
+  }, [authUser]);
+
+  const handleVerificationCodeSubmit = useCallback(async (verificationCode: string) => {
+    if (!authUser || !verificationId || !mfaDisplayName) {
+      showErrorToast("An error occurred. Please start over.");
+      setCodeModalOpen(false);
+      return;
+    }
+    setIsEnrolling(true);
+    try {
+      const cred = PhoneAuthProvider.credential(verificationId, verificationCode);
+      const multiFactorAssertion = PhoneMultiFactorGenerator.assertion(cred);
+      await multiFactor(authUser).enroll(multiFactorAssertion, mfaDisplayName);
+      showSuccessToast("2FA enrolled successfully!");
+    } catch (error) {
+      console.error("Error verifying code:", error);
+      showErrorToast("Invalid verification code. Please try again.");
+      setIsEnrolling(false);
+    }
+  }, [authUser, verificationId, mfaDisplayName]);
+
+  if (loading) return <Loading />;
+  if (!isAuthed || !authUser) return <Navigate to="/" />;
+  if (isMfaEnrolled(authUser!)) return <Navigate to="/" />;
+
+
   return (
     <>
       <div className="flex flex-col items-center justify-center h-screen text-center">
@@ -10,9 +118,25 @@ export default function MfaEnrollPage() {
           alt="BCGW Logo"
         />
         <h2 className="font-semibold mb-2">Enroll in 2-Factor Authentication</h2>
-        <h3>For security reasons, your account must be enrolled in SMS 2FA.</h3>
-        <p className="mb-4">Once the email is sent, click the link within the email and then refresh this page.</p>
+        <h3 className="mb-8">For security reasons, your account must be enrolled in SMS 2FA.</h3>
+        <Button variant="yellow" onClick={handleEnrollClick} disabled={isEnrolling}>
+          {isEnrolling ? "Enrolling..." : "Enroll in 2FA"}
+        </Button>
       </div>
+
+      <EnterPhoneNumberModal
+        open={isPhoneModalOpen}
+        onClose={() => setPhoneModalOpen(false)}
+        onSubmit={handlePhoneNumberSubmit}
+        authUser={authUser}
+        isPending={isEnrolling}
+      />
+
+      <TwoFAPopup
+        open={isCodeModalOpen}
+        onCodeSubmit={handleVerificationCodeSubmit}
+        disabled={isEnrolling}
+      />
     </>
-  )
+  );
 }
