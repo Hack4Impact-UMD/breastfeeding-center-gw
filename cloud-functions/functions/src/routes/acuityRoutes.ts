@@ -16,14 +16,15 @@ router.get(
     try {
       const startDate = req.query.startDate as string;
       const endDate = req.query.endDate as string;
-      const classCategory = req.query.classCategory ? (req.query.classCategory as string).toLowerCase() : undefined;
+      const classCategory = req.query.classCategory
+        ? (req.query.classCategory as string).toLowerCase()
+        : undefined;
 
       if (!startDate || !endDate) {
         return res
           .status(400)
           .json({ error: "startDate and endDate are required" });
       }
-
 
       let appts: AcuityAppointment[] = [];
       if (
@@ -42,7 +43,7 @@ router.get(
     } catch (e) {
       logger.error("Error fetching appointments:", e);
       return res.status(500).send({
-        error: "Failed to fetch acuity appointments"
+        error: "Failed to fetch acuity appointments",
       });
     }
   },

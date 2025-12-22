@@ -6,26 +6,29 @@ import { updateCurrentUserPhone } from "@/services/userService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
-export function useUpdateUserPhone(onSettled: () => void = () => { }) {
+export function useUpdateUserPhone(onSettled: () => void = () => {}) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ newPhone }: { newPhone: string }) => updateCurrentUserPhone(newPhone),
+    mutationFn: ({ newPhone }: { newPhone: string }) =>
+      updateCurrentUserPhone(newPhone),
     onSettled: async () => {
       await queryClient.invalidateQueries({ queryKey: queries.users._def });
       await auth.currentUser?.getIdToken(true);
-      onSettled()
+      onSettled();
     },
     onSuccess() {
-      showSuccessToast("Phone number updated successfully!")
+      showSuccessToast("Phone number updated successfully!");
     },
     onError: (err) => {
       if (err instanceof AxiosError && err.response?.data === "reauth") {
-        showErrorToast("Failed to update phone number. Reauthenticate and try again.")
+        showErrorToast(
+          "Failed to update phone number. Reauthenticate and try again.",
+        );
       } else {
-        showErrorToast("Failed to update phone number.")
+        showErrorToast("Failed to update phone number.");
       }
       console.error(err);
-    }
+    },
   });
 }

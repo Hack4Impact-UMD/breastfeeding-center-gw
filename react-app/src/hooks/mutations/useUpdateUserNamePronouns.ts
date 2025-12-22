@@ -5,22 +5,30 @@ import queries from "@/queries";
 import { updateCurrentUserNamePronouns } from "@/services/userService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export function useUpdateUserNamePronouns(onSettled: () => void = () => { }) {
+export function useUpdateUserNamePronouns(onSettled: () => void = () => {}) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ firstName, lastName, pronouns }: { firstName: string, lastName: string, pronouns: string | null }) => updateCurrentUserNamePronouns(firstName, lastName, pronouns),
+    mutationFn: ({
+      firstName,
+      lastName,
+      pronouns,
+    }: {
+      firstName: string;
+      lastName: string;
+      pronouns: string | null;
+    }) => updateCurrentUserNamePronouns(firstName, lastName, pronouns),
     onSettled: async () => {
       await queryClient.invalidateQueries({ queryKey: queries.users._def });
       await auth.currentUser?.getIdToken(true);
-      onSettled()
+      onSettled();
     },
     onSuccess() {
-      showSuccessToast("Profile updated successfully!")
+      showSuccessToast("Profile updated successfully!");
     },
     onError: (err) => {
-      showErrorToast("Failed to update profile.")
+      showErrorToast("Failed to update profile.");
       console.error(err);
-    }
+    },
   });
 }

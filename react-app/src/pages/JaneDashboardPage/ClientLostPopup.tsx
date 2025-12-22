@@ -70,8 +70,15 @@ const ClientLostPopup = ({ openRow, setOpenRow }: ClientLostPopupProps) => {
 
         <div className="pt-4 pb-8 px-8">
           <div className="flex justify-end mb-0">
-            <Button variant={"outlineGray"} className="rounded-full text-lg"
-              onClick={() => exportCsv(openRow?.clients ?? [], `jane_clients_lost_${openRow.visit}`)}
+            <Button
+              variant={"outlineGray"}
+              className="rounded-full text-lg"
+              onClick={() =>
+                exportCsv(
+                  openRow?.clients ?? [],
+                  `jane_clients_lost_${openRow.visit}`,
+                )
+              }
             >
               Export
             </Button>

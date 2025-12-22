@@ -20,7 +20,9 @@ const ProfilePage = () => {
     [firstName, lastName],
   );
 
-  const [editType, setEditType] = useState<"Email" | "Phone" | "Password">("Email");
+  const [editType, setEditType] = useState<"Email" | "Phone" | "Password">(
+    "Email",
+  );
   const [openConfirmPasswordModal, setOpenConfirmPasswordModal] =
     useState(false);
   const [openNamePronounsModal, setOpenNamePronounsModal] = useState(false);
@@ -93,8 +95,9 @@ const ProfilePage = () => {
         <div className="bg-transparent md:bg-white md:border md:border-gray-300 md:rounded-md md:shadow-sm md:p-6 text-left">
           <h5 className="font-bold mb-4 text-base sm:text-lg">PASSWORD</h5>
           <p className="text-sm text-gray-600 mb-4">
-            Heads up! You will be asked to input your password before making any changes to your email address or password to ensure
-            a secure and complete update.
+            Heads up! You will be asked to input your password before making any
+            changes to your email address or password to ensure a secure and
+            complete update.
           </p>
 
           <div className="flex justify-between items-center">

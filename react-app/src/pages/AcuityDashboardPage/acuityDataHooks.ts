@@ -22,8 +22,8 @@ export function useClassAttendanceData(
             const date = shouldGroupByWeek
               ? DateTime.fromISO(intervalKey).toJSDate()
               : DateTime.fromFormat(intervalKey, "yyyy-MM")
-                .startOf("month")
-                .toJSDate();
+                  .startOf("month")
+                  .toJSDate();
 
             const attendanceForInterval = attendanceBreakdown.get(intervalKey);
 
@@ -68,8 +68,8 @@ export function useCategoryAttendanceData(
               const date = shouldGroupByWeek
                 ? DateTime.fromISO(intervalKey).toJSDate()
                 : DateTime.fromFormat(intervalKey, "yyyy-MM")
-                  .startOf("month")
-                  .toJSDate();
+                    .startOf("month")
+                    .toJSDate();
 
               const attendanceForInterval =
                 attendanceBreakdown.get(intervalKey);
@@ -107,8 +107,8 @@ export function useAllInstructorData(
             const date = shouldGroupByWeek
               ? DateTime.fromISO(intervalKey).toJSDate()
               : DateTime.fromFormat(intervalKey, "yyyy-MM")
-                .startOf("month")
-                .toJSDate();
+                  .startOf("month")
+                  .toJSDate();
             const attendanceForInterval = attendanceBreakdown.get(intervalKey);
 
             if (!attendanceForInterval) return { key: date, data: 0 };

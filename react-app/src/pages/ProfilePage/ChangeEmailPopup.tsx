@@ -12,8 +12,10 @@ const ChangeEmailPopup = ({
   open: boolean;
   onClose: () => void;
 }) => {
-  const { profile } = useAuth()
-  const { mutate: updateEmail, isPending } = useUpdateUserEmail(() => onClose())
+  const { profile } = useAuth();
+  const { mutate: updateEmail, isPending } = useUpdateUserEmail(() =>
+    onClose(),
+  );
   const [newEmail, setNewEmail] = useState(""); // value while changing email & used for checks
   const [confirmNewEmail, setConfirmNewEmail] = useState("");
   const [, setShowEmailMatchError] = useState(false);
@@ -32,7 +34,7 @@ const ChangeEmailPopup = ({
     setShowEmailInvalidError(!isEmailValid);
 
     if (isMatch && isEmailValid && profile?.email) {
-      updateEmail({ oldEmail: profile.email, newEmail: newEmail })
+      updateEmail({ oldEmail: profile.email, newEmail: newEmail });
       setConfirmNewEmail("");
     }
   };
@@ -58,7 +60,10 @@ const ChangeEmailPopup = ({
           <ModalHeader onClose={() => onClose()} />
 
           <div className="flex flex-col p-4 mb-2 text-left">
-            <p>Note: Changing your email will automatically log you out of your account.</p>
+            <p>
+              Note: Changing your email will automatically log you out of your
+              account.
+            </p>
             {/* New Email Input */}
             <div className="flex flex-col sm:grid sm:grid-cols-[170px_1fr] sm:gap-x-2 mt-6">
               <label className="text-sm font-medium mb-1 sm:mb-0 sm:content-center">

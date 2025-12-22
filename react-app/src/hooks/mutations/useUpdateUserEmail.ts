@@ -6,26 +6,32 @@ import { updateCurrentUserEmail } from "@/services/userService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
-export function useUpdateUserEmail(onSettled: () => void = () => { }) {
+export function useUpdateUserEmail(onSettled: () => void = () => {}) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ oldEmail, newEmail }: { oldEmail: string, newEmail: string }) => updateCurrentUserEmail(newEmail, oldEmail),
+    mutationFn: ({
+      oldEmail,
+      newEmail,
+    }: {
+      oldEmail: string;
+      newEmail: string;
+    }) => updateCurrentUserEmail(newEmail, oldEmail),
     onSettled: async () => {
       await queryClient.invalidateQueries({ queryKey: queries.users._def });
       await auth.currentUser?.getIdToken(true);
-      onSettled()
+      onSettled();
     },
     onSuccess() {
-      showSuccessToast("Email updated successfully!")
+      showSuccessToast("Email updated successfully!");
     },
     onError: (err) => {
       if (err instanceof AxiosError && err.response?.data === "reauth") {
-        showErrorToast("Failed to update email. Reauthenticate and try again.")
+        showErrorToast("Failed to update email. Reauthenticate and try again.");
       } else {
-        showErrorToast("Failed to update email.")
+        showErrorToast("Failed to update email.");
       }
       console.error(err);
-    }
+    },
   });
 }

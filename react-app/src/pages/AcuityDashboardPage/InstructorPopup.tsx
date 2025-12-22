@@ -72,8 +72,15 @@ const InstructorPopup = ({ openRow, setOpenRow }: InstructorPopupProps) => {
 
         <div className="pt-4 pb-8 px-8">
           <div className="flex justify-end mb-0">
-            <Button variant={"outlineGray"} className="rounded-full text-lg"
-              onClick={() => exportCsv(openRow?.instructors ?? [], `acuity_instructors_${openRow?.class}`)}
+            <Button
+              variant={"outlineGray"}
+              className="rounded-full text-lg"
+              onClick={() =>
+                exportCsv(
+                  openRow?.instructors ?? [],
+                  `acuity_instructors_${openRow?.class}`,
+                )
+              }
             >
               Export
             </Button>

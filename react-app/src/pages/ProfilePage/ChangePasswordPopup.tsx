@@ -19,14 +19,16 @@ const ChangePasswordPopup = ({
   const handleSendPasswordReset = useCallback(async () => {
     try {
       if (!profile?.email) throw new Error("Email not found!");
-      await sendPasswordReset(profile.email)
-      showSuccessToast(`Password reset email sent to ${profile.email}! Check your inbox.`);
+      await sendPasswordReset(profile.email);
+      showSuccessToast(
+        `Password reset email sent to ${profile.email}! Check your inbox.`,
+      );
       onClose();
     } catch (err) {
       console.error(err);
-      showErrorToast("Failed to send password reset email.")
+      showErrorToast("Failed to send password reset email.");
     }
-  }, [onClose, profile?.email])
+  }, [onClose, profile?.email]);
 
   const ModalHeader = ({ onClose }: { onClose: () => void }) => (
     <>
@@ -49,7 +51,11 @@ const ChangePasswordPopup = ({
         <ModalHeader onClose={() => onClose()} />
 
         <div className="flex flex-col gap-2 p-4 mb-2 text-left h-full">
-          <p>To reset your password, click the button below to send a password reset email to the email address associated with your account ({profile?.email}).</p>
+          <p>
+            To reset your password, click the button below to send a password
+            reset email to the email address associated with your account (
+            {profile?.email}).
+          </p>
           <Button
             variant={"yellow"}
             className="w-full sm:w-auto py-4 px-6 text-sm sm:text-base"
@@ -58,7 +64,6 @@ const ChangePasswordPopup = ({
             Send Password Reset Email
           </Button>
         </div>
-
       </div>
     </Modal>
   );

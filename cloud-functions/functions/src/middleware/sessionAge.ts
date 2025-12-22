@@ -5,7 +5,7 @@ export function sessionAge(maxAgeMin: number) {
     if (!req.token) return res.status(403).send();
 
     const sessionStartSec = req.token.auth_time;
-    if (!sessionStartSec) return res.status(403).send("reauth")
+    if (!sessionStartSec) return res.status(403).send("reauth");
 
     const nowSec = Date.now() / 1000;
     const dt = nowSec - sessionStartSec;
@@ -16,5 +16,5 @@ export function sessionAge(maxAgeMin: number) {
     } else {
       return res.status(403).send("reauth");
     }
-  }
+  };
 }

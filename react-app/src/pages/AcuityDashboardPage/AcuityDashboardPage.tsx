@@ -82,8 +82,12 @@ const CLASS_CAT_COLOR_SCHEME: Record<string, string> = {
 };
 
 export default function AcuityDashboardPage() {
-  const [attendanceDisplay, setAttendanceDisplay] = useState<"graph" | "table">("graph");
-  const [popularityDisplay, setPopularityDisplay] = useState<"graph" | "table">("graph");
+  const [attendanceDisplay, setAttendanceDisplay] = useState<"graph" | "table">(
+    "graph",
+  );
+  const [popularityDisplay, setPopularityDisplay] = useState<"graph" | "table">(
+    "graph",
+  );
   const [openInstructorRow, setOpenInstructorRow] =
     useState<InstructorAttendance | null>(null);
   const [dateRange, setDateRange] = useState<DateRange | undefined>(
@@ -208,12 +212,17 @@ export default function AcuityDashboardPage() {
     instructorDataByClass,
   );
 
-  const exportableInstructorTableData = useMemo(() =>
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    instructorTableData.map(({ instructors, ...rest }) => ({
-      ...rest
-    } as Omit<InstructorAttendance, "instructors">)
-    ), [instructorTableData])
+  const exportableInstructorTableData = useMemo(
+    () =>
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      instructorTableData.map(
+        ({ instructors, ...rest }) =>
+          ({
+            ...rest,
+          }) as Omit<InstructorAttendance, "instructors">,
+      ),
+    [instructorTableData],
+  );
 
   const trimesterAttendanceGraphDataByCategory =
     useCategoryAttendanceByTrimesterData(
@@ -296,36 +305,46 @@ export default function AcuityDashboardPage() {
               <div className={`${centerItemsInDiv} pt-4`}>
                 <div className="flex flex-row">
                   <button
-                    className={`${graphTableButtonStyle} ${attendanceDisplay == "graph"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#f5f5f5]"
-                      }`}
+                    className={`${graphTableButtonStyle} ${
+                      attendanceDisplay == "graph"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#f5f5f5]"
+                    }`}
                     onClick={() => setAttendanceDisplay("graph")}
                   >
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${attendanceDisplay == "table"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#f5f5f5]"
-                      }`}
+                    className={`${graphTableButtonStyle} ${
+                      attendanceDisplay == "table"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#f5f5f5]"
+                    }`}
                     onClick={() => setAttendanceDisplay("table")}
                   >
                     Table
                   </button>
                 </div>
-                {(attendanceDisplay === "table") ? (
+                {attendanceDisplay === "table" ? (
                   <Button
                     variant={"outlineGray"}
                     className={
                       "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
                     }
-                    onClick={() => exportCsv(trimesterTableData, `acuity_class_attendance_by_trimester${dateRange?.from?.toISOString()}_${dateRange?.to?.toISOString()}_${selectedClassCategory}`)}
+                    onClick={() =>
+                      exportCsv(
+                        trimesterTableData,
+                        `acuity_class_attendance_by_trimester${dateRange?.from?.toISOString()}_${dateRange?.to?.toISOString()}_${selectedClassCategory}`,
+                      )
+                    }
                   >
                     Export
                   </Button>
                 ) : (
-                  <ExportTrigger disabled={attendanceDisplay !== "graph"} asChild>
+                  <ExportTrigger
+                    disabled={attendanceDisplay !== "graph"}
+                    asChild
+                  >
                     <Button
                       variant={"outlineGray"}
                       className={
@@ -335,8 +354,7 @@ export default function AcuityDashboardPage() {
                       Export
                     </Button>
                   </ExportTrigger>
-                )
-                }
+                )}
               </div>
               {/* Attendance by Trimester Bar Chart */}
               <span className="self-start font-semibold text-2xl">
@@ -440,19 +458,21 @@ export default function AcuityDashboardPage() {
             <div className={`${centerItemsInDiv} pt-8`}>
               <div className="flex flex-row">
                 <button
-                  className={`${graphTableButtonStyle} ${popularityDisplay == "graph"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
-                    }`}
+                  className={`${graphTableButtonStyle} ${
+                    popularityDisplay == "graph"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#f5f5f5]"
+                  }`}
                   onClick={() => setPopularityDisplay("graph")}
                 >
                   Graph
                 </button>
                 <button
-                  className={`${graphTableButtonStyle} ${popularityDisplay == "table"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
-                    }`}
+                  className={`${graphTableButtonStyle} ${
+                    popularityDisplay == "table"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#f5f5f5]"
+                  }`}
                   onClick={() => setPopularityDisplay("table")}
                 >
                   Table
@@ -464,7 +484,12 @@ export default function AcuityDashboardPage() {
                   className={
                     "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
                   }
-                  onClick={() => exportCsv(exportableInstructorTableData, `acuity_class_popularity_${dateRange?.from?.toISOString()}_${dateRange?.to?.toISOString()}_${selectedClassCategory}`)}
+                  onClick={() =>
+                    exportCsv(
+                      exportableInstructorTableData,
+                      `acuity_class_popularity_${dateRange?.from?.toISOString()}_${dateRange?.to?.toISOString()}_${selectedClassCategory}`,
+                    )
+                  }
                 >
                   Export
                 </Button>
@@ -476,7 +501,7 @@ export default function AcuityDashboardPage() {
               ) : (
                 <span>Attendance By Class & Instructor,</span>
               )}
-              {popularityDisplay === "graph" ? <br /> : <>{" "}</>}
+              {popularityDisplay === "graph" ? <br /> : <> </>}
               {dateRangeLabel}
             </span>
             {/* Class Popularity Over Time */}
@@ -530,7 +555,7 @@ export default function AcuityDashboardPage() {
                                 (selectedClassCategory === "ALL CLASSES"
                                   ? CLASS_CAT_COLOR_SCHEME
                                   : classColorScheme)[
-                                item[0] ? item[0].key : item.key
+                                  item[0] ? item[0].key : item.key
                                 ]
                               }
                               type="grouped"

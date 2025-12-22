@@ -62,7 +62,7 @@ router.post(
         await getAllFirebaseClients(referencedClientIds);
 
       // use list of clients on firebase as the initial primary client ids
-      const primaryClientIds = new Set<string>(clientsList.map(c => c.id));
+      const primaryClientIds = new Set<string>(clientsList.map((c) => c.id));
 
       logger.info("client list:");
       logger.info(clientsList);
@@ -71,12 +71,15 @@ router.post(
       clientsList.forEach((c) => {
         if (c.janeId) janeIdToUUIDMap.set(c.janeId, c.id);
         if (c.associatedClients) {
-          c.associatedClients.forEach(ac => {
+          c.associatedClients.forEach((ac) => {
             if (ac.janeId) {
               if (!janeIdToUUIDMap.has(ac.janeId)) {
                 janeIdToUUIDMap.set(ac.janeId, ac.id);
               } else {
-                logger.warn("Duplicate associated client jane ID found!", ac.janeId);
+                logger.warn(
+                  "Duplicate associated client jane ID found!",
+                  ac.janeId,
+                );
               }
             }
           });
@@ -204,14 +207,18 @@ router.post(
         // add to the parent object's babies array using the babies matched with their appointment.
         // NOTE: only add the new babies if they do not already exist in the parent's baby array (check based on their ids)
         // use existing primary client if we have one, otherwise choose the last client
-        const parentResolved = parents.find(c => primaryClientIds.has(c.id)) ?? parents[parents.length - 1];
+        const parentResolved =
+          parents.find((c) => primaryClientIds.has(c.id)) ??
+          parents[parents.length - 1];
         if (!parentResolved) {
           continue;
         }
 
         primaryClientIds.add(parentResolved.id);
 
-        const associatedClients = parents.filter(p => p.janeId !== parentResolved.janeId);
+        const associatedClients = parents.filter(
+          (p) => p.janeId !== parentResolved.janeId,
+        );
 
         // Merge new associated clients instead of overwriting.
         if (!parentResolved.associatedClients) {
@@ -221,7 +228,10 @@ router.post(
         associatedClients.forEach((client) => {
           if (
             !parentResolved.associatedClients.some(
-              (existingClient) => existingClient.janeId && client.janeId && existingClient.janeId === client.janeId
+              (existingClient) =>
+                existingClient.janeId &&
+                client.janeId &&
+                existingClient.janeId === client.janeId,
             )
           ) {
             parentResolved.associatedClients.push(client);
@@ -236,7 +246,7 @@ router.post(
 
         const allBabiesInGroup = [...babies];
 
-        associatedClients.forEach(client => {
+        associatedClients.forEach((client) => {
           if (client.baby) {
             allBabiesInGroup.push(...client.baby);
           }

@@ -18,7 +18,9 @@ const ChangeNamePronounsPopup = ({
   initialLastName: string;
   initialPronouns: string;
 }) => {
-  const { mutate: updateNamePronouns, isPending } = useUpdateUserNamePronouns(() => onClose());
+  const { mutate: updateNamePronouns, isPending } = useUpdateUserNamePronouns(
+    () => onClose(),
+  );
   const [firstName, setFirstName] = useState(initialFirstName);
   const [lastName, setLastName] = useState(initialLastName);
   const [pronouns, setPronouns] = useState(initialPronouns);

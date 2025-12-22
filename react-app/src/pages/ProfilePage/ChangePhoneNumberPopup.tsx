@@ -16,13 +16,15 @@ const ChangePhoneNumberPopup = ({
   const [newPhone, setNewPhone] = useState("");
   const [confirmNewPhone, setConfirmNewPhone] = useState("");
 
-  const { mutate: updatePhone, isPending } = useUpdateUserPhone(() => handleClose())
+  const { mutate: updatePhone, isPending } = useUpdateUserPhone(() =>
+    handleClose(),
+  );
 
   const handleClose = () => {
     setNewPhone("");
     setConfirmNewPhone("");
     onClose();
-  }
+  };
 
   const handleNewPhoneSubmit = () => {
     const isMatch = newPhone === confirmNewPhone;

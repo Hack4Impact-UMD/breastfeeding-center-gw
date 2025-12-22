@@ -45,7 +45,6 @@ export function authenticateUserEmailAndPassword(
   });
 }
 
-
 /*
   Updates the logged-in user's password.
   Shouldn't face the re-authentication issue because password is provided to re-authenticate within the function.

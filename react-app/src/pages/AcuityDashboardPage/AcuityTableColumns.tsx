@@ -23,8 +23,10 @@ export const trimesterColumns: ColumnDef<TrimesterAttendance>[] = [
       const className: string = row.getValue("class");
 
       return (
-        <span className="font-bold">{className.length > 15 ? className.slice(0, 15) + "..." : className}</span>
-      )
+        <span className="font-bold">
+          {className.length > 15 ? className.slice(0, 15) + "..." : className}
+        </span>
+      );
     },
   },
   {
@@ -102,8 +104,10 @@ export function instructorColumns(
         const className: string = row.getValue("class");
 
         return (
-          <span className="font-bold">{className.length > 15 ? className.slice(0, 15) + "..." : className}</span>
-        )
+          <span className="font-bold">
+            {className.length > 15 ? className.slice(0, 15) + "..." : className}
+          </span>
+        );
       },
     },
     {

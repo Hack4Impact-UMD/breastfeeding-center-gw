@@ -187,51 +187,56 @@ const JaneDashboardPage = () => {
               <div className="flex items-center justify-between w-full pt-4 mb-6">
                 <div className="flex flex-row ">
                   <button
-                    className={`${graphTableButtonStyle} ${visitDisplay === "graph"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#CED8E1]"
-                      }`}
+                    className={`${graphTableButtonStyle} ${
+                      visitDisplay === "graph"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#CED8E1]"
+                    }`}
                     onClick={() => setVisitDisplay("graph")}
                   >
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${visitDisplay === "table"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#CED8E1]"
-                      }`}
+                    className={`${graphTableButtonStyle} ${
+                      visitDisplay === "table"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#CED8E1]"
+                    }`}
                     onClick={() => setVisitDisplay("table")}
                   >
                     Table
                   </button>
                 </div>
-                {(visitDisplay === "table") ?
-                  (
+                {visitDisplay === "table" ? (
+                  <Button
+                    variant={"outlineGray"}
+                    className={
+                      "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
+                    }
+                    onClick={() =>
+                      exportCsv(
+                        visitBreakdownData,
+                        `jane_visit_breakdown_${dateRange?.from?.toISOString()}_${dateRange?.to?.toISOString()}`,
+                      )
+                    }
+                  >
+                    Export
+                  </Button>
+                ) : (
+                  <ExportTrigger
+                    disabled={chartData.length === 0 || isLoading}
+                    asChild
+                  >
                     <Button
                       variant={"outlineGray"}
                       className={
                         "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
                       }
-                      onClick={() => exportCsv(visitBreakdownData, `jane_visit_breakdown_${dateRange?.from?.toISOString()}_${dateRange?.to?.toISOString()}`)}
                     >
                       Export
                     </Button>
-                  ) : (
-                    <ExportTrigger
-                      disabled={chartData.length === 0 || isLoading}
-                      asChild
-                    >
-                      <Button
-                        variant={"outlineGray"}
-                        className={
-                          "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
-                        }
-                      >
-                        Export
-                      </Button>
-                    </ExportTrigger>
-                  )
-                }
+                  </ExportTrigger>
+                )}
               </div>
 
               {visitDisplay === "graph" ? (

@@ -31,7 +31,7 @@ const ConfirmPasswordPopup = ({
 
   const handleNextFromCurrent = async () => {
     try {
-      await reauthenticateUser(currentPasswordInput)
+      await reauthenticateUser(currentPasswordInput);
     } catch (err) {
       if (err instanceof FirebaseError) {
         if (err.code === "auth/wrong-password") {
