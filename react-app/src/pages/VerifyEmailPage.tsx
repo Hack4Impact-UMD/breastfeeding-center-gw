@@ -7,9 +7,10 @@ import { showErrorToast } from "@/components/Toasts/ErrorToast";
 import { useAuth } from "@/auth/AuthProvider";
 import { Navigate, useNavigate } from "react-router";
 import { showSuccessToast } from "@/components/Toasts/SuccessToast";
+import Loading from "@/components/Loading";
 
 export default function VerifyEmailPage() {
-  const { authUser } = useAuth();
+  const { authUser, isAuthed, loading } = useAuth();
   const navigate = useNavigate();
 
   const sendVerificationEmail = useCallback(async () => {
@@ -34,6 +35,8 @@ export default function VerifyEmailPage() {
     return () => window.removeEventListener("focus", refresh);
   }, [refresh]);
 
+  if (loading) return <Loading />
+  if (!isAuthed) return <Navigate to="/" />
   if (authUser?.emailVerified) return <Navigate to="/" />
 
   return (
