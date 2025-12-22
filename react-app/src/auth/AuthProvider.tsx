@@ -3,7 +3,7 @@ import {
   type User as AuthUser,
   type IdTokenResult,
 } from "firebase/auth";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { auth } from "../config/firebase";
 import { User as UserProfile } from "@/types/UserType";
 import { getUserById } from "@/services/userService";
@@ -18,6 +18,12 @@ interface AuthContextType {
   token: IdTokenResult | null;
   loading: boolean;
   isAuthed: boolean;
+  refreshAuth: () => Promise<void>
+}
+
+const refreshAuth = async () => {
+  await auth.currentUser?.reload();
+  await auth.currentUser?.getIdToken(true);
 }
 
 // The AuthContext that other components may subscribe to.
@@ -27,17 +33,20 @@ const AuthContext = createContext<AuthContextType>({
   profile: null,
   token: null,
   isAuthed: false,
+  refreshAuth
 });
 
 // Updates the AuthContext and re-renders children when the user changes.
 // See onIdTokenChanged for what events trigger a change.
 export const AuthProvider = ({ children }: Props): React.ReactElement => {
+
   const [authState, setAuthState] = useState<AuthContextType>({
     loading: true,
     token: null,
     authUser: null,
     profile: null,
     isAuthed: false,
+    refreshAuth
   });
 
   useEffect(() => {
@@ -62,6 +71,7 @@ export const AuthProvider = ({ children }: Props): React.ReactElement => {
             loading: false,
             profile: null,
             isAuthed: false,
+            refreshAuth
           });
         } else {
           setAuthState({
@@ -70,6 +80,7 @@ export const AuthProvider = ({ children }: Props): React.ReactElement => {
             loading: false,
             profile,
             isAuthed: true,
+            refreshAuth
           });
         }
       } else {
@@ -79,6 +90,7 @@ export const AuthProvider = ({ children }: Props): React.ReactElement => {
           loading: false,
           profile: null,
           isAuthed: false,
+          refreshAuth
         });
       }
     });

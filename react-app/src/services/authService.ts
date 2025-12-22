@@ -101,8 +101,6 @@ export function isMfaEnrolled(user: User) {
 
   // ensure that the user's registered phone number on firebase auth is enrolled in mfa, otherwise force enrollment
   // this is primarily used to re-enroll when the user updates their phone number
-  console.log(user.phoneNumber)
-  console.log(enrolledFactors.map((f: MultiFactorInfo & { phoneNumber?: string }) => f.phoneNumber));
   return enrolledFactors && enrolledFactors
     .some((factor: MultiFactorInfo & { phoneNumber?: string }) => factor.factorId === "phone" &&
       factor.phoneNumber === user.phoneNumber);

@@ -1,6 +1,6 @@
+import { useAuth } from "@/auth/AuthProvider";
 import { showErrorToast } from "@/components/Toasts/ErrorToast";
 import { showSuccessToast } from "@/components/Toasts/SuccessToast";
-import { auth } from "@/config/firebase";
 import queries from "@/queries";
 import { updateCurrentUserPhone } from "@/services/userService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -8,13 +8,14 @@ import { AxiosError } from "axios";
 
 export function useUpdateUserPhone(onSettled: () => void = () => { }) {
   const queryClient = useQueryClient();
+  const { refreshAuth } = useAuth()
 
   return useMutation({
     mutationFn: ({ newPhone }: { newPhone: string }) =>
       updateCurrentUserPhone(newPhone),
     onSettled: async () => {
       await queryClient.invalidateQueries({ queryKey: queries.users._def });
-      await auth.currentUser?.getIdToken(true);
+      await refreshAuth();
       onSettled();
     },
     onSuccess() {

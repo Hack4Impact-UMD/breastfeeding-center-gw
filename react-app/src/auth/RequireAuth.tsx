@@ -20,7 +20,7 @@ const RequireAuth: React.FC<Props> = ({ children }) => {
     return <Navigate to="/login" state={{ redir: window.location.pathname }} />;
   } else if (!authContext.authUser.emailVerified) {
     return <Navigate to="/verify" />
-  } else if (!isMfaEnrolled(authContext.profile)) {
+  } else if (!isMfaEnrolled(authContext.authUser)) {
     return <Navigate to="/mfa-enroll" />
   }
 
