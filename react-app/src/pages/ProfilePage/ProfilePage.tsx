@@ -144,8 +144,6 @@ const ProfilePage = () => {
                 >
                   <XIcon
                     className="cursor-pointer text-gray-600"
-                    onClick={() => {
-                    }}
                   />
                   Unenroll
                 </Button>
