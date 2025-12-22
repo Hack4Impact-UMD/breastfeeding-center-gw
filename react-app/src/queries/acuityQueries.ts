@@ -8,4 +8,5 @@ export const acuityQueries = createQueryKeys("acuityData", {
     classCategory,
   ],
   apptsForClient: (email: string) => ["appts", "client", email],
+  apptsForClients: (emails: string[]) => ["appts", "clients", emails],
 });
