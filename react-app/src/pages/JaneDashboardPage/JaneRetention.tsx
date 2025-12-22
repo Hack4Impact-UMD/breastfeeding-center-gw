@@ -21,6 +21,7 @@ import type { Client } from "@/types/ClientType";
 import { hasRecentBirth } from "@/lib/clientUtils.ts";
 import { exportCsv } from "@/lib/tableExportUtils.ts";
 
+//TODO: recent childbirth should use the appt time as the ref date
 function filterClients(
   clientsByNumVisits: { [key: number]: Client[] } | undefined,
   endDate?: Date,
@@ -158,21 +159,19 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
         <div className={`${centerItemsInDiv} pt-4 mb-6`}>
           <div className="flex flex-row">
             <button
-              className={`${graphTableButtonStyle} ${
-                retentionDisplay === "graph"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#CED8E1]"
-              }`}
+              className={`${graphTableButtonStyle} ${retentionDisplay === "graph"
+                ? "bg-bcgw-gray-light"
+                : "bg-[#CED8E1]"
+                }`}
               onClick={() => setRetentionDisplay("graph")}
             >
               Graph
             </button>
             <button
-              className={`${graphTableButtonStyle} ${
-                retentionDisplay === "table"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#CED8E1]"
-              }`}
+              className={`${graphTableButtonStyle} ${retentionDisplay === "table"
+                ? "bg-bcgw-gray-light"
+                : "bg-[#CED8E1]"
+                }`}
               onClick={() => setRetentionDisplay("table")}
             >
               Table
