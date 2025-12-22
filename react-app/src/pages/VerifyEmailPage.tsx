@@ -2,7 +2,6 @@ import { useCallback, useEffect } from "react";
 import primaryLogo from "../assets/bcgw-logo.png";
 import { Button } from "@/components/ui/button";
 import { sendEmailVerification } from "firebase/auth";
-import { auth } from "@/config/firebase";
 import { showErrorToast } from "@/components/Toasts/ErrorToast";
 import { useAuth } from "@/auth/AuthProvider";
 import { Navigate, useNavigate } from "react-router";
@@ -14,19 +13,19 @@ export default function VerifyEmailPage() {
   const navigate = useNavigate();
 
   const sendVerificationEmail = useCallback(async () => {
-    if (!auth.currentUser) {
+    if (!authUser) {
       showErrorToast("Not authenticated");
       return;
     }
     try {
-      await sendEmailVerification(auth.currentUser)
+      await sendEmailVerification(authUser)
       showSuccessToast("Verification email sent!")
     } catch (err) {
       console.error("Failed to send verification email");
       console.error(err);
       showErrorToast("Failed to send verification email!")
     }
-  }, [])
+  }, [authUser])
 
   const refresh = useCallback(() => navigate(0), [navigate]);
 

@@ -97,6 +97,7 @@ export default function MfaEnrollPage() {
       const multiFactorAssertion = PhoneMultiFactorGenerator.assertion(cred);
       await multiFactor(authUser).enroll(multiFactorAssertion, mfaDisplayName);
       showSuccessToast("2FA enrolled successfully!");
+      setIsEnrolling(false);
     } catch (error) {
       console.error("Error verifying code:", error);
       showErrorToast("Invalid verification code. Please try again.");
