@@ -25,6 +25,8 @@ import { getClientByPatientId } from "./services/janeService";
 import LayoutShell from "./pages/LayoutShell";
 import { ToastContainer } from "react-toastify";
 import { showErrorToast } from "./components/Toasts/ErrorToast";
+import VerifyEmailPage from "./pages/VerifyEmailPage";
+import MfaEnrollPage from "./pages/MfaEnrollPage";
 
 function App() {
   return (
@@ -159,6 +161,8 @@ function App() {
                   </RequireAuth>
                 }
               />
+              <Route path="/verify" element={<VerifyEmailPage />} />
+              <Route path="/mfa-enroll" element={<MfaEnrollPage />} />
               <Route
                 path="/*"
                 element={

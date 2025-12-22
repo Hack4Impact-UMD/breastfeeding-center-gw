@@ -52,7 +52,7 @@ export async function isAuthenticated(
 
     // if (!decodedIdToken.email_verified) {
     //   logger.warn(
-    //     `Email ${decodedIdToken.email} not verified! Rejecting request!`,
+    //     `Email not verified! Rejecting request!`,
     //   );
     //   res.status(403).send("Email not verified!");
     //   return;
