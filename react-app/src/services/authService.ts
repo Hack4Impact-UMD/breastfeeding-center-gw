@@ -1,5 +1,4 @@
 import {
-  updatePassword,
   reauthenticateWithCredential,
   EmailAuthProvider,
   signOut,
@@ -8,6 +7,11 @@ import {
   type AuthError,
   type User,
   multiFactor,
+  MultiFactorInfo,
+  RecaptchaVerifier,
+  PhoneAuthProvider,
+  MultiFactorResolver,
+  PhoneMultiFactorGenerator,
 } from "firebase/auth";
 import { auth } from "../config/firebase";
 import { axiosClient } from "@/lib/utils";
@@ -43,53 +47,6 @@ export function authenticateUserEmailAndPassword(
       .catch((error: AuthError) => {
         reject(error);
       });
-  });
-}
-
-/*
-  Updates the logged-in user's password.
-  Shouldn't face the re-authentication issue because password is provided to re-authenticate within the function.
-  
-  TODO: make error messages change properly.
-   */
-export async function updateUserPassword(
-  newPassword: string,
-  oldPassword: string,
-): Promise<string> {
-  return await new Promise((resolve, reject) => {
-    const user = auth.currentUser;
-
-    if (user != null) {
-      const credential = EmailAuthProvider.credential(user.email!, oldPassword);
-      reauthenticateWithCredential(user, credential)
-        .then(async () => {
-          updatePassword(user, newPassword)
-            .then(() => {
-              resolve("Successfully updated password");
-            })
-            .catch((error) => {
-              const code = (error as AuthError).code;
-              if (code === "auth/weak-password") {
-                reject("New password should be at least 6 characters");
-              } else {
-                reject("Error updating password. Please try again later.");
-              }
-            });
-        })
-        .catch((error) => {
-          const code = (error as AuthError).code;
-          if (code === "auth/wrong-password") {
-            reject("Your original password is incorrect.");
-          } else if (code === "auth/too-many-request") {
-            reject(`Access to this account has been temporarily disabled due to many failed
-              login attempts or due to too many failed password resets. Please try again later`);
-          } else {
-            reject("Failed to authenticate user. Please log in again.");
-          }
-        });
-    } else {
-      reject("Session expired. Please sign in again.");
-    }
   });
 }
 
@@ -142,5 +99,47 @@ export function isMfaEnrolled(user: User) {
   const multifactor = multiFactor(user);
   const enrolledFactors = multifactor.enrolledFactors
 
-  return enrolledFactors && enrolledFactors.length > 0;
+  // ensure that the user's registered phone number on firebase auth is enrolled in mfa, otherwise force enrollment
+  // this is primarily used to re-enroll when the user updates their phone number
+  return enrolledFactors && enrolledFactors
+    .some((factor: MultiFactorInfo & { phoneNumber?: string }) => factor.factorId === "phone" &&
+      factor.phoneNumber === user.phoneNumber);
+}
+
+export async function sendSMSMFACode(hint: MultiFactorInfo, verifier: RecaptchaVerifier, resolver: MultiFactorResolver) {
+  const phoneInfoOptions = {
+    multiFactorHint: hint,
+    session: resolver.session,
+  };
+
+  const phoneAuthProvider = new PhoneAuthProvider(auth);
+  const newVerificationId = await phoneAuthProvider.verifyPhoneNumber(
+    phoneInfoOptions,
+    verifier
+  );
+
+  return newVerificationId;
+}
+
+export async function verifySMSMFACode(verificationId: string, verificationCode: string, resolver: MultiFactorResolver) {
+  const cred = PhoneAuthProvider.credential(verificationId, verificationCode);
+  const multiFactorAssertion = PhoneMultiFactorGenerator.assertion(cred);
+  await resolver.resolveSignIn(multiFactorAssertion);
+}
+
+export function initRecaptchaVerifier() {
+  const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+    'size': 'invisible',
+    'callback': () => { console.log('recaptcha resolved..') }
+  });
+  verifier.render();
+  return verifier;
+}
+
+export function getEnrolledMFAMethods() {
+  if (!auth.currentUser) throw new Error("Not authenticated");
+  const multiFactorUser = multiFactor(auth.currentUser);
+  const options = multiFactorUser.enrolledFactors;
+
+  return options;
 }

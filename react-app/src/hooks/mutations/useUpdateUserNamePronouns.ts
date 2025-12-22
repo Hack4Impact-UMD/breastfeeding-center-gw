@@ -1,12 +1,13 @@
+import { useAuth } from "@/auth/AuthProvider";
 import { showErrorToast } from "@/components/Toasts/ErrorToast";
 import { showSuccessToast } from "@/components/Toasts/SuccessToast";
-import { auth } from "@/config/firebase";
 import queries from "@/queries";
 import { updateCurrentUserNamePronouns } from "@/services/userService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export function useUpdateUserNamePronouns(onSettled: () => void = () => {}) {
+export function useUpdateUserNamePronouns(onSettled: () => void = () => { }) {
   const queryClient = useQueryClient();
+  const { refreshAuth } = useAuth()
 
   return useMutation({
     mutationFn: ({
@@ -20,7 +21,8 @@ export function useUpdateUserNamePronouns(onSettled: () => void = () => {}) {
     }) => updateCurrentUserNamePronouns(firstName, lastName, pronouns),
     onSettled: async () => {
       await queryClient.invalidateQueries({ queryKey: queries.users._def });
-      await auth.currentUser?.getIdToken(true);
+
+      await refreshAuth();
       onSettled();
     },
     onSuccess() {

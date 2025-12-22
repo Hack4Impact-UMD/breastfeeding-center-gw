@@ -1,20 +1,19 @@
-import { FormEvent, MouseEvent, useState, useRef, useEffect } from "react";
+import { FormEvent, MouseEvent, useState, useRef, useEffect, useCallback } from "react";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import Logo from "../../assets/bcgw-logo.png";
 import Loading from "../../components/Loading";
-import { AuthError, getMultiFactorResolver, MultiFactorResolver, PhoneAuthProvider, RecaptchaVerifier, MultiFactorInfo, PhoneMultiFactorGenerator } from "firebase/auth";
-import { authenticateUserEmailAndPassword } from "../../services/authService";
+import { AuthError, getMultiFactorResolver, MultiFactorResolver, RecaptchaVerifier, MultiFactorInfo } from "firebase/auth";
+import { authenticateUserEmailAndPassword, initRecaptchaVerifier, sendSMSMFACode, verifySMSMFACode } from "../../services/authService";
 import ForgotPasswordPopup from "./ForgotPasswordPopup";
 import TwoFAPopup from "../../components/TwoFAPopup";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/config/firebase";
 import Select2FAMethodModal from "./Select2FAMethodModal";
 import { showSuccessToast } from "@/components/Toasts/SuccessToast";
-import { useNavigate } from "react-router";
+import { showErrorToast } from "@/components/Toasts/ErrorToast";
 
 const LoginPage = () => {
   const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [visibility, setVisibility] = useState(false);
@@ -29,11 +28,7 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (!recaptchaVerifierRef.current) {
-      recaptchaVerifierRef.current = new RecaptchaVerifier(auth, 'recaptcha-container', {
-        'size': 'invisible',
-        'callback': () => { console.log('recaptcha resolved..') }
-      });
-      recaptchaVerifierRef.current.render();
+      recaptchaVerifierRef.current = initRecaptchaVerifier();
     }
 
     return () => {
@@ -44,11 +39,11 @@ const LoginPage = () => {
     };
   }, []);
 
-  const viewPassword = () => {
+  const viewPassword = useCallback(() => {
     setVisibility(!visibility);
-  };
+  }, [visibility]);
 
-  const handleSubmit = (
+  const handleSubmit = useCallback((
     e: FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>,
   ): void => {
     e.preventDefault();
@@ -73,7 +68,6 @@ const LoginPage = () => {
 
     authenticateUserEmailAndPassword(email, password)
       .then(() => {
-        // On successful login for non-MFA user, AuthProvider will handle redirect.
         setShowLoading(false);
       })
       .catch((error) => {
@@ -92,10 +86,9 @@ const LoginPage = () => {
           setError("Incorrect email address or password");
         }
       });
-  };
+  }, [email, password, regex]);
 
-  const handle2FASelection = async (hint: MultiFactorInfo) => {
-    setSelect2FAModalOpen(false);
+  const handle2FASelection = useCallback(async (hint: MultiFactorInfo) => {
     if (!resolver || !recaptchaVerifierRef.current) {
       setError("An error occurred during 2FA setup. Please try again.");
       return;
@@ -103,38 +96,33 @@ const LoginPage = () => {
 
     setShowLoading(true);
     try {
-      const phoneInfoOptions = {
-        multiFactorHint: hint,
-        session: resolver.session,
-      };
+      const newVerificationId = await sendSMSMFACode(hint, recaptchaVerifierRef.current, resolver);
 
-      const phoneAuthProvider = new PhoneAuthProvider(auth);
-      const newVerificationId = await phoneAuthProvider.verifyPhoneNumber(
-        phoneInfoOptions,
-        recaptchaVerifierRef.current
-      );
       setVerificationId(newVerificationId);
+      setSelect2FAModalOpen(false);
       setOpen2FAModal(true);
+
       showSuccessToast("Verification code sent!")
+      recaptchaVerifierRef.current.clear();
+      recaptchaVerifierRef.current = initRecaptchaVerifier()
     } catch (error) {
-      setError("Failed to send verification code. Please try again.");
+      showErrorToast("Failed to send verification code. Please try again.");
       console.error(error)
-      navigate(0);
+      recaptchaVerifierRef.current.clear();
+      recaptchaVerifierRef.current = initRecaptchaVerifier();
     } finally {
       setShowLoading(false);
     }
-  };
+  }, [resolver]);
 
-  const handle2FACodeSubmit = async (verificationCode: string) => {
+  const handle2FACodeSubmit = useCallback(async (verificationCode: string) => {
     if (!resolver || !verificationId) {
       setError("An error occurred. Please try again.");
       return;
     }
     setShowLoading(true);
     try {
-      const cred = PhoneAuthProvider.credential(verificationId, verificationCode);
-      const multiFactorAssertion = PhoneMultiFactorGenerator.assertion(cred);
-      await resolver.resolveSignIn(multiFactorAssertion);
+      await verifySMSMFACode(verificationId, verificationCode, resolver);
       // AuthProvider will redirect on successful sign in
       setOpen2FAModal(false);
     } catch (error) {
@@ -143,7 +131,7 @@ const LoginPage = () => {
     } finally {
       setShowLoading(false);
     }
-  };
+  }, [resolver, verificationId]);
 
 
   return (

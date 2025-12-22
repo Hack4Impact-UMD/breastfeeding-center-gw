@@ -84,7 +84,10 @@ const TwoFAPopup = ({
         </p>
 
         <Button
-          onClick={() => onCodeSubmit(otp.join(""))}
+          onClick={() => {
+            setOtp(Array(6).fill(""));
+            onCodeSubmit(otp.join(""));
+          }}
           disabled={!allFilled || disabled}
           variant={"yellow"}
           className={`font-bold rounded-full py-3 px-12 sm:py-4 sm:px-20 text-sm sm:text-lg mb-4 ${allFilled

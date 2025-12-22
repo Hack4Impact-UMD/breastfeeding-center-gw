@@ -1,13 +1,12 @@
 import { useAuth } from "@/auth/AuthProvider";
 import { updateUserRole } from "@/services/userService";
-import { auth } from "@/config/firebase";
 import queries from "@/queries";
 import { Role } from "@/types/UserType";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function useUpdateUserRole() {
   const queryClient = useQueryClient();
-  const { authUser } = useAuth();
+  const { authUser, refreshAuth } = useAuth();
 
   return useMutation({
     mutationFn: (variables: { id: string; role: Role }) =>
@@ -18,7 +17,7 @@ export function useUpdateUserRole() {
 
       // force refresh auth
       if (authUser?.uid === id) {
-        await auth.currentUser?.getIdToken(true);
+        await refreshAuth();
       }
     },
   });
