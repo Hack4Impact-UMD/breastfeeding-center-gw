@@ -35,6 +35,13 @@ const LoginPage = () => {
       });
       recaptchaVerifierRef.current.render();
     }
+
+    return () => {
+      if (recaptchaVerifierRef.current) {
+        recaptchaVerifierRef.current.clear();
+        recaptchaVerifierRef.current = null;
+      }
+    };
   }, []);
 
   const viewPassword = () => {
