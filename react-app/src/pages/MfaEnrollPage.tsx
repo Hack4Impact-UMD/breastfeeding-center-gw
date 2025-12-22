@@ -11,6 +11,7 @@ import Loading from "@/components/Loading";
 import EnterPhoneNumberModal from "./MfaEnrollPage/EnterPhoneNumberModal";
 import { showSuccessToast } from "@/components/Toasts/SuccessToast";
 import TwoFAPopup from "@/components/TwoFAPopup";
+import { updateCurrentUserPhone } from "@/services/userService";
 
 export default function MfaEnrollPage() {
   const recaptchaVerifierRef = useRef<RecaptchaVerifier | null>(null);
@@ -69,6 +70,7 @@ export default function MfaEnrollPage() {
         session: mfaSession,
       };
 
+      await updateCurrentUserPhone(phoneNumber);
       const phoneAuthProvider = new PhoneAuthProvider(auth);
       const newVerificationId = await phoneAuthProvider.verifyPhoneNumber(phoneInfoOptions, verifier);
 
