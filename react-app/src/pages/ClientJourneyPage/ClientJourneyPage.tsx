@@ -13,7 +13,8 @@ import { Navigate, useParams } from "react-router";
 import { useClientByPatientId } from "@/hooks/queries/useClientById.ts";
 import Loading from "@/components/Loading.tsx";
 import { useJaneApptsForClient } from "@/hooks/queries/useJaneApptsForClient.ts";
-import { useAcuityApptsForClient } from "@/hooks/queries/useAcuityApptsForClient.ts";
+import { useAcuityApptsForClients } from "@/hooks/queries/useAcuityApptsForClient.ts";
+import { useMemo } from "react";
 
 const ClientJourney = () => {
   //styles
@@ -29,19 +30,22 @@ const ClientJourney = () => {
     error: clientInfoError,
   } = useClientByPatientId(clientId ?? "");
 
+  const associatedEmails = useMemo(() => clientInfo ? [clientInfo.email, ...clientInfo.associatedClients.map(c => c.email)] : [], [clientInfo])
+
   // get appointments for the specific client
   const {
     data: clientApptData,
     isPending,
-    error,
+    error: janeError,
   } = useJaneApptsForClient(clientId ?? "");
+
 
   // get Acuity appts for the specific client
   const {
     data: acuityApptData,
     isPending: isAcuityPending,
     error: acuityError,
-  } = useAcuityApptsForClient(clientInfo?.email ?? "");
+  } = useAcuityApptsForClients(associatedEmails);
 
   const samplePaysimple: PaySimpleRentals[] = [
     {
@@ -113,8 +117,12 @@ const ClientJourney = () => {
 
         {isClientInfoPending || isPending || isAcuityPending ? (
           <Loading />
-        ) : clientInfoError || error || acuityError ? (
-          <Navigate to="/*" />
+        ) : clientInfoError ? (
+          <p className="text-red-600">Failed to load client info: {clientInfoError.message}</p>
+        ) : janeError ? (
+          <p className="text-red-600">Failed to load Jane appointments: {janeError.message}</p>
+        ) : acuityError ? (
+          <p className="text-red-600">Failed to load acuity data: {acuityError.message}</p>
         ) : (
           <>
             {/*info section*/}
@@ -124,15 +132,28 @@ const ClientJourney = () => {
                   <strong className="pr-2">NAME:</strong>{" "}
                   {clientInfo?.firstName} {clientInfo?.lastName}
                 </div>
-                <div>
-                  <strong className="pr-2">CHILDREN:</strong>
-                  {clientInfo?.baby.map((child, index) => (
-                    <span key={index}>
-                      {child.firstName} {child.lastName}
-                      {index < clientInfo.baby.length - 1 ? ", " : ""}
-                    </span>
-                  ))}
-                </div>
+                {
+                  clientInfo.baby.length > 0 && <div>
+                    <strong className="pr-2">CHILDREN:</strong>
+                    {clientInfo?.baby.map((child, index) => (
+                      <span key={index}>
+                        {child.firstName} {child.lastName}
+                        {index < clientInfo.baby.length - 1 ? ", " : ""}
+                      </span>
+                    ))}
+                  </div>
+                }
+                {
+                  clientInfo.associatedClients.length > 0 && <div>
+                    <strong className="pr-2">ASSOCIATED CLIENTS:</strong>
+                    {clientInfo?.associatedClients.map((client, index) => (
+                      <span key={index}>
+                        {client.firstName} {client.lastName}
+                        {index < clientInfo.associatedClients.length - 1 ? ", " : ""}
+                      </span>
+                    ))}
+                  </div>
+                }
               </div>
             </div>
 
@@ -188,7 +209,7 @@ const ClientJourney = () => {
             </div>
           </>
         )}
-      </div>
+      </div >
     </>
   );
 };

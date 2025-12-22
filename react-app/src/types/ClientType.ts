@@ -10,6 +10,7 @@ export interface Client {
   insurance?: string;
   paysimpleId?: string; // Paysimple customer id
   baby: Baby[];
+  associatedClients: Client[];
 }
 
 export interface Baby {

@@ -10,6 +10,7 @@ export interface Client {
   janeId?: string; // Jane patient_number
   paysimpleId?: string; // Paysimple customer id
   baby: Baby[];
+  associatedClients: Client[]
 }
 
 export interface Baby {
