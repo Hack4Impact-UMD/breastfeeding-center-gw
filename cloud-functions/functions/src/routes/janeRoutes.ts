@@ -72,7 +72,13 @@ router.post(
         if (c.janeId) janeIdToUUIDMap.set(c.janeId, c.id);
         if (c.associatedClients) {
           c.associatedClients.forEach(ac => {
-            if (ac.janeId) janeIdToUUIDMap.set(ac.janeId, ac.id);
+            if (ac.janeId) {
+              if (!janeIdToUUIDMap.has(ac.janeId)) {
+                janeIdToUUIDMap.set(ac.janeId, ac.id);
+              } else {
+                logger.warn("Duplicate associated client jane ID found!", ac.janeId);
+              }
+            }
           });
         }
       });
