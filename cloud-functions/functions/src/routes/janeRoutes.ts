@@ -233,7 +233,6 @@ router.post(
         associatedClients.forEach(client => {
           if (client.baby) {
             allBabiesInGroup.push(...client.baby);
-            client.baby = []; // Clear babies from associate to prevent duplication
           }
         });
 

@@ -122,7 +122,7 @@ const ClientJourney = () => {
         ) : janeError ? (
           <p className="text-red-600">Failed to load Jane appointments: {janeError.message}</p>
         ) : acuityError ? (
-          <p className="text-red-600">Failed to acuity data: {acuityError.message}</p>
+          <p className="text-red-600">Failed to load acuity data: {acuityError.message}</p>
         ) : (
           <>
             {/*info section*/}
@@ -149,7 +149,7 @@ const ClientJourney = () => {
                     {clientInfo?.associatedClients.map((client, index) => (
                       <span key={index}>
                         {client.firstName} {client.lastName}
-                        {index < clientInfo.baby.length - 1 ? ", " : ""}
+                        {index < clientInfo.associatedClients.length - 1 ? ", " : ""}
                       </span>
                     ))}
                   </div>
