@@ -217,7 +217,7 @@ router.post(
         primaryClientIds.add(parentResolved.id);
 
         const associatedClients = parents.filter(
-          (p) => p.janeId !== parentResolved.janeId,
+          (p) => p.id !== parentResolved.id,
         );
 
         // Merge new associated clients instead of overwriting.
@@ -229,9 +229,9 @@ router.post(
           if (
             !parentResolved.associatedClients.some(
               (existingClient) =>
-                existingClient.janeId &&
-                client.janeId &&
-                existingClient.janeId === client.janeId,
+                existingClient.id &&
+                client.id &&
+                existingClient.id === client.id,
             )
           ) {
             parentResolved.associatedClients.push(client);
