@@ -5,7 +5,7 @@ export interface Client {
   middleName?: string;
   lastName: string;
   email: string;
-  dob: string; // ISO
+  dob?: string; // ISO
   phone?: string;
   insurance?: string;
   paysimpleId?: string; // Paysimple customer id
