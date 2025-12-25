@@ -10,6 +10,7 @@ import { auth, db } from "../services/firebase";
 import { isAuthenticated } from "../middleware/authMiddleware";
 import { CLIENTS_COLLECTION, JANE_APPT_COLLECTION } from "../types/collections";
 import { getAllJaneApptsInRange } from "../services/jane";
+import { CollectionReference } from "firebase-admin/firestore";
 
 const router = Router();
 
@@ -56,11 +57,7 @@ router.post(
 
       const babyApptSet = new Set(babyAppts.map((appt) => appt.apptId));
 
-      const referencedClientIds = new Set(
-        appointmentsSheet.map((appt) => appt.janePatientNumber),
-      );
-      let clientsList: Client[] =
-        await getAllFirebaseClients(referencedClientIds);
+      let clientsList: Client[] = await getAllFirebaseClients();
 
       // use list of clients on firebase as the initial primary client ids
       const primaryClientIds = new Set<string>(clientsList.map((c) => c.id));
@@ -111,7 +108,26 @@ router.post(
 
       // jane id -> client
       const clientMap: Map<string, Client> = new Map<string, Client>(clientsList.filter(c => !!c.janeId).map(c => [c.janeId!, c]));
-      const emailToUUIDMap = new Map<string, string>(clientsList.map(c => [c.email, c.id]))
+      const emailToUUIDMap = new Map<string, string>();
+
+      clientsList.forEach((c) => {
+        if (c.email) emailToUUIDMap.set(c.email, c.id);
+        if (c.associatedClients) {
+          c.associatedClients.forEach((ac) => {
+            if (ac.email) {
+              if (!emailToUUIDMap.has(ac.email)) {
+                emailToUUIDMap.set(ac.email, ac.id);
+              } else {
+                logger.warn(
+                  "Duplicate associated client email found!",
+                  ac.email,
+                );
+              }
+            }
+          });
+        }
+      });
+
 
       const appointments_map = new Map<string, RawJaneAppt[]>();
 
@@ -131,24 +147,12 @@ router.post(
         return babyApptSet.has(appt.apptId);
       }
 
-      async function getAllFirebaseClients(janeIdsSet: Set<string>) {
-        const allClients: Client[] = [];
-        const MAX_IN_SIZE = 30;
-        const janeIds = [...janeIdsSet];
+      async function getAllFirebaseClients() {
+        const collection = db
+          .collection(CLIENTS_COLLECTION) as CollectionReference<Client>;
+        const query = await collection.get()
 
-        for (let i = 0; i < janeIds.length; i += MAX_IN_SIZE) {
-          const chunk = janeIds.slice(i, i + MAX_IN_SIZE);
-          const query = db
-            .collection(CLIENTS_COLLECTION)
-            .where("janeId", "in", chunk);
-          const clients = (await query.get()).docs.map(
-            (d) => d.data() as Client,
-          );
-
-          allClients.push(...clients);
-        }
-
-        return allClients;
+        return query.docs.map(d => d.data());
       }
 
       const parentsToAdd: Client[] = [];
