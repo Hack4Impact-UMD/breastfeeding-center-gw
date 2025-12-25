@@ -78,6 +78,8 @@ export async function parseAppointmentSheet(
   const appointments: RawJaneAppt[] = [];
   const babyAppts: RawJaneAppt[] = [];
 
+  const janeIdFrequencies = new Map<string, number>();
+
   // looping through each element in jsonArray to turn into JaneAppt obj
   for (const rawAppt of jsonArray) {
     // parsing rawAppt data in jsonArray and adding it to appointments list
@@ -96,10 +98,12 @@ export async function parseAppointmentSheet(
         firstName: String(rawAppt.patient_first_name ?? "").trim() || "N/A",
         lastName: String(rawAppt.patient_last_name ?? "").trim() || "N/A",
       };
+
+      janeIdFrequencies.set(appt.janePatientNumber, 1 + (janeIdFrequencies.get(appt.janePatientNumber) ?? 0))
     }
   }
 
-  return { appointments, patientNames, babyAppts };
+  return { appointments, patientNames, babyAppts, janeIdFrequencies };
 }
 
 function isBabyAppt(appt: Record<string, string>) {
@@ -132,7 +136,7 @@ function parseAppointment(appt: Record<string, string>) {
 
   janeAppt.clinician =
     appt.staff_member_name === undefined ||
-    String(appt.staff_member_name).trim() === ""
+      String(appt.staff_member_name).trim() === ""
       ? "N/A"
       : String(appt.staff_member_name).trim();
   janeAppt.firstVisit =

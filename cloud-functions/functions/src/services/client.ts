@@ -4,6 +4,6 @@ import { db } from "./firebase";
 import { Client } from "../types/clientType";
 
 export async function getAllExistingClients() {
-  const clients: CollectionReference<Client> = db.collection(CLIENTS_COLLECTION);
+  const clients = db.collection(CLIENTS_COLLECTION) as CollectionReference<Client>;
   return (await clients.get()).docs.map(d => d.data())
 }

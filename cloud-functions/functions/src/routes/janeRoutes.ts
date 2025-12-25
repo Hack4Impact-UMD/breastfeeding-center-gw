@@ -53,6 +53,7 @@ router.post(
         appointments: appointmentsSheet,
         patientNames,
         babyAppts,
+        janeIdFrequencies
       } = appointmentParseResults;
 
       const babyApptSet = new Set(babyAppts.map((appt) => appt.apptId));
@@ -207,9 +208,21 @@ router.post(
         // add to the parent object's babies array using the babies matched with their appointment.
         // NOTE: only add the new babies if they do not already exist in the parent's baby array (check based on their ids)
         // use existing primary client if we have one, otherwise choose the last client
+
+        const pickMostFrequentPrimary = (primary: Client, client: Client) => {
+          const primaryFrequency = primary.janeId ? janeIdFrequencies.get(primary.janeId) ?? 0 : 0
+          const clientFrequency = client.janeId ? janeIdFrequencies.get(client.janeId) ?? 0 : 0
+
+          if (clientFrequency > primaryFrequency) {
+            return client;
+          } else {
+            return primary;
+          }
+        }
+
         const parentResolved =
           parents.find((c) => primaryClientIds.has(c.id)) ??
-          parents[parents.length - 1];
+          parents.reduce(pickMostFrequentPrimary, parents[0]);
         if (!parentResolved) {
           continue;
         }
