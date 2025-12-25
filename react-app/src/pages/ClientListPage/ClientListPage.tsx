@@ -1,7 +1,10 @@
 import { clientListColumns } from "./ClientListTableColumns.tsx";
 import { DataTable } from "@/components/DataTable/DataTable.tsx";
 import Loading from "@/components/Loading.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu.tsx";
 import { useClientListRows } from "@/hooks/queries/useClientListRows.ts";
+import { RefreshCwIcon } from "lucide-react";
 
 const ClientList = () => {
   //styles
@@ -19,11 +22,25 @@ const ClientList = () => {
       <div className="flex flex-col py-14 px-10 sm:px-20">
         {/*headings*/}
         <div className={centerItemsInDiv}>
-          <div>
-            <h1 className="font-bold text-3xl sm:text-4xl lg:text-5xl">
+          <div className="flex flex-row">
+            <h1 className="font-bold text-3xl sm:text-4xl lg:text-5xl grow">
               Client List
             </h1>
           </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant={"yellow"}>
+                <RefreshCwIcon /> Sync Services
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="bg-white">
+              <DropdownMenuLabel>Services</DropdownMenuLabel>
+              <DropdownMenuItem className="hover:bg-bcgw-gray-light">Acuity</DropdownMenuItem>
+              <DropdownMenuItem>Booqable</DropdownMenuItem>
+              <DropdownMenuItem>Stripe</DropdownMenuItem>
+              <DropdownMenuItem>Square</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/*table section*/}

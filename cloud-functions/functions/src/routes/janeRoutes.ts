@@ -13,6 +13,7 @@ import { getAllJaneApptsInRange } from "../services/jane";
 
 const router = Router();
 
+//TODO: (ramy) the old implementation of this code assumed no clients from existing services being present in the db. Obviously, this was a bad assumption. I've made some edits to match clients by emails which should address it, but more testing is needed.
 router.post(
   "/upload",
   [isAuthenticated, upload],
@@ -65,20 +66,20 @@ router.post(
       const primaryClientIds = new Set<string>(clientsList.map((c) => c.id));
 
       logger.info("client list:");
-      logger.info(clientsList);
+      // logger.info(clientsList);
 
-      const janeIdToUUIDMap = new Map<string, string>();
+      const emailToUUIDMap = new Map<string, string>();
       clientsList.forEach((c) => {
-        if (c.janeId) janeIdToUUIDMap.set(c.janeId, c.id);
+        if (c.email) emailToUUIDMap.set(c.email, c.id);
         if (c.associatedClients) {
           c.associatedClients.forEach((ac) => {
-            if (ac.janeId) {
-              if (!janeIdToUUIDMap.has(ac.janeId)) {
-                janeIdToUUIDMap.set(ac.janeId, ac.id);
+            if (ac.email) {
+              if (!emailToUUIDMap.has(ac.email)) {
+                emailToUUIDMap.set(ac.email, ac.id);
               } else {
                 logger.warn(
-                  "Duplicate associated client jane ID found!",
-                  ac.janeId,
+                  "Duplicate associated client email found!",
+                  ac.email,
                 );
               }
             }
@@ -92,7 +93,7 @@ router.post(
         const clientParseResults = await parseClientSheet(
           clientFileType,
           clientsFile.buffer,
-          janeIdToUUIDMap,
+          emailToUUIDMap,
         );
 
         clientsList = clientParseResults.clientList;
@@ -256,7 +257,7 @@ router.post(
         allBabiesInGroup.forEach((baby) => {
           if (
             !parentResolved.baby.some(
-              (existingBaby: { id: string }) => existingBaby.id === baby.id,
+              (existingBaby) => existingBaby.id === baby.id || existingBaby.dob === baby.dob,
             )
           ) {
             parentResolved.baby.push(baby);
@@ -282,14 +283,16 @@ router.post(
         });
       }
 
-      const janeToDocIdMap = new Map<string, string>();
-      // batch transaction for performace, limit is 500 per batch
+      logger.info("Adding clients")
+
+      const janeToEmailMap = new Map<string, string>(parentsToAdd.filter(p => !!p.janeId).map(p => [p.janeId!, p.email]));
+
       const chunkSize = 500;
       for (let i = 0; i < parentsToAdd.length; i += chunkSize) {
         const chunk = parentsToAdd.slice(i, i + chunkSize);
         const batch = db.batch();
         chunk.forEach((parent) => {
-          janeToDocIdMap.set(parent.janeId!, parent.id);
+          logger.info("AC Count: " + parent.associatedClients.length);
           batch.set(db.collection(CLIENTS_COLLECTION).doc(parent.id), parent, {
             merge: true,
           });
@@ -297,19 +300,24 @@ router.post(
         await batch.commit();
       }
 
+      logger.info("Adding appts")
+
       for (let i = 0; i < apptsToAdd.length; i += chunkSize) {
         const chunk = apptsToAdd.slice(i, i + chunkSize);
         const batch = db.batch();
         chunk.forEach((appt) => {
           const { apptId } = appt;
-          const parentId = janeToDocIdMap.get(appt.janePatientNumber);
-          batch.set(
-            db.collection(JANE_APPT_COLLECTION).doc(apptId),
-            { ...appt, clientId: parentId } as JaneAppt,
-            {
-              merge: true,
-            },
-          );
+          const email = janeToEmailMap.get(appt.janePatientNumber);
+          if (email) {
+            const parentId = emailToUUIDMap.get(email);
+            batch.set(
+              db.collection(JANE_APPT_COLLECTION).doc(apptId),
+              { ...appt, clientId: parentId } as JaneAppt,
+              {
+                merge: true,
+              },
+            );
+          }
         });
         await batch.commit();
       }
@@ -329,6 +337,7 @@ router.post(
         return "xlsx";
       }
     } catch (e) {
+      logger.error(e);
       return res.status(400).send((e as Error).message);
     }
   },
