@@ -68,14 +68,14 @@ router.post(
       logger.info("client list:");
       // logger.info(clientsList);
 
-      const emailToUUIDMap = new Map<string, string>();
+      const existingEmailToUUIDMap = new Map<string, string>();
       clientsList.forEach((c) => {
-        if (c.email) emailToUUIDMap.set(c.email, c.id);
+        if (c.email) existingEmailToUUIDMap.set(c.email, c.id);
         if (c.associatedClients) {
           c.associatedClients.forEach((ac) => {
             if (ac.email) {
-              if (!emailToUUIDMap.has(ac.email)) {
-                emailToUUIDMap.set(ac.email, ac.id);
+              if (!existingEmailToUUIDMap.has(ac.email)) {
+                existingEmailToUUIDMap.set(ac.email, ac.id);
               } else {
                 logger.warn(
                   "Duplicate associated client email found!",
@@ -93,7 +93,7 @@ router.post(
         const clientParseResults = await parseClientSheet(
           clientFileType,
           clientsFile.buffer,
-          emailToUUIDMap,
+          existingEmailToUUIDMap,
         );
 
         clientsList = clientParseResults.clientList;
@@ -110,13 +110,8 @@ router.post(
       }
 
       // jane id -> client
-      const clientMap: Map<string, Client> = new Map();
-
-      clientsList.forEach((client) => {
-        if (client.janeId) {
-          clientMap.set(client.janeId, client);
-        }
-      });
+      const clientMap: Map<string, Client> = new Map<string, Client>(clientsList.filter(c => !!c.janeId).map(c => [c.janeId!, c]));
+      const emailToUUIDMap = new Map<string, string>(clientsList.map(c => [c.email, c.id]))
 
       const appointments_map = new Map<string, RawJaneAppt[]>();
 
