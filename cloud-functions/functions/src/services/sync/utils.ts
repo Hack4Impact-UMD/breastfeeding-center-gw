@@ -17,13 +17,11 @@ export type ErrorSyncResult = {
 export type SyncResult = SuccessSyncResult | ErrorSyncResult;
 
 // returns a map of email -> primary client
-// associated client emails map to their primary client
 export function groupPrimaryClientsByEmail(primaryClients: Client[]): PrimaryClientEmailMap {
   const clientMap = new Map<string, Client>();
 
   primaryClients.forEach(primary => {
     clientMap.set(primary.email, primary);
-    primary.associatedClients.map(ac => clientMap.set(ac.email, primary))
   })
 
   return clientMap;

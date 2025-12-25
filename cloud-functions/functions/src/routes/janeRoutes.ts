@@ -291,7 +291,7 @@ router.post(
         const chunk = parentsToAdd.slice(i, i + chunkSize);
         const batch = db.batch();
         chunk.forEach((parent) => {
-          logger.info("AC Count: " + parent.associatedClients.length);
+          // logger.info("AC Count: " + parent.associatedClients.length);
           batch.set(db.collection(CLIENTS_COLLECTION).doc(parent.id), parent, {
             merge: true,
           });
