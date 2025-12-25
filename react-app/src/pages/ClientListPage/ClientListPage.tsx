@@ -35,7 +35,7 @@ const ClientList = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-white">
               <DropdownMenuLabel>Services</DropdownMenuLabel>
-              <DropdownMenuItem className="hover:bg-bcgw-gray-light">Acuity</DropdownMenuItem>
+              <DropdownMenuItem>Acuity</DropdownMenuItem>
               <DropdownMenuItem>Booqable</DropdownMenuItem>
               <DropdownMenuItem>Stripe</DropdownMenuItem>
               <DropdownMenuItem>Square</DropdownMenuItem>
