@@ -75,14 +75,16 @@ function getAcuityClientsFromAppts(appts: AcuityAppointment[], primaryEmails: Se
   const acuityClientMap = new Map<string, AcuityClient>();
 
   for (const appt of appts) {
-    const emails = appt.email.split(",");
+    const emails = appt.email.split(",").map(e => e.trim()).filter(e => e);
+
+    if (emails.length === 0) continue;
 
     const { primary, secondary } = findPrimaryEmail(emails, primaryEmails);
     primaryEmails.add(primary);
 
     if (acuityClientMap.has(primary)) {
       const babies = appt.babyDueDatesISO;
-      const acuityClient = acuityClientMap.get(appt.email)!;
+      const acuityClient = acuityClientMap.get(primary)!;
 
       for (const dueDate of babies) {
         if (!acuityClient.babies.some(b => b.dob === dueDate)) {
@@ -94,9 +96,9 @@ function getAcuityClientsFromAppts(appts: AcuityAppointment[], primaryEmails: Se
 
       secondary.forEach(secondaryEmail => acuityClient.associatedEmails.add(secondaryEmail));
     } else {
-      acuityClientMap.set(appt.email, {
+      acuityClientMap.set(primary, {
         babies: appt.babyDueDatesISO.map(d => ({ dob: d })),
-        email: appt.email,
+        email: primary,
         firstName: appt.firstName,
         lastName: appt.lastName,
         associatedEmails: new Set(secondary)
@@ -180,7 +182,7 @@ function mergeAcuityAndExistingClients(acuityClientsByEmail: Map<string, AcuityC
       const mergedBabies = mergeClientBabies(existingClient, acuityClient.babies);
       const mergedAssocatedClients = mergeAssociatedClients(existingClient, acuityClient.associatedEmails);
 
-      if (mergedBabies.length !== existingClient.baby.length || mergedAssocatedClients.length === existingClient.associatedClients.length) {
+      if (mergedBabies.length !== existingClient.baby.length || mergedAssocatedClients.length !== existingClient.associatedClients.length) {
         updatedClients.push({
           ...existingClient,
           baby: mergedBabies,
