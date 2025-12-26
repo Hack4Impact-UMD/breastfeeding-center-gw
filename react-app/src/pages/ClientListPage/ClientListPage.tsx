@@ -22,6 +22,10 @@ const ClientList = () => {
 
   const syncPending = acuityPending;
 
+  // sync acuity -> upload jane: 1668
+  // upload jane -> sync acuity: 1668
+  // console.log("Clients: " + clientData?.length);
+
   return (
     <>
       <div className="flex flex-col py-14 px-10 sm:px-20">
@@ -48,9 +52,9 @@ const ClientList = () => {
             <DropdownMenuContent className="bg-white">
               <DropdownMenuLabel>Services</DropdownMenuLabel>
               <DropdownMenuItem onClick={() => syncAcuity()}>Acuity</DropdownMenuItem>
-              <DropdownMenuItem>Booqable</DropdownMenuItem>
-              <DropdownMenuItem>Stripe</DropdownMenuItem>
-              <DropdownMenuItem>Square</DropdownMenuItem>
+              <DropdownMenuItem disabled>Booqable</DropdownMenuItem>
+              <DropdownMenuItem disabled>Stripe</DropdownMenuItem>
+              <DropdownMenuItem disabled>Square</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

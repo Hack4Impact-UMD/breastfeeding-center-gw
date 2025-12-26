@@ -100,7 +100,7 @@ export const acuityColumns: ColumnDef<AcuityData>[] = [
     cell: ({ row }) => {
       const value = row.getValue<string>("date");
       const dt = DateTime.fromISO(value);
-      return dt.isValid ? dt.toFormat("M/d/yy") : "N/A";
+      return dt.isValid ? dt.toLocaleString(DateTime.DATETIME_SHORT) : "N/A";
     },
   },
 ];
