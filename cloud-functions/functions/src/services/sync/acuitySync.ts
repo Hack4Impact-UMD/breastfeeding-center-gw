@@ -77,16 +77,13 @@ export async function syncAcuityClients(startDate: string, endDate: string): Pro
 async function writeClients(clients: Client[]) {
   const CHUNK_SIZE = 500;
 
-  const writes = []
   for (let i = 0; i < clients.length; i += CHUNK_SIZE) {
     const batch = db.batch();
     const chunk = clients.slice(i, i + CHUNK_SIZE);
 
     chunk.forEach(c => batch.set(db.collection(CLIENTS_COLLECTION).doc(c.id), c))
-    writes.push(batch);
+    await batch.commit()
   }
-
-  return await Promise.all(writes.map(b => b.commit()))
 }
 
 

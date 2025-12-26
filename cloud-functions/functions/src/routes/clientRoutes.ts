@@ -14,7 +14,7 @@ const router = Router();
 
 router.post("/sync/acuity", [isAuthenticated], async (req: Request, res: Response) => {
   const startDate = req.body.startDate ?? DateTime.now().minus({ months: 1 }).toISODate()
-  const endDate = req.body.endDate ?? DateTime.now()
+  const endDate = req.body.endDate ?? DateTime.now().toISODate()
 
   const result = await syncAcuityClients(startDate, endDate);
 
@@ -32,7 +32,7 @@ router.post("/hooks/acuity/client", [verifyAcuityWebhook], async (req: Request, 
     action
   } = req.body;
 
-  if (!id) res.status(400).send("Appointment id not provided");
+  if (!id) return res.status(400).send("Appointment id not provided");
   if (action !== "changed") return res.status(200).send();
 
   try {

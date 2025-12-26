@@ -269,7 +269,7 @@ router.post(
         allBabiesInGroup.forEach((baby) => {
           if (
             !parentResolved.baby.some(
-              (existingBaby) => existingBaby.id === baby.id || existingBaby.dob === baby.dob,
+              (existingBaby) => existingBaby.id === baby.id,
             )
           ) {
             parentResolved.baby.push(baby);

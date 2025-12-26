@@ -65,7 +65,7 @@ export const acuityColumns: ColumnDef<AcuityData>[] = [
       const value = row.getValue<string | null>("class");
       return <Tooltip>
         <TooltipTrigger>
-          {value ? truncate(value, 70) : "N/A"};
+          {value ? truncate(value, 70) : "N/A"}
         </TooltipTrigger>
         <TooltipContent>
           {value}

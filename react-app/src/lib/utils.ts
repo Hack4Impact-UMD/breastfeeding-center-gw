@@ -63,5 +63,9 @@ export const formatDate = (date: Date) =>
   });
 
 export function truncate(str: string, max: number) {
-  return str.length > max ? str.substring(0, max - 3) + "..." : str;
+  if (max < 1) return str;
+  if (str.length <= max) return str;
+  const ellipsis = "...";
+  if (max <= ellipsis.length) return str.substring(0, max);
+  return str.substring(0, max - ellipsis.length) + ellipsis;
 }

@@ -5,7 +5,7 @@ import queries from "@/queries";
 
 export function useClientByPatientId(patientId: string) {
   return useQuery<Client>({
-    ...queries.janeData.patientId(patientId),
+    ...queries.clients.id(patientId),
     queryFn: () => getClientById(patientId),
   });
 }

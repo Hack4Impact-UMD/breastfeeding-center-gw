@@ -12,5 +12,4 @@ export const janeQueries = createQueryKeys("janeData", {
     endDate,
     clientId,
   ],
-  patientId: (patientId: string) => ["patientId", patientId],
 });
