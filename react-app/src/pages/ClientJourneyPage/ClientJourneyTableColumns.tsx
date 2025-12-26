@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { LuArrowUpDown } from "react-icons/lu";
 import { DateTime } from "luxon";
 import { truncate } from "@/lib/utils";
+import { TooltipContent, Tooltip, TooltipTrigger } from "@/components/ui/tooltip";
 
 export type AcuityData = {
   class: string | null;
@@ -62,7 +63,14 @@ export const acuityColumns: ColumnDef<AcuityData>[] = [
     },
     cell: ({ row }) => {
       const value = row.getValue<string | null>("class");
-      return value ? truncate(value, 70) : "N/A";
+      return <Tooltip>
+        <TooltipTrigger>
+          {value ? truncate(value, 70) : "N/A"};
+        </TooltipTrigger>
+        <TooltipContent>
+          {value}
+        </TooltipContent>
+      </Tooltip>
     },
   },
   {
