@@ -5,6 +5,10 @@ import { DateTime } from "luxon";
 import { verifyAcuityWebhook } from "../middleware/acuityWebhook"
 import { logger } from "firebase-functions";
 import { getAcuityApptById } from "../services/acuity";
+import { db } from "../services/firebase";
+import { getAllExistingClients } from "../services/client";
+import { CLIENTS_COLLECTION } from "../types/collections";
+import { Client } from "../types/clientType";
 
 const router = Router();
 
@@ -26,7 +30,6 @@ router.post("/hooks/acuity/client", [verifyAcuityWebhook], async (req: Request, 
   const {
     id,
     action
-
   } = req.body;
 
   if (!id) res.status(400).send("Appointment id not provided");
@@ -47,5 +50,41 @@ router.post("/hooks/acuity/client", [verifyAcuityWebhook], async (req: Request, 
     return res.status(400).send("Failed to sync client");
   }
 })
+
+router.get(
+  "/all",
+  [isAuthenticated],
+  async (_: Request, res: Response) => {
+    try {
+      const clients = await getAllExistingClients();
+      return res.status(200).json(clients);
+    } catch (e) {
+      logger.error("Error fetching clients:", e);
+      return res.status(500).send((e as Error).message);
+    }
+  },
+);
+
+router.get(
+  "/id/:client_id",
+  [isAuthenticated],
+  async (req: Request, res: Response) => {
+    try {
+      const clientId = req.params.client_id;
+
+      const doc = await db.collection(CLIENTS_COLLECTION).doc(clientId).get();
+
+      if (!doc.exists) {
+        return res.status(404).send("Client not found");
+      }
+
+      const clientData: Client = doc.data() as Client;
+      return res.status(200).json(clientData);
+    } catch (e) {
+      logger.error("Error fetching client:", e);
+      return res.status(500).send((e as Error).message);
+    }
+  },
+);
 
 export default router;

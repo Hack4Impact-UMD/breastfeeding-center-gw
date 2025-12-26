@@ -80,7 +80,7 @@ export async function getAllJaneApptsInRangeWithClient(
   }
 }
 
-export async function getClientByPatientId(patientId: string): Promise<Client> {
+export async function getClientById(patientId: string): Promise<Client> {
   try {
     const axios = await axiosClient();
     const response = await axios.get(`/jane/client/${patientId}`);

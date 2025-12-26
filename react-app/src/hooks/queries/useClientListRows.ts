@@ -10,7 +10,7 @@ import { getAllAcuityApptsInRange } from "@/services/acuityService";
 
 export function useClientListRows() {
   return useQuery<ClientTableRow[]>({
-    ...queries.janeData.clientListRows(),
+    ...queries.clients.clientListRows(),
     queryFn: async (): Promise<ClientTableRow[]> => {
       const now = DateTime.now();
       const oneMonthAgo = now.minus({ months: 1 });
