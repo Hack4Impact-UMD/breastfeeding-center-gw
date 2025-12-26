@@ -13,8 +13,8 @@ import { Client } from "../types/clientType";
 const router = Router();
 
 router.post("/sync/acuity", [isAuthenticated], async (req: Request, res: Response) => {
-  const startDate = req.params.startDate ?? DateTime.now().minus({ months: 1 }).toISODate()
-  const endDate = req.params.endDate ?? DateTime.now()
+  const startDate = req.body.startDate ?? DateTime.now().minus({ months: 1 }).toISODate()
+  const endDate = req.body.endDate ?? DateTime.now()
 
   const result = await syncAcuityClients(startDate, endDate);
 

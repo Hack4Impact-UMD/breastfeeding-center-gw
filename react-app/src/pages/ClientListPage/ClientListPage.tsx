@@ -3,6 +3,7 @@ import { DataTable } from "@/components/DataTable/DataTable.tsx";
 import Loading from "@/components/Loading.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu.tsx";
+import { useSyncAcuityClients } from "@/hooks/mutations/useSyncAcuityClients.ts";
 import { useClientListRows } from "@/hooks/queries/useClientListRows.ts";
 import { RefreshCwIcon } from "lucide-react";
 
@@ -17,6 +18,10 @@ const ClientList = () => {
 
   const isLoading = clientsLoading;
 
+  const { mutate: syncAcuity, isPending: acuityPending } = useSyncAcuityClients();
+
+  const syncPending = acuityPending;
+
   return (
     <>
       <div className="flex flex-col py-14 px-10 sm:px-20">
@@ -28,14 +33,21 @@ const ClientList = () => {
             </h1>
           </div>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger disabled={syncPending} asChild>
               <Button variant={"yellow"}>
-                <RefreshCwIcon /> Sync Services
+                <RefreshCwIcon className={`${syncPending ? 'animate-spin' : ''}`} />
+                {
+                  acuityPending ? (
+                    "Syncing Acuity Clients..."
+                  ) : (
+                    "Sync Services"
+                  )
+                }
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-white">
               <DropdownMenuLabel>Services</DropdownMenuLabel>
-              <DropdownMenuItem>Acuity</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => syncAcuity()}>Acuity</DropdownMenuItem>
               <DropdownMenuItem>Booqable</DropdownMenuItem>
               <DropdownMenuItem>Stripe</DropdownMenuItem>
               <DropdownMenuItem>Square</DropdownMenuItem>
