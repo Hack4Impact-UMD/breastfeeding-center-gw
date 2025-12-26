@@ -182,8 +182,7 @@ function mergeClientBabies(client: Client, acuityBabies: AcuityBaby[]) {
     const number = merged.length + 1;
 
     merged.push({
-      firstName: `Baby`,
-      middleName: `Acuity`,
+      firstName: `Acuity Baby`,
       lastName: `${number}`,
       dob: baby.dob,
       id: uuidv7()
