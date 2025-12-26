@@ -6,7 +6,7 @@ import { verifyAcuityWebhook } from "../middleware/acuityWebhook"
 import { logger } from "firebase-functions";
 import { getAcuityApptById } from "../services/acuity";
 import { db } from "../services/firebase";
-import { getAllExistingClients } from "../services/client";
+import { getAllClients } from "../services/client";
 import { CLIENTS_COLLECTION } from "../types/collections";
 import { Client } from "../types/clientType";
 
@@ -56,7 +56,7 @@ router.get(
   [isAuthenticated],
   async (_: Request, res: Response) => {
     try {
-      const clients = await getAllExistingClients();
+      const clients = await getAllClients();
       return res.status(200).json(clients);
     } catch (e) {
       logger.error("Error fetching clients:", e);

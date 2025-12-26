@@ -22,7 +22,7 @@ export function groupPrimaryClientsByEmail(primaryClients: Client[]): PrimaryCli
 
   primaryClients.forEach(primary => {
     clientMap.set(primary.email, primary);
-    primary.associatedClients.map(ac => clientMap.set(ac.email, primary))
+    primary.associatedClients.forEach(ac => clientMap.set(ac.email, primary))
   })
 
   return clientMap;

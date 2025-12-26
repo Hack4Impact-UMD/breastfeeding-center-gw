@@ -1,6 +1,6 @@
 import { Baby, Client } from "../../types/clientType";
 import { v7 as uuidv7 } from "uuid"
-import { getAllExistingClients } from "../client";
+import { getAllClients } from "../client";
 import { groupPrimaryClientsByEmail, PrimaryClientEmailMap, SyncResult } from "./utils";
 import { getAllAcuityApptsInRange } from "../acuity";
 import { AcuityAppointment } from "../../types/acuityType";
@@ -21,7 +21,7 @@ type AcuityClient = {
 }
 
 export async function syncAcuityClientFromAppt(appt: AcuityAppointment) {
-  const allExistingClients = await getAllExistingClients();
+  const allExistingClients = await getAllClients();
 
   const clientEmailMap = groupPrimaryClientsByEmail(allExistingClients);
   const primaryEmails = new Set(allExistingClients.map(c => c.email));
@@ -48,7 +48,7 @@ export async function syncAcuityClientFromAppt(appt: AcuityAppointment) {
 
 export async function syncAcuityClients(startDate: string, endDate: string): Promise<SyncResult> {
   try {
-    const allExistingClients = await getAllExistingClients();
+    const allExistingClients = await getAllClients();
     const emailToPrimaryClientMap = groupPrimaryClientsByEmail(allExistingClients);
     const acuityApptsInRange = await getAllAcuityApptsInRange(startDate, endDate);
     const primaryEmails = new Set(allExistingClients.map(c => c.email));
