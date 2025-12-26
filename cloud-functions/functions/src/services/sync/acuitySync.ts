@@ -23,13 +23,7 @@ type AcuityClient = {
 export async function syncAcuityClientFromAppt(appt: AcuityAppointment) {
   const allExistingClients = await getAllExistingClients();
 
-  const clientEmailMap = new Map<string, Client>();
-
-  allExistingClients.forEach(primary => {
-    clientEmailMap.set(primary.email, primary);
-    primary.associatedClients.map(ac => clientEmailMap.set(ac.email, primary))
-  });
-
+  const clientEmailMap = groupPrimaryClientsByEmail(allExistingClients);
   const primaryEmails = new Set(allExistingClients.map(c => c.email));
 
   const acuityClient = getAcuityClientFromAppt(appt, primaryEmails);
