@@ -2,9 +2,9 @@ import { NextFunction, Request, Response } from "express";
 import { config } from "../config";
 import crypto from "crypto"
 
-export function verfiyAcuityWebhook(req: Request, res: Response, next: NextFunction) {
+export function verifyAcuityWebhook(req: Request, res: Response, next: NextFunction) {
   const key = config.acuityAPIKey.value()
-  const body = req.body;
+  const body = req.rawBody ?? "";
 
   const hmac = crypto.createHmac("sha256", key);
   hmac.update(body);

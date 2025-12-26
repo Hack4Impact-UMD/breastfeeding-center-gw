@@ -51,63 +51,65 @@ const INTAKE_FORM_ID = 1313857;
 const BIRTH_DATE_FIELD_ID = 16417167;
 const DUE_DATE_FIELD_ID = 7203871;
 
+function processRawAcuityAppt(appt: RawAcuityAppt) {
+  const formValues = appt.forms.find(
+    (form) => form.id === INTAKE_FORM_ID,
+  )?.values;
+  const formats = [
+    "LL-dd-yyyy",
+    "L-d-yyyy",
+    "LL-dd-yy",
+    "D",
+    "DD",
+    "DDD",
+    "LL/dd/yyyy",
+    "L/d/yyyy",
+    "LL/dd/yy",
+    "yyyy-dd-LL",
+    "yyyy-dd-L",
+    "yyyy/dd/LL",
+    "yyyy/dd/L",
+  ];
+
+  const birthDates = formValues
+    ?.find((q) => q.fieldID === BIRTH_DATE_FIELD_ID)
+    ?.value?.split(",");
+  const dueDates = formValues
+    ?.find((q) => q.fieldID === DUE_DATE_FIELD_ID)
+    ?.value?.split(",");
+
+  const babyBirthDates =
+    birthDates?.map((b) => fromFormatArray(b.trim(), formats)) ?? [];
+  const babyDueDates =
+    dueDates?.map((b) => fromFormatArray(b.trim(), formats)) ?? [];
+
+  const finalDates: (DateTime<true> | null)[] = [];
+  const count = Math.max(babyBirthDates.length, babyDueDates.length);
+  for (let i = 0; i < count; i++) {
+    const babyBirthDate = babyBirthDates[i] ?? null;
+    const babyDueDate = babyDueDates[i] ?? null;
+    const finalBirthDate =
+      babyBirthDate !== null ? babyBirthDate : babyDueDate;
+    finalDates.push(finalBirthDate);
+  }
+
+  return {
+    id: appt.id,
+    firstName: appt.firstName,
+    lastName: appt.lastName,
+    email: appt.email,
+    datetime: appt.datetime,
+    instructor: appt.calendar,
+    class: appt.type,
+    classCategory: appt.category,
+    babyDueDatesISO: finalDates
+      .filter((d) => d !== null && d !== undefined)
+      .map((d) => d.toJSDate().toISOString()),
+  } as AcuityAppointment;
+}
+
 function processRawAcuityAppts(appts: RawAcuityAppt[]) {
-  return appts.map((appt) => {
-    const formValues = appt.forms.find(
-      (form) => form.id === INTAKE_FORM_ID,
-    )?.values;
-    const formats = [
-      "LL-dd-yyyy",
-      "L-d-yyyy",
-      "LL-dd-yy",
-      "D",
-      "DD",
-      "DDD",
-      "LL/dd/yyyy",
-      "L/d/yyyy",
-      "LL/dd/yy",
-      "yyyy-dd-LL",
-      "yyyy-dd-L",
-      "yyyy/dd/LL",
-      "yyyy/dd/L",
-    ];
-
-    const birthDates = formValues
-      ?.find((q) => q.fieldID === BIRTH_DATE_FIELD_ID)
-      ?.value?.split(",");
-    const dueDates = formValues
-      ?.find((q) => q.fieldID === DUE_DATE_FIELD_ID)
-      ?.value?.split(",");
-
-    const babyBirthDates =
-      birthDates?.map((b) => fromFormatArray(b.trim(), formats)) ?? [];
-    const babyDueDates =
-      dueDates?.map((b) => fromFormatArray(b.trim(), formats)) ?? [];
-
-    const finalDates: (DateTime<true> | null)[] = [];
-    const count = Math.max(babyBirthDates.length, babyDueDates.length);
-    for (let i = 0; i < count; i++) {
-      const babyBirthDate = babyBirthDates[i] ?? null;
-      const babyDueDate = babyDueDates[i] ?? null;
-      const finalBirthDate =
-        babyBirthDate !== null ? babyBirthDate : babyDueDate;
-      finalDates.push(finalBirthDate);
-    }
-
-    return {
-      id: appt.id,
-      firstName: appt.firstName,
-      lastName: appt.lastName,
-      email: appt.email,
-      datetime: appt.datetime,
-      instructor: appt.calendar,
-      class: appt.type,
-      classCategory: appt.category,
-      babyDueDatesISO: finalDates
-        .filter((d) => d !== null && d !== undefined)
-        .map((d) => d.toJSDate().toISOString()),
-    } as AcuityAppointment;
-  });
+  return appts.map((appt) => processRawAcuityAppt(appt));
 }
 
 export async function getAllAcuityApptsInRange(
@@ -183,4 +185,11 @@ export async function getAllAcuityAppointmentsForClient(
     params: { email, max: -1 },
   });
   return processRawAcuityAppts(response.data as RawAcuityAppt[]);
+}
+
+export async function getAcuityApptById(apptId: string) {
+  const client = acuityClient();
+  const response = await client.get(`/appointments/${apptId}`);
+
+  return processRawAcuityAppt(response.data)
 }

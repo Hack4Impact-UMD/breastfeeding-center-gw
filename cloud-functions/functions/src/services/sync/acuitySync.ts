@@ -6,6 +6,7 @@ import { getAllAcuityApptsInRange } from "../acuity";
 import { AcuityAppointment } from "../../types/acuityType";
 import { db } from "../firebase";
 import { CLIENTS_COLLECTION } from "../../types/collections";
+import { logger } from "firebase-functions";
 
 type AcuityBaby = {
   dob: string
@@ -17,6 +18,38 @@ type AcuityClient = {
   email: string,
   babies: AcuityBaby[],
   associatedEmails: Set<string>;
+}
+
+export async function syncAcuityClientFromAppt(appt: AcuityAppointment) {
+  const allExistingClients = await getAllExistingClients();
+
+  const clientEmailMap = new Map<string, Client>();
+
+  allExistingClients.forEach(primary => {
+    clientEmailMap.set(primary.email, primary);
+    primary.associatedClients.map(ac => clientEmailMap.set(ac.email, primary))
+  });
+
+  const primaryEmails = new Set(allExistingClients.map(c => c.email));
+
+  const acuityClient = getAcuityClientFromAppt(appt, primaryEmails);
+
+  if (!acuityClient) throw new Error("Could not create acuity client from appt");
+
+  if (clientEmailMap.has(acuityClient.email)) {
+    const existingClient = clientEmailMap.get(acuityClient.email)!;
+
+    const merged = mergeAcuityAndExistingClient(acuityClient, existingClient);
+
+    logger.info("client sync: merging client!")
+
+    await db.collection(CLIENTS_COLLECTION).doc(merged.id).set(merged);
+  } else {
+    const fullClient = acuityClientToFullClient(acuityClient);
+
+    logger.info("client sync: creating new client!")
+    await db.collection(CLIENTS_COLLECTION).doc(fullClient.id).set(fullClient);
+  }
 }
 
 export async function syncAcuityClients(startDate: string, endDate: string): Promise<SyncResult> {
@@ -71,6 +104,23 @@ function findPrimaryEmail(emails: string[], primaryEmails: Set<string>) {
   return { primary, secondary };
 }
 
+function getAcuityClientFromAppt(appt: AcuityAppointment, primaryEmails: Set<string>): AcuityClient | undefined {
+  const emails = appt.email.split(",").map(e => e.trim()).filter(e => !!e);
+
+  if (emails.length === 0) return undefined;
+
+  const { primary, secondary } = findPrimaryEmail(emails, primaryEmails);
+  primaryEmails.add(primary);
+
+  return {
+    babies: appt.babyDueDatesISO.map(d => ({ dob: d })),
+    email: primary,
+    firstName: appt.firstName,
+    lastName: appt.lastName,
+    associatedEmails: new Set(secondary)
+  }
+}
+
 function getAcuityClientsFromAppts(appts: AcuityAppointment[], primaryEmails: Set<string>) {
   const acuityClientMap = new Map<string, AcuityClient>();
 
@@ -109,7 +159,7 @@ function getAcuityClientsFromAppts(appts: AcuityAppointment[], primaryEmails: Se
   return acuityClientMap;
 }
 
-function acuityClientToFullClient(acuityClient: AcuityClient): Client {
+export function acuityClientToFullClient(acuityClient: AcuityClient): Client {
   const associated = [...acuityClient.associatedEmails].map(email => acuityClientToFullClient({ firstName: acuityClient.firstName, lastName: acuityClient.lastName, email: email, babies: [], associatedEmails: new Set() }));
 
   const babies: Baby[] = acuityClient.babies.map((b, index) => ({
@@ -171,6 +221,21 @@ function mergeAssociatedClients(client: Client, associatedEmails: Set<string>) {
   return merged;
 }
 
+export function mergeAcuityAndExistingClient(acuityClient: AcuityClient, existingClient: Client) {
+  const mergedBabies = mergeClientBabies(existingClient, acuityClient.babies);
+  const mergedAssocatedClients = mergeAssociatedClients(existingClient, acuityClient.associatedEmails);
+
+  if (mergedBabies.length !== existingClient.baby.length || mergedAssocatedClients.length !== existingClient.associatedClients.length) {
+    return {
+      ...existingClient,
+      baby: mergedBabies,
+      associatedClients: mergedAssocatedClients
+    }
+  }
+
+  return existingClient;
+}
+
 function mergeAcuityAndExistingClients(acuityClientsByEmail: Map<string, AcuityClient>, existingClients: PrimaryClientEmailMap) {
   const newClients: Client[] = [];
   const updatedClients: Client[] = [];
@@ -179,15 +244,9 @@ function mergeAcuityAndExistingClients(acuityClientsByEmail: Map<string, AcuityC
     if (existingClients.has(email)) {
       // an existing client with the same email exists, maybe merge
       const existingClient = existingClients.get(email)!;
-      const mergedBabies = mergeClientBabies(existingClient, acuityClient.babies);
-      const mergedAssocatedClients = mergeAssociatedClients(existingClient, acuityClient.associatedEmails);
-
-      if (mergedBabies.length !== existingClient.baby.length || mergedAssocatedClients.length !== existingClient.associatedClients.length) {
-        updatedClients.push({
-          ...existingClient,
-          baby: mergedBabies,
-          associatedClients: mergedAssocatedClients
-        })
+      const merged = mergeAcuityAndExistingClient(acuityClient, existingClient);
+      if (merged !== existingClient) {
+        updatedClients.push(merged);
       }
     } else {
       newClients.push(acuityClientToFullClient(acuityClient));
