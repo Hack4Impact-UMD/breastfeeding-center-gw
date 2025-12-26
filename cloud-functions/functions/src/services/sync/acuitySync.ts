@@ -193,11 +193,11 @@ function mergeClientBabies(client: Client, acuityBabies: AcuityBaby[]) {
 }
 
 function mergeAssociatedClients(client: Client, associatedEmails: Set<string>) {
-  const existingAssocitedEmails = new Set(client.associatedClients.map(c => c.email));
+  const existingAssociatedEmails = new Set(client.associatedClients.map(c => c.email));
   const merged: Client[] = [...client.associatedClients]
 
   for (const email of associatedEmails) {
-    if (!existingAssocitedEmails.has(email)) {
+    if (!existingAssociatedEmails.has(email)) {
       merged.push({
         ...client,
         email,
