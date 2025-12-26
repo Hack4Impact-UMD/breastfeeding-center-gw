@@ -3,6 +3,7 @@ import { VisitType } from "@/types/JaneType";
 import { Button } from "@/components/ui/button";
 import { LuArrowUpDown } from "react-icons/lu";
 import { DateTime } from "luxon";
+import { truncate } from "@/lib/utils";
 
 export type AcuityData = {
   class: string | null;
@@ -61,7 +62,7 @@ export const acuityColumns: ColumnDef<AcuityData>[] = [
     },
     cell: ({ row }) => {
       const value = row.getValue<string | null>("class");
-      return value ?? "N/A";
+      return value ? truncate(value, 70) : "N/A";
     },
   },
   {

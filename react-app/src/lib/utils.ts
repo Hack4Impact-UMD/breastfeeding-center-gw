@@ -49,8 +49,8 @@ export const axiosClient = async () => {
     baseURL: API_URL,
     headers: auth.currentUser
       ? {
-          Authorization: `Bearer ${await auth.currentUser.getIdToken()}`,
-        }
+        Authorization: `Bearer ${await auth.currentUser.getIdToken()}`,
+      }
       : {},
   });
 };
@@ -61,3 +61,7 @@ export const formatDate = (date: Date) =>
     month: "numeric",
     day: "numeric",
   });
+
+export function truncate(str: string, max: number) {
+  return str.length > max ? str.substring(0, max - 3) + "..." : str;
+}
