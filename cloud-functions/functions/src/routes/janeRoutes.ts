@@ -426,46 +426,6 @@ router.get(
   },
 );
 
-router.get(
-  "/clients",
-  [isAuthenticated],
-  async (req: Request, res: Response) => {
-    try {
-      const clientsSnapshot = await db.collection(CLIENTS_COLLECTION).get();
-      const clients = clientsSnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      })) as Client[];
-      return res.status(200).json(clients);
-    } catch (e) {
-      logger.error("Error fetching clients:", e);
-      return res.status(500).send((e as Error).message);
-    }
-  },
-);
-
-router.get(
-  "/client/:client_id",
-  [isAuthenticated],
-  async (req: Request, res: Response) => {
-    try {
-      const clientId = req.params.client_id;
-
-      // Get client document by client_id
-      const doc = await db.collection(CLIENTS_COLLECTION).doc(clientId).get();
-
-      if (!doc.exists) {
-        return res.status(404).send("Client not found");
-      }
-
-      const clientData: Client = doc.data() as Client;
-      return res.status(200).json(clientData);
-    } catch (e) {
-      logger.error("Error fetching client:", e);
-      return res.status(500).send((e as Error).message);
-    }
-  },
-);
 
 // delete a specific appointment
 router.delete(
