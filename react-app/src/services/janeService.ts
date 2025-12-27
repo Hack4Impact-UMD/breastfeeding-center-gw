@@ -80,7 +80,6 @@ export async function getAllJaneApptsInRangeWithClient(
   }
 }
 
-
 export async function deleteJaneApptById(id: string) {
   const axios = await axiosClient();
   await axios.delete("/jane/appointments/" + id);

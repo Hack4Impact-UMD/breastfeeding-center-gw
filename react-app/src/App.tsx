@@ -103,11 +103,7 @@ function App() {
                     <div className="flex flex-col gap-2 p-2">
                       <div className="space-x-3">
                         <strong>Yellow: </strong>
-                        <Button
-                          variant={"yellow"}
-                        >
-                          TEST
-                        </Button>
+                        <Button variant={"yellow"}>TEST</Button>
                         <Button variant={"yellow"} size="lg" disabled>
                           TEST
                         </Button>

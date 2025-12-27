@@ -97,16 +97,24 @@ export async function sendPasswordReset(email: string) {
 
 export function isMfaEnrolled(user: User) {
   const multifactor = multiFactor(user);
-  const enrolledFactors = multifactor.enrolledFactors
+  const enrolledFactors = multifactor.enrolledFactors;
 
   // ensure that the user's registered phone number on firebase auth is enrolled in mfa, otherwise force enrollment
   // this is primarily used to re-enroll when the user updates their phone number
-  return enrolledFactors && enrolledFactors
-    .some((factor: MultiFactorInfo & { phoneNumber?: string }) => factor.factorId === "phone" &&
-      factor.phoneNumber === user.phoneNumber);
+  return (
+    enrolledFactors &&
+    enrolledFactors.some(
+      (factor: MultiFactorInfo & { phoneNumber?: string }) =>
+        factor.factorId === "phone" && factor.phoneNumber === user.phoneNumber,
+    )
+  );
 }
 
-export async function sendSMSMFACode(hint: MultiFactorInfo, verifier: RecaptchaVerifier, resolver: MultiFactorResolver) {
+export async function sendSMSMFACode(
+  hint: MultiFactorInfo,
+  verifier: RecaptchaVerifier,
+  resolver: MultiFactorResolver,
+) {
   const phoneInfoOptions = {
     multiFactorHint: hint,
     session: resolver.session,
@@ -115,22 +123,28 @@ export async function sendSMSMFACode(hint: MultiFactorInfo, verifier: RecaptchaV
   const phoneAuthProvider = new PhoneAuthProvider(auth);
   const newVerificationId = await phoneAuthProvider.verifyPhoneNumber(
     phoneInfoOptions,
-    verifier
+    verifier,
   );
 
   return newVerificationId;
 }
 
-export async function verifySMSMFACode(verificationId: string, verificationCode: string, resolver: MultiFactorResolver) {
+export async function verifySMSMFACode(
+  verificationId: string,
+  verificationCode: string,
+  resolver: MultiFactorResolver,
+) {
   const cred = PhoneAuthProvider.credential(verificationId, verificationCode);
   const multiFactorAssertion = PhoneMultiFactorGenerator.assertion(cred);
   await resolver.resolveSignIn(multiFactorAssertion);
 }
 
 export function initRecaptchaVerifier() {
-  const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-    'size': 'invisible',
-    'callback': () => { console.log('recaptcha resolved..') }
+  const verifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+    size: "invisible",
+    callback: () => {
+      console.log("recaptcha resolved..");
+    },
   });
   verifier.render();
   return verifier;

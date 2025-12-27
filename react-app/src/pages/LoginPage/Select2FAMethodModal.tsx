@@ -30,14 +30,20 @@ const Select2FAMethodModal = ({
             >
               {hint.factorId === "phone" ? <PhoneIcon /> : <AsteriskIcon />}
               <div>
-                <p className="font-medium">{hint.displayName || "Phone Number"}</p>
-                <p className="text-sm text-gray-600">{hint.phoneNumber ?? "n/a"}</p>
+                <p className="font-medium">
+                  {hint.displayName || "Phone Number"}
+                </p>
+                <p className="text-sm text-gray-600">
+                  {hint.phoneNumber ?? "n/a"}
+                </p>
               </div>
             </Button>
           ))}
         </div>
         <div className="flex justify-end mt-6">
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
         </div>
       </div>
     </Modal>

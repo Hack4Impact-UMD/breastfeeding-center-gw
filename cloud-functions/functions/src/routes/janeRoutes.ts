@@ -53,7 +53,7 @@ router.post(
         appointments: appointmentsSheet,
         patientNames,
         babyAppts,
-        janeIdFrequencies
+        janeIdFrequencies,
       } = appointmentParseResults;
 
       const babyApptSet = new Set(babyAppts.map((appt) => appt.apptId));
@@ -108,7 +108,9 @@ router.post(
       }
 
       // jane id -> client
-      const clientMap: Map<string, Client> = new Map<string, Client>(clientsList.filter(c => !!c.janeId).map(c => [c.janeId!, c]));
+      const clientMap: Map<string, Client> = new Map<string, Client>(
+        clientsList.filter((c) => !!c.janeId).map((c) => [c.janeId!, c]),
+      );
       const emailToUUIDMap = new Map<string, string>();
 
       clientsList.forEach((c) => {
@@ -129,7 +131,6 @@ router.post(
         }
       });
 
-
       const appointments_map = new Map<string, RawJaneAppt[]>();
 
       appointmentsSheet.forEach((jane_appt) => {
@@ -149,11 +150,12 @@ router.post(
       }
 
       async function getAllFirebaseClients() {
-        const collection = db
-          .collection(CLIENTS_COLLECTION) as CollectionReference<Client>;
-        const query = await collection.get()
+        const collection = db.collection(
+          CLIENTS_COLLECTION,
+        ) as CollectionReference<Client>;
+        const query = await collection.get();
 
-        return query.docs.map(d => d.data());
+        return query.docs.map((d) => d.data());
       }
 
       const parentsToAdd: Client[] = [];
@@ -210,15 +212,19 @@ router.post(
         // use existing primary client if we have one, otherwise choose the last client
 
         const pickMostFrequentPrimary = (primary: Client, client: Client) => {
-          const primaryFrequency = primary.janeId ? janeIdFrequencies.get(primary.janeId) ?? 0 : 0
-          const clientFrequency = client.janeId ? janeIdFrequencies.get(client.janeId) ?? 0 : 0
+          const primaryFrequency = primary.janeId
+            ? (janeIdFrequencies.get(primary.janeId) ?? 0)
+            : 0;
+          const clientFrequency = client.janeId
+            ? (janeIdFrequencies.get(client.janeId) ?? 0)
+            : 0;
 
           if (clientFrequency > primaryFrequency) {
             return client;
           } else {
             return primary;
           }
-        }
+        };
 
         const parentResolved =
           parents.find((c) => primaryClientIds.has(c.id)) ??
@@ -295,9 +301,11 @@ router.post(
         });
       }
 
-      logger.info("Adding clients")
+      logger.info("Adding clients");
 
-      const janeToEmailMap = new Map<string, string>(parentsToAdd.filter(p => !!p.janeId).map(p => [p.janeId!, p.email]));
+      const janeToEmailMap = new Map<string, string>(
+        parentsToAdd.filter((p) => !!p.janeId).map((p) => [p.janeId!, p.email]),
+      );
 
       const chunkSize = 500;
       for (let i = 0; i < parentsToAdd.length; i += chunkSize) {
@@ -312,7 +320,7 @@ router.post(
         await batch.commit();
       }
 
-      logger.info("Adding appts")
+      logger.info("Adding appts");
 
       for (let i = 0; i < apptsToAdd.length; i += chunkSize) {
         const chunk = apptsToAdd.slice(i, i + chunkSize);
@@ -425,7 +433,6 @@ router.get(
     }
   },
 );
-
 
 // delete a specific appointment
 router.delete(

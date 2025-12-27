@@ -2,7 +2,13 @@ import { clientListColumns } from "./ClientListTableColumns.tsx";
 import { DataTable } from "@/components/DataTable/DataTable.tsx";
 import Loading from "@/components/Loading.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu.tsx";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu.tsx";
 import { useSyncAcuityClients } from "@/hooks/mutations/useSyncAcuityClients.ts";
 import { useClientListRows } from "@/hooks/queries/useClientListRows.ts";
 import { RefreshCwIcon } from "lucide-react";
@@ -18,7 +24,8 @@ const ClientList = () => {
 
   const isLoading = clientsLoading;
 
-  const { mutate: syncAcuity, isPending: acuityPending } = useSyncAcuityClients();
+  const { mutate: syncAcuity, isPending: acuityPending } =
+    useSyncAcuityClients();
 
   const syncPending = acuityPending;
 
@@ -39,19 +46,17 @@ const ClientList = () => {
           <DropdownMenu>
             <DropdownMenuTrigger disabled={syncPending} asChild>
               <Button variant={"yellow"}>
-                <RefreshCwIcon className={`${syncPending ? 'animate-spin' : ''}`} />
-                {
-                  acuityPending ? (
-                    "Syncing Acuity Clients..."
-                  ) : (
-                    "Sync Services"
-                  )
-                }
+                <RefreshCwIcon
+                  className={`${syncPending ? "animate-spin" : ""}`}
+                />
+                {acuityPending ? "Syncing Acuity Clients..." : "Sync Services"}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-white">
               <DropdownMenuLabel>Services</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => syncAcuity()}>Acuity</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => syncAcuity()}>
+                Acuity
+              </DropdownMenuItem>
               <DropdownMenuItem disabled>Booqable</DropdownMenuItem>
               <DropdownMenuItem disabled>Stripe</DropdownMenuItem>
               <DropdownMenuItem disabled>Square</DropdownMenuItem>

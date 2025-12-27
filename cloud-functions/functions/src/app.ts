@@ -6,7 +6,7 @@ import userRouter from "./routes/userRoutes";
 import janeRouter from "./routes/janeRoutes";
 import inviteRouter from "./routes/inviteRoutes";
 import acuityRouter from "./routes/acuityRoutes";
-import clientRouter from "./routes/clientRoutes"
+import clientRouter from "./routes/clientRoutes";
 
 const app = express();
 

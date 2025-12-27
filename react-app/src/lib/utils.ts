@@ -49,8 +49,8 @@ export const axiosClient = async () => {
     baseURL: API_URL,
     headers: auth.currentUser
       ? {
-        Authorization: `Bearer ${await auth.currentUser.getIdToken()}`,
-      }
+          Authorization: `Bearer ${await auth.currentUser.getIdToken()}`,
+        }
       : {},
   });
 };

@@ -124,31 +124,42 @@ const ProfilePage = () => {
         <div className="bg-transparent md:bg-white md:border md:border-gray-300 md:rounded-md md:shadow-sm md:p-6 text-left">
           <h5 className="font-bold mb-4 text-base sm:text-lg">2FA Methods</h5>
           <p className="text-sm text-gray-600 mb-4">
-            The 2FA methods associated with your account are listed below. You must have one method enrolled with the same phone number as the one currently used for your account ({phone}).
+            The 2FA methods associated with your account are listed below. You
+            must have one method enrolled with the same phone number as the one
+            currently used for your account ({phone}).
           </p>
 
           <div className="flex flex-col gap-2">
-            {mfaMethods.map((hint: MultiFactorInfo & { phoneNumber?: string }) => (
-              <div key={hint.uid} className="flex gap-4 items-center">
-                {hint.factorId === "phone" ? <PhoneIcon className="size-4" /> : <AsteriskIcon className="size-4" />}
-                <div className="grow">
-                  <p className="font-semibold text-sm sm:text-base">
-                    {hint.displayName}
-                  </p>
-                  {hint.phoneNumber &&
-                    <span className="text-sm sm:text-base text-black flex-1">{hint.phoneNumber}</span>
-                  }
+            {mfaMethods.map(
+              (hint: MultiFactorInfo & { phoneNumber?: string }) => (
+                <div key={hint.uid} className="flex gap-4 items-center">
+                  {hint.factorId === "phone" ? (
+                    <PhoneIcon className="size-4" />
+                  ) : (
+                    <AsteriskIcon className="size-4" />
+                  )}
+                  <div className="grow">
+                    <p className="font-semibold text-sm sm:text-base">
+                      {hint.displayName}
+                    </p>
+                    {hint.phoneNumber && (
+                      <span className="text-sm sm:text-base text-black flex-1">
+                        {hint.phoneNumber}
+                      </span>
+                    )}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={hint.phoneNumber === phone}
+                    onClick={() => unenrollMethod(hint)}
+                  >
+                    <XIcon className="cursor-pointer text-gray-600" />
+                    Unenroll
+                  </Button>
                 </div>
-                <Button variant="outline" size="sm" disabled={hint.phoneNumber === phone}
-                  onClick={() => unenrollMethod(hint)}
-                >
-                  <XIcon
-                    className="cursor-pointer text-gray-600"
-                  />
-                  Unenroll
-                </Button>
-              </div>
-            ))}
+              ),
+            )}
           </div>
         </div>
       </>

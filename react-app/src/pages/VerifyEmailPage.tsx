@@ -18,14 +18,14 @@ export default function VerifyEmailPage() {
       return;
     }
     try {
-      await sendEmailVerification(authUser)
-      showSuccessToast("Verification email sent!")
+      await sendEmailVerification(authUser);
+      showSuccessToast("Verification email sent!");
     } catch (err) {
       console.error("Failed to send verification email");
       console.error(err);
-      showErrorToast("Failed to send verification email!")
+      showErrorToast("Failed to send verification email!");
     }
-  }, [authUser])
+  }, [authUser]);
 
   const refresh = useCallback(() => navigate(0), [navigate]);
 
@@ -34,9 +34,9 @@ export default function VerifyEmailPage() {
     return () => window.removeEventListener("focus", refresh);
   }, [refresh]);
 
-  if (loading) return <Loading />
-  if (!isAuthed) return <Navigate to="/" />
-  if (authUser?.emailVerified) return <Navigate to="/" />
+  if (loading) return <Loading />;
+  if (!isAuthed) return <Navigate to="/" />;
+  if (authUser?.emailVerified) return <Navigate to="/" />;
 
   return (
     <>
@@ -47,8 +47,14 @@ export default function VerifyEmailPage() {
           alt="BCGW Logo"
         />
         <h2 className="font-semibold mb-2">Verify your email</h2>
-        <h3>For security reasons, the email associated with your account must be verified.</h3>
-        <p className="mb-4">Once the email is sent, click the link within the email and then refresh this page.</p>
+        <h3>
+          For security reasons, the email associated with your account must be
+          verified.
+        </h3>
+        <p className="mb-4">
+          Once the email is sent, click the link within the email and then
+          refresh this page.
+        </p>
         <Button onClick={sendVerificationEmail} variant={"yellow"}>
           Send verification email to {authUser?.email}
         </Button>

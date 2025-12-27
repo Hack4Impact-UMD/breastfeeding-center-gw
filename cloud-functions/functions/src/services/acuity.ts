@@ -88,8 +88,7 @@ function processRawAcuityAppt(appt: RawAcuityAppt) {
   for (let i = 0; i < count; i++) {
     const babyBirthDate = babyBirthDates[i] ?? null;
     const babyDueDate = babyDueDates[i] ?? null;
-    const finalBirthDate =
-      babyBirthDate !== null ? babyBirthDate : babyDueDate;
+    const finalBirthDate = babyBirthDate !== null ? babyBirthDate : babyDueDate;
     finalDates.push(finalBirthDate);
   }
 
@@ -191,5 +190,5 @@ export async function getAcuityApptById(apptId: string) {
   const client = acuityClient();
   const response = await client.get(`/appointments/${apptId}`);
 
-  return processRawAcuityAppt(response.data)
+  return processRawAcuityAppt(response.data);
 }

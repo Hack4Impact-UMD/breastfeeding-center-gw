@@ -1,7 +1,11 @@
 import { ColumnDef } from "@tanstack/react-table";
 import ColumnSortButton from "@/components/DataTable/ColumnSortButton";
 import { truncate } from "@/lib/utils";
-import { TooltipContent, Tooltip, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  TooltipContent,
+  Tooltip,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 /* ---------- Trimester Attendance ---------- */
 export type TrimesterAttendance = {
@@ -27,13 +31,9 @@ export const trimesterColumns: ColumnDef<TrimesterAttendance>[] = [
       return (
         <Tooltip>
           <TooltipTrigger>
-            <span className="font-bold">
-              {truncate(className, 15)}
-            </span>
+            <span className="font-bold">{truncate(className, 15)}</span>
           </TooltipTrigger>
-          <TooltipContent>
-            {className}
-          </TooltipContent>
+          <TooltipContent>{className}</TooltipContent>
         </Tooltip>
       );
     },
@@ -115,13 +115,9 @@ export function instructorColumns(
         return (
           <Tooltip>
             <TooltipTrigger>
-              <span className="font-bold">
-                {truncate(className, 15)}
-              </span>
+              <span className="font-bold">{truncate(className, 15)}</span>
             </TooltipTrigger>
-            <TooltipContent>
-              {className}
-            </TooltipContent>
+            <TooltipContent>{className}</TooltipContent>
           </Tooltip>
         );
       },

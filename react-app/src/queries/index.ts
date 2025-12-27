@@ -10,7 +10,7 @@ const queries = mergeQueryKeys(
   janeQueries,
   inviteQueries,
   acuityQueries,
-  clientQueries
+  clientQueries,
 );
 
 export default queries;

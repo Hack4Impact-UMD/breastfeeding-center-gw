@@ -6,9 +6,9 @@ import { updateCurrentUserPhone } from "@/services/userService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
-export function useUpdateUserPhone(onSettled: () => void = () => { }) {
+export function useUpdateUserPhone(onSettled: () => void = () => {}) {
   const queryClient = useQueryClient();
-  const { refreshAuth } = useAuth()
+  const { refreshAuth } = useAuth();
 
   return useMutation({
     mutationFn: ({ newPhone }: { newPhone: string }) =>

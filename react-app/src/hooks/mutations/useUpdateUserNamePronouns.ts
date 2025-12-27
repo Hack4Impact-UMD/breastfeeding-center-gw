@@ -5,9 +5,9 @@ import queries from "@/queries";
 import { updateCurrentUserNamePronouns } from "@/services/userService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export function useUpdateUserNamePronouns(onSettled: () => void = () => { }) {
+export function useUpdateUserNamePronouns(onSettled: () => void = () => {}) {
   const queryClient = useQueryClient();
-  const { refreshAuth } = useAuth()
+  const { refreshAuth } = useAuth();
 
   return useMutation({
     mutationFn: ({

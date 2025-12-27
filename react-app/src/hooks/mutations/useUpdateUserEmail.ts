@@ -6,7 +6,7 @@ import { updateCurrentUserEmail } from "@/services/userService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
-export function useUpdateUserEmail(onSettled: () => void = () => { }) {
+export function useUpdateUserEmail(onSettled: () => void = () => {}) {
   const { refreshAuth } = useAuth();
   const queryClient = useQueryClient();
 

@@ -99,7 +99,10 @@ export async function parseAppointmentSheet(
         lastName: String(rawAppt.patient_last_name ?? "").trim() || "N/A",
       };
 
-      janeIdFrequencies.set(appt.janePatientNumber, 1 + (janeIdFrequencies.get(appt.janePatientNumber) ?? 0))
+      janeIdFrequencies.set(
+        appt.janePatientNumber,
+        1 + (janeIdFrequencies.get(appt.janePatientNumber) ?? 0),
+      );
     }
   }
 
@@ -136,7 +139,7 @@ function parseAppointment(appt: Record<string, string>) {
 
   janeAppt.clinician =
     appt.staff_member_name === undefined ||
-      String(appt.staff_member_name).trim() === ""
+    String(appt.staff_member_name).trim() === ""
       ? "N/A"
       : String(appt.staff_member_name).trim();
   janeAppt.firstVisit =

@@ -1,9 +1,28 @@
-import { FormEvent, MouseEvent, useState, useRef, useEffect, useCallback, useMemo } from "react";
+import {
+  FormEvent,
+  MouseEvent,
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import Logo from "../../assets/bcgw-logo.png";
 import Loading from "../../components/Loading";
-import { AuthError, getMultiFactorResolver, MultiFactorResolver, RecaptchaVerifier, MultiFactorInfo } from "firebase/auth";
-import { authenticateUserEmailAndPassword, initRecaptchaVerifier, sendSMSMFACode, verifySMSMFACode } from "../../services/authService";
+import {
+  AuthError,
+  getMultiFactorResolver,
+  MultiFactorResolver,
+  RecaptchaVerifier,
+  MultiFactorInfo,
+} from "firebase/auth";
+import {
+  authenticateUserEmailAndPassword,
+  initRecaptchaVerifier,
+  sendSMSMFACode,
+  verifySMSMFACode,
+} from "../../services/authService";
 import ForgotPasswordPopup from "./ForgotPasswordPopup";
 import TwoFAPopup from "../../components/TwoFAPopup";
 import { Button } from "@/components/ui/button";
@@ -13,7 +32,10 @@ import { showSuccessToast } from "@/components/Toasts/SuccessToast";
 import { showErrorToast } from "@/components/Toasts/ErrorToast";
 
 const LoginPage = () => {
-  const regex = useMemo(() => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, []);
+  const regex = useMemo(
+    () => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    [],
+  );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [visibility, setVisibility] = useState(false);
@@ -43,98 +65,108 @@ const LoginPage = () => {
     setVisibility(!visibility);
   }, [visibility]);
 
-  const handleSubmit = useCallback((
-    e: FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>,
-  ): void => {
-    e.preventDefault();
-    setShowLoading(true);
-    setError("");
-
-    if (!email) {
-      setError("Email is required.");
-      setShowLoading(false);
-      return;
-    }
-    if (!password) {
-      setError("Password is required");
-      setShowLoading(false);
-      return;
-    }
-    if (!regex.test(email)) {
-      setError("Please input a valid email.");
-      setShowLoading(false);
-      return;
-    }
-
-    authenticateUserEmailAndPassword(email, password)
-      .then(() => {
-        setShowLoading(false);
-      })
-      .catch((error) => {
-        const code = (error as AuthError).code;
-        console.log(code)
-        if (code === "auth/multi-factor-auth-required") {
-          const mfaResolver = getMultiFactorResolver(auth, error);
-          setResolver(mfaResolver);
-          setSelect2FAModalOpen(true);
-        } else if (code === "auth/too-many-requests") {
-          setShowLoading(false);
-          setError(
-            "Access to this account has been temporarily disabled due to many failed login attempts. You can reset your password or try again later.",
-          );
-        } else {
-          setShowLoading(false);
-          setError("Incorrect email address or password");
-        }
-      });
-  }, [email, password, regex]);
-
-  const handle2FASelection = useCallback(async (hint: MultiFactorInfo) => {
-    if (!resolver || !recaptchaVerifierRef.current) {
-      setError("An error occurred during 2FA setup. Please try again.");
-      return;
-    }
-
-    setShowLoading(true);
-    try {
-      const newVerificationId = await sendSMSMFACode(hint, recaptchaVerifierRef.current, resolver);
-
-      setVerificationId(newVerificationId);
-      setSelect2FAModalOpen(false);
-      setOpen2FAModal(true);
-
-      showSuccessToast("Verification code sent!")
-      recaptchaVerifierRef.current.clear();
-      recaptchaVerifierRef.current = initRecaptchaVerifier()
-    } catch (error) {
-      showErrorToast("Failed to send verification code. Please try again.");
-      console.error(error)
-      recaptchaVerifierRef.current.clear();
-      recaptchaVerifierRef.current = initRecaptchaVerifier();
-    } finally {
-      setShowLoading(false);
-    }
-  }, [resolver]);
-
-  const handle2FACodeSubmit = useCallback(async (verificationCode: string) => {
-    if (!resolver || !verificationId) {
-      setError("An error occurred. Please try again.");
-      return;
-    }
-    setShowLoading(true);
-    try {
-      await verifySMSMFACode(verificationId, verificationCode, resolver);
-      // AuthProvider will redirect on successful sign in
-      setOpen2FAModal(false);
-      // it takes some time to fetch profile info, show loading before redirect
+  const handleSubmit = useCallback(
+    (e: FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>): void => {
+      e.preventDefault();
       setShowLoading(true);
-    } catch (error) {
-      setError("Invalid verification code. Please try again.");
-      console.error(error)
-      setShowLoading(false);
-    }
-  }, [resolver, verificationId]);
+      setError("");
 
+      if (!email) {
+        setError("Email is required.");
+        setShowLoading(false);
+        return;
+      }
+      if (!password) {
+        setError("Password is required");
+        setShowLoading(false);
+        return;
+      }
+      if (!regex.test(email)) {
+        setError("Please input a valid email.");
+        setShowLoading(false);
+        return;
+      }
+
+      authenticateUserEmailAndPassword(email, password)
+        .then(() => {
+          setShowLoading(false);
+        })
+        .catch((error) => {
+          const code = (error as AuthError).code;
+          console.log(code);
+          if (code === "auth/multi-factor-auth-required") {
+            const mfaResolver = getMultiFactorResolver(auth, error);
+            setResolver(mfaResolver);
+            setSelect2FAModalOpen(true);
+          } else if (code === "auth/too-many-requests") {
+            setShowLoading(false);
+            setError(
+              "Access to this account has been temporarily disabled due to many failed login attempts. You can reset your password or try again later.",
+            );
+          } else {
+            setShowLoading(false);
+            setError("Incorrect email address or password");
+          }
+        });
+    },
+    [email, password, regex],
+  );
+
+  const handle2FASelection = useCallback(
+    async (hint: MultiFactorInfo) => {
+      if (!resolver || !recaptchaVerifierRef.current) {
+        setError("An error occurred during 2FA setup. Please try again.");
+        return;
+      }
+
+      setShowLoading(true);
+      try {
+        const newVerificationId = await sendSMSMFACode(
+          hint,
+          recaptchaVerifierRef.current,
+          resolver,
+        );
+
+        setVerificationId(newVerificationId);
+        setSelect2FAModalOpen(false);
+        setOpen2FAModal(true);
+
+        showSuccessToast("Verification code sent!");
+        recaptchaVerifierRef.current.clear();
+        recaptchaVerifierRef.current = initRecaptchaVerifier();
+      } catch (error) {
+        showErrorToast("Failed to send verification code. Please try again.");
+        console.error(error);
+        recaptchaVerifierRef.current.clear();
+        recaptchaVerifierRef.current = initRecaptchaVerifier();
+      } finally {
+        setShowLoading(false);
+      }
+    },
+    [resolver],
+  );
+
+  const handle2FACodeSubmit = useCallback(
+    async (verificationCode: string) => {
+      if (!resolver || !verificationId) {
+        setError("An error occurred. Please try again.");
+        return;
+      }
+      setShowLoading(true);
+      try {
+        await verifySMSMFACode(verificationId, verificationCode, resolver);
+        // AuthProvider will redirect on successful sign in
+        setOpen2FAModal(false);
+        // it takes some time to fetch profile info, show loading before redirect
+        setShowLoading(true);
+      } catch (error) {
+        setError("Invalid verification code. Please try again.");
+        console.error(error);
+        setShowLoading(false);
+      }
+    },
+    [resolver, verificationId],
+  );
 
   return (
     <div className="flex flex-col items-center justify-center h-screen w-screen">

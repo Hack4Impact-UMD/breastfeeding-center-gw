@@ -34,7 +34,9 @@ const EnterPhoneNumberModal = ({
   const ModalHeader = () => (
     <>
       <div className="flex justify-between items-center my-2 mx-4">
-        <p className="text-base sm:text-lg">Enroll in SMS 2-Factor Authentication</p>
+        <p className="text-base sm:text-lg">
+          Enroll in SMS 2-Factor Authentication
+        </p>
         <IoIosClose
           className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
           onClick={onClose}
@@ -60,7 +62,7 @@ const EnterPhoneNumberModal = ({
             </label>
             <PhoneInput
               value={phoneNumber}
-              onChange={(value) => setPhoneNumber(value as string || "")}
+              onChange={(value) => setPhoneNumber((value as string) || "")}
               defaultCountry="US"
               placeholder="Enter phone number"
               disabled={isPhoneInputDisabled}
@@ -91,7 +93,9 @@ const EnterPhoneNumberModal = ({
           <Button
             variant={"yellow"}
             className="w-full sm:w-auto py-4 px-6 text-sm sm:text-base"
-            disabled={!phoneNumber || !displayName || !isPhoneValid || isPending}
+            disabled={
+              !phoneNumber || !displayName || !isPhoneValid || isPending
+            }
             onClick={handlePhoneNumberSubmit}
           >
             {isPending ? "Sending..." : "Send Verification Code"}
