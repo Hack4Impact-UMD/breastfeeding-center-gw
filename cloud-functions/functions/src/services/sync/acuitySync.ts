@@ -7,6 +7,7 @@ import { AcuityAppointment } from "../../types/acuityType";
 import { db } from "../firebase";
 import { CLIENTS_COLLECTION } from "../../types/collections";
 import { logger } from "firebase-functions";
+import { DateTime } from "luxon";
 
 type AcuityBaby = {
   dob: string
@@ -153,10 +154,10 @@ function getAcuityClientsFromAppts(appts: AcuityAppointment[], primaryEmails: Se
 export function acuityClientToFullClient(acuityClient: AcuityClient): Client {
   const associated = [...acuityClient.associatedEmails].map(email => acuityClientToFullClient({ firstName: acuityClient.firstName, lastName: acuityClient.lastName, email: email, babies: [], associatedEmails: new Set() }));
 
-  const babies: Baby[] = acuityClient.babies.map((b, index) => ({
+  const babies: Baby[] = acuityClient.babies.map((b) => ({
     dob: b.dob,
     firstName: "Acuity Baby",
-    lastName: `${index + 1}`,
+    lastName: formatBabyLastName(b.dob),
     id: uuidv7(),
   }))
 
@@ -179,11 +180,9 @@ function mergeClientBabies(client: Client, acuityBabies: AcuityBaby[]) {
     // a baby with the same id has been found
     if (existingBabies.some(existing => existing.dob === baby.dob)) continue;
 
-    const number = merged.length + 1;
-
     merged.push({
       firstName: `Acuity Baby`,
-      lastName: `${number}`,
+      lastName: formatBabyLastName(baby.dob),
       dob: baby.dob,
       id: uuidv7()
     })
@@ -244,4 +243,9 @@ function mergeAcuityAndExistingClients(acuityClientsByEmail: Map<string, AcuityC
   }
 
   return { newClients, updatedClients }
+}
+
+function formatBabyLastName(dob: string): string {
+  const date = DateTime.fromISO(dob);
+  return `(Acuity ${date.toFormat("MM/dd/yyyy")})`;
 }
