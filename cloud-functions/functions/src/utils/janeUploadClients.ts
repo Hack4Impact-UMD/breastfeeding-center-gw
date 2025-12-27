@@ -7,7 +7,7 @@ import { v7 as uuidv7 } from "uuid";
 export async function parseClientSheet(
   fileType: string,
   fileAsBuffer: Buffer,
-  janeIdToUUID: Map<string, string>,
+  emailToUUIDMap: Map<string, string>,
 ) {
   const requiredHeaders = [
     "Patient Number",
@@ -79,7 +79,7 @@ export async function parseClientSheet(
       ) {
         babyList.push(parseBaby(jsonObj));
       } else {
-        clientList.push(parseClient(jsonObj, janeIdToUUID));
+        clientList.push(parseClient(jsonObj, emailToUUIDMap));
       }
     }
   });
@@ -89,28 +89,28 @@ export async function parseClientSheet(
 
 function parseClient(
   clientRawData: Record<string, string>,
-  janeIdToUUID: Map<string, string>,
+  emailToUUIDMap: Map<string, string>,
 ) {
   const client = {} as Client;
   client.janeId = clientRawData["Patient Number"].trim();
-  client.id = janeIdToUUID.has(client.janeId ?? "")
-    ? janeIdToUUID.get(client.janeId)!
-    : uuidv7();
-
   client.email =
     clientRawData.Email === undefined ||
-    String(clientRawData.Email).trim() === ""
+      String(clientRawData.Email).trim() === ""
       ? "N/A"
       : String(clientRawData.Email).trim();
 
+  client.id = client.email !== "N/A" && client.email.length > 0 && client.email.includes("@") && emailToUUIDMap.has(client.email)
+    ? emailToUUIDMap.get(client.email)!
+    : uuidv7();
+
   client.firstName =
     clientRawData["First Name"] === undefined ||
-    String(clientRawData["First Name"]).trim() === ""
+      String(clientRawData["First Name"]).trim() === ""
       ? "N/A"
       : String(clientRawData["First Name"]).trim();
   client.lastName =
     clientRawData["Last Name"] === undefined ||
-    String(clientRawData["Last Name"]).trim() === ""
+      String(clientRawData["Last Name"]).trim() === ""
       ? "N/A"
       : String(clientRawData["Last Name"]).trim();
 
@@ -159,7 +159,7 @@ function parseBaby(babyRawData: Record<string, string>) {
   }
   baby.firstName =
     babyRawData["First Name"] === undefined ||
-    String(babyRawData["First Name"]).trim() === ""
+      String(babyRawData["First Name"]).trim() === ""
       ? "N/A"
       : String(babyRawData["First Name"]).trim();
   // "baby" or "twin" may be in first name
@@ -167,7 +167,7 @@ function parseBaby(babyRawData: Record<string, string>) {
 
   baby.lastName =
     babyRawData["Last Name"] === undefined ||
-    String(babyRawData["Last Name"]).trim() === ""
+      String(babyRawData["Last Name"]).trim() === ""
       ? "N/A"
       : String(babyRawData["Last Name"]).trim();
 

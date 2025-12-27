@@ -10,9 +10,11 @@ import { auth, db } from "../services/firebase";
 import { isAuthenticated } from "../middleware/authMiddleware";
 import { CLIENTS_COLLECTION, JANE_APPT_COLLECTION } from "../types/collections";
 import { getAllJaneApptsInRange } from "../services/jane";
+import { CollectionReference } from "firebase-admin/firestore";
 
 const router = Router();
 
+//TODO: (ramy) the old implementation of this code assumed no clients from existing services being present in the db. Obviously, this was a bad assumption. I've made some edits to match clients by emails which should address it, but more testing is needed.
 router.post(
   "/upload",
   [isAuthenticated, upload],
@@ -51,34 +53,31 @@ router.post(
         appointments: appointmentsSheet,
         patientNames,
         babyAppts,
+        janeIdFrequencies
       } = appointmentParseResults;
 
       const babyApptSet = new Set(babyAppts.map((appt) => appt.apptId));
 
-      const referencedClientIds = new Set(
-        appointmentsSheet.map((appt) => appt.janePatientNumber),
-      );
-      let clientsList: Client[] =
-        await getAllFirebaseClients(referencedClientIds);
+      let clientsList: Client[] = await getAllFirebaseClients();
 
       // use list of clients on firebase as the initial primary client ids
       const primaryClientIds = new Set<string>(clientsList.map((c) => c.id));
 
       logger.info("client list:");
-      logger.info(clientsList);
+      // logger.info(clientsList);
 
-      const janeIdToUUIDMap = new Map<string, string>();
+      const existingEmailToUUIDMap = new Map<string, string>();
       clientsList.forEach((c) => {
-        if (c.janeId) janeIdToUUIDMap.set(c.janeId, c.id);
+        if (c.email) existingEmailToUUIDMap.set(c.email, c.id);
         if (c.associatedClients) {
           c.associatedClients.forEach((ac) => {
-            if (ac.janeId) {
-              if (!janeIdToUUIDMap.has(ac.janeId)) {
-                janeIdToUUIDMap.set(ac.janeId, ac.id);
+            if (ac.email) {
+              if (!existingEmailToUUIDMap.has(ac.email)) {
+                existingEmailToUUIDMap.set(ac.email, ac.id);
               } else {
                 logger.warn(
-                  "Duplicate associated client jane ID found!",
-                  ac.janeId,
+                  "Duplicate associated client email found!",
+                  ac.email,
                 );
               }
             }
@@ -92,7 +91,7 @@ router.post(
         const clientParseResults = await parseClientSheet(
           clientFileType,
           clientsFile.buffer,
-          janeIdToUUIDMap,
+          existingEmailToUUIDMap,
         );
 
         clientsList = clientParseResults.clientList;
@@ -109,13 +108,27 @@ router.post(
       }
 
       // jane id -> client
-      const clientMap: Map<string, Client> = new Map();
+      const clientMap: Map<string, Client> = new Map<string, Client>(clientsList.filter(c => !!c.janeId).map(c => [c.janeId!, c]));
+      const emailToUUIDMap = new Map<string, string>();
 
-      clientsList.forEach((client) => {
-        if (client.janeId) {
-          clientMap.set(client.janeId, client);
+      clientsList.forEach((c) => {
+        if (c.email) emailToUUIDMap.set(c.email, c.id);
+        if (c.associatedClients) {
+          c.associatedClients.forEach((ac) => {
+            if (ac.email) {
+              if (!emailToUUIDMap.has(ac.email)) {
+                emailToUUIDMap.set(ac.email, ac.id);
+              } else {
+                logger.warn(
+                  "Duplicate associated client email found!",
+                  ac.email,
+                );
+              }
+            }
+          });
         }
       });
+
 
       const appointments_map = new Map<string, RawJaneAppt[]>();
 
@@ -135,24 +148,12 @@ router.post(
         return babyApptSet.has(appt.apptId);
       }
 
-      async function getAllFirebaseClients(janeIdsSet: Set<string>) {
-        const allClients: Client[] = [];
-        const MAX_IN_SIZE = 30;
-        const janeIds = [...janeIdsSet];
+      async function getAllFirebaseClients() {
+        const collection = db
+          .collection(CLIENTS_COLLECTION) as CollectionReference<Client>;
+        const query = await collection.get()
 
-        for (let i = 0; i < janeIds.length; i += MAX_IN_SIZE) {
-          const chunk = janeIds.slice(i, i + MAX_IN_SIZE);
-          const query = db
-            .collection(CLIENTS_COLLECTION)
-            .where("janeId", "in", chunk);
-          const clients = (await query.get()).docs.map(
-            (d) => d.data() as Client,
-          );
-
-          allClients.push(...clients);
-        }
-
-        return allClients;
+        return query.docs.map(d => d.data());
       }
 
       const parentsToAdd: Client[] = [];
@@ -207,9 +208,21 @@ router.post(
         // add to the parent object's babies array using the babies matched with their appointment.
         // NOTE: only add the new babies if they do not already exist in the parent's baby array (check based on their ids)
         // use existing primary client if we have one, otherwise choose the last client
+
+        const pickMostFrequentPrimary = (primary: Client, client: Client) => {
+          const primaryFrequency = primary.janeId ? janeIdFrequencies.get(primary.janeId) ?? 0 : 0
+          const clientFrequency = client.janeId ? janeIdFrequencies.get(client.janeId) ?? 0 : 0
+
+          if (clientFrequency > primaryFrequency) {
+            return client;
+          } else {
+            return primary;
+          }
+        }
+
         const parentResolved =
           parents.find((c) => primaryClientIds.has(c.id)) ??
-          parents[parents.length - 1];
+          parents.reduce(pickMostFrequentPrimary, parents[0]);
         if (!parentResolved) {
           continue;
         }
@@ -256,7 +269,7 @@ router.post(
         allBabiesInGroup.forEach((baby) => {
           if (
             !parentResolved.baby.some(
-              (existingBaby: { id: string }) => existingBaby.id === baby.id,
+              (existingBaby) => existingBaby.id === baby.id,
             )
           ) {
             parentResolved.baby.push(baby);
@@ -282,14 +295,16 @@ router.post(
         });
       }
 
-      const janeToDocIdMap = new Map<string, string>();
-      // batch transaction for performace, limit is 500 per batch
+      logger.info("Adding clients")
+
+      const janeToEmailMap = new Map<string, string>(parentsToAdd.filter(p => !!p.janeId).map(p => [p.janeId!, p.email]));
+
       const chunkSize = 500;
       for (let i = 0; i < parentsToAdd.length; i += chunkSize) {
         const chunk = parentsToAdd.slice(i, i + chunkSize);
         const batch = db.batch();
         chunk.forEach((parent) => {
-          janeToDocIdMap.set(parent.janeId!, parent.id);
+          // logger.info("AC Count: " + parent.associatedClients.length);
           batch.set(db.collection(CLIENTS_COLLECTION).doc(parent.id), parent, {
             merge: true,
           });
@@ -297,19 +312,24 @@ router.post(
         await batch.commit();
       }
 
+      logger.info("Adding appts")
+
       for (let i = 0; i < apptsToAdd.length; i += chunkSize) {
         const chunk = apptsToAdd.slice(i, i + chunkSize);
         const batch = db.batch();
         chunk.forEach((appt) => {
           const { apptId } = appt;
-          const parentId = janeToDocIdMap.get(appt.janePatientNumber);
-          batch.set(
-            db.collection(JANE_APPT_COLLECTION).doc(apptId),
-            { ...appt, clientId: parentId } as JaneAppt,
-            {
-              merge: true,
-            },
-          );
+          const email = janeToEmailMap.get(appt.janePatientNumber);
+          if (email) {
+            const parentId = emailToUUIDMap.get(email);
+            batch.set(
+              db.collection(JANE_APPT_COLLECTION).doc(apptId),
+              { ...appt, clientId: parentId } as JaneAppt,
+              {
+                merge: true,
+              },
+            );
+          }
         });
         await batch.commit();
       }
@@ -329,6 +349,7 @@ router.post(
         return "xlsx";
       }
     } catch (e) {
+      logger.error(e);
       return res.status(400).send((e as Error).message);
     }
   },
@@ -405,46 +426,6 @@ router.get(
   },
 );
 
-router.get(
-  "/clients",
-  [isAuthenticated],
-  async (req: Request, res: Response) => {
-    try {
-      const clientsSnapshot = await db.collection(CLIENTS_COLLECTION).get();
-      const clients = clientsSnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      })) as Client[];
-      return res.status(200).json(clients);
-    } catch (e) {
-      logger.error("Error fetching clients:", e);
-      return res.status(500).send((e as Error).message);
-    }
-  },
-);
-
-router.get(
-  "/client/:client_id",
-  [isAuthenticated],
-  async (req: Request, res: Response) => {
-    try {
-      const clientId = req.params.client_id;
-
-      // Get client document by client_id
-      const doc = await db.collection(CLIENTS_COLLECTION).doc(clientId).get();
-
-      if (!doc.exists) {
-        return res.status(404).send("Client not found");
-      }
-
-      const clientData: Client = doc.data() as Client;
-      return res.status(200).json(clientData);
-    } catch (e) {
-      logger.error("Error fetching client:", e);
-      return res.status(500).send((e as Error).message);
-    }
-  },
-);
 
 // delete a specific appointment
 router.delete(

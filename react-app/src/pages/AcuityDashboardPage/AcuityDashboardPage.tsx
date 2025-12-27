@@ -81,6 +81,8 @@ const CLASS_CAT_COLOR_SCHEME: Record<string, string> = {
   "CHILDBIRTH CLASSES": schemes.cybertron[4],
 };
 
+const truncateInstructorName = (instructor: string) => instructor.split(",")[0];
+
 export default function AcuityDashboardPage() {
   const [attendanceDisplay, setAttendanceDisplay] = useState<"graph" | "table">(
     "graph",
@@ -214,7 +216,7 @@ export default function AcuityDashboardPage() {
 
   const exportableInstructorTableData = useMemo(
     () =>
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
       instructorTableData.map(
         ({ instructors, ...rest }) =>
           ({
@@ -305,21 +307,19 @@ export default function AcuityDashboardPage() {
               <div className={`${centerItemsInDiv} pt-4`}>
                 <div className="flex flex-row">
                   <button
-                    className={`${graphTableButtonStyle} ${
-                      attendanceDisplay == "graph"
-                        ? "bg-bcgw-gray-light"
-                        : "bg-[#f5f5f5]"
-                    }`}
+                    className={`${graphTableButtonStyle} ${attendanceDisplay == "graph"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#f5f5f5]"
+                      }`}
                     onClick={() => setAttendanceDisplay("graph")}
                   >
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${
-                      attendanceDisplay == "table"
-                        ? "bg-bcgw-gray-light"
-                        : "bg-[#f5f5f5]"
-                    }`}
+                    className={`${graphTableButtonStyle} ${attendanceDisplay == "table"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#f5f5f5]"
+                      }`}
                     onClick={() => setAttendanceDisplay("table")}
                   >
                     Table
@@ -458,21 +458,19 @@ export default function AcuityDashboardPage() {
             <div className={`${centerItemsInDiv} pt-8`}>
               <div className="flex flex-row">
                 <button
-                  className={`${graphTableButtonStyle} ${
-                    popularityDisplay == "graph"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#f5f5f5]"
-                  }`}
+                  className={`${graphTableButtonStyle} ${popularityDisplay == "graph"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
+                    }`}
                   onClick={() => setPopularityDisplay("graph")}
                 >
                   Graph
                 </button>
                 <button
-                  className={`${graphTableButtonStyle} ${
-                    popularityDisplay == "table"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#f5f5f5]"
-                  }`}
+                  className={`${graphTableButtonStyle} ${popularityDisplay == "table"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
+                    }`}
                   onClick={() => setPopularityDisplay("table")}
                 >
                   Table
@@ -555,7 +553,7 @@ export default function AcuityDashboardPage() {
                                 (selectedClassCategory === "ALL CLASSES"
                                   ? CLASS_CAT_COLOR_SCHEME
                                   : classColorScheme)[
-                                  item[0] ? item[0].key : item.key
+                                item[0] ? item[0].key : item.key
                                 ]
                               }
                               type="grouped"
@@ -642,7 +640,7 @@ export default function AcuityDashboardPage() {
                               (line) => (
                                 <DiscreteLegendEntry
                                   key={line.key}
-                                  label={line.key}
+                                  label={truncateInstructorName(line.key)}
                                   color={instructorColorScheme[line.key]}
                                 />
                               ),

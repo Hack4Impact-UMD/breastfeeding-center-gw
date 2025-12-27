@@ -21,7 +21,6 @@ import { TooltipProvider } from "./components/ui/tooltip";
 import { Button } from "./components/ui/button";
 import RequireNoAuth from "./auth/RequireNoAuth";
 import { axiosClient } from "./lib/utils";
-import { getClientByPatientId } from "./services/janeService";
 import LayoutShell from "./pages/LayoutShell";
 import { ToastContainer } from "react-toastify";
 import { showErrorToast } from "./components/Toasts/ErrorToast";
@@ -106,9 +105,6 @@ function App() {
                         <strong>Yellow: </strong>
                         <Button
                           variant={"yellow"}
-                          onClick={async () => {
-                            await getClientByPatientId("100");
-                          }}
                         >
                           TEST
                         </Button>

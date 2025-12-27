@@ -5,7 +5,7 @@ import queries from "@/queries";
 
 export function useAllClients() {
   return useQuery<Client[]>({
-    ...queries.janeData.clients(),
+    ...queries.clients.all(),
     queryFn: getAllClients,
   });
 }

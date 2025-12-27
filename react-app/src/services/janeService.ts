@@ -80,16 +80,6 @@ export async function getAllJaneApptsInRangeWithClient(
   }
 }
 
-export async function getClientByPatientId(patientId: string): Promise<Client> {
-  try {
-    const axios = await axiosClient();
-    const response = await axios.get(`/jane/client/${patientId}`);
-    return response.data as Client;
-  } catch (error) {
-    console.error("Error fetching client by patient ID:", error);
-    throw error;
-  }
-}
 
 export async function deleteJaneApptById(id: string) {
   const axios = await axiosClient();
