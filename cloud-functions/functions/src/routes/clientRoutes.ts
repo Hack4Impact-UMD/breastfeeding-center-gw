@@ -44,6 +44,9 @@ router.post(
     const { id, action } = req.body;
 
     if (!id) return res.status(400).send("Appointment id not provided");
+    if (action !== "appointment.changed") {
+      logger.warn("acuity web hook: called for action != appointment.changed");
+    }
     logger.info(`acuity webhook: called with action: ${action}`)
 
     try {
