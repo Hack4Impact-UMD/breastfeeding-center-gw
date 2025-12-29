@@ -38,16 +38,16 @@ router.post(
   "/hooks/acuity/client",
   [verifyAcuityWebhook],
   async (req: Request, res: Response) => {
-    logger.info("webhook: acuity hook called with following body:")
-    logger.info(req.rawBody)
+    logger.info("acuity webhook: acuity hook called with following body:")
+    logger.info(req.rawBody?.toString())
 
     const { id, action } = req.body;
 
     if (!id) return res.status(400).send("Appointment id not provided");
-    if (action !== "changed") return res.status(200).send();
+    logger.info(`acuity webhook: called with action: ${action}`)
 
     try {
-      logger.info("Acuity hook called with appointment ID: " + id);
+      logger.info("acuity webhook: hook called with appointment ID: " + id);
 
       const appt = await getAcuityApptById(id);
 
@@ -55,7 +55,7 @@ router.post(
 
       return res.status(200).send();
     } catch (err) {
-      logger.error("Acuity hook error!");
+      logger.error("acuity webhook: hook error!");
       logger.error(err);
 
       return res.status(400).send("Failed to sync client");
