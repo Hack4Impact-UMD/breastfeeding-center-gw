@@ -38,6 +38,9 @@ router.post(
   "/hooks/acuity/client",
   [verifyAcuityWebhook],
   async (req: Request, res: Response) => {
+    logger.info("webhook: acuity hook called with following body:")
+    logger.info(req.rawBody)
+
     const { id, action } = req.body;
 
     if (!id) return res.status(400).send("Appointment id not provided");
