@@ -15,7 +15,7 @@ export default function useMostAttendedAcuityClasses(startDate: DateTime, endDat
       attendance: entry[1]
     }))
 
-    return classes.sort((a, b) => a.attendance - b.attendance).reverse()
+    return classes.sort((a, b) => b.attendance - a.attendance)
   }, [appts])
 
   return {
