@@ -40,7 +40,7 @@ export default function VerifyEmailPage() {
 
   return (
     <>
-      <div className="flex flex-col items-center justify-center h-screen text-center">
+      <div className="p-4 flex flex-col items-center justify-center h-screen text-center">
         <img
           className="h-50 w-50 object-contain"
           src={primaryLogo}
