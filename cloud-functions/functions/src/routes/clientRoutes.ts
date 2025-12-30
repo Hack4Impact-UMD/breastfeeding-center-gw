@@ -20,8 +20,8 @@ router.post(
   [isAuthenticated],
   async (req: Request, res: Response) => {
     const startDate =
-      req.body.startDate ?? DateTime.now().minus({ months: 1 }).toISODate();
-    const endDate = req.body.endDate ?? DateTime.now().toISODate();
+      req.body.startDate ?? DateTime.now().minus({ months: 1 }).toISO();
+    const endDate = req.body.endDate ?? DateTime.now().toISO();
 
     const result = await syncAcuityClients(startDate, endDate);
 

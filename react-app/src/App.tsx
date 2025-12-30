@@ -26,6 +26,7 @@ import { ToastContainer } from "react-toastify";
 import { showErrorToast } from "./components/Toasts/ErrorToast";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 import MfaEnrollPage from "./pages/MfaEnrollPage";
+import HomePage from "./pages/HomePage/HomePage";
 
 function App() {
   return (
@@ -76,7 +77,7 @@ function App() {
                   </RequireAuth>
                 }
               >
-                <Route path="/" element={<p>Home</p>} />
+                <Route path="/" element={<HomePage />} />
                 <Route path="/services/jane" element={<JaneDashboard />} />
                 <Route path="/services/jane/data" element={<JaneDataPage />} />
                 <Route path="/services/acuity" element={<AcuityDashboard />} />
