@@ -6,7 +6,7 @@ export function useJaneConsultationsCount(startDate: DateTime, endDate: DateTime
     data: appts,
     isPending,
     error
-  } = useJaneAppts(startDate.toISODate() ?? undefined, endDate.toISODate() ?? undefined)
+  } = useJaneAppts(startDate.toISO() ?? undefined, endDate.toISO() ?? undefined)
 
   return {
     data: appts?.length,

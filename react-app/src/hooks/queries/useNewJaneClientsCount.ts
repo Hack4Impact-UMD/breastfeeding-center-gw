@@ -7,7 +7,7 @@ export function useNewJaneClientsCount(startDate: DateTime, endDate: DateTime) {
     data: appts,
     isPending,
     error
-  } = useJaneAppts(startDate.toISODate() ?? undefined, endDate.toISODate() ?? undefined)
+  } = useJaneAppts(startDate.toISO() ?? undefined, endDate.toISO() ?? undefined)
 
   const newClients = useMemo(() => appts ? appts?.reduce((count, appt) => appt.firstVisit ? (count + 1) : count, 0) : undefined, [appts])
 
