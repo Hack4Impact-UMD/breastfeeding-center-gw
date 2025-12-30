@@ -48,7 +48,7 @@ export default function HomePage() {
     ) : attendanceError ? (
       <p>Failed to fetch acuity attendance</p>
     ) : (
-      <p>Acutiy attendance in last month: {acuityAttendance}</p>
+      <p>Acuity attendance in last month: {acuityAttendance}</p>
     )
     }
   </div>
