@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
 import ClientLostPopup from "./ClientLostPopup.tsx";
-import { BarChart, BarSeries, BarProps, Bar, BarLabel } from "reaviz";
 import {
   LostClient,
   RetentionRate,
@@ -20,6 +19,7 @@ import { formatDate } from "@/lib/utils.ts";
 import type { Client } from "@/types/ClientType";
 import { hasRecentBirth } from "@/lib/clientUtils.ts";
 import { exportCsv } from "@/lib/tableExportUtils.ts";
+import FunnelChart from "@/components/FunnelChart/FunnelChart.tsx";
 
 //TODO: recent childbirth should use the appt time as the ref date
 function filterClients(
@@ -55,20 +55,6 @@ const colors: Record<string, string> = {
   "Week 5": "#0F4374",
   "Week 6": "#0F4374",
 };
-
-function CustomBar(props: Partial<BarProps>) {
-  const label = props.data?.key as string | undefined;
-  const fillColor = label && colors[label] ? colors[label] : "#000000";
-  return (
-    <Bar
-      {...props}
-      style={{
-        fill: fillColor,
-      }}
-      label={<BarLabel />}
-    />
-  );
-}
 
 const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
   const [selectedDropdown, setSelectedDropdown] = useState<
@@ -159,21 +145,19 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
         <div className={`${centerItemsInDiv} pt-4 mb-6`}>
           <div className="flex flex-row">
             <button
-              className={`${graphTableButtonStyle} ${
-                retentionDisplay === "graph"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#CED8E1]"
-              }`}
+              className={`${graphTableButtonStyle} ${retentionDisplay === "graph"
+                ? "bg-bcgw-gray-light"
+                : "bg-[#CED8E1]"
+                }`}
               onClick={() => setRetentionDisplay("graph")}
             >
               Graph
             </button>
             <button
-              className={`${graphTableButtonStyle} ${
-                retentionDisplay === "table"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#CED8E1]"
-              }`}
+              className={`${graphTableButtonStyle} ${retentionDisplay === "table"
+                ? "bg-bcgw-gray-light"
+                : "bg-[#CED8E1]"
+                }`}
               onClick={() => setRetentionDisplay("table")}
             >
               Table
@@ -247,15 +231,12 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
                     <p className="text-base text-black">{dateRangeLabel}</p>
                     <p className="text-gray-800 text-sm">{selectedDropdown}</p>
                   </ExportOnly>
-                  <div className="w-full flex flex-col items-center justify-center mt-4">
-                    <BarChart
-                      height={300}
-                      data={funnelData}
-                      series={
-                        <BarSeries layout="vertical" bar={<CustomBar />} />
-                      }
-                    />
-                  </div>
+                  <FunnelChart data={funnelData.map(d => ({
+                    label: d.key,
+                    value: d.data,
+                    backgroundColor: colors[d.key] ?? "#000000",
+                    labelColor: "#FFFFFF"
+                  }))} />
                 </ExportContent>
               </>
             )
