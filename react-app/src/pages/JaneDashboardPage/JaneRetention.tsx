@@ -234,7 +234,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
                   <FunnelChart data={funnelData.map(d => ({
                     label: d.key,
                     value: d.data,
-                    backgroundColor: colors[d.key],
+                    backgroundColor: colors[d.key] ?? "#000000",
                     labelColor: "#FFFFFF"
                   }))} />
                 </ExportContent>

@@ -42,6 +42,8 @@ function FunnelChartBlock({ offset, width, next, pt, max, spacing }: { offset: n
 
 export default function FunnelChart({ data, spacing = 0.2, leftPadding = 6 }: FunnelChartProps) {
   const max = useMemo(() => {
+    if (data.length === 0) return 0;
+
     let max = data[0].value;
     data.forEach(pt => {
       max = Math.max(pt.value, max)
@@ -53,7 +55,7 @@ export default function FunnelChart({ data, spacing = 0.2, leftPadding = 6 }: Fu
     <text x={0.5 + leftPadding / 2} y="0" textAnchor="middle" transform={`rotate(270, ${0.5 + leftPadding / 2}, 0)`} fontSize={4.5} fontWeight={"bold"} className="fill-black">Number of Clients</text>
     {data.map((d, index) => {
       const next = data[index + 1] ?? data[data.length - 1];
-      return <FunnelChartBlock spacing={spacing} max={max} width={(100 - leftPadding) / data.length} offset={leftPadding + index * ((100 - leftPadding) / data.length)} next={next} pt={d} />
+      return <FunnelChartBlock key={index} spacing={spacing} max={max} width={(100 - leftPadding) / data.length} offset={leftPadding + index * ((100 - leftPadding) / data.length)} next={next} pt={d} />
     })}
   </svg>
 }
