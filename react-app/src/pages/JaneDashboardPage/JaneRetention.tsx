@@ -57,20 +57,6 @@ const colors: Record<string, string> = {
   "Week 6": "#0F4374",
 };
 
-function CustomBar(props: Partial<BarProps>) {
-  const label = props.data?.key as string | undefined;
-  const fillColor = label && colors[label] ? colors[label] : "#000000";
-  return (
-    <Bar
-      {...props}
-      style={{
-        fill: fillColor,
-      }}
-      label={<BarLabel />}
-    />
-  );
-}
-
 const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
   const [selectedDropdown, setSelectedDropdown] = useState<
     "ALL CLIENTS" | "RECENT CHILDBIRTH"
@@ -252,18 +238,6 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
                     backgroundColor: colors[d.key],
                     labelColor: "#FFFFFF"
                   }))} />
-
-                  {
-                    // <div className="w-full flex flex-col items-center justify-center mt-4">
-                    //   <BarChart
-                    //     height={300}
-                    //     data={funnelData}
-                    //     series={
-                    //       <BarSeries layout="vertical" bar={<CustomBar />} />
-                    //     }
-                    //   />
-                    // </div>
-                  }
                 </ExportContent>
               </>
             )
