@@ -12,8 +12,8 @@ type FunnelChartProps = {
 }
 
 function FunnelChartBlock({ offset, width, next, pt, max }: { offset: number, width: number, max: number, next: FunnelChartDataPoint, pt: FunnelChartDataPoint }) {
-  const nextVal = 30 * next.value / max;
-  const currVal = 30 * pt.value / max;
+  const nextVal = 23 * next.value / max;
+  const currVal = 23 * pt.value / max;
   const padding = 7;
   const spacing = 0.2;
   const pts = [
@@ -39,7 +39,6 @@ function FunnelChartBlock({ offset, width, next, pt, max }: { offset: number, wi
 }
 
 export default function FunnelChart({ data }: FunnelChartProps) {
-  console.log(data)
   const max = useMemo(() => {
     let max = data[0].value;
     data.forEach(pt => {
@@ -48,8 +47,8 @@ export default function FunnelChart({ data }: FunnelChartProps) {
     return max;
   }, [data])
 
-  return <svg viewBox="0 -15 100 30" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-    <text x="4" y="0" textAnchor="middle" transform={"rotate(270, 4, 0)"} fontSize={4.5} fontWeight={"bold"} className="fill-black">Number of Clients</text>
+  return <svg preserveAspectRatio="xMidYMid meet" viewBox="0 -15 100 30" xmlns="http://www.w3.org/2000/svg" className="w-full h-full min-h-92 max-w-xl">
+    <text x="3.5" y="0" textAnchor="middle" transform={"rotate(270, 3.5, 0)"} fontSize={4.5} fontWeight={"bold"} className="fill-black">Number of Clients</text>
     {data.map((d, index) => {
       const next = data[index + 1] ?? data[data.length - 1];
       return <FunnelChartBlock max={max} width={(100 - 6) / data.length} offset={6 + index * ((100 - 6) / data.length)} next={next} pt={d} />
