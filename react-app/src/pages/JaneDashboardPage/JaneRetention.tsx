@@ -104,8 +104,10 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
   const funnelData = useMemo(
     () =>
       processedData.map((row) => ({
-        data: row.numberVisited,
-        key: `Week ${row.visit}`,
+        label: `Week ${row.visit}`,
+        value: row.numberVisited,
+        backgroundColor: colors[`Week ${row.visit}`] ?? "#000000",
+        labelColor: "#FFFFFF"
       })),
     [processedData],
   );
@@ -132,7 +134,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
   );
 
   const noData = useMemo(
-    () => !funnelData.some((d) => d.data > 0),
+    () => !funnelData.some((d) => d.value > 0),
     [funnelData],
   );
 
@@ -231,12 +233,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
                     <p className="text-base text-black">{dateRangeLabel}</p>
                     <p className="text-gray-800 text-sm">{selectedDropdown}</p>
                   </ExportOnly>
-                  <FunnelChart data={funnelData.map(d => ({
-                    label: d.key,
-                    value: d.data,
-                    backgroundColor: colors[d.key] ?? "#000000",
-                    labelColor: "#FFFFFF"
-                  }))} />
+                  <FunnelChart data={funnelData} />
                 </ExportContent>
               </>
             )
