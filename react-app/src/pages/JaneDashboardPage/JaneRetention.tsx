@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
 import ClientLostPopup from "./ClientLostPopup.tsx";
-import { BarChart, BarSeries, BarProps, Bar, BarLabel } from "reaviz";
 import {
   LostClient,
   RetentionRate,
