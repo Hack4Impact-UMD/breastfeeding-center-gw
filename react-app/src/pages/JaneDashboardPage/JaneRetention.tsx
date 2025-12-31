@@ -107,7 +107,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
         label: `Week ${row.visit}`,
         value: row.numberVisited,
         backgroundColor: colors[`Week ${row.visit}`] ?? "#000000",
-        labelColor: "#FFFFFF"
+        labelColor: "#FFFFFF",
       })),
     [processedData],
   );
@@ -147,19 +147,21 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
         <div className={`${centerItemsInDiv} pt-4 mb-6`}>
           <div className="flex flex-row">
             <button
-              className={`${graphTableButtonStyle} ${retentionDisplay === "graph"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#CED8E1]"
-                }`}
+              className={`${graphTableButtonStyle} ${
+                retentionDisplay === "graph"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#CED8E1]"
+              }`}
               onClick={() => setRetentionDisplay("graph")}
             >
               Graph
             </button>
             <button
-              className={`${graphTableButtonStyle} ${retentionDisplay === "table"
-                ? "bg-bcgw-gray-light"
-                : "bg-[#CED8E1]"
-                }`}
+              className={`${graphTableButtonStyle} ${
+                retentionDisplay === "table"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#CED8E1]"
+              }`}
               onClick={() => setRetentionDisplay("table")}
             >
               Table
