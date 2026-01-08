@@ -5,8 +5,8 @@ import {
   janeConsultsColumns,
   OneTimePurchase,
   oneTimePurchaseColumns,
-  paysimpleColumns,
-  PaySimpleRentals,
+  booqableColumns,
+  BooqableRentals,
 } from "./ClientJourneyTableColumns.tsx";
 import { DataTable } from "../../components/DataTable/DataTable.tsx";
 import { Navigate, useParams } from "react-router";
@@ -55,7 +55,7 @@ const ClientJourney = () => {
     error: acuityError,
   } = useAcuityApptsForClients(associatedEmails);
 
-  const samplePaysimple: PaySimpleRentals[] = [
+  const sampleBooqable: BooqableRentals[] = [
     {
       item: "Item A",
       totalCost: 20,
@@ -201,11 +201,11 @@ const ClientJourney = () => {
 
               <div className={tableSection}>
                 <h2 className="font-bold text-base sm:text-3xl">
-                  Paysimple Rentals
+                  Booqable Rentals
                 </h2>
                 <DataTable
-                  columns={paysimpleColumns}
-                  data={samplePaysimple}
+                  columns={booqableColumns}
+                  data={sampleBooqable}
                   tableType="default"
                   pageSize={5}
                 />

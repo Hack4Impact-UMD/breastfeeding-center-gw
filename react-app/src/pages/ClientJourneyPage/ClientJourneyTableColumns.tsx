@@ -24,7 +24,7 @@ export type JaneConsults = {
   insurance: string;
 };
 
-export type PaySimpleRentals = {
+export type BooqableRentals = {
   item: string;
   totalCost: number;
   rate: number;
@@ -200,7 +200,7 @@ export const janeConsultsColumns: ColumnDef<JaneConsults>[] = [
   },
 ];
 
-export const paysimpleColumns: ColumnDef<PaySimpleRentals>[] = [
+export const booqableColumns: ColumnDef<BooqableRentals>[] = [
   {
     accessorKey: "item",
     header: ({ column }) => {

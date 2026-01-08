@@ -53,7 +53,7 @@ function formatDate(date: Date) {
   return `${m}/${d}/${y}`;
 }
 
-export default function PaysimpleDashboardPage() {
+export default function BooqableDashboardPage() {
   // use state for toggles/buttons/changing of information
   const [rentalDisplay, setRentalDisplay] = useState("graph");
   //@ts-expect-error
@@ -119,7 +119,7 @@ export default function PaysimpleDashboardPage() {
         {/* Page Title */}
         <div className={centerItemsInDiv}>
           <div>
-            <h1 className="font-bold text-4xl lg:text-5xl">Paysimple</h1>
+            <h1 className="font-bold text-4xl lg:text-5xl">Booqable</h1>
           </div>
           {/*date picker*/}
           <div className="w-60">
