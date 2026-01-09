@@ -359,9 +359,7 @@ export default function AcuityDashboardPage() {
               </div>
               {/* Attendance by Trimester Bar Chart */}
               <span className="self-start font-semibold text-2xl">
-                Class Attendance By Trimester,{" "}
-                {attendanceDisplay === "graph" ? <br /> : <></>}
-                {dateRangeLabel}
+                Class Attendance By Trimester, {dateRangeLabel}
               </span>
               {attendanceDisplay === "graph" ? (
                 <div className={chartDiv}>
@@ -498,11 +496,10 @@ export default function AcuityDashboardPage() {
             </div>
             <span className="self-start font-semibold text-2xl">
               {popularityDisplay === "graph" ? (
-                <span>Class and Instructor Popularity Over Time,</span>
+                <span>Class and Instructor Popularity Over Time, </span>
               ) : (
-                <span>Attendance By Class & Instructor,</span>
+                <span>Attendance By Class & Instructor, </span>
               )}
-              {popularityDisplay === "graph" ? <br /> : <> </>}
               {dateRangeLabel}
             </span>
             {/* Class Popularity Over Time */}

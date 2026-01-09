@@ -221,8 +221,7 @@ export function DataTable<TData, TValue>({
                       <TableCell
                         key={cell.id}
                         className={`${
-                          tableType === "clientList" ||
-                          tableType === "clientsLost"
+                          tableType === "clientList"
                             ? "cursor-pointer group-hover:bg-[#F5BB4782] group-active:bg-bcgw-yellow-dark transition-colors"
                             : ""
                         }`}
@@ -312,7 +311,7 @@ export function DataTable<TData, TValue>({
               variant="ghost"
               className={`rounded-none w-8 h-8 flex items-center justify-center border-2 ${
                 table.getCanPreviousPage()
-                  ? "border-black text-[#222] cursor-pointer"
+                  ? "border-black text-[#222] cursor-pointer hover:bg-bcgw-gray-lighter"
                   : "border-gray-300 text-gray-300 cursor-not-allowed"
               }`}
               onClick={() => table.previousPage()}
@@ -330,7 +329,7 @@ export function DataTable<TData, TValue>({
               variant="ghost"
               className={`rounded-none w-8 h-8 flex items-center justify-center border-2 ${
                 table.getCanNextPage()
-                  ? "border-black text-[#222] cursor-pointer"
+                  ? "border-black text-[#222] cursor-pointer hover:bg-bcgw-gray-lighter"
                   : "border-gray-300 text-gray-300 cursor-not-allowed"
               }`}
               onClick={() => table.nextPage()}
