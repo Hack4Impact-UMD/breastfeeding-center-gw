@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo } from "react";
 import {
   LineChart,
   LineSeries,
@@ -13,7 +13,6 @@ import {
   DiscreteLegend,
   DiscreteLegendEntry,
   schemes,
-  Line,
 } from "reaviz";
 import { Export } from "@/components/export/Export";
 import ExportTrigger from "@/components/export/ExportTrigger";
@@ -54,7 +53,7 @@ import {
   useTrimesterAttendanceData as useCategoryAttendanceByTrimesterData,
   useTrimesterTableData,
 } from "./acuityDataHooks";
-import { assignColorScheme, assignColorSchemeProcedural } from "@/lib/colorUtils";
+import { assignColorSchemeProcedural } from "@/lib/colorUtils";
 import { exportCsv } from "@/lib/tableExportUtils";
 
 const CLASS_FILTER_OPTIONS = [

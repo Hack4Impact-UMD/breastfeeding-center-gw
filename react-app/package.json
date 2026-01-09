@@ -47,7 +47,7 @@
     "react-router-dom": "^7.2.0",
     "react-toastify": "^11.0.5",
     "react-tooltip": "^5.29.1",
-    "reaviz": "https://github.com/rk234/reaviz.git",
+    "reaviz": "github:rk234/reaviz",
     "sanitize-filename": "^1.6.3",
     "tailwind-merge": "^3.2.0",
     "tailwind-variants": "^1.0.0",
