@@ -624,7 +624,6 @@ export default function AcuityDashboardPage() {
                           series={
                             <LineSeries
                               colorScheme={(item) => {
-                                console.log(item)
                                 return item[0]
                                   ? instructorColorScheme[item[0].key]
                                   : instructorColorScheme[item.key]
