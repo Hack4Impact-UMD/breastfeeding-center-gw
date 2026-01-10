@@ -276,7 +276,7 @@ export default function AcuityDashboardPage() {
       <div className="flex flex-col h-full py-14 px-10 sm:px-20 space-y-5">
         <div className={centerItemsInDiv}>
           <div>
-            <h1 className="font-bold text-4xl lg:text-5xl">ACUITY</h1>
+            <h1 className="font-bold text-4xl lg:text-5xl">Acuity</h1>
           </div>
           {/*date picker*/}
           <div className="w-60">
