@@ -1,14 +1,20 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { BarChart, BarSeries, Bar, BarProps } from "reaviz";
 import {
   DateRangePicker,
   defaultPresets,
   defaultDateRange,
+  DateRange,
 } from "@/components/DateRangePicker/DateRangePicker";
 import { DataTable } from "@/components/DataTable/DataTable";
 import { ColumnDef } from "@tanstack/react-table";
 import ColumnSortButton from "@/components/DataTable/ColumnSortButton";
 import { Button } from "@/components/ui/button";
+import { Export } from "@/components/export/Export";
+import ExportTrigger from "@/components/export/ExportTrigger";
+import ExportContent from "@/components/export/ExportContent";
+import ExportOnly from "@/components/export/ExportOnly";
+import { exportCsv } from "@/lib/tableExportUtils";
 
 // record of colors to use for each rental item
 const colors: Record<string, string> = {
@@ -53,15 +59,16 @@ function formatDate(date: Date) {
   return `${m}/${d}/${y}`;
 }
 
-export default function PaysimpleDashboardPage() {
+export default function BooqableDashboardPage() {
   // use state for toggles/buttons/changing of information
   const [rentalDisplay, setRentalDisplay] = useState("graph");
-  //@ts-expect-error
-  const [selectedDate, setSelectedDate] = useState(new Date());
-
-  const rentalChartRef = useRef<HTMLDivElement>(null);
-  const { monday, sunday } = getWeekRange(selectedDate);
-  const formattedRange = `${formatDate(monday)} - ${formatDate(sunday)}`;
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(
+    defaultDateRange,
+  );
+  const dateRangeLabel =
+    dateRange?.from && dateRange?.to
+      ? `${formatDate(dateRange.from)} - ${formatDate(dateRange.to)}`
+      : "All Data";
 
   const graphTableButtonStyle =
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer";
@@ -119,13 +126,14 @@ export default function PaysimpleDashboardPage() {
         {/* Page Title */}
         <div className={centerItemsInDiv}>
           <div>
-            <h1 className="font-bold text-4xl lg:text-5xl">Paysimple</h1>
+            <h1 className="font-bold text-4xl lg:text-5xl">Booqable</h1>
           </div>
           {/*date picker*/}
           <div className="w-60">
             <DateRangePicker
               enableYearNavigation
               defaultValue={defaultDateRange}
+              onChange={(range) => setDateRange(range)}
               presets={defaultPresets}
               className="w-60"
             />
@@ -133,69 +141,82 @@ export default function PaysimpleDashboardPage() {
         </div>
 
         {/* Graph/Table & Export Selection */}
-        <div className={`${centerItemsInDiv} pt-4`}>
-          <div className="flex flex-row">
-            <button
-              className={`${graphTableButtonStyle} ${
-                rentalDisplay == "graph" ? "bg-bcgw-gray-light" : "bg-[#f5f5f5]"
-              }`}
-              onClick={() => setRentalDisplay("graph")}
-            >
-              Graph
-            </button>
-            <button
-              className={`${graphTableButtonStyle} ${
-                rentalDisplay == "table" ? "bg-bcgw-gray-light" : "bg-[#f5f5f5]"
-              }`}
-              onClick={() => setRentalDisplay("table")}
-            >
-              Table
-            </button>
-          </div>
-          <Button
-            variant={"outlineGray"}
-            className={
-              "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
-            }
-          >
-            Export
-          </Button>
-        </div>
-
-        {/* white card to put graph inside */}
-        <div
-          className={
-            rentalDisplay === "graph"
-              ? "bg-white rounded-2xl shadow p-6 space-y-6 border-2 border-black"
-              : ""
-          }
-          ref={rentalChartRef}
-        >
-          <div className="flex justify-between items-center">
-            <div className="text-2xl font-semibold">
-              Average Rental Duration By Item, {formattedRange}
+        <Export title={`AverageRentalDuration${dateRangeLabel}`}>
+          <div className={`${centerItemsInDiv} pt-4`}>
+            <div className="flex flex-row">
+              <button
+                className={`${graphTableButtonStyle} ${
+                  rentalDisplay == "graph"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
+                }`}
+                onClick={() => setRentalDisplay("graph")}
+              >
+                Graph
+              </button>
+              <button
+                className={`${graphTableButtonStyle} ${
+                  rentalDisplay == "table"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#f5f5f5]"
+                }`}
+                onClick={() => setRentalDisplay("table")}
+              >
+                Table
+              </button>
             </div>
+            {rentalDisplay === "table" ? (
+              <Button
+                variant={"outlineGray"}
+                className={
+                  "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
+                }
+                onClick={() =>
+                  exportCsv(
+                    mockData,
+                    `booqable_avg_rental_duration${dateRange?.from?.toISOString()}_${dateRange?.to?.toISOString()}`,
+                  )
+                }
+              >
+                Export
+              </Button>
+            ) : (
+              <ExportTrigger disabled={rentalDisplay !== "graph"} asChild>
+                <Button
+                  variant={"outlineGray"}
+                  className={
+                    "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
+                  }
+                >
+                  Export
+                </Button>
+              </ExportTrigger>
+            )}
           </div>
 
-          {/* the different elements rendered depending on the toggle buttons */}
-          <div className="mt-1">
-            {rentalDisplay === "graph" ? (
-              <div className="w-full h-[500px] flex">
+          <span className="self-start font-semibold text-2xl">
+            Average Rental Duration By Item, {dateRangeLabel}
+          </span>
+          {rentalDisplay === "graph" ? (
+            <div className="flex flex-col items-center justify-start bg-white min-h-[400px] border-2 border-black p-5 mt-5 rounded-2xl">
+              <ExportContent className="w-full">
+                <ExportOnly className="mb-5">
+                  <h1 className="text-xl font-bold text-black">
+                    Average Rental Duration by Item
+                  </h1>
+                  <p className="text-base text-black">{dateRangeLabel}</p>
+                </ExportOnly>
                 <BarChart
                   height={500}
                   data={dataMonths}
                   series={<BarSeries layout="vertical" bar={<CustomBar />} />}
                 />
-              </div>
-            ) : (
-              <DataTable
-                columns={columns}
-                data={mockData}
-                tableType="default"
-              />
-            )}
-          </div>
-        </div>
+              </ExportContent>
+            </div>
+          ) : (
+            <DataTable columns={columns} data={mockData} tableType="default" />
+          )}
+        </Export>
       </div>
     </>
   );

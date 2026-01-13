@@ -5,7 +5,7 @@ import LogoutPage from "./pages/LogoutPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
 import UserManagementPage from "./pages/UserManagementPage/UserManagementPage";
 import RequireAuth from "./auth/RequireAuth";
-import PaysimpleDashboard from "./pages/PaysimpleDashboardPage";
+import BooqableDashboard from "./pages/BooqableDashboardPage";
 import { AuthProvider } from "./auth/AuthProvider";
 import AcuityDashboard from "./pages/AcuityDashboardPage/AcuityDashboardPage";
 import JaneDashboard from "./pages/JaneDashboardPage/JaneDashboardPage";
@@ -82,8 +82,8 @@ function App() {
                 <Route path="/services/jane/data" element={<JaneDataPage />} />
                 <Route path="/services/acuity" element={<AcuityDashboard />} />
                 <Route
-                  path="/services/paysimple"
-                  element={<PaysimpleDashboard />}
+                  path="/services/booqable"
+                  element={<BooqableDashboard />}
                 />
                 <Route path="/clients" element={<ClientListPage />} />
                 <Route

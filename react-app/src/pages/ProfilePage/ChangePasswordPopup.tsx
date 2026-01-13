@@ -46,19 +46,18 @@ const ChangePasswordPopup = ({
     </>
   );
   return (
-    <Modal open={open} onClose={() => onClose()} height={290} width={600}>
+    <Modal open={open} onClose={() => onClose()} height={200} width={500}>
       <div className="flex flex-col bg-white rounded-2xl w-full h-full">
         <ModalHeader onClose={() => onClose()} />
 
         <div className="flex flex-col gap-2 p-4 mb-2 text-left h-full">
           <p>
-            To reset your password, click the button below to send a password
-            reset email to the email address associated with your account (
-            {profile?.email}).
+            Click the button below to send a password reset email to the email
+            address associated with your account ({profile?.email}).
           </p>
           <Button
             variant={"yellow"}
-            className="w-full sm:w-auto py-4 px-6 text-sm sm:text-base"
+            className="w-full sm:w-auto py-4 px-6 mt-3 text-sm sm:text-base"
             onClick={handleSendPasswordReset}
           >
             Send Password Reset Email

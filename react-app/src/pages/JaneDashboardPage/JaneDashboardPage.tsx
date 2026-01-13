@@ -242,7 +242,7 @@ const JaneDashboardPage = () => {
               {visitDisplay === "graph" ? (
                 <>
                   <span className="self-start font-semibold text-2xl mb-20">
-                    Visit Breakdown: {dateRangeLabel}
+                    Visit Breakdown, {dateRangeLabel}
                   </span>
                   <div className="flex flex-col items-center justify-start bg-white h-116 border-2 border-black p-5 mt-5 rounded-2xl">
                     <ExportContent
@@ -308,7 +308,7 @@ const JaneDashboardPage = () => {
               ) : (
                 <div className="space-y-2">
                   <span className="font-semibold text-2xl">
-                    Visit Breakdown: {dateRangeLabel}
+                    Visit Breakdown, {dateRangeLabel}
                   </span>
                   <DataTable
                     rowClassName="h-16"

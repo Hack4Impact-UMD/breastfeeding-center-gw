@@ -38,7 +38,6 @@ function filterClients(
     const visit = Number(visitStr);
     result[visit] = clients.filter((client) => hasRecentBirth(client, refDate));
   });
-
   return result;
 }
 
@@ -133,10 +132,13 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
     [processedData],
   );
 
-  const noData = useMemo(
-    () => !funnelData.some((d) => d.value > 0),
-    [funnelData],
-  );
+  const noData = useMemo(() => {
+    if (!rawRetentionData) return true;
+    const entries = Object.values(
+      rawRetentionData as { [k: string]: Client[] },
+    );
+    return !entries.some((arr) => arr.length > 0);
+  }, [rawRetentionData]);
 
   if (retentionError) return <div>Error loading retention data</div>;
 
@@ -200,7 +202,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
         </div>
 
         <span className="self-start font-semibold text-2xl">
-          Retention Rate: {dateRangeLabel}
+          Retention Rate, {dateRangeLabel}
         </span>
 
         <div className={retentionDisplay === "graph" ? chartDiv : ""}>
@@ -227,7 +229,7 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
                     }
                   />
                 </div>
-                <ExportContent className="w-full h-92">
+                <ExportContent className="w-full flex items-center justify-center h-92">
                   <ExportOnly className="mb-5">
                     <h1 className="text-xl font-bold text-black">
                       Client Retention

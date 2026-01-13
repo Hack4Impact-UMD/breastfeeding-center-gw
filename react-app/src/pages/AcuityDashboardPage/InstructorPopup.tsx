@@ -74,7 +74,7 @@ const InstructorPopup = ({ openRow, setOpenRow }: InstructorPopupProps) => {
           <div className="flex justify-end mb-0">
             <Button
               variant={"outlineGray"}
-              className="rounded-full text-lg"
+              className="text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
               onClick={() =>
                 exportCsv(
                   openRow?.instructors ?? [],

@@ -140,11 +140,13 @@ export default function MfaEnrollPage() {
           alt="BCGW Logo"
         />
         <h2 className="font-semibold mb-2">
-          Enroll in 2-Factor Authentication
+          Enroll in Two-Factor Authentication
         </h2>
-        <h3 className="mb-8">
-          For security reasons, your account must be enrolled in SMS 2FA.
-        </h3>
+        <h3>For security reasons, your account must be enrolled in SMS 2FA.</h3>
+        <p className="mb-4">
+          Your carrier may charge for SMS messages used for verifications.
+          Standard SMS rates apply.
+        </p>
         <Button
           variant="yellow"
           onClick={handleEnrollClick}
