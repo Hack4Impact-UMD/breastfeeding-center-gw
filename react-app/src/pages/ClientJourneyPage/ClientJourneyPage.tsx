@@ -60,16 +60,16 @@ const ClientJourney = () => {
       item: "Item A",
       totalCost: 20,
       rate: 10,
-      startDate: "2/2/24",
-      endDate: "2/9/24",
+      startDate: "2/2/2024",
+      endDate: "2/9/2024",
       rentalLength: 7,
     },
     {
       item: "Item B",
       totalCost: 30,
       rate: 10,
-      startDate: "2/2/24",
-      endDate: "2/9/24",
+      startDate: "2/2/2024",
+      endDate: "2/9/2024",
       rentalLength: 14,
     },
   ];
@@ -78,7 +78,7 @@ const ClientJourney = () => {
     {
       item: "Item A",
       cost: 20,
-      date: "1/12/24",
+      date: "1/12/2024",
       platform: "Square",
     },
   ];

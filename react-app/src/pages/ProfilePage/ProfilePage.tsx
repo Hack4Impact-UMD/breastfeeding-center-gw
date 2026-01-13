@@ -126,7 +126,9 @@ const ProfilePage = () => {
           <p className="text-sm text-gray-600 mb-4">
             The 2FA methods associated with your account are listed below. You
             must have one method enrolled with the same phone number as the one
-            currently used for your account ({phone}).
+            currently used for your account ({phone}). <br /> Your carrier may
+            charge for SMS messages used for verifications. Standard SMS rates
+            apply.
           </p>
 
           <div className="flex flex-col gap-2">

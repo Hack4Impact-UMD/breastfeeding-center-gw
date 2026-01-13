@@ -118,6 +118,21 @@ export const acuityColumns: ColumnDef<AcuityData>[] = [
 
 export const janeConsultsColumns: ColumnDef<JaneConsults>[] = [
   {
+    accessorKey: "service",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="cursor-pointer"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Service
+          <LuArrowUpDown className="h-4 w-4" />
+        </Button>
+      );
+    },
+  },
+  {
     accessorKey: "clinician",
     header: ({ column }) => {
       return (
@@ -151,21 +166,6 @@ export const janeConsultsColumns: ColumnDef<JaneConsults>[] = [
       return value === "N/A"
         ? ""
         : DateTime.fromISO(value).toLocaleString(DateTime.DATETIME_SHORT);
-    },
-  },
-  {
-    accessorKey: "service",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Service
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
-      );
     },
   },
   {
@@ -225,7 +225,7 @@ export const booqableColumns: ColumnDef<BooqableRentals>[] = [
           className="cursor-pointer"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Total Cost
+          Cost
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
       );
