@@ -11,8 +11,6 @@ import { config } from "../config";
 
 const router = Router();
 
-// TODO: Currently the figma and ui don't have a role field
-// but a role field is necessary to invite different user types.
 type UserInviteForm = {
   firstName: string;
   lastName: string;

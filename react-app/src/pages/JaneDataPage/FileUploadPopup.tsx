@@ -82,12 +82,14 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const invalidType = false; // TODO: implement check for correct files
+    const fileName = file?.name;
+    const parts = fileName.split(".");
+    const extension = parts[parts.length - 1]?.trim()?.toLowerCase() ?? "";
+    const invalidType = !(extension === "csv" || extension === "xlsx");
     if (invalidType) {
       setErrorType("invalidType");
       return;
     }
-    const fileName = file?.name;
 
     setErrorType("none");
     if (type === "appt") {

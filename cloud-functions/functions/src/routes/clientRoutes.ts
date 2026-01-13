@@ -33,7 +33,6 @@ router.post(
   },
 );
 
-//TODO: REMEMBER TO REGISTER THIS HOOK: https://developers.acuityscheduling.com/page/webhooks-webhooks-webhooks
 router.post(
   "/hooks/acuity/client",
   [verifyAcuityWebhook],
