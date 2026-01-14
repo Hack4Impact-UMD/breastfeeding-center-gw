@@ -9,7 +9,7 @@ export function useRetentionData(startDate?: Date, endDate?: Date, recentChildbi
     queryFn: async () => {
       const axiosInstance = await axiosClient();
       const response = await axiosInstance.get("/jane/retention", {
-        params: { startDate, endDate, recentChildbirth },
+        params: { startDate: startDate?.toISOString(), endDate: endDate?.toISOString(), recentChildbirth },
       });
       return response.data;
     },
