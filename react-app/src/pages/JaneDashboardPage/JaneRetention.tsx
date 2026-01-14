@@ -16,31 +16,8 @@ import ExportContent from "@/components/export/ExportContent.tsx";
 import ExportTrigger from "@/components/export/ExportTrigger.tsx";
 import ExportOnly from "@/components/export/ExportOnly.tsx";
 import { formatDate } from "@/lib/utils.ts";
-import type { Client } from "@/types/ClientType";
-import { hasRecentBirth } from "@/lib/clientUtils.ts";
 import { exportCsv } from "@/lib/tableExportUtils.ts";
 import FunnelChart from "@/components/FunnelChart/FunnelChart.tsx";
-
-//TODO: recent childbirth should use the appt time as the ref date
-function filterClients(
-  clientsByNumVisits: { [key: number]: Client[] } | undefined,
-  endDate?: Date,
-  mode: "ALL CLIENTS" | "RECENT CHILDBIRTH" = "ALL CLIENTS",
-): { [key: number]: Client[] } | undefined {
-  if (!clientsByNumVisits) return undefined;
-  if (mode !== "RECENT CHILDBIRTH") return clientsByNumVisits;
-  if (!endDate) return clientsByNumVisits;
-
-  const refDate = endDate;
-  const result: { [key: number]: Client[] } = {};
-
-  Object.entries(clientsByNumVisits).forEach(([visitStr, clients]) => {
-    const visit = Number(visitStr);
-    result[visit] = clients.filter((client) => hasRecentBirth(client, refDate));
-  });
-
-  return result;
-}
 
 type JaneRetentionProps = {
   startDate?: Date | undefined;
@@ -81,24 +58,15 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
     data: rawRetentionData,
     isLoading: isRetentionLoading,
     error: retentionError,
-  } = useRetentionData(startDate, endDate);
+  } = useRetentionData(startDate, endDate, selectedDropdown === "RECENT CHILDBIRTH");
 
-  const filteredRetentionSource = useMemo(
-    () =>
-      filterClients(
-        rawRetentionData as { [key: number]: Client[] } | undefined,
-        endDate,
-        selectedDropdown,
-      ),
-    [rawRetentionData, endDate, selectedDropdown],
-  );
 
   const processedData = useMemo(
     () =>
-      filteredRetentionSource
-        ? processRetentionData(filteredRetentionSource)
+      rawRetentionData
+        ? processRetentionData(rawRetentionData)
         : [],
-    [filteredRetentionSource],
+    [rawRetentionData],
   );
 
   const funnelData = useMemo(
@@ -148,8 +116,8 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
           <div className="flex flex-row">
             <button
               className={`${graphTableButtonStyle} ${retentionDisplay === "graph"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#CED8E1]"
+                ? "bg-bcgw-gray-light"
+                : "bg-[#CED8E1]"
                 }`}
               onClick={() => setRetentionDisplay("graph")}
             >
@@ -157,8 +125,8 @@ const JaneRetention = ({ startDate, endDate }: JaneRetentionProps) => {
             </button>
             <button
               className={`${graphTableButtonStyle} ${retentionDisplay === "table"
-                  ? "bg-bcgw-gray-light"
-                  : "bg-[#CED8E1]"
+                ? "bg-bcgw-gray-light"
+                : "bg-[#CED8E1]"
                 }`}
               onClick={() => setRetentionDisplay("table")}
             >

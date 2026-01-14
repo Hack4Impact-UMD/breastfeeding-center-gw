@@ -1,16 +1,7 @@
 import { axiosClient } from "@/lib/utils";
-import { useMutation, UseMutationOptions } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
-export function useUploadJaneData(
-  opts: Partial<
-    UseMutationOptions<
-      unknown,
-      Error,
-      { apptFile: File | null; clientFile: File | null },
-      unknown
-    >
-  > = {},
-) {
+export function useUploadJaneData() {
   return useMutation({
     mutationFn: async ({
       apptFile,
@@ -32,6 +23,5 @@ export function useUploadJaneData(
 
       return response.data;
     },
-    ...opts,
   });
 }

@@ -45,31 +45,7 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
   const clientFileInputRef = useRef<HTMLInputElement>(null);
   const [missingClients, setMissingClients] = useState<string[]>([]);
 
-  const uploadMutation = useUploadJaneData({
-    onError: (err) => {
-      console.error(err);
-
-      if (err instanceof AxiosError) {
-        if (Array.isArray(err.response?.data.details)) {
-          setErrorType("missingClients");
-          setMissingClients(err.response.data.details as string[]);
-        } else {
-          setErrorType("other");
-        }
-      } else {
-        setErrorType("other");
-      }
-    },
-    onSuccess: () => {
-      console.log("Upload successful!");
-      handleClose();
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: queries.janeData.uploadedDataTable._def,
-      });
-    },
-  });
+  const uploadMutation = useUploadJaneData();
 
   const [errorType, setErrorType] = useState<
     "none" | "invalidType" | "missingClients" | "other"
@@ -119,7 +95,7 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
   };
 
   const handleSubmit = async () => {
-    handleUploadSubmit(apptFile, clientFile);
+    await handleUploadSubmit(apptFile, clientFile);
   };
 
   const handleUploadSubmit = async (
@@ -129,6 +105,30 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
     uploadMutation.mutate({
       apptFile,
       clientFile,
+    }, {
+      onError: (err) => {
+        console.error(err);
+
+        if (err instanceof AxiosError) {
+          if (Array.isArray(err.response?.data.details)) {
+            setErrorType("missingClients");
+            setMissingClients(err.response.data.details as string[]);
+          } else {
+            setErrorType("other");
+          }
+        } else {
+          setErrorType("other");
+        }
+      },
+      onSuccess: () => {
+        console.log("Upload successful!");
+        handleClose();
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries({
+          queryKey: queries.janeData.uploadedDataTable._def,
+        });
+      },
     });
   };
 
@@ -151,7 +151,7 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
             <IoIosClose
               className="text-bcgw-blue-dark hover:text-gray-600 cursor-pointer"
               onClick={() => {
-                if (!uploadMutation.isPending) onClose();
+                if (!uploadMutation.isPending) handleClose();
               }}
               size={32}
             />

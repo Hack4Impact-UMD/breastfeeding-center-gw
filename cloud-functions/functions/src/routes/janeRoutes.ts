@@ -9,7 +9,7 @@ import { Role } from "../types/userType";
 import { auth, db } from "../services/firebase";
 import { isAuthenticated } from "../middleware/authMiddleware";
 import { CLIENTS_COLLECTION, JANE_APPT_COLLECTION } from "../types/collections";
-import { getAllJaneApptsInRange } from "../services/jane";
+import { getAllJaneApptsInRange, hasRecentBirth } from "../services/jane";
 import { CollectionReference } from "firebase-admin/firestore";
 
 const router = Router();
@@ -504,6 +504,7 @@ router.get(
     try {
       const startDate = req.query.startDate as string;
       const endDate = req.query.endDate as string;
+      const recentChildbirth = (req.query.recentChildbirth as string) === "true";
 
       logger.info(`Fetching jane appts between: ${startDate} - ${endDate}`);
 
@@ -528,21 +529,21 @@ router.get(
 
       const apptsToRemove = ["bra fitting", "pump check"];
 
-      const appts_filtered = appts.filter(
+      const firstVisitAppts = appts.filter(
         (appt) =>
           !apptsToRemove.some((phrase) =>
             appt.service.toLowerCase().includes(phrase),
           ) && appt.firstVisit,
       );
 
-      if (appts_filtered.length === 0)
+      if (firstVisitAppts.length === 0)
         return res.status(200).send(clientsByNumVisits);
 
       const firstVisitClients: Client[] = [];
       const clientDict: { [key: string]: Set<string> } = {};
 
       const uniquePatientIds = [
-        ...new Set(appts_filtered.map((a) => a.clientId)),
+        ...new Set(firstVisitAppts.map((a) => a.clientId)),
       ];
 
       const clientDocs = await db.getAll(
@@ -559,9 +560,13 @@ router.get(
         }
       });
 
-      for (const appt of appts_filtered) {
+      for (const appt of firstVisitAppts) {
         const matchingClient = clientsMap.get(appt.clientId);
         if (matchingClient) {
+          if (recentChildbirth && !hasRecentBirth(matchingClient, new Date(appt.startAt))) {
+            continue;
+          }
+
           firstVisitClients.push(matchingClient);
           if (!clientDict[appt.clientId]) {
             clientDict[appt.clientId] = new Set();

@@ -12,4 +12,10 @@ export const janeQueries = createQueryKeys("janeData", {
     endDate,
     clientId,
   ],
+  retention: (startDate?: Date, endDate?: Date, recentChildbirth: boolean = false) => [
+    "retention",
+    startDate,
+    endDate,
+    recentChildbirth
+  ]
 });
