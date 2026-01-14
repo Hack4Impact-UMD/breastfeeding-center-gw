@@ -18,7 +18,6 @@ import ExportOnly from "@/components/export/ExportOnly.tsx";
 import { formatDate } from "@/lib/utils.ts";
 import { exportCsv } from "@/lib/tableExportUtils.ts";
 import FunnelChart from "@/components/FunnelChart/FunnelChart.tsx";
-import { Client } from "@/types/ClientType.ts";
 
 type JaneRetentionProps = {
   startDate?: Date | undefined;
