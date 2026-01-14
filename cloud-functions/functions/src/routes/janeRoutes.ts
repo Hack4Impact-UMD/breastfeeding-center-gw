@@ -563,6 +563,7 @@ router.get(
       for (const appt of firstVisitAppts) {
         const matchingClient = clientsMap.get(appt.clientId);
         if (matchingClient) {
+          // recent childbirth based on first vist date time
           if (recentChildbirth && !hasRecentBirth(matchingClient, new Date(appt.startAt))) {
             continue;
           }
