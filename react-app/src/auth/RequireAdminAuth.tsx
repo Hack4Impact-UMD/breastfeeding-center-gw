@@ -1,6 +1,6 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "./AuthProvider";
+import { useAuth } from "./AuthProvider";
 import Loading from "../components/Loading";
 
 interface Props {
@@ -30,7 +30,7 @@ const RequireAdminAuth: React.FC<Props> = ({ children }) => {
     );
   }
 
-  return <AuthProvider>{children}</AuthProvider>;
+  return <>{children}</>;
 };
 
 export default RequireAdminAuth;

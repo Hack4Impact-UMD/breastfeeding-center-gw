@@ -1,6 +1,6 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "./AuthProvider";
+import { useAuth } from "./AuthProvider";
 import Loading from "../components/Loading";
 import { isMfaEnrolled } from "@/services/authService";
 
@@ -24,7 +24,7 @@ const RequireAuth: React.FC<Props> = ({ children }) => {
     return <Navigate to="/mfa-enroll" />;
   }
 
-  return <AuthProvider>{children}</AuthProvider>;
+  return <>{children}</>;
 };
 
 export default RequireAuth;
