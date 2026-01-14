@@ -40,16 +40,16 @@ function CustomBar(props: Partial<BarProps>) {
 }
 
 // getting the date from user input
-function getWeekRange(date: Date) {
-  const selected = new Date(date);
-  const day = selected.getDay(); // 0 (Sun) to 6 (Sat)
-  const diffToMonday = (day === 0 ? -6 : 1) - day;
-  const monday = new Date(selected);
-  monday.setDate(selected.getDate() + diffToMonday);
-  const sunday = new Date(monday);
-  sunday.setDate(monday.getDate() + 6);
-  return { monday, sunday };
-}
+// function getWeekRange(date: Date) {
+//   const selected = new Date(date);
+//   const day = selected.getDay(); // 0 (Sun) to 6 (Sat)
+//   const diffToMonday = (day === 0 ? -6 : 1) - day;
+//   const monday = new Date(selected);
+//   monday.setDate(selected.getDate() + diffToMonday);
+//   const sunday = new Date(monday);
+//   sunday.setDate(monday.getDate() + 6);
+//   return { monday, sunday };
+// }
 
 // format the date to put in title
 function formatDate(date: Date) {
@@ -145,21 +145,19 @@ export default function BooqableDashboardPage() {
           <div className={`${centerItemsInDiv} pt-4`}>
             <div className="flex flex-row">
               <button
-                className={`${graphTableButtonStyle} ${
-                  rentalDisplay == "graph"
+                className={`${graphTableButtonStyle} ${rentalDisplay == "graph"
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
-                }`}
+                  }`}
                 onClick={() => setRentalDisplay("graph")}
               >
                 Graph
               </button>
               <button
-                className={`${graphTableButtonStyle} ${
-                  rentalDisplay == "table"
+                className={`${graphTableButtonStyle} ${rentalDisplay == "table"
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
-                }`}
+                  }`}
                 onClick={() => setRentalDisplay("table")}
               >
                 Table
