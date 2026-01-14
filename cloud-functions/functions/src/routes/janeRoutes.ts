@@ -14,7 +14,6 @@ import { CollectionReference } from "firebase-admin/firestore";
 
 const router = Router();
 
-//TODO: (ramy) the old implementation of this code assumed no clients from existing services being present in the db. Obviously, this was a bad assumption. I've made some edits to match clients by emails which should address it, but more testing is needed.
 router.post(
   "/upload",
   [isAuthenticated, upload],
