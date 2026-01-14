@@ -9,9 +9,7 @@ import { connectAuthEmulator, getAuth } from "firebase/auth";
 
 export const API_URL = import.meta.env.DEV
   ? "http://127.0.0.1:5001/breastfeeding-center-gw/us-east4/api"
-  : "https://api-jfbhgde3qa-uk.a.run.app"; //TODO: replace with prod url
-
-// TODO: Add SDKs for Firebase products that you want to use
+  : "https://api-jfbhgde3qa-uk.a.run.app";
 
 // https://firebase.google.com/docs/web/setup#available-libraries
 
