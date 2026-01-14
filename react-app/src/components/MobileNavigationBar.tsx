@@ -66,7 +66,7 @@ const MobileNavigationBar = () => {
     return (
       location.pathname.includes("/services/jane") ||
       location.pathname.includes("/services/acuity") ||
-      location.pathname.includes("/services/paysimple")
+      location.pathname.includes("/services/booqable")
     );
   };
 
@@ -190,7 +190,7 @@ const MobileNavigationBar = () => {
                   Acuity
                 </NavLink>
                 <NavLink
-                  to="/services/paysimple"
+                  to="/services/booqable"
                   className={({ isActive }) =>
                     `block px-6 py-3 text-base font-medium ${
                       isActive
@@ -199,7 +199,7 @@ const MobileNavigationBar = () => {
                     }`
                   }
                 >
-                  Paysimple
+                  Booqable
                 </NavLink>
               </div>
             )}

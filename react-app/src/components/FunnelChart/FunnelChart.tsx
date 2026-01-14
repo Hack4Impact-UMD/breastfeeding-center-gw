@@ -28,8 +28,8 @@ function FunnelChartBlock({
   pt: FunnelChartDataPoint;
   spacing: number;
 }) {
-  const nextVal = (23 * next.value) / max;
-  const currVal = (23 * pt.value) / max;
+  const nextVal = max > 0 ? (23 * next.value) / max : 0;
+  const currVal = max > 0 ? (23 * pt.value) / max : 0;
   const padding = 7;
   const pts = [
     [offset + width - spacing, nextVal + padding],

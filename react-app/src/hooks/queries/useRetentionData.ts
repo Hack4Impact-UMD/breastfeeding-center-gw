@@ -5,7 +5,7 @@ import queries from "@/queries";
 
 export function useRetentionData(startDate?: Date, endDate?: Date, recentChildbirth: boolean = false) {
   return useQuery<{ [key: number]: Client[] }>({
-    ...queries.janeData.retention(startDate, endDate, recentChildbirth),
+    ...queries.janeData.retention(startDate?.toISOString(), endDate?.toISOString(), recentChildbirth),
     queryFn: async () => {
       const axiosInstance = await axiosClient();
       const response = await axiosInstance.get("/jane/retention", {

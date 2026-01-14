@@ -148,12 +148,12 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
                   </div>
                   <div className={serviceStyle}>
                     <NavLink
-                      to="/services/paysimple"
+                      to="/services/booqable"
                       className={({ isActive }) =>
                         isActive ? activeStyle : notActiveStyle
                       }
                     >
-                      <span className={serviceMargin}>PaySimple</span>
+                      <span className={serviceMargin}>Booqable</span>
                     </NavLink>
                   </div>
                 </div>

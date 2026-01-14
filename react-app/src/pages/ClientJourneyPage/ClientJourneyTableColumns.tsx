@@ -24,7 +24,7 @@ export type JaneConsults = {
   insurance: string;
 };
 
-export type PaySimpleRentals = {
+export type BooqableRentals = {
   item: string;
   totalCost: number;
   rate: number;
@@ -118,6 +118,21 @@ export const acuityColumns: ColumnDef<AcuityData>[] = [
 
 export const janeConsultsColumns: ColumnDef<JaneConsults>[] = [
   {
+    accessorKey: "service",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="cursor-pointer"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Service
+          <LuArrowUpDown className="h-4 w-4" />
+        </Button>
+      );
+    },
+  },
+  {
     accessorKey: "clinician",
     header: ({ column }) => {
       return (
@@ -154,21 +169,6 @@ export const janeConsultsColumns: ColumnDef<JaneConsults>[] = [
     },
   },
   {
-    accessorKey: "service",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Service
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
-      );
-    },
-  },
-  {
     accessorKey: "visitType",
     header: ({ column }) => {
       return (
@@ -200,7 +200,7 @@ export const janeConsultsColumns: ColumnDef<JaneConsults>[] = [
   },
 ];
 
-export const paysimpleColumns: ColumnDef<PaySimpleRentals>[] = [
+export const booqableColumns: ColumnDef<BooqableRentals>[] = [
   {
     accessorKey: "item",
     header: ({ column }) => {
@@ -225,7 +225,7 @@ export const paysimpleColumns: ColumnDef<PaySimpleRentals>[] = [
           className="cursor-pointer"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Total Cost
+          Cost
           <LuArrowUpDown className="h-4 w-4" />
         </Button>
       );

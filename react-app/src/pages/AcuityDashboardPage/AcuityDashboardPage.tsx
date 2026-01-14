@@ -276,7 +276,7 @@ export default function AcuityDashboardPage() {
       <div className="flex flex-col h-full py-14 px-10 sm:px-20 space-y-5">
         <div className={centerItemsInDiv}>
           <div>
-            <h1 className="font-bold text-4xl lg:text-5xl">ACUITY</h1>
+            <h1 className="font-bold text-4xl lg:text-5xl">Acuity</h1>
           </div>
           {/*date picker*/}
           <div className="w-60">
@@ -357,9 +357,7 @@ export default function AcuityDashboardPage() {
               </div>
               {/* Attendance by Trimester Bar Chart */}
               <span className="self-start font-semibold text-2xl">
-                Class Attendance By Trimester,{" "}
-                {attendanceDisplay === "graph" ? <br /> : <></>}
-                {dateRangeLabel}
+                Class Attendance By Trimester, {dateRangeLabel}
               </span>
               {attendanceDisplay === "graph" ? (
                 <div className={chartDiv}>
@@ -494,11 +492,10 @@ export default function AcuityDashboardPage() {
             </div>
             <span className="self-start font-semibold text-2xl">
               {popularityDisplay === "graph" ? (
-                <span>Class and Instructor Popularity Over Time,</span>
+                <span>Class and Instructor Popularity Over Time, </span>
               ) : (
-                <span>Attendance By Class & Instructor,</span>
+                <span>Attendance By Class & Instructor, </span>
               )}
-              {popularityDisplay === "graph" ? <br /> : <> </>}
               {dateRangeLabel}
             </span>
             {/* Class Popularity Over Time */}

@@ -94,9 +94,7 @@ const FileUploadPopup = ({ isOpen, onClose }: FileUploadPopupProps) => {
     }
   };
 
-  const handleSubmit = async () => {
-    await handleUploadSubmit(apptFile, clientFile);
-  };
+  const handleSubmit = async () => handleUploadSubmit(apptFile, clientFile);
 
   const handleUploadSubmit = async (
     apptFile: File | null,
