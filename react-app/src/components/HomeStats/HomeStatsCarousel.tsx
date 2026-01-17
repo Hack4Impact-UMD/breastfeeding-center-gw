@@ -35,7 +35,7 @@ export default function HomeStatsCarousel() {
       <Carousel
         setApi={setCarouselApi}
         opts={{ loop: true }}
-        className="w-full max-w-7xl h-96 max-h-[500px] z-10"
+        className="w-full max-w-7xl h-128 max-h-[500px] z-10 overflow-clip rounded-3xl"
       >
         <CarouselContent>
           {Array.from({ length: 5 }).map((_, index) => (
