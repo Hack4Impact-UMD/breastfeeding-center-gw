@@ -35,12 +35,12 @@ export default function ServiceCard({
                 {description}
             </p>
 
-            <button
-                onClick={() => window.location.href = link}
-                className="w-full bg-yellow-400 text-[#1a1a2e] font-medium py-3 px-6 rounded-lg text-sm md:text-base"
+            <a
+                href={link}
+                className="w-full bg-yellow-400 text-[#1a1a2e] font-medium py-3 px-6 rounded-lg text-sm md:text-base text-center block"
             >
                 View {serviceName} Dashboard
-            </button>
+            </a>
         </div>
     );
 }

@@ -94,7 +94,7 @@ export default function HomePage() {
           serviceName="Client Journey"
           serviceType="Client Journey Analytics"
           description="Client Journey tracks all of a client's interactions, including rentals, appointments, classes and more. View client progression and engagement with services."
-          link="/clients/journey/:id"
+          link="/clients"
         />
       </div>
     </div>
