@@ -24,14 +24,14 @@ export default function ServiceCard({
                     {icon}
                 </div>
 
-                <h2 className="text-[23px] sm:text-xl md:text-3xl font-semibold text-[#1a1a2e] mb-2 ml-5">
+                <h1 className="text-[23px] sm:text-xl md:text-3xl font-semibold text-[#1a1a2e] mb-2 ml-5">
                     {serviceName}
-                </h2>
+                </h1>
             </div>
 
-            <h3 className="text-[17px] sm:text-base md:text-xl font-medium text-[#454545] mb-3">
+            <h1 className="text-[17px] sm:text-base md:text-xl font-medium text-[#454545] mb-3">
                 {serviceType}
-            </h3>
+            </h1>
 
             <p className="text-[15px] sm:text-base md:text-lg text-[#454545] leading-relaxed mb-5 flex-grow">
                 {description}
