@@ -1,42 +1,11 @@
-import useAcuityAttendance from "@/hooks/queries/useAcuityAttendance";
-import { useJaneConsultationsCount } from "@/hooks/queries/useJaneConsultationsCount";
-import useMostAttendedAcuityClasses from "@/hooks/queries/useMostAttendedAcuityClasses";
-import { useNewJaneClientsCount } from "@/hooks/queries/useNewJaneClientsCount";
 import ServiceCard from "@/components/ServiceCard";
 import dashboardImage from "@/assets/dashboard.jpg";
 import janeIcon from "@/assets/icons/janeIcon.png";
 import acuityIcon from "@/assets/icons/acuityIcon.png";
 import booqableIcon from "@/assets/icons/booqableIcon.png";
 import clientJourneyIcon from "@/assets/icons/clientJourneyIcon.png";
-import { DateTime } from "luxon";
-import { useMemo } from "react";
-
 
 export default function HomePage() {
-  const startDate = useMemo(() => DateTime.now().minus({ month: 1 }), []);
-  const endDate = useMemo(() => DateTime.now(), []);
-  const {
-    data: newClients,
-    isPending: clientCountPending,
-    error: clientCountError,
-  } = useNewJaneClientsCount(startDate, endDate);
-  const {
-    data: apptsCount,
-    isPending: apptsCountPending,
-    error: apptsCountError,
-  } = useJaneConsultationsCount(startDate, endDate);
-
-  const {
-    data: mostAttendedClasses,
-    isPending: classesPending,
-    error: classesError,
-  } = useMostAttendedAcuityClasses(startDate, endDate);
-  const {
-    data: acuityAttendance,
-    isPending: attendancePending,
-    error: attendanceError,
-  } = useAcuityAttendance(startDate, endDate);
-
   return (
     <div className="flex flex-col py-8 px-6 sm:px-12 md:px-16 lg:px-20">
       <h1 className="font-bold text-[32px] md:text-[36px] text-[#1a1a2e] mb-8">
@@ -60,14 +29,14 @@ export default function HomePage() {
       </div>
 
       <div className="flex flex-col items-center mb-8">
-        <h2 className="text-[25px] md:text-3xl font-semibold text-[#1a1a2e] tracking-wide">
+        <h1 className="text-[25px] md:text-3xl font-semibold text-[#1a1a2e] tracking-wide">
           OUR APPLICATIONS
-        </h2>
-        <div className="w-[85%] max-w-[200px] h-[2px] bg-yellow-400 mt-2" />
+        </h1>
+        <div className="w-[85%] max-w-[200px] h-0.5 bg-yellow-400 mt-2" />
       </div>
 
       {/* Service Cards Grid */}
-      <div className="grid grid-cols-1 min-[769px]:grid-cols-2 gap-6 mb-10">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
         <ServiceCard
           icon={<img src={janeIcon} alt="Jane icon" className="w-10 h-10" />}
           serviceName="Jane"
