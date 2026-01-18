@@ -3,6 +3,9 @@ import { Carousel, CarouselApi, CarouselContent } from "../ui/carousel";
 import { Button } from "../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import HomeCarouselSlide from "./HomeCarouselSlide";
+import ImageSlide from "./slides/ImageSlide";
+import dashboardImage from "@/assets/dashboard.jpg";
+import JaneSlide from "./slides/JaneSlide";
 
 export default function HomeStatsCarousel() {
   const [carouselApi, setCarouselApi] = useState<CarouselApi | null>(null);
@@ -38,6 +41,11 @@ export default function HomeStatsCarousel() {
         className="w-full max-w-7xl h-128 max-h-[500px] z-10 overflow-clip rounded-3xl"
       >
         <CarouselContent>
+          <JaneSlide />
+          <ImageSlide
+            image={dashboardImage}
+            message="Supporting Mothers Every Step Of The Way"
+          />
           {Array.from({ length: 5 }).map((_, index) => (
             <HomeCarouselSlide key={index} className="relative items-center justify-center h-128 max-h-[500px] p-6">
               <svg className="absolute inset-0" viewBox="0 0 1355 529" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -57,13 +65,13 @@ export default function HomeStatsCarousel() {
           onClick={() => scrollToIndex(currentIndex - 1)}
           className="pointer-events-auto rounded-full p-1 bg-transparent shadow-none hover:bg-transparent"
         >
-          <ChevronLeft className="size-20" strokeWidth={1.5} />
+          <ChevronLeft className="size-10 lg:size-18" strokeWidth={1.5} />
         </Button>
         <Button
           onClick={() => scrollToIndex(currentIndex + 1)}
           className="pointer-events-auto rounded-full p-1 bg-transparent shadow-none hover:bg-transparent"
         >
-          <ChevronRight className="size-20" strokeWidth={1.5} />
+          <ChevronRight className="size-10 lg:size-18" strokeWidth={1.5} />
         </Button>
       </div>
 
