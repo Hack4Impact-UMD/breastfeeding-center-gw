@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { Carousel, CarouselApi, CarouselContent } from "../ui/carousel";
 import { Button } from "../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import HomeCarouselSlide from "./HomeCarouselSlide";
 import ImageSlide from "./slides/ImageSlide";
 import dashboardImage from "@/assets/dashboard.jpg";
+import dashboardImage2 from "@/assets/dashboard2.png";
 import JaneSlide from "./slides/JaneSlide";
+import AcuitySlide from "./slides/AcuitySlide";
+import BooqableSlide from "./slides/BooqableSlide";
 
 export default function HomeStatsCarousel() {
   const [carouselApi, setCarouselApi] = useState<CarouselApi | null>(null);
@@ -42,21 +44,16 @@ export default function HomeStatsCarousel() {
       >
         <CarouselContent>
           <JaneSlide />
+          <AcuitySlide />
+          <BooqableSlide />
           <ImageSlide
             image={dashboardImage}
             message="Supporting Mothers Every Step Of The Way"
           />
-          {Array.from({ length: 5 }).map((_, index) => (
-            <HomeCarouselSlide key={index} className="relative items-center justify-center h-128 max-h-[500px] p-6">
-              <svg className="absolute inset-0" viewBox="0 0 1355 529" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="233" cy="146" r="233" fill="#0F4374" fillOpacity="0.5" />
-                <circle cx="1292" cy="379" r="150" fill="#0F4374" fillOpacity="0.5" />
-              </svg>
-              <div className="flex items-center justify-center w-full h-full">
-                <span className="text-4xl font-semibold">{index + 1}</span>
-              </div>
-            </HomeCarouselSlide>
-          ))}
+          <ImageSlide
+            image={dashboardImage2}
+            message="Supporting Mothers Every Step Of The Way"
+          />
         </CarouselContent>
       </Carousel>
 
@@ -80,11 +77,12 @@ export default function HomeStatsCarousel() {
           <Button
             key={index}
             onClick={() => scrollToIndex(index)}
-            className={`w-3 h-3 p-0 rounded-full ${currentIndex === index ? "bg-bcgw-yellow-dark" : "bg-gray-600"
-              }`}
+            className={`w-3 h-3 p-0 rounded-full ${
+              currentIndex === index ? "bg-bcgw-yellow-dark" : "bg-gray-600"
+            }`}
           />
         ))}
       </div>
     </div>
-  )
+  );
 }
