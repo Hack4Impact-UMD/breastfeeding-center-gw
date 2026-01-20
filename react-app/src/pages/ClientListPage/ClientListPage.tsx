@@ -39,7 +39,7 @@ const ClientList = () => {
         {/*headings*/}
         <div className={centerItemsInDiv}>
           <div className="flex flex-row">
-            <h1 className="font-bold text-3xl sm:text-4xl lg:text-5xl grow">
+            <h1 className="font-semibold text-3xl sm:text-4xl lg:text-5xl grow">
               Client List
             </h1>
           </div>

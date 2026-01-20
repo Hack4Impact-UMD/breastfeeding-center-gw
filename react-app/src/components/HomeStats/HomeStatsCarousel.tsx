@@ -39,14 +39,14 @@ export default function HomeStatsCarousel() {
   };
 
   return (
-    <div className="relative h-128 max-h-[500px] w-full max-w-7xl">
+    <div className="relative h-128 max-h-[500px] w-full ">
       <Carousel
         setApi={setCarouselApi}
         opts={{ loop: true }}
         plugins={[plugin.current]}
         onMouseEnter={plugin.current.stop}
         onMouseLeave={plugin.current.reset}
-        className="w-full max-w-7xl h-128 max-h-[500px] z-10 overflow-clip rounded-3xl"
+        className="w-full h-128 max-h-[500px] z-10 overflow-clip rounded-3xl"
       >
         <CarouselContent>
           <JaneSlide />

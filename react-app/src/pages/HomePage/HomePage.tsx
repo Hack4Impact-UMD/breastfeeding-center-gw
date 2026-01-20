@@ -7,14 +7,11 @@ import clientJourneyIcon from "@/assets/icons/clientJourneyIcon.png";
 
 export default function HomePage() {
   return (
-    <div className="px-4 md:px-8 py-10 flex flex-col items-center">
-      <div className="w-full max-w-7xl flex flex-col gap-4">
-        <div className="w-full">
-          <h1 className="font-semibold text-[32px] md:text-[36px] text-[#1a1a2e]">
-            Home Dashboard
-          </h1>
-        </div>
-
+    <div className="py-14 px-10 sm:px-20 flex flex-col items-center">
+      <div className="w-full flex flex-col gap-4">
+        <h1 className="font-semibold text-3xl sm:text-4xl lg:text-5xl mb-4">
+          Home Dashboard
+        </h1>
         <HomeStatsCarousel />
 
         <div className="flex flex-col items-center my-8">
