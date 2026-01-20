@@ -43,7 +43,7 @@ const JaneDataPage = () => {
     <>
       <div className="flex flex-col py-14 px-10 sm:px-20">
         <div className="flex flex-col-reverse gap-4 md:flex-row md:items-center justify-between mb-4">
-          <h1 className="font-bold w-full text-4xl lg:text-5xl">
+          <h1 className="w-full font-semibold text-3xl sm:text-4xl lg:text-5xl">
             Jane Uploaded Data
           </h1>
           <div className="flex justify-end">

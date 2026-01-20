@@ -39,7 +39,7 @@ export default function ServiceCard({
 
             <Link
                 to={link}
-                className="bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light border border-[#2C2C2C] text-bcgw-blue-dark disabled:bg-[#D9D9D9] h-9 px-4 py-2 has-[>svg]:px-3 flex items-center justify-center rounded-md transition-all"
+                className="bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light border border-[#2C2C2C] text-bcgw-blue-dark disabled:bg-[#D9D9D9] min-h-9 px-4 has-[>svg]:px-3 flex items-center justify-center rounded-md transition-all py-2"
             >
                 View {serviceName} Dashboard
             </Link>
