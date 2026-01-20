@@ -34,24 +34,38 @@ export default function HomePage() {
             link="/services/jane"
           />
           <ServiceCard
-            icon={<img src={acuityIcon} alt="Acuity icon" className="w-8 h-8" />}
+            icon={
+              <img src={acuityIcon} alt="Acuity icon" className="w-8 h-8" />
+            }
             serviceName="Acuity"
             serviceType="Appointment Scheduling System"
             description="Acuity manages class scheduling and calendars. View most attended classes, broken down by instructor, trimester, and class type."
             link="/services/acuity"
           />
           <ServiceCard
-            icon={<img src={booqableIcon} alt="Booqable icon" className="w-10 h-6" />}
+            icon={
+              <img
+                src={booqableIcon}
+                alt="Booqable icon"
+                className="w-10 h-6"
+              />
+            }
             serviceName="Booqable"
             serviceType="Equipment Rental Management"
             description="Booqable tracks equipment inventory and rentals. View inventory levels, overdue items, and rental duration statistics by item."
             link="/services/booqable"
           />
           <ServiceCard
-            icon={<img src={clientJourneyIcon} alt="Client Journey icon" className="w-8 h-8" />}
+            icon={
+              <img
+                src={clientJourneyIcon}
+                alt="Client Journey icon"
+                className="w-8 h-8"
+              />
+            }
             serviceName="Client Journey"
             serviceType="Client Journey Analytics"
-            description="Client Journey tracks all of a client's interactions, including rentals, appointments, classes and more. View client progression and engagement with services."
+            description="Client Journey tracks all of a client's BCGW interactions, including rentals, appointments, classes and more. View client progression and engagement with services."
             link="/clients"
           />
         </div>

@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Carousel, CarouselApi, CarouselContent } from "../ui/carousel";
 import { Button } from "../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Autoplay from "embla-carousel-autoplay";
 import ImageSlide from "./slides/ImageSlide";
 import dashboardImage from "@/assets/dashboard.jpg";
 import dashboardImage2 from "@/assets/dashboard2.png";
@@ -13,6 +14,8 @@ export default function HomeStatsCarousel() {
   const [carouselApi, setCarouselApi] = useState<CarouselApi | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
+
+  const plugin = useRef(Autoplay({ delay: 2000, stopOnInteraction: true }));
 
   useEffect(() => {
     if (!carouselApi) return;
@@ -40,6 +43,9 @@ export default function HomeStatsCarousel() {
       <Carousel
         setApi={setCarouselApi}
         opts={{ loop: true }}
+        plugins={[plugin.current]}
+        onMouseEnter={plugin.current.stop}
+        onMouseLeave={plugin.current.reset}
         className="w-full max-w-7xl h-128 max-h-[500px] z-10 overflow-clip rounded-3xl"
       >
         <CarouselContent>

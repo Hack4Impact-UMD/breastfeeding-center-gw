@@ -1,4 +1,10 @@
 import { DateTime } from "luxon";
+import { truncate } from "@/lib/utils";
+import {
+  TooltipContent,
+  Tooltip,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import HomeCarouselSlide from "../HomeCarouselSlide";
 import acuityIcon from "@/assets/icons/acuityIcon.png";
 import Loading from "@/components/Loading";
@@ -10,7 +16,6 @@ export default function AcuitySlide() {
   const endDate = DateTime.now().endOf("month").endOf("day");
 
   console.log(`start = ${startDate.toISO()}, end = ${endDate.toISO()}`);
-
   const {
     data: mostAttendedClasses,
     isPending: classesPending,
@@ -33,7 +38,7 @@ export default function AcuitySlide() {
         <circle cx="155" cy="520" r="150" fill="#0F4374" fillOpacity="0.5" />
         <circle cx="1172" cy="55" r="253" fill="#0F4374" fillOpacity="0.5" />
       </svg>
-      <div className="flex flex-col gap-4 lg:gap-10 items-center justify-center w-full h-full max">
+      <div className="flex flex-col gap-4 lg:gap-10 z-10 items-center justify-center w-full h-full max">
         {classesPending || attendancePending ? (
           <Loading />
         ) : classesError ? (
@@ -61,12 +66,22 @@ export default function AcuitySlide() {
                 Top 3 Attended Classes This Month
               </span>
               {mostAttendedClasses?.slice(0, 3).map((c, idx) => (
-                <div className="max-w-185 max-h-63 w-full h-full bg-white rounded-lg flex flex-row items-center justify-between px-4 py-2 lg:gap-2 text-xs lg:text-base">
+                <div
+                  key={idx}
+                  className="max-w-185 max-h-63 w-full h-full bg-white rounded-lg flex flex-row items-center justify-between px-4 py-2 lg:gap-2 text-xs lg:text-base"
+                >
                   <div className="flex flex-row gap-4 items-center">
                     <span className="bg-bcgw-yellow-dark text-bcgw-blue-dark rounded-full p-1 size-5 min-w-5 min-h-5 lg:size-8 lg:min-w-8 lg:min-h-8 lg:text-lg flex justify-center items-center font-medium">
                       {idx + 1}
                     </span>
-                    <span className="text-black ">{c.class}</span>
+                    <Tooltip>
+                      <TooltipTrigger className="text-left">
+                        <span className="text-black ">
+                          {truncate(c.class, 65)}
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>{c.class}</TooltipContent>
+                    </Tooltip>
                   </div>
                   <div className="bg-bcgw-yellow-dark text-bcgw-blue-dark rounded-full py-1 px-2 w-fit min-w-fit flex justify-center gap-1">
                     <span className="font-medium">{c.attendance}</span> clients
@@ -77,7 +92,7 @@ export default function AcuitySlide() {
                 <h1 className="text-bcgw-yellow-dark font-medium text-3xl md:text-6xl">
                   {acuityAttendance}
                 </h1>
-                <span className="text-white lg:text-xl text-center">
+                <span className="text-white lg:text-xl ">
                   Clients Attending Classes This Month
                 </span>
               </div>
