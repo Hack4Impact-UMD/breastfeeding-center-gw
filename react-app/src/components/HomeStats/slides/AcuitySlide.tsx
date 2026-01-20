@@ -38,15 +38,17 @@ export default function AcuitySlide() {
         <circle cx="155" cy="520" r="150" fill="#0F4374" fillOpacity="0.5" />
         <circle cx="1172" cy="55" r="253" fill="#0F4374" fillOpacity="0.5" />
       </svg>
-      <div className="flex flex-col gap-4 lg:gap-10 z-10 items-center justify-center w-full h-full max">
+      <div className="flex flex-col gap-4 lg:gap-10 items-center justify-center w-full h-full max">
         {classesPending || attendancePending ? (
           <Loading />
         ) : classesError ? (
-          <p>
+          <p className="z-10">
             Failed to fetch most attended Acuity classes: {classesError.message}
           </p>
         ) : attendanceError ? (
-          <p>Failed to fetch Acuity attendance: {attendanceError.message}</p>
+          <p className="z-10">
+            Failed to fetch Acuity attendance: {attendanceError.message}
+          </p>
         ) : (
           <div className="flex flex-col items-center justify-center w-full h-full">
             <div className="flex flex-row gap-4 lg:gap-8 z-10 items-center justify-center">
@@ -63,7 +65,7 @@ export default function AcuitySlide() {
             </div>
             <div className="flex flex-col gap-4 w-full max-w-7xl z-10 justify-center items-center mt-4 lg:mt-0">
               <span className="text-white lg:text-lg text-center">
-                Top 3 Attended Classes This Month
+                Top 3 Attended Classes
               </span>
               {mostAttendedClasses?.slice(0, 3).map((c, idx) => (
                 <div
@@ -93,7 +95,7 @@ export default function AcuitySlide() {
                   {acuityAttendance}
                 </h1>
                 <span className="text-white lg:text-xl ">
-                  Clients Attending Classes This Month
+                  Clients Attending Classes
                 </span>
               </div>
             </div>

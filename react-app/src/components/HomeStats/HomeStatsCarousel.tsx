@@ -15,7 +15,7 @@ export default function HomeStatsCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
 
-  const plugin = useRef(Autoplay({ delay: 2000, stopOnInteraction: true }));
+  const plugin = useRef(Autoplay({ delay: 10000, stopOnInteraction: true }));
 
   useEffect(() => {
     if (!carouselApi) return;

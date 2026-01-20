@@ -38,9 +38,13 @@ export default function JaneSlide() {
         {clientsPending || apptsPending ? (
           <Loading />
         ) : clientsError ? (
-          <p>Failed to fetch new Jane clients: {clientsError.message}</p>
+          <p className="z-10">
+            Failed to fetch new Jane clients: {clientsError.message}
+          </p>
         ) : apptsError ? (
-          <p>Failed to fetch Jane appointments: {apptsError.message}</p>
+          <p className="z-10">
+            Failed to fetch Jane appointments: {apptsError.message}
+          </p>
         ) : (
           <>
             <div className="flex flex-row gap-4 lg:gap-8 z-10 items-center justify-center">
@@ -62,7 +66,7 @@ export default function JaneSlide() {
                   {newClients}
                 </h1>
                 <span className="text-black lg:text-xl text-center">
-                  New Clients This Month
+                  New Clients
                 </span>
               </div>
 
@@ -72,7 +76,7 @@ export default function JaneSlide() {
                   {apptCount}
                 </h1>
                 <span className="text-black lg:text-xl text-center">
-                  Total Consultations This Month
+                  Total Consultations
                 </span>
               </div>
             </div>

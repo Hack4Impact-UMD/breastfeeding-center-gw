@@ -30,9 +30,9 @@ export default function BooqableSlide() {
         {/* {numItemsRentedPending || mostRentedItemPending ? (
           <Loading />
         ) : numItemsRentedError ? (
-          <p>Failed to fetch Booqable number items rented: {numItemsRentedError.message}</p>
+          <p className="z-10">Failed to fetch Booqable number items rented: {numItemsRentedError.message}</p>
         ) : mostRentedItemError ? (
-          <p>Failed to fetch Booqable most rented item: {mostRentedItemError.message}</p>
+          <p className="z-10">Failed to fetch Booqable most rented item: {mostRentedItemError.message}</p>
         ) : ( */}
         <>
           <div className="flex flex-row gap-4 lg:gap-8 z-10 items-center justify-center">
@@ -54,7 +54,7 @@ export default function BooqableSlide() {
                 {numItemsRented}
               </h1>
               <span className="text-black lg:text-xl text-center">
-                Items Rented This Month
+                Items Rented
               </span>
             </div>
 
@@ -65,10 +65,10 @@ export default function BooqableSlide() {
               </h1>
               <div className="flex flex-col gap-1">
                 <span className="text-black lg:text-xl text-center">
-                  Most Rented Item This Month
+                  Most Rented Item
                 </span>
                 <span className="text-[#434343] lg:text-base text-center">
-                  {numMostRentedItem} active rentals
+                  {numMostRentedItem} rentals
                 </span>
               </div>
             </div>
