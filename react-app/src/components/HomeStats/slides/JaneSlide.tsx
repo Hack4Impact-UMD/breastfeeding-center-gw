@@ -10,8 +10,6 @@ export default function JaneSlide() {
   const startDate = DateTime.now().startOf("month").startOf("day");
   const endDate = DateTime.now().endOf("month").endOf("day");
 
-  console.log(`start = ${startDate.toISO()}, end = ${endDate.toISO()}`);
-
   const {
     data: newClients,
     isPending: clientsPending,

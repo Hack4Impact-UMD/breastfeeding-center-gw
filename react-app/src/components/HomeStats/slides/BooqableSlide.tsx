@@ -6,9 +6,7 @@ import { Award } from "lucide-react";
 
 export default function BooqableSlide() {
   const startDate = DateTime.now().startOf("month").startOf("day");
-  const endDate = DateTime.now().endOf("month").endOf("day");
-
-  console.log(`start = ${startDate.toISO()}, end = ${endDate.toISO()}`);
+  // const endDate = DateTime.now().endOf("month").endOf("day");
 
   // TODO: Connect to Booqable API to fetch real data
   const numItemsRented: number = 42;

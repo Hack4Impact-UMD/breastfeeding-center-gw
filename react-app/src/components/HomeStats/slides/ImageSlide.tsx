@@ -23,6 +23,7 @@ export default function ImageSlide({
     >
       <img
         src={image}
+        alt={"BCGW dashboard image"}
         className={cn(
           "absolute w-full h-full inset-0 object-cover",
           imageClassName,

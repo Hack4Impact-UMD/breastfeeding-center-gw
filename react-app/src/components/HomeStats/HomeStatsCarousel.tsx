@@ -34,10 +34,6 @@ export default function HomeStatsCarousel() {
     };
   }, [carouselApi]);
 
-  const scrollToIndex = (index: number) => {
-    carouselApi?.scrollTo(index);
-  };
-
   return (
     <div className="relative h-128 max-h-[500px] w-full ">
       <Carousel
@@ -65,13 +61,13 @@ export default function HomeStatsCarousel() {
 
       <div className="absolute inset-0 z-20 flex items-center justify-between pointer-events-none text-white">
         <Button
-          onClick={() => scrollToIndex(currentIndex - 1)}
+          onClick={() => carouselApi?.scrollPrev()}
           className="pointer-events-auto rounded-full p-1 bg-transparent shadow-none hover:bg-transparent"
         >
           <ChevronLeft className="size-10 lg:size-18" strokeWidth={1.5} />
         </Button>
         <Button
-          onClick={() => scrollToIndex(currentIndex + 1)}
+          onClick={() => carouselApi?.scrollNext()}
           className="pointer-events-auto rounded-full p-1 bg-transparent shadow-none hover:bg-transparent"
         >
           <ChevronRight className="size-10 lg:size-18" strokeWidth={1.5} />
@@ -82,7 +78,7 @@ export default function HomeStatsCarousel() {
         {Array.from({ length: totalItems }).map((_, index) => (
           <Button
             key={index}
-            onClick={() => scrollToIndex(index)}
+            onClick={() => carouselApi?.scrollTo(index)}
             className={`w-3 h-3 p-0 rounded-full ${
               currentIndex === index ? "bg-bcgw-yellow-dark" : "bg-gray-600"
             }`}
