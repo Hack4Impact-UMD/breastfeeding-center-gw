@@ -77,8 +77,11 @@ export default function AcuitySlide() {
                       {idx + 1}
                     </span>
                     <Tooltip>
-                      <TooltipTrigger className="text-left">
-                        <span className="text-black ">
+                      <TooltipTrigger className="text-left text-black">
+                        <span className="sm:hidden">
+                          {truncate(c.class, 20)}
+                        </span>
+                        <span className="hidden sm:inline">
                           {truncate(c.class, 65)}
                         </span>
                       </TooltipTrigger>
