@@ -63,17 +63,18 @@ const TwoFAPopup = ({
         <div className="flex gap-2 sm:gap-3 mb-4">
           {otp.map((digit, index) => (
             <input
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
               key={index}
               ref={(el) => (inputRefs.current[index] = el)}
-              type="text"
               maxLength={1}
               value={digit}
               onChange={(e) => handleChange(e, index)}
               onKeyDown={(e) => handleKeyDown(e, index)}
               onClick={() => handleClick(index)}
-              className={`w-10 h-12 sm:w-14 sm:h-14 text-center text-xl sm:text-2xl border-2 rounded-lg ${
-                activeIndex === index ? "border-[#1239BB]" : "border-black-300"
-              } focus:outline-none`}
+              className={`w-10 h-12 sm:w-14 sm:h-14 text-center text-xl sm:text-2xl border-2 rounded-lg ${activeIndex === index ? "border-[#1239BB]" : "border-black-300"
+                } focus:outline-none`}
             />
           ))}
         </div>
@@ -90,11 +91,10 @@ const TwoFAPopup = ({
           }}
           disabled={!allFilled || disabled}
           variant={"yellow"}
-          className={`font-bold rounded-full py-3 px-12 sm:py-4 sm:px-20 text-sm sm:text-lg mb-4 ${
-            allFilled
-              ? "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light cursor-pointer"
-              : "bg-bcgw-gray-light cursor-not-allowed"
-          }`}
+          className={`font-bold rounded-full py-3 px-12 sm:py-4 sm:px-20 text-sm sm:text-lg mb-4 ${allFilled
+            ? "bg-bcgw-yellow-dark hover:bg-bcgw-yellow-light cursor-pointer"
+            : "bg-bcgw-gray-light cursor-not-allowed"
+            }`}
         >
           Submit
         </Button>
@@ -103,7 +103,7 @@ const TwoFAPopup = ({
   );
 
   return (
-    <Modal open={openModal} disabled={disabled} onClose={() => {}}>
+    <Modal open={openModal} disabled={disabled} onClose={() => { }}>
       <div className="bg-white rounded-2xl shadow-lg p-6 w-full">{twoFA}</div>
     </Modal>
   );
