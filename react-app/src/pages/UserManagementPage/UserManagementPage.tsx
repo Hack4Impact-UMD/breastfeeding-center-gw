@@ -68,7 +68,7 @@ const UserManagementPage: React.FC = () => {
 
   return (
     <>
-      <div className="flex flex-col px-4 md:px-14 py-14">
+      <div className="flex flex-col py-14">
         <UserFilters
           search={search}
           setSearch={setSearch}

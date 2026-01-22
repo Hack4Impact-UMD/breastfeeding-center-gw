@@ -20,15 +20,16 @@ export default function LayoutShell() {
       </div>
 
       <div
-        className={`transition-all duration-200 ease-in-out bg-gray-100 min-h-screen overflow-x-hidden flex flex-col ml-0 ${
-          navBarOpen ? "md:ml-[250px]" : "md:ml-[60px]"
-        }`}
+        className={`w-full transition-all duration-200 ease-in-out bg-gray-100 min-h-screen overflow-x-hidden flex flex-col pl-0 ${navBarOpen ? "md:pl-[250px]" : "md:pl-[60px]"
+          }`}
       >
-        <span className="hidden md:block">
+        <div className={`z-50 hidden md:block fixed top-0 right-0 ${navBarOpen ? "left-[250px]" : "left-[60px]"}`}>
           <Header />
-        </span>
-        <div className="mt-14 md:mt-0 h-full">
-          <Outlet />
+        </div>
+        <div className="pt-14 md:mt-0 h-full flex flex-col items-center">
+          <div className="w-full max-w-7xl px-4 md:px-8">
+            <Outlet />
+          </div>
         </div>
       </div>
     </div>

@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import Logo from "../assets/bcgw-logo.png";
 import editIcon from "../assets/edit.svg";
 import { useAuth } from "@/auth/AuthProvider";
+import { cn } from "@/lib/utils";
 
-const Header = () => {
+const Header = ({ className = "" }: { className?: string }) => {
   const { profile: user } = useAuth();
   const name = `${user?.firstName} ${user?.lastName}`;
   const initials =
@@ -13,8 +14,8 @@ const Header = () => {
   const [hover, setHover] = useState(false);
   const navigate = useNavigate();
   return (
-    <header className="flex justify-between items-center bg-bcgw-blue-dark text-bcgw-yellow-dark px-4 py-2 shadow-md">
-      <div className="flex items-center gap-3">
+    <header className={cn("flex items-center bg-bcgw-blue-dark text-bcgw-yellow-dark px-4 py-2 shadow-md", className)}>
+      <div className="flex items-center gap-3 grow">
         <img src={Logo} className="h-10" />
         <span className="font-semibold">BCGW Dashboard</span>
       </div>

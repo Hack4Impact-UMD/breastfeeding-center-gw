@@ -35,7 +35,7 @@ const ClientList = () => {
 
   return (
     <>
-      <div className="flex flex-col py-14 px-10 sm:px-20">
+      <div className="flex flex-col py-14">
         {/*headings*/}
         <div className={centerItemsInDiv}>
           <div className="flex flex-row">

@@ -156,7 +156,7 @@ const JaneDashboardPage = () => {
 
   return (
     <>
-      <div className="flex flex-col py-14 px-10 sm:px-20">
+      <div className="flex flex-col py-14">
         <div className="flex flex-col-reverse gap-4  md:flex-row md:items-center justify-between mb-4">
           <h1 className="font-semibold text-4xl lg:text-5xl">Jane</h1>
           <div className="w-full flex justify-end">
@@ -187,21 +187,19 @@ const JaneDashboardPage = () => {
               <div className="flex items-center justify-between w-full pt-4 mb-6">
                 <div className="flex flex-row ">
                   <button
-                    className={`${graphTableButtonStyle} ${
-                      visitDisplay === "graph"
-                        ? "bg-bcgw-gray-light"
-                        : "bg-[#CED8E1]"
-                    }`}
+                    className={`${graphTableButtonStyle} ${visitDisplay === "graph"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#CED8E1]"
+                      }`}
                     onClick={() => setVisitDisplay("graph")}
                   >
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${
-                      visitDisplay === "table"
-                        ? "bg-bcgw-gray-light"
-                        : "bg-[#CED8E1]"
-                    }`}
+                    className={`${graphTableButtonStyle} ${visitDisplay === "table"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#CED8E1]"
+                      }`}
                     onClick={() => setVisitDisplay("table")}
                   >
                     Table

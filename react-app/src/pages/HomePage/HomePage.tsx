@@ -7,7 +7,7 @@ import clientJourneyIcon from "@/assets/icons/clientJourneyIcon.png";
 
 export default function HomePage() {
   return (
-    <div className="py-14 px-10 sm:px-20 flex flex-col items-center">
+    <div className="py-14 flex flex-col items-center">
       <div className="w-full flex flex-col gap-4">
         <h1 className="font-semibold text-3xl sm:text-4xl lg:text-5xl mb-4">
           Home Dashboard

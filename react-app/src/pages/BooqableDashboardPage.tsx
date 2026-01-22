@@ -122,7 +122,7 @@ export default function BooqableDashboardPage() {
 
   return (
     <>
-      <div className="flex flex-col py-14 px-10 sm:px-20 space-y-5">
+      <div className="flex flex-col py-14 space-y-5">
         {/* Page Title */}
         <div className={centerItemsInDiv}>
           <div>
@@ -147,21 +147,19 @@ export default function BooqableDashboardPage() {
           <div className={`${centerItemsInDiv} pt-4`}>
             <div className="flex flex-row">
               <button
-                className={`${graphTableButtonStyle} ${
-                  rentalDisplay == "graph"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
-                }`}
+                className={`${graphTableButtonStyle} ${rentalDisplay == "graph"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
+                  }`}
                 onClick={() => setRentalDisplay("graph")}
               >
                 Graph
               </button>
               <button
-                className={`${graphTableButtonStyle} ${
-                  rentalDisplay == "table"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
-                }`}
+                className={`${graphTableButtonStyle} ${rentalDisplay == "table"
+                  ? "bg-bcgw-gray-light"
+                  : "bg-[#f5f5f5]"
+                  }`}
                 onClick={() => setRentalDisplay("table")}
               >
                 Table
