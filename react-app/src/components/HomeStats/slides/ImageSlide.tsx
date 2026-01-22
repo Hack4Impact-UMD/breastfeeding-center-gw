@@ -17,7 +17,7 @@ export default function ImageSlide({
   return (
     <HomeCarouselSlide
       className={cn(
-        "relative items-center justify-center h-128 max-h-full p-6 overflow-clip",
+        "relative items-center justify-center h-128 max-h-[500px] p-6 overflow-clip",
         className,
       )}
     >
