@@ -36,7 +36,7 @@ const ProfilePage = () => {
   const displayName = `${firstName} ${lastName}`;
 
   return (
-    <div className="flex flex-col gap-8 justify-center py-14 px-10 sm:px-20">
+    <div className="flex flex-col gap-8 justify-center py-14">
       <>
         <div className="w-full">
           <div className="flex items-center gap-4 md:gap-6">
