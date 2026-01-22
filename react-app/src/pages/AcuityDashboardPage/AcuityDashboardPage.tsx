@@ -276,7 +276,9 @@ export default function AcuityDashboardPage() {
       <div className="flex flex-col h-full py-14 px-10 sm:px-20 space-y-5">
         <div className={centerItemsInDiv}>
           <div>
-            <h1 className="font-bold text-4xl lg:text-5xl">Acuity</h1>
+            <h1 className="font-semibold text-3xl sm:text-4xl lg:text-5xl">
+              Acuity
+            </h1>
           </div>
           {/*date picker*/}
           <div className="w-60">
@@ -306,19 +308,21 @@ export default function AcuityDashboardPage() {
               <div className={`${centerItemsInDiv} pt-4`}>
                 <div className="flex flex-row">
                   <button
-                    className={`${graphTableButtonStyle} ${attendanceDisplay == "graph"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#f5f5f5]"
-                      }`}
+                    className={`${graphTableButtonStyle} ${
+                      attendanceDisplay == "graph"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#f5f5f5]"
+                    }`}
                     onClick={() => setAttendanceDisplay("graph")}
                   >
                     Graph
                   </button>
                   <button
-                    className={`${graphTableButtonStyle} ${attendanceDisplay == "table"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#f5f5f5]"
-                      }`}
+                    className={`${graphTableButtonStyle} ${
+                      attendanceDisplay == "table"
+                        ? "bg-bcgw-gray-light"
+                        : "bg-[#f5f5f5]"
+                    }`}
                     onClick={() => setAttendanceDisplay("table")}
                   >
                     Table
@@ -455,19 +459,21 @@ export default function AcuityDashboardPage() {
             <div className={`${centerItemsInDiv} pt-8`}>
               <div className="flex flex-row">
                 <button
-                  className={`${graphTableButtonStyle} ${popularityDisplay == "graph"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
-                    }`}
+                  className={`${graphTableButtonStyle} ${
+                    popularityDisplay == "graph"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#f5f5f5]"
+                  }`}
                   onClick={() => setPopularityDisplay("graph")}
                 >
                   Graph
                 </button>
                 <button
-                  className={`${graphTableButtonStyle} ${popularityDisplay == "table"
-                    ? "bg-bcgw-gray-light"
-                    : "bg-[#f5f5f5]"
-                    }`}
+                  className={`${graphTableButtonStyle} ${
+                    popularityDisplay == "table"
+                      ? "bg-bcgw-gray-light"
+                      : "bg-[#f5f5f5]"
+                  }`}
                   onClick={() => setPopularityDisplay("table")}
                 >
                   Table
@@ -549,7 +555,7 @@ export default function AcuityDashboardPage() {
                                 (selectedClassCategory === "ALL CLASSES"
                                   ? CLASS_CAT_COLOR_SCHEME
                                   : classColorScheme)[
-                                item[0] ? item[0].key : item.key
+                                  item[0] ? item[0].key : item.key
                                 ]
                               }
                               type="grouped"
@@ -623,7 +629,7 @@ export default function AcuityDashboardPage() {
                               colorScheme={(item) => {
                                 return item[0]
                                   ? instructorColorScheme[item[0].key]
-                                  : instructorColorScheme[item.key]
+                                  : instructorColorScheme[item.key];
                               }}
                               type="grouped"
                             />

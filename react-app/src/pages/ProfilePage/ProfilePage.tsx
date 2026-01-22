@@ -42,7 +42,7 @@ const ProfilePage = () => {
           <div className="flex items-center gap-4 md:gap-6">
             <ProfileIcon initials={initials} />
             <div className="flex flex-col lg:flex-row lg:gap-4 lg:items-end">
-              <h1 className="font-normal text-4xl lg:text-5xl leading-tight text-left">
+              <h1 className="font-normal text-3xl sm:text-4xl lg:text-5xl leading-tight text-left">
                 {displayName}
               </h1>
               <div className="flex items-center gap-2 text-lg mb-2">

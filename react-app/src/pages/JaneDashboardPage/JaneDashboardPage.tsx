@@ -158,7 +158,7 @@ const JaneDashboardPage = () => {
     <>
       <div className="flex flex-col py-14 px-10 sm:px-20">
         <div className="flex flex-col-reverse gap-4  md:flex-row md:items-center justify-between mb-4">
-          <h1 className="font-bold text-4xl lg:text-5xl">Jane</h1>
+          <h1 className="font-semibold text-4xl lg:text-5xl">Jane</h1>
           <div className="w-full flex justify-end">
             <DateRangePicker
               enableYearNavigation

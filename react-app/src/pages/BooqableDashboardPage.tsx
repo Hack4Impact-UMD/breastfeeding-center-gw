@@ -126,7 +126,9 @@ export default function BooqableDashboardPage() {
         {/* Page Title */}
         <div className={centerItemsInDiv}>
           <div>
-            <h1 className="font-bold text-4xl lg:text-5xl">Booqable</h1>
+            <h1 className="font-semibold text-3xl sm:text-4xl lg:text-5xl">
+              Booqable
+            </h1>
           </div>
           {/*date picker*/}
           <div className="w-60">
@@ -145,19 +147,21 @@ export default function BooqableDashboardPage() {
           <div className={`${centerItemsInDiv} pt-4`}>
             <div className="flex flex-row">
               <button
-                className={`${graphTableButtonStyle} ${rentalDisplay == "graph"
+                className={`${graphTableButtonStyle} ${
+                  rentalDisplay == "graph"
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
-                  }`}
+                }`}
                 onClick={() => setRentalDisplay("graph")}
               >
                 Graph
               </button>
               <button
-                className={`${graphTableButtonStyle} ${rentalDisplay == "table"
+                className={`${graphTableButtonStyle} ${
+                  rentalDisplay == "table"
                     ? "bg-bcgw-gray-light"
                     : "bg-[#f5f5f5]"
-                  }`}
+                }`}
                 onClick={() => setRentalDisplay("table")}
               >
                 Table
