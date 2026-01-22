@@ -34,9 +34,9 @@ const ClientJourney = () => {
     () =>
       clientInfo
         ? [
-            clientInfo.email,
-            ...clientInfo.associatedClients.map((c) => c.email),
-          ]
+          clientInfo.email,
+          ...clientInfo.associatedClients.map((c) => c.email),
+        ]
         : [],
     [clientInfo],
   );
@@ -113,7 +113,7 @@ const ClientJourney = () => {
 
   return (
     <>
-      <div className="flex flex-col py-14 px-10 sm:px-20">
+      <div className="flex flex-col py-14">
         {/*headings*/}
         <div className={centerItemsInDiv}>
           <div>
