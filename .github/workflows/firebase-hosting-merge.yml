@@ -15,6 +15,9 @@ jobs:
       ACUITY_API_KEY: ${{ secrets.ACUITY_API_KEY }}
       ACUITY_USER_ID: ${{ secrets.ACUITY_USER_ID }}
       INVITE_EXPIRE_DAYS: 7
+      EMAIL_CLIENT_ID: ${{ secrets.EMAIL_CLIENT_ID }}
+      EMAIL_CLIENT_SECRET: ${{ secrets.EMAIL_CLIENT_SECRET }}
+      EMAIL_REFRESH_TOKEN: ${{ secrets.EMAIL_REFRESH_TOKEN }}
     steps:
       - uses: actions/checkout@v4
 
@@ -52,6 +55,9 @@ jobs:
           echo "INVITE_EXPIRE_DAYS=${INVITE_EXPIRE_DAYS}" >> cloud-functions/functions/.env
           echo "ACUITY_API_KEY=${ACUITY_API_KEY}" >> cloud-functions/functions/.env
           echo "ACUITY_USER_ID=${ACUITY_USER_ID}" >> cloud-functions/functions/.env
+          echo "EMAIL_CLIENT_ID=${EMAIL_CLIENT_ID}" >> cloud-functions/functions/.env
+          echo "EMAIL_CLIENT_SECRET=${EMAIL_CLIENT_SECRET}" >> cloud-functions/functions/.env
+          echo "EMAIL_REFRESH_TOKEN=${EMAIL_REFRESH_TOKEN}" >> cloud-functions/functions/.env
 
       - name: Deploy to Firebase
         run: firebase deploy
