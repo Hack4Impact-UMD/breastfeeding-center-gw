@@ -8,6 +8,8 @@ import { useMutation } from "@tanstack/react-query";
 import { sendUserInvite } from "@/services/inviteService";
 import { Role } from "@/types/UserType";
 import { useAuth } from "@/auth/AuthProvider";
+import { showSuccessToast } from "@/components/Toasts/SuccessToast";
+import { showErrorToast } from "@/components/Toasts/ErrorToast";
 
 const UserManagementPage: React.FC = () => {
   const auth = useAuth();
@@ -54,12 +56,14 @@ const UserManagementPage: React.FC = () => {
     }) => {
       await sendUserInvite(firstName, lastName, email, role);
     },
-    onSuccess: () => {
+    onSuccess: (_, { email }) => {
       console.log("Invite sent!");
+      showSuccessToast(`Invite successfully sent to ${email}!`)
     },
     onError: (err) => {
       console.error("Failed to send invite");
       console.error(err);
+      showErrorToast("Failed to send invite!")
     },
     onSettled: () => {
       setShowAddModal(false);
