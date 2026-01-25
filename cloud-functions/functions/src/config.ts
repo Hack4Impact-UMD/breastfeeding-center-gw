@@ -27,13 +27,22 @@ const siteDomain = defineString("SITE_DOMAIN", {
   default: "breastfeeding-center-gw.web.app"
 });
 
+const emailClientSecret = defineString("EMAIL_CLIENT_SECRET");
+const emailRefreshToken = defineString("EMAIL_REFRESH_TOKEN");
+const emailAccessToken = defineString("EMAIL_ACCESS_TOKEN");
+const emailClientId = defineString("EMAIL_CLIENT_ID");
+
 const config = {
   rootUserEmail,
   inviteExpirationDays,
   rootUserSecret,
   acuityAPIKey,
   acuityUserId,
-  siteDomain
+  siteDomain,
+  emailAccessToken,
+  emailClientSecret,
+  emailRefreshToken,
+  emailClientId
 };
 
 export { config };

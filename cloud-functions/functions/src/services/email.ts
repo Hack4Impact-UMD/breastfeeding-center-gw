@@ -136,3 +136,25 @@ export async function sendTestEmail(from: string, to: string, subject: string, b
   console.log("Preview: %s", nodemailer.getTestMessageUrl(info));
 }
 
+
+export async function sendEmail(from: string, to: string, subject: string, body: string) {
+  const gmailTransport = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      type: "oauth2",
+      user: "bcgw.dashboard@gmail.com",
+      clientId: config.emailClientId.value(),
+      clientSecret: config.emailClientSecret.value(),
+      refreshToken: config.emailRefreshToken.value()
+    }
+  })
+
+  const info = await gmailTransport.sendMail({
+    from: `"${from}" <bcgw.dashboard@gmail.com>`,
+    to: to,
+    subject: subject,
+    html: body,
+  });
+
+  console.log("Message sent: %s", info.messageId);
+}
