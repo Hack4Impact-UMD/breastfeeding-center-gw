@@ -29,7 +29,6 @@ const siteDomain = defineString("SITE_DOMAIN", {
 
 const emailClientSecret = defineString("EMAIL_CLIENT_SECRET");
 const emailRefreshToken = defineString("EMAIL_REFRESH_TOKEN");
-const emailAccessToken = defineString("EMAIL_ACCESS_TOKEN");
 const emailClientId = defineString("EMAIL_CLIENT_ID");
 
 const config = {
@@ -39,7 +38,6 @@ const config = {
   acuityAPIKey,
   acuityUserId,
   siteDomain,
-  emailAccessToken,
   emailClientSecret,
   emailRefreshToken,
   emailClientId

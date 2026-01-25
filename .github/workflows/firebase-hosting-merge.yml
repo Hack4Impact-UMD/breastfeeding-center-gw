@@ -59,6 +59,7 @@ jobs:
           echo "EMAIL_CLIENT_ID=${EMAIL_CLIENT_ID}" >> cloud-functions/functions/.env
           echo "EMAIL_CLIENT_SECRET=${EMAIL_CLIENT_SECRET}" >> cloud-functions/functions/.env
           echo "EMAIL_REFRESH_TOKEN=${EMAIL_REFRESH_TOKEN}" >> cloud-functions/functions/.env
+          echo "SITE_DOMAIN=${SITE_DOMAIN}" >> cloud-functions/functions/.env
 
       - name: Deploy to Firebase
         run: firebase deploy
