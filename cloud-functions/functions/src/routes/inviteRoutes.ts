@@ -8,6 +8,7 @@ import { isInviteValid, UserInvite } from "../types/inviteType";
 import { v7 as uuidv7 } from "uuid";
 import { logger } from "firebase-functions";
 import { config } from "../config";
+import { inviteTemplate, sendTestEmail } from "../services/email";
 
 const router = Router();
 
@@ -71,6 +72,8 @@ router.post(
         ? "http://localhost:5173"
         : "<PROD_URL_HERE>";
     const registerLink = `${siteURL}/register/${invite.id}`;
+
+    await sendTestEmail("bcgw.dashboard@gmail.com", invite.email, "BCGW Dashboard Invite", inviteTemplate(invite));
 
     logger.info(`Invite for user ${firstName} ${lastName} (${email}) created.`);
     logger.info(`Use the following link to register: ${registerLink}`);

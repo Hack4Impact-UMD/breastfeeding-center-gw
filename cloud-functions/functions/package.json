@@ -27,6 +27,7 @@
     "firebase-admin": "^12.6.0",
     "firebase-functions": "^7.0.2",
     "luxon": "^3.7.2",
+    "nodemailer": "^7.0.12",
     "uuid": "^13.0.0",
     "xlsx": "^0.18.5"
   },
@@ -35,6 +36,7 @@
     "@eslint/eslintrc": "^3.3.0",
     "@eslint/js": "^9.29.0",
     "@types/luxon": "^3.7.1",
+    "@types/nodemailer": "^7.0.5",
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^8.44.1",
     "eslint": "^9.29.0",

@@ -23,6 +23,9 @@ const acuityUserId = defineString("ACUITY_USER_ID", {
 const acuityAPIKey = defineString("ACUITY_API_KEY", {
   default: "",
 });
+const siteDomain = defineString("SITE_DOMAIN", {
+  default: "breastfeeding-center-gw.web.app"
+});
 
 const config = {
   rootUserEmail,
@@ -30,6 +33,7 @@ const config = {
   rootUserSecret,
   acuityAPIKey,
   acuityUserId,
+  siteDomain
 };
 
 export { config };
