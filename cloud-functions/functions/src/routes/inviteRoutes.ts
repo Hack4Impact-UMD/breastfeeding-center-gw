@@ -73,12 +73,17 @@ router.post(
         : "<PROD_URL_HERE>";
     const registerLink = `${siteURL}/register/${invite.id}`;
 
-    if (process.env.FUNCTIONS_EMULATOR === "true") {
-      await sendTestEmail("BCGW Data Dashboard", invite.email, "BCGW Dashboard Invite", inviteTemplate(invite));
-    } else {
-      await sendEmail("BCGW Data Dashboard", invite.email, "BCGW Dashboard Invite", inviteTemplate(invite));
+    try {
+      if (process.env.FUNCTIONS_EMULATOR === "true") {
+        await sendTestEmail("BCGW Data Dashboard", invite.email, "BCGW Dashboard Invite", inviteTemplate(invite));
+      } else {
+        await sendEmail("BCGW Data Dashboard", invite.email, "BCGW Dashboard Invite", inviteTemplate(invite));
+      }
+    } catch (err) {
+      logger.error("Failed to send email: ", err);
+      await inviteDoc.delete()
+      return res.status(400).send("Failed to send invite");
     }
-
     logger.info(`Invite for user ${firstName} ${lastName} (${email}) created.`);
     logger.info(`Use the following link to register: ${registerLink}`);
     //TODO: send the link by email

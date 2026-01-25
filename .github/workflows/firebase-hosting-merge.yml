@@ -18,6 +18,7 @@ jobs:
       EMAIL_CLIENT_ID: ${{ secrets.EMAIL_CLIENT_ID }}
       EMAIL_CLIENT_SECRET: ${{ secrets.EMAIL_CLIENT_SECRET }}
       EMAIL_REFRESH_TOKEN: ${{ secrets.EMAIL_REFRESH_TOKEN }}
+      SITE_DOMAIN: breastfeeding-center-gw.web.app
     steps:
       - uses: actions/checkout@v4
 

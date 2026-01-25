@@ -1,6 +1,7 @@
 import * as nodemailer from "nodemailer"
 import { UserInvite } from "../types/inviteType";
 import { config } from "../config";
+import SMTPTransport from "nodemailer/lib/smtp-transport";
 
 export function createInviteLink(invite: UserInvite) {
   const domain = process.env.FUNCTIONS_EMULATOR === "true" ? "localhost:5173" : config.siteDomain.value()
@@ -136,20 +137,29 @@ export async function sendTestEmail(from: string, to: string, subject: string, b
   console.log("Preview: %s", nodemailer.getTestMessageUrl(info));
 }
 
+let gmailTransport: nodemailer.Transporter | null = null
+
+function getGmailTransport() {
+  if (gmailTransport) {
+    return gmailTransport
+  } else {
+    gmailTransport = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        type: "oauth2",
+        user: "bcgw.dashboard@gmail.com",
+        clientId: config.emailClientId.value(),
+        clientSecret: config.emailClientSecret.value(),
+        refreshToken: config.emailRefreshToken.value()
+      }
+    })
+    return gmailTransport
+  }
+}
 
 export async function sendEmail(from: string, to: string, subject: string, body: string) {
-  const gmailTransport = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      type: "oauth2",
-      user: "bcgw.dashboard@gmail.com",
-      clientId: config.emailClientId.value(),
-      clientSecret: config.emailClientSecret.value(),
-      refreshToken: config.emailRefreshToken.value()
-    }
-  })
-
-  const info = await gmailTransport.sendMail({
+  const transport = getGmailTransport()
+  const info = await transport.sendMail({
     from: `"${from}" <bcgw.dashboard@gmail.com>`,
     to: to,
     subject: subject,
