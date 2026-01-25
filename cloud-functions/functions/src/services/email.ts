@@ -1,7 +1,6 @@
 import * as nodemailer from "nodemailer"
 import { UserInvite } from "../types/inviteType";
 import { config } from "../config";
-import SMTPTransport from "nodemailer/lib/smtp-transport";
 
 export function createInviteLink(invite: UserInvite) {
   const domain = process.env.FUNCTIONS_EMULATOR === "true" ? "localhost:5173" : config.siteDomain.value()
