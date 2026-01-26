@@ -7,7 +7,7 @@ import Loading from "@/components/Loading";
 import { useJaneConsultationsCount } from "@/hooks/queries/useJaneConsultationsCount";
 
 export default function JaneSlide() {
-  const startDate = DateTime.now().minus({ month: 1 }).startOf("day");
+  const startDate = DateTime.now().minus({ days: 30 }).startOf("day");
   const endDate = DateTime.now().endOf("day");
 
   const {
@@ -54,7 +54,7 @@ export default function JaneSlide() {
                 />
               </div>
               <h1 className="font-semibold text-lg lg:text-4xl">
-                JANE STATS FOR THE LAST MONTH
+                JANE STATS FOR THE LAST 30 DAYS
               </h1>
             </div>
             <div className="flex flex-col lg:flex-row gap-4 w-full max-w-4xl z-10 justify-center items-center">

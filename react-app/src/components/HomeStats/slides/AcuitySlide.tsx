@@ -12,7 +12,7 @@ import useMostAttendedAcuityClasses from "@/hooks/queries/useMostAttendedAcuityC
 import useAcuityAttendance from "@/hooks/queries/useAcuityAttendance";
 
 export default function AcuitySlide() {
-  const startDate = DateTime.now().minus({ month: 1 }).startOf("day");
+  const startDate = DateTime.now().minus({ days: 30 }).startOf("day");
   const endDate = DateTime.now().endOf("day");
 
   const {
@@ -59,7 +59,7 @@ export default function AcuitySlide() {
                 />
               </div>
               <h1 className="font-semibold text-lg lg:text-4xl">
-                ACUITY STATS FOR THE LAST MONTH
+                ACUITY STATS FOR THE LAST 30 DAYS
               </h1>
             </div>
             <div className="flex flex-col gap-4 w-full max-w-7xl z-10 justify-center items-center mt-4 lg:mt-0">
