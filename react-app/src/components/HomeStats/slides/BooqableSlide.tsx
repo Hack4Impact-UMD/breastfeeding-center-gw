@@ -1,12 +1,12 @@
-import { DateTime } from "luxon";
+// import { DateTime } from "luxon";
 import HomeCarouselSlide from "../HomeCarouselSlide";
 import booqableIcon from "@/assets/icons/booqableIcon.png";
 import { Package } from "lucide-react";
 import { Award } from "lucide-react";
 
 export default function BooqableSlide() {
-  const startDate = DateTime.now().minus({ month: 1 }).startOf("day");
-  // const endDate = DateTime.now().endOf("month").endOf("day");
+  // const startDate = DateTime.now().minus({ month: 1 }).startOf("day");
+  // const endDate = DateTime.now().endOf("day");
 
   // TODO: Connect to Booqable API to fetch real data
   const numItemsRented: number = 42;

@@ -2,6 +2,7 @@ import axios from "axios";
 import { config } from "../config";
 import { DateTime } from "luxon";
 import { AcuityAppointment } from "../types/acuityType";
+import { logger } from "firebase-functions/v1";
 
 type RawAcuityAppt = {
   id: number;
