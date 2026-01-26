@@ -1,12 +1,12 @@
-// import { DateTime } from "luxon";
+import { DateTime } from "luxon";
 import HomeCarouselSlide from "../HomeCarouselSlide";
 import booqableIcon from "@/assets/icons/booqableIcon.png";
 import { Package } from "lucide-react";
 import { Award } from "lucide-react";
 
 export default function BooqableSlide() {
-  // const startDate = DateTime.now().minus({ days: 30 }).startOf("day");
-  // const endDate = DateTime.now().endOf("day");
+  const startDate = DateTime.now().minus({ days: 30 }).startOf("day");
+  const endDate = DateTime.now().endOf("day");
 
   // TODO: Connect to Booqable API to fetch real data
   const numItemsRented: number = 42;
@@ -41,9 +41,20 @@ export default function BooqableSlide() {
                 className="size-3/4 object-contain"
               />
             </div>
-            <h1 className="font-semibold text-lg lg:text-4xl">
-              BOOQABLE STATS FOR THE LAST 30 DAYS
-            </h1>
+            <div>
+              <h1 className="font-semibold text-lg lg:text-4xl">
+                BOOQABLE STATS: LAST 30 DAYS
+              </h1>
+              <p className="text-xs md:text-sm">
+                {startDate.toLocaleString({
+                  month: "long",
+                  day: "numeric"
+                })} - {endDate.toLocaleString({
+                  month: "long",
+                  day: "numeric"
+                })}
+              </p>
+            </div>
           </div>
           <div className="flex flex-col lg:flex-row gap-4 w-full max-w-4xl z-10 justify-center items-center">
             <div className="max-w-120 max-h-63 w-full h-full bg-white rounded-lg flex flex-col items-center justify-center p-4 lg:py-6 lg:gap-2">

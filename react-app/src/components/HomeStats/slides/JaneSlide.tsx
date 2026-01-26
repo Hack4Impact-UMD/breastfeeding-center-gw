@@ -53,9 +53,20 @@ export default function JaneSlide() {
                   className="size-full object-contain"
                 />
               </div>
-              <h1 className="font-semibold text-lg lg:text-4xl">
-                JANE STATS FOR THE LAST 30 DAYS
-              </h1>
+              <div>
+                <h1 className="font-semibold text-lg lg:text-4xl">
+                  JANE STATS: LAST 30 DAYS
+                </h1>
+                <p className="text-xs md:text-sm">
+                  {startDate.toLocaleString({
+                    month: "long",
+                    day: "numeric"
+                  })} - {endDate.toLocaleString({
+                    month: "long",
+                    day: "numeric"
+                  })}
+                </p>
+              </div>
             </div>
             <div className="flex flex-col lg:flex-row gap-4 w-full max-w-4xl z-10 justify-center items-center">
               <div className="max-w-120 max-h-63 w-full h-full bg-white rounded-lg flex flex-col items-center justify-center p-4 lg:py-6 lg:gap-2">

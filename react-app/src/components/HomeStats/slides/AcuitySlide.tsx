@@ -58,9 +58,20 @@ export default function AcuitySlide() {
                   className="size-3/4 object-contain"
                 />
               </div>
-              <h1 className="font-semibold text-lg lg:text-4xl">
-                ACUITY STATS FOR THE LAST 30 DAYS
-              </h1>
+              <div>
+                <h1 className="font-semibold text-lg lg:text-4xl">
+                  ACUITY STATS: LAST 30 DAYS
+                </h1>
+                <p className="text-xs md:text-sm">
+                  {startDate.toLocaleString({
+                    month: "long",
+                    day: "numeric"
+                  })} - {endDate.toLocaleString({
+                    month: "long",
+                    day: "numeric"
+                  })}
+                </p>
+              </div>
             </div>
             <div className="flex flex-col gap-4 w-full max-w-7xl z-10 justify-center items-center mt-4 lg:mt-0">
               <span className="text-white lg:text-lg text-center">
