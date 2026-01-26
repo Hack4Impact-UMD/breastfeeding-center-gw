@@ -1,12 +1,12 @@
-import { DateTime } from "luxon";
+// import { DateTime } from "luxon";
 import HomeCarouselSlide from "../HomeCarouselSlide";
 import booqableIcon from "@/assets/icons/booqableIcon.png";
 import { Package } from "lucide-react";
 import { Award } from "lucide-react";
 
 export default function BooqableSlide() {
-  const startDate = DateTime.now().startOf("month").startOf("day");
-  // const endDate = DateTime.now().endOf("month").endOf("day");
+  // const startDate = DateTime.now().minus({ days: 30 }).startOf("day");
+  // const endDate = DateTime.now().endOf("day");
 
   // TODO: Connect to Booqable API to fetch real data
   const numItemsRented: number = 42;
@@ -42,7 +42,7 @@ export default function BooqableSlide() {
               />
             </div>
             <h1 className="font-semibold text-lg lg:text-4xl">
-              BOOQABLE STATS FOR {startDate.monthLong.toUpperCase()}{" "}
+              BOOQABLE STATS FOR THE LAST 30 DAYS
             </h1>
           </div>
           <div className="flex flex-col lg:flex-row gap-4 w-full max-w-4xl z-10 justify-center items-center">

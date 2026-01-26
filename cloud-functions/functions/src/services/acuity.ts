@@ -114,7 +114,10 @@ function processRawAcuityAppts(appts: RawAcuityAppt[]) {
 export async function getAllAcuityApptsInRange(
   startDate: string,
   endDate: string,
+  maxInFlight = 10
 ): Promise<AcuityAppointment[]> {
+  if (maxInFlight < 1) throw new Error("maxInFlight must be >= 1");
+
   const startDateLuxon = DateTime.fromISO(startDate, { zone: "utc" });
   const endDateLuxon = DateTime.fromISO(endDate, { zone: "utc" });
 
@@ -148,30 +151,41 @@ export async function getAllAcuityApptsInRange(
 
   // split into chunks
   let currentStart = startDateLuxon.setZone("utc");
-
+  const requests = []
   while (currentStart < endDateLuxon) {
     const chunkEnd = currentStart.plus({ months: 1 }).setZone("utc");
     const actualChunkEnd =
       chunkEnd > endDateLuxon ? endDateLuxon.setZone("utc") : chunkEnd;
 
     // make request for this chunk
-    const response = await api.get("/appointments", {
-      params: {
-        max: -1,
-        minDate: currentStart.toISO(),
-        maxDate: actualChunkEnd.toISO(),
-      },
-    });
+    const params = {
+      max: -1,
+      minDate: currentStart.toISO(),
+      maxDate: actualChunkEnd.toISO(),
+    };
+    requests.push(() => api.get<RawAcuityAppt[]>("/appointments", {
+      params,
+    }));
 
-    if (!Array.isArray(response.data))
-      throw new Error("Invalid response format!");
-
-    acuityApptsInRange = [
-      ...acuityApptsInRange,
-      ...processRawAcuityAppts(response.data),
-    ];
     currentStart = actualChunkEnd.plus({ milliseconds: 1 });
   }
+
+  for (let i = 0; i < requests.length; i += maxInFlight) {
+    const chunk = requests.slice(i, i + maxInFlight);
+
+    const resps = await Promise.all(chunk.map(r => r()));
+
+    resps.forEach(response => {
+      if (!Array.isArray(response.data))
+        throw new Error("Invalid response format!");
+
+      acuityApptsInRange = [
+        ...acuityApptsInRange,
+        ...processRawAcuityAppts(response.data),
+      ];
+    })
+  }
+
 
   return acuityApptsInRange;
 }
