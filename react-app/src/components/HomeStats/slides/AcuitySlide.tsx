@@ -12,8 +12,8 @@ import useMostAttendedAcuityClasses from "@/hooks/queries/useMostAttendedAcuityC
 import useAcuityAttendance from "@/hooks/queries/useAcuityAttendance";
 
 export default function AcuitySlide() {
-  const startDate = DateTime.now().startOf("month").startOf("day");
-  const endDate = DateTime.now().endOf("month").endOf("day");
+  const startDate = DateTime.now().minus({ month: 1 }).startOf("day");
+  const endDate = DateTime.now().endOf("day");
 
   const {
     data: mostAttendedClasses,
@@ -59,7 +59,7 @@ export default function AcuitySlide() {
                 />
               </div>
               <h1 className="font-semibold text-lg lg:text-4xl">
-                ACUITY STATS FOR {startDate.monthLong.toUpperCase()}{" "}
+                ACUITY STATS FOR THE LAST MONTH
               </h1>
             </div>
             <div className="flex flex-col gap-4 w-full max-w-7xl z-10 justify-center items-center mt-4 lg:mt-0">
