@@ -32,12 +32,11 @@ We are currently using Firebase Hosting. You can view a dev deployment of the ap
 Authentication, Database, and Hosting: [Firebase](https://firebase.google.com/)
 
 **APIs:**
-- [Mailchimp](https://mailchimp.com/developer/marketing/docs/fundamentals/)
 - [Acuity](https://developers.acuityscheduling.com/)
 - [Booqable](https://developers.booqable.com/)
-- [Square](https://developer.squareup.com/reference/square) (potentially less important?)
-- [Paypal](https://developer.paypal.com/api/rest/)
-- [Jane](https://jane.app/) (imported via Excel sheet converted to JSON)
+- [Square](https://developer.squareup.com/reference/square) 
+- [Stripe](https://docs.stripe.com/api)
+- [Jane](https://jane.app/) (imported via Excel sheet)
 
 
 ```mermaid
@@ -46,7 +45,7 @@ Authentication, Database, and Hosting: [Firebase](https://firebase.google.com/)
         ac[(Acuity)] --> back
         ps[(Booqable)] --> back
         sq[(Square)] --> back
-        pp[(Paypal)] --> back
+        pp[(Stripe)] --> back
         back[Firebase] --> front
         front[React/TS] --> build
         build[Vite] --> app
@@ -65,8 +64,10 @@ Authentication, Database, and Hosting: [Firebase](https://firebase.google.com/)
 
 For inquiries about the project, contact
 
-| Name          | Contact                   |
-| ------------- | ------------------------- |
-| Sophie Tsai   | sophietsai31@gmail.com    |
-| Ramy Kaddouri | rkaddour@terpmail.umd.edu |
-| Prakhar Gupta | pg12@terpmail.umd.edu     |
+| Name          | Role            | Email                     |
+| ------------- | --------------- | ------------------------- |
+| Sophie Tsai   | Tech Lead       | sophietsai31@gmail.com    |
+| Ramy Kaddouri | Tech Lead       | rkaddour@terpmail.umd.edu |
+| Prakhar Gupta | Tech Lead       | pg12@terpmail.umd.edu     |
+| Tarun Kommuri | Product Manager | kommuri.tarun@gmail.com   |
+| Vishesh Khare | Product Manager | vishesh.khare@gmail.com   |
