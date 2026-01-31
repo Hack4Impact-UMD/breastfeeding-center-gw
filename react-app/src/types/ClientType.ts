@@ -9,6 +9,7 @@ export interface Client {
   phone?: string;
   insurance?: string;
   paysimpleId?: string; // Paysimple customer id
+  squarespaceCustomerId?: string; // Squarespace customer ID
   baby: Baby[];
   associatedClients: Client[];
 }
