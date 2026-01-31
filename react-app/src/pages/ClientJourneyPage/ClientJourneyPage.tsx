@@ -15,6 +15,8 @@ import Loading from "@/components/Loading.tsx";
 import { useJaneApptsForClient } from "@/hooks/queries/useJaneApptsForClient.ts";
 import { useAcuityApptsForClients } from "@/hooks/queries/useAcuityApptsForClient.ts";
 import { useMemo } from "react";
+import { useSquarespaceOrdersForClients } from "@/hooks/queries/useSquarespaceOrdersForClient.ts";
+import { platform } from "process";
 
 const ClientJourney = () => {
   //styles
@@ -30,12 +32,12 @@ const ClientJourney = () => {
     error: clientInfoError,
   } = useClientByPatientId(clientId ?? "");
 
-  const associatedEmails = useMemo(
+  const associatedClients = useMemo(
     () =>
       clientInfo
         ? [
-          clientInfo.email,
-          ...clientInfo.associatedClients.map((c) => c.email),
+          clientInfo,
+          ...clientInfo.associatedClients,
         ]
         : [],
     [clientInfo],
@@ -53,7 +55,14 @@ const ClientJourney = () => {
     data: acuityApptData,
     isPending: isAcuityPending,
     error: acuityError,
-  } = useAcuityApptsForClients(associatedEmails);
+  } = useAcuityApptsForClients(associatedClients.map(c => c.email));
+
+  // get squarespace data
+  const {
+    data: squarespaceOrders,
+    isPending: squarespacePending,
+    error: squarespaceError
+  } = useSquarespaceOrdersForClients(associatedClients);
 
   const sampleBooqable: BooqableRentals[] = [
     {
@@ -74,14 +83,14 @@ const ClientJourney = () => {
     },
   ];
 
-  const sampleOTPs: OneTimePurchase[] = [
-    {
-      item: "Item A",
-      cost: 20,
-      date: "1/12/2024",
-      platform: "Square",
-    },
-  ];
+  const otps: OneTimePurchase[] = useMemo(() =>
+    squarespaceOrders?.flatMap(order => order.lineItems.map(item => ({
+      item: item.productName,
+      cost: parseFloat(item.unitPricePaid.value),
+      date: order.fulfilledOn,
+      platform: `Squarespace (${order.channel === "pos" ? "In-person" : "Online"})`
+    }))) ?? []
+    , [squarespaceOrders])
 
   const janeConsultsData: JaneConsults[] =
     clientApptData?.map((appt) => ({
@@ -217,7 +226,7 @@ const ClientJourney = () => {
                 </h2>
                 <DataTable
                   columns={oneTimePurchaseColumns}
-                  data={sampleOTPs}
+                  data={otps}
                   tableType="default"
                   pageSize={5}
                 />

@@ -59,9 +59,43 @@ export type SquarespaceOrder = {
   priceTaxInterpretation: string
 }
 
+type SquarespaceProfile = {
+  id: string,
+  firstName?: string,
+  lastName?: string,
+  email?: string,
+  isCustomer: boolean,
+  createdOn: string,
+  transactionSummary: {
+    firstOrderSubmittedOn: string,
+    lastOrderSubmittedOn: string,
+    orderCount: number,
+  }
+}
+
+
 export async function getAllSquarespaceOrdersInRange(startDate: string, endDate: string): Promise<SquarespaceOrder[]> {
   const axios = await axiosClient();
   const resp = await axios.get<SquarespaceOrder[]>(`/squarespace/orders?startDate=${startDate}&endDate=${endDate}`);
+
+  return resp.data;
+}
+
+export async function getSquarespaceCustomerByEmail(email: string) {
+  const axios = await axiosClient();
+  const resp = await axios.get<SquarespaceProfile>(`/squarespace/profile?email=${email}`);
+
+  return resp.data;
+}
+
+export async function getAllSquarespaceOrdersForClientByEmail(email: string) {
+  const profile = await getSquarespaceCustomerByEmail(email);
+  return await getAllSquarespaceOrdersForClientById(profile.id);
+}
+
+export async function getAllSquarespaceOrdersForClientById(id: string) {
+  const axios = await axiosClient();
+  const resp = await axios.get<SquarespaceOrder[]>(`/squarespace/orders/customer/${id}`);
 
   return resp.data;
 }

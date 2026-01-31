@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import { isAuthenticated } from "../middleware/authMiddleware";
-import { getOrdersForCustomerId, getOrdersInRange } from "../services/squarespace";
+import { getOrdersForCustomerId, getOrdersInRange, getSquarespaceCustomer } from "../services/squarespace";
 import { logger } from "firebase-functions/v1";
 
 const router = Router();
@@ -28,7 +28,7 @@ router.get("/orders", [isAuthenticated], async (req: Request, res: Response) => 
   }
 });
 
-router.get("/orders/customer/:customerId", [], async (req: Request, res: Response) => {
+router.get("/orders/customer/:customerId", [isAuthenticated], async (req: Request, res: Response) => {
   const { customerId } = req.params;
 
   if (!customerId) {
@@ -49,5 +49,27 @@ router.get("/orders/customer/:customerId", [], async (req: Request, res: Respons
     }
   }
 });
+
+router.get("/profile", [isAuthenticated], async (req: Request, res: Response) => {
+  const email = req.query.email as string;
+  if (!email) {
+    return res.status(400).send("Missing email");
+  }
+
+  try {
+    const profile = await getSquarespaceCustomer(email);
+
+    return res.status(200).send(profile);
+  } catch (err) {
+    logger.error(`Failed to fetch customer ${email}`);
+    logger.error(err);
+
+    if (err instanceof Error) {
+      return res.status(400).send(`Failed to fetch customer ${err.message}`);
+    } else {
+      return res.status(400).send("Failed to fetch customer");
+    }
+  }
+})
 
 export default router;

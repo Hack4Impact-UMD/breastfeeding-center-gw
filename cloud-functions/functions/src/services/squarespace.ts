@@ -103,7 +103,7 @@ const squarespaceClient = () => {
   return client;
 }
 
-export async function getSquarespaceCustomerId(email: string) {
+export async function getSquarespaceCustomer(email: string) {
   const axios = squarespaceClient();
 
   const resp = await axios.get<SquarespaceProfilesResponse>(`/1.0/profiles?filter=email,${encodeURIComponent(email)}`);

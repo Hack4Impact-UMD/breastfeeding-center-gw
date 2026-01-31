@@ -356,6 +356,10 @@ export const oneTimePurchaseColumns: ColumnDef<OneTimePurchase>[] = [
         </Button>
       );
     },
+    cell: ({ getValue }) => Intl.DateTimeFormat("en-us", {
+      dateStyle: "short",
+      timeStyle: "short"
+    }).format(new Date(getValue() as string))
   },
   {
     accessorKey: "platform",
