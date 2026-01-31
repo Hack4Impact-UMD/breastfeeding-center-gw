@@ -1,7 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { VisitType } from "@/types/JaneType";
-import { Button } from "@/components/ui/button";
-import { LuArrowUpDown } from "react-icons/lu";
 import { DateTime } from "luxon";
 import { truncate } from "@/lib/utils";
 import {
@@ -9,6 +7,7 @@ import {
   Tooltip,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import ColumnSortButton from "@/components/DataTable/ColumnSortButton";
 
 export type AcuityData = {
   class: string | null;
@@ -55,14 +54,9 @@ export const acuityColumns: ColumnDef<AcuityData>[] = [
     accessorKey: "class",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <ColumnSortButton column={column}>
           Class
-          <LuArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
     cell: ({ row }) => {
@@ -79,14 +73,9 @@ export const acuityColumns: ColumnDef<AcuityData>[] = [
     accessorKey: "instructor",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <ColumnSortButton column={column}>
           Instructor
-          <LuArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
     cell: ({ row }) => {
@@ -98,14 +87,9 @@ export const acuityColumns: ColumnDef<AcuityData>[] = [
     accessorKey: "date",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
+        <ColumnSortButton column={column}>
           Date
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
     cell: ({ row }) => {
@@ -121,14 +105,11 @@ export const janeConsultsColumns: ColumnDef<JaneConsults>[] = [
     accessorKey: "service",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <ColumnSortButton
+          column={column}
         >
           Service
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -136,14 +117,11 @@ export const janeConsultsColumns: ColumnDef<JaneConsults>[] = [
     accessorKey: "clinician",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <ColumnSortButton
+          column={column}
         >
           Clinician
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -151,14 +129,11 @@ export const janeConsultsColumns: ColumnDef<JaneConsults>[] = [
     accessorKey: "date",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <ColumnSortButton
+          column={column}
         >
           Date
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
     cell: ({ row }) => {
@@ -172,14 +147,11 @@ export const janeConsultsColumns: ColumnDef<JaneConsults>[] = [
     accessorKey: "visitType",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <ColumnSortButton
+          column={column}
         >
           Visit Type
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -187,14 +159,11 @@ export const janeConsultsColumns: ColumnDef<JaneConsults>[] = [
     accessorKey: "insurance",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <ColumnSortButton
+          column={column}
         >
           Insurance
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -205,14 +174,11 @@ export const booqableColumns: ColumnDef<BooqableRentals>[] = [
     accessorKey: "item",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <ColumnSortButton
+          column={column}
         >
           Item
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -220,14 +186,11 @@ export const booqableColumns: ColumnDef<BooqableRentals>[] = [
     accessorKey: "totalCost",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <ColumnSortButton
+          column={column}
         >
           Cost
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
     cell: ({ row }) => {
@@ -244,14 +207,11 @@ export const booqableColumns: ColumnDef<BooqableRentals>[] = [
     accessorKey: "rate",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <ColumnSortButton
+          column={column}
         >
           Rate
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -259,14 +219,11 @@ export const booqableColumns: ColumnDef<BooqableRentals>[] = [
     accessorKey: "startDate",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <ColumnSortButton
+          column={column}
         >
           Start Date
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -274,14 +231,11 @@ export const booqableColumns: ColumnDef<BooqableRentals>[] = [
     accessorKey: "endDate",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <ColumnSortButton
+          column={column}
         >
           End Date
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -289,14 +243,11 @@ export const booqableColumns: ColumnDef<BooqableRentals>[] = [
     accessorKey: "rentalLength",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <ColumnSortButton
+          column={column}
         >
           Rental Length
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -307,14 +258,11 @@ export const oneTimePurchaseColumns: ColumnDef<OneTimePurchase>[] = [
     accessorKey: "item",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <ColumnSortButton
+          column={column}
         >
           Item
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -322,14 +270,11 @@ export const oneTimePurchaseColumns: ColumnDef<OneTimePurchase>[] = [
     accessorKey: "cost",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <ColumnSortButton
+          column={column}
         >
           Cost
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
     cell: ({ row }) => {
@@ -346,14 +291,11 @@ export const oneTimePurchaseColumns: ColumnDef<OneTimePurchase>[] = [
     accessorKey: "date",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <ColumnSortButton
+          column={column}
         >
           Date
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
     cell: ({ getValue }) => Intl.DateTimeFormat("en-us", {
@@ -365,14 +307,11 @@ export const oneTimePurchaseColumns: ColumnDef<OneTimePurchase>[] = [
     accessorKey: "platform",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <ColumnSortButton
+          column={column}
         >
           Platform
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -383,14 +322,11 @@ export const clientListColumns: ColumnDef<ClientRow>[] = [
     accessorKey: "firstName",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <ColumnSortButton
+          column={column}
         >
           F. Name
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -398,14 +334,11 @@ export const clientListColumns: ColumnDef<ClientRow>[] = [
     accessorKey: "lastName",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <ColumnSortButton
+          column={column}
         >
           L. Name
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -413,14 +346,11 @@ export const clientListColumns: ColumnDef<ClientRow>[] = [
     accessorKey: "email",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <ColumnSortButton
+          column={column}
         >
           Email
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -428,14 +358,11 @@ export const clientListColumns: ColumnDef<ClientRow>[] = [
     accessorKey: "acuityClasses",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <ColumnSortButton
+          column={column}
         >
           Acuity Classes
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -443,14 +370,11 @@ export const clientListColumns: ColumnDef<ClientRow>[] = [
     accessorKey: "janeConsults",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <ColumnSortButton
+          column={column}
         >
           JANE Consults
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -458,14 +382,11 @@ export const clientListColumns: ColumnDef<ClientRow>[] = [
     accessorKey: "rentals",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <ColumnSortButton
+          column={column}
         >
           Rentals
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },
@@ -473,14 +394,11 @@ export const clientListColumns: ColumnDef<ClientRow>[] = [
     accessorKey: "purchases",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <ColumnSortButton
+          column={column}
         >
           Purchases
-          <LuArrowUpDown className="h-4 w-4" />
-        </Button>
+        </ColumnSortButton>
       );
     },
   },

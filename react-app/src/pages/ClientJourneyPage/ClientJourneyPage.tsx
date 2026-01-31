@@ -16,7 +16,6 @@ import { useJaneApptsForClient } from "@/hooks/queries/useJaneApptsForClient.ts"
 import { useAcuityApptsForClients } from "@/hooks/queries/useAcuityApptsForClient.ts";
 import { useMemo } from "react";
 import { useSquarespaceOrdersForClients } from "@/hooks/queries/useSquarespaceOrdersForClient.ts";
-import { platform } from "process";
 
 const ClientJourney = () => {
   //styles
@@ -85,8 +84,8 @@ const ClientJourney = () => {
 
   const otps: OneTimePurchase[] = useMemo(() =>
     squarespaceOrders?.flatMap(order => order.lineItems.map(item => ({
-      item: item.productName,
-      cost: parseFloat(item.unitPricePaid.value),
+      item: `${item.productName} x${item.quantity}`,
+      cost: parseFloat(item.unitPricePaid.value) * item.quantity,
       date: order.fulfilledOn,
       platform: `Squarespace (${order.channel === "pos" ? "In-person" : "Online"})`
     }))) ?? []
@@ -132,7 +131,7 @@ const ClientJourney = () => {
           </div>
         </div>
 
-        {isClientInfoPending || isPending || isAcuityPending ? (
+        {isClientInfoPending || isPending || isAcuityPending || squarespacePending ? (
           <Loading />
         ) : clientInfoError ? (
           <p className="text-red-600">
@@ -142,6 +141,10 @@ const ClientJourney = () => {
           <p className="text-red-600">
             Failed to load Jane appointments: {janeError.message}
           </p>
+        ) : squarespaceError ? (
+          <p className="text-red-600">
+            Failed to load Squarespace orders: {squarespaceError.message}
+          </p>
         ) : acuityError ? (
           <p className="text-red-600">
             Failed to load acuity data: {acuityError.message}
@@ -150,7 +153,7 @@ const ClientJourney = () => {
           <>
             {/*info section*/}
             <div className="flex flex-col space-y-1 pt-1">
-              <div className="text-left space-y-2 py-2 w-full max-w-md text-sm sm:text-base pt-3 pb-4">
+              <div className="text-left space-y-2 py-2 w-full text-sm sm:text-base pt-3 pb-4">
                 <div>
                   <strong className="pr-2">NAME:</strong>{" "}
                   {clientInfo?.firstName} {clientInfo?.lastName}
