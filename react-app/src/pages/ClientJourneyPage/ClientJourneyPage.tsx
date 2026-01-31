@@ -32,20 +32,14 @@ const ClientJourney = () => {
   } = useClientByPatientId(clientId ?? "");
 
   const associatedClients = useMemo(
-    () =>
-      clientInfo
-        ? [
-          clientInfo,
-          ...clientInfo.associatedClients,
-        ]
-        : [],
+    () => (clientInfo ? [clientInfo, ...clientInfo.associatedClients] : []),
     [clientInfo],
   );
 
   // get appointments for the specific client
   const {
     data: clientApptData,
-    isPending,
+    isPending: janePending,
     error: janeError,
   } = useJaneApptsForClient(clientId ?? "");
 
@@ -54,13 +48,13 @@ const ClientJourney = () => {
     data: acuityApptData,
     isPending: isAcuityPending,
     error: acuityError,
-  } = useAcuityApptsForClients(associatedClients.map(c => c.email));
+  } = useAcuityApptsForClients(associatedClients.map((c) => c.email));
 
   // get squarespace data
   const {
     data: squarespaceOrders,
     isPending: squarespacePending,
-    error: squarespaceError
+    error: squarespaceError,
   } = useSquarespaceOrdersForClients(associatedClients);
 
   const sampleBooqable: BooqableRentals[] = [
@@ -82,14 +76,18 @@ const ClientJourney = () => {
     },
   ];
 
-  const otps: OneTimePurchase[] = useMemo(() =>
-    squarespaceOrders?.flatMap(order => order.lineItems.map(item => ({
-      item: `${item.productName} x${item.quantity}`,
-      cost: parseFloat(item.unitPricePaid.value) * item.quantity,
-      date: order.fulfilledOn,
-      platform: `Squarespace (${order.channel === "pos" ? "In-person" : "Online"})`
-    }))) ?? []
-    , [squarespaceOrders])
+  const otps: OneTimePurchase[] = useMemo(
+    () =>
+      squarespaceOrders?.flatMap((order) =>
+        order.lineItems.map((item) => ({
+          item: `${item.productName} x${item.quantity}`,
+          cost: parseFloat(item.unitPricePaid.value) * item.quantity,
+          date: order.fulfilledOn,
+          platform: `Squarespace (${order.channel === "pos" ? "In-person" : "Online"})`,
+        })),
+      ) ?? [],
+    [squarespaceOrders],
+  );
 
   const janeConsultsData: JaneConsults[] =
     clientApptData?.map((appt) => ({
@@ -131,112 +129,124 @@ const ClientJourney = () => {
           </div>
         </div>
 
-        {isClientInfoPending || isPending || isAcuityPending || squarespacePending ? (
-          <Loading />
-        ) : clientInfoError ? (
-          <p className="text-red-600">
-            Failed to load client info: {clientInfoError.message}
-          </p>
-        ) : janeError ? (
-          <p className="text-red-600">
-            Failed to load Jane appointments: {janeError.message}
-          </p>
-        ) : squarespaceError ? (
-          <p className="text-red-600">
-            Failed to load Squarespace orders: {squarespaceError.message}
-          </p>
-        ) : acuityError ? (
-          <p className="text-red-600">
-            Failed to load acuity data: {acuityError.message}
-          </p>
-        ) : (
-          <>
-            {/*info section*/}
-            <div className="flex flex-col space-y-1 pt-1">
-              <div className="text-left space-y-2 py-2 w-full text-sm sm:text-base pt-3 pb-4">
+        {/*info section*/}
+        <div className="flex flex-col space-y-1 pt-1">
+          {isClientInfoPending ? (
+            <div className="min-h-[200px] flex items-center justify-center">
+              <Loading />
+            </div>
+          ) : clientInfoError ? (
+            <p className="text-red-600">
+              Failed to load client info: {clientInfoError.message}
+            </p>
+          ) : (
+            <div className="text-left space-y-2 py-2 w-full text-sm sm:text-base pt-3 pb-4">
+              <div>
+                <strong className="pr-2">NAME:</strong> {clientInfo?.firstName}{" "}
+                {clientInfo?.lastName}
+              </div>
+              {clientInfo.baby.length > 0 && (
                 <div>
-                  <strong className="pr-2">NAME:</strong>{" "}
-                  {clientInfo?.firstName} {clientInfo?.lastName}
+                  <strong className="pr-2">CHILDREN:</strong>
+                  {clientInfo?.baby.map((child, index) => (
+                    <span key={index}>
+                      {child.firstName} {child.lastName}
+                      {index < clientInfo.baby.length - 1 ? ", " : ""}
+                    </span>
+                  ))}
                 </div>
-                {clientInfo.baby.length > 0 && (
-                  <div>
-                    <strong className="pr-2">CHILDREN:</strong>
-                    {clientInfo?.baby.map((child, index) => (
-                      <span key={index}>
-                        {child.firstName} {child.lastName}
-                        {index < clientInfo.baby.length - 1 ? ", " : ""}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                {clientInfo.associatedClients.length > 0 && (
-                  <div>
-                    <strong className="pr-2">ASSOCIATED CLIENTS:</strong>
-                    {clientInfo?.associatedClients.map((client, index) => (
-                      <span key={index}>
-                        {client.firstName} {client.lastName}
-                        {index < clientInfo.associatedClients.length - 1
-                          ? ", "
-                          : ""}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
+              )}
+              {clientInfo.associatedClients.length > 0 && (
+                <div>
+                  <strong className="pr-2">ASSOCIATED CLIENTS:</strong>
+                  {clientInfo?.associatedClients.map((client, index) => (
+                    <span key={index}>
+                      {client.firstName} {client.lastName}
+                      {index < clientInfo.associatedClients.length - 1
+                        ? ", "
+                        : ""}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
+          )}
+        </div>
 
-            {/*tables section*/}
-            <div>
-              <div className={tableSection}>
-                <h2 className="font-bold text-base sm:text-3xl">
-                  Acuity Classes
-                </h2>
-                <DataTable
-                  columns={acuityColumns}
-                  data={acuityData}
-                  tableType="default"
-                  pageSize={5}
-                />
+        {/*tables section*/}
+        <div>
+          <div className={tableSection}>
+            <h2 className="font-bold text-base sm:text-3xl">Acuity Classes</h2>
+            {isAcuityPending ? (
+              <div className="min-h-[200px] flex items-center justify-center">
+                <Loading />
               </div>
+            ) : acuityError ? (
+              <p className="text-red-600">
+                Failed to load acuity data: {acuityError.message}
+              </p>
+            ) : (
+              <DataTable
+                columns={acuityColumns}
+                data={acuityData}
+                tableType="default"
+                pageSize={5}
+              />
+            )}
+          </div>
 
-              <div className={tableSection}>
-                <h2 className="font-bold text-base sm:text-3xl">
-                  Jane Consults
-                </h2>
-                <DataTable
-                  columns={janeConsultsColumns}
-                  data={formattedJaneConsultsData}
-                  tableType="default"
-                  pageSize={5}
-                />
+          <div className={tableSection}>
+            <h2 className="font-bold text-base sm:text-3xl">Jane Consults</h2>
+            {janePending ? (
+              <div className="min-h-[200px] flex items-center justify-center">
+                <Loading />
               </div>
+            ) : janeError ? (
+              <p className="text-red-600">
+                Failed to load Jane appointments: {janeError.message}
+              </p>
+            ) : (
+              <DataTable
+                columns={janeConsultsColumns}
+                data={formattedJaneConsultsData}
+                tableType="default"
+                pageSize={5}
+              />
+            )}
+          </div>
 
-              <div className={tableSection}>
-                <h2 className="font-bold text-base sm:text-3xl">
-                  Booqable Rentals
-                </h2>
-                <DataTable
-                  columns={booqableColumns}
-                  data={sampleBooqable}
-                  tableType="default"
-                  pageSize={5}
-                />
-              </div>
+          <div className={tableSection}>
+            <h2 className="font-bold text-base sm:text-3xl">
+              Booqable Rentals
+            </h2>
+            <DataTable
+              columns={booqableColumns}
+              data={sampleBooqable}
+              tableType="default"
+              pageSize={5}
+            />
+          </div>
 
-              <div className={tableSection}>
-                <h2 className="font-bold text-base sm:text-3xl">
-                  One-Time Purchases
-                </h2>
-                <DataTable
-                  columns={oneTimePurchaseColumns}
-                  data={otps}
-                  tableType="default"
-                  pageSize={5}
-                />
-              </div>
-            </div>
-          </>
-        )}
+          <div className={tableSection}>
+            <h2 className="font-bold text-base sm:text-3xl">
+              One-Time Purchases
+            </h2>
+            {squarespacePending ? (
+              <Loading />
+            ) : squarespaceError ? (
+              <p className="text-red-600">
+                Failed to load Squarespace orders: {squarespaceError.message}
+              </p>
+            ) : (
+              <DataTable
+                columns={oneTimePurchaseColumns}
+                data={otps}
+                tableType="default"
+                pageSize={5}
+              />
+            )}
+          </div>
+        </div>
       </div>
     </>
   );

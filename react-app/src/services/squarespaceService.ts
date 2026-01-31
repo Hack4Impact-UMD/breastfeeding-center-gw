@@ -89,7 +89,8 @@ export async function getSquarespaceCustomerByEmail(email: string) {
 }
 
 export async function getAllSquarespaceOrdersForClientByEmail(email: string) {
-  const profile = await getSquarespaceCustomerByEmail(email);
+  const profile = await getSquarespaceCustomerByEmail(email).catch(() => null);
+  if (!profile) return [];
   return await getAllSquarespaceOrdersForClientById(profile.id);
 }
 
