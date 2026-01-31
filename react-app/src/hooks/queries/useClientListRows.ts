@@ -7,6 +7,7 @@ import { getAllJaneApptsInRange } from "@/services/janeService";
 import { JaneAppt } from "@/types/JaneType";
 import { ClientTableRow } from "@/pages/ClientListPage/ClientListTableColumns";
 import { getAllAcuityApptsInRange } from "@/services/acuityService";
+import { getAllSquarespaceOrdersInRange } from "@/services/squarespaceService";
 
 export function useClientListRows() {
   return useQuery<ClientTableRow[]>({
@@ -17,9 +18,10 @@ export function useClientListRows() {
       const startDate = oneMonthAgo.startOf("day").toISO();
       const endDate = now.endOf("day").toISO();
 
-      const [janeAppointments, acuityAppoinments] = await Promise.all([
+      const [janeAppointments, acuityAppoinments, squarespaceOrders] = await Promise.all([
         getAllJaneApptsInRange(startDate!, endDate!),
         getAllAcuityApptsInRange(startDate!, endDate!),
+        getAllSquarespaceOrdersInRange(startDate!, endDate!)
       ]);
 
       // map matching client ids to their list of jane appts
@@ -40,6 +42,16 @@ export function useClientListRows() {
         acuityClassCounts.set(email, currentCount + 1);
       }
 
+      const squarespaceOrderCounts: Map<string, number> = new Map();
+      for (const order of squarespaceOrders) {
+        if (order.customerEmail) {
+          squarespaceOrderCounts.set(
+            order.customerEmail,
+            (squarespaceOrderCounts.get(order.customerEmail) ?? 0) + 1
+          )
+        }
+      }
+
       const clients = await getAllClients();
 
       return clients.map((client: Client) => ({
@@ -54,7 +66,7 @@ export function useClientListRows() {
           ? (clientAppts.get(client.id)?.length ?? 0)
           : "N/A",
         rentals: 0,
-        purchases: 0,
+        purchases: squarespaceOrderCounts.get(client.email) ?? 0,
       }));
     },
   });
