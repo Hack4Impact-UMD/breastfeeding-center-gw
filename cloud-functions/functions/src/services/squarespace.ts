@@ -106,7 +106,7 @@ const squarespaceClient = () => {
 export async function getSquarespaceCustomerId(email: string) {
   const axios = squarespaceClient();
 
-  const resp = await axios.get<SquarespaceProfilesResponse>(`/1.0/profiles?filter=${email},${encodeURIComponent(email)}`);
+  const resp = await axios.get<SquarespaceProfilesResponse>(`/1.0/profiles?filter=email,${encodeURIComponent(email)}`);
   const { profiles } = resp.data;
 
   if (profiles.length === 0 || !profiles[0].isCustomer) throw new Error(`No customers found with email ${email}`)
@@ -114,15 +114,30 @@ export async function getSquarespaceCustomerId(email: string) {
   return profiles[0];
 }
 
+export async function getAllCustomers() {
+  const client = squarespaceClient();
+  const resp = await client.get<SquarespaceProfilesResponse>("/1.0/commerce/profiles?filter=isCustomer,true");
+  let pagination = resp.data.pagination;
+  const collectedProfiles: SquarespaceProfile[] = [];
+
+  while (pagination.hasNextPage) {
+    const nextPageResp = await client.get<SquarespaceProfilesResponse>(`/1.0/commerce/profiles?cursor=${pagination.nextPageCursor}`);
+    collectedProfiles.push(...nextPageResp.data.profiles);
+    pagination = nextPageResp.data.pagination
+  }
+
+  return collectedProfiles;
+}
+
 export async function getPaginatedOrders(cursor: string) {
-  const axios = squarespaceClient();
-  const resp = await axios.get<SquarespaceOrdersResponse>(`/1.0/commerce/orders?cursor=${cursor}`);
+  const client = squarespaceClient();
+  const resp = await client.get<SquarespaceOrdersResponse>(`/1.0/commerce/orders?cursor=${cursor}`);
   const collectedOrders = [...resp.data.result];
   let pagination = resp.data.pagination;
 
   while (pagination.hasNextPage) {
     logger.info(`squarespace: fetching orders cursor ${pagination.nextPageCursor}`)
-    const nextPageResp = await axios.get<SquarespaceOrdersResponse>(`/1.0/commerce/orders?cursor=${pagination.nextPageCursor}`);
+    const nextPageResp = await client.get<SquarespaceOrdersResponse>(`/1.0/commerce/orders?cursor=${pagination.nextPageCursor}`);
     const { result: nextOrders, pagination: nextPagination } = nextPageResp.data;
 
     collectedOrders.push(...nextOrders);
@@ -133,8 +148,8 @@ export async function getPaginatedOrders(cursor: string) {
 }
 
 export async function getOrdersInRange(startDate: string, endDate: string) {
-  const axios = squarespaceClient();
-  const resp = await axios.get<SquarespaceOrdersResponse>(`/1.0/commerce/orders?modifiedAfter=${startDate}&modifiedBefore=${endDate}&fulfillmentStatus=FULFILLED`);
+  const client = squarespaceClient();
+  const resp = await client.get<SquarespaceOrdersResponse>(`/1.0/commerce/orders?modifiedAfter=${startDate}&modifiedBefore=${endDate}&fulfillmentStatus=FULFILLED`);
   const { result: orders, pagination } = resp.data;
 
   if (pagination.hasNextPage) {
@@ -143,9 +158,14 @@ export async function getOrdersInRange(startDate: string, endDate: string) {
   return orders;
 }
 
-// NOTE: This will only return the most recent 50 orders, doesn't seem to be a way to get around it
 export async function getOrdersForCustomerId(id: string) {
-  const resp = await axios.get<SquarespaceOrdersResponse>(`/1.0/commerce/orders?customerId=${id}&fulfillmentStatus=FULFILLED`);
-  const { result: orders } = resp.data;
+  const client = squarespaceClient();
+  const resp = await client.get<SquarespaceOrdersResponse>(`/1.0/commerce/orders?customerId=${id}&fulfillmentStatus=FULFILLED`);
+  const { result: orders, pagination } = resp.data;
+
+  if (pagination.hasNextPage) {
+    return [...orders, ...(await getPaginatedOrders(pagination.nextPageCursor))]
+  }
+
   return orders
 }
