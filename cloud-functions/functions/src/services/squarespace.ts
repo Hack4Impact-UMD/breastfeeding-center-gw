@@ -15,8 +15,8 @@ type SquarespaceOrder = {
   modifiedOn: string,
   channel: string,
   fulfillmentStatus: string,
-  customerEmail?: string,
-  customerId?: string,
+  customerEmail: string | null,
+  customerId: string | null,
   lineItems: {
     id: string,
     variantId: string,
@@ -67,11 +67,11 @@ type SquarespaceOrder = {
   priceTaxInterpretation: string
 }
 
-type SquarespaceProfile = {
+export type SquarespaceProfile = {
   id: string,
-  firstName?: string,
-  lastName?: string,
-  email?: string,
+  firstName: string | null,
+  lastName: string | null,
+  email: string | null,
   isCustomer: boolean,
   createdOn: string,
   transactionSummary: {
@@ -168,4 +168,22 @@ export async function getOrdersForCustomerId(id: string) {
   }
 
   return orders
+}
+
+export async function getCustomersByIds(ids: string[]) {
+  if (ids.length === 0) return [];
+
+  const client = squarespaceClient();
+  const chunkSize = 50;
+
+  const customers: SquarespaceProfile[] = []
+
+  for (let i = 0; i < ids.length; i += chunkSize) {
+    const chunk = ids.slice(i, i + chunkSize);
+    const resp = await client.get<SquarespaceProfilesResponse>(`/1.0/commerce/profiles/${chunk.join(",")}`);
+
+    customers.push(...resp.data.profiles);
+  }
+
+  return customers;
 }

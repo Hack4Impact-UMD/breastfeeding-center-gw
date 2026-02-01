@@ -5,6 +5,7 @@ import {
   groupPrimaryClientsByEmail,
   PrimaryClientEmailMap,
   SyncResult,
+  writeClients,
 } from "./utils";
 import { getAllAcuityApptsInRange } from "../acuity";
 import { AcuityAppointment } from "../../types/acuityType";
@@ -93,19 +94,6 @@ export async function syncAcuityClients(
   }
 }
 
-async function writeClients(clients: Client[]) {
-  const CHUNK_SIZE = 500;
-
-  for (let i = 0; i < clients.length; i += CHUNK_SIZE) {
-    const batch = db.batch();
-    const chunk = clients.slice(i, i + CHUNK_SIZE);
-
-    chunk.forEach((c) =>
-      batch.set(db.collection(CLIENTS_COLLECTION).doc(c.id), c),
-    );
-    await batch.commit();
-  }
-}
 
 function findPrimaryEmail(emails: string[], primaryEmails: Set<string>) {
   const existingPrim = emails.find((e) => primaryEmails.has(e));
