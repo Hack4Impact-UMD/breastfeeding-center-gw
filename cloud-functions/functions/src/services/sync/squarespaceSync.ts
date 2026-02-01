@@ -1,3 +1,4 @@
+import { logger } from "firebase-functions/v1";
 import { Client } from "../../types/clientType";
 import { getAllClients } from "../client";
 import { getCustomersByIds, getOrdersInRange, SquarespaceProfile } from "../squarespace";
@@ -16,6 +17,8 @@ export async function syncSquarespaceClients(
     const squarespaceOrders = await getOrdersInRange(startDate, endDate);
     const profiles = await getCustomersByIds(squarespaceOrders.map(o => o.customerId).filter(id => id !== null))
 
+    logger.log(profiles);
+
     const { newClients, mergedClients, mergeResult } = mergeSquarespaceProfiles(emailToPrimaryClientMap, profiles);
 
     const clients = [];
@@ -32,6 +35,8 @@ export async function syncSquarespaceClients(
       }
     }
   } catch (err) {
+    logger.error("Squarespace sync failed:")
+    logger.error(err);
     return {
       status: "ERROR",
       message: err instanceof Error ? err.message : "Failed to merge",

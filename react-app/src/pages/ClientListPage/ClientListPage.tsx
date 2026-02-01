@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
 import { useSyncAcuityClients } from "@/hooks/mutations/useSyncAcuityClients.ts";
+import { useSyncSquarespaceClients } from "@/hooks/mutations/useSyncSquarespaceClients.ts";
 import { useClientListRows } from "@/hooks/queries/useClientListRows.ts";
 import { RefreshCwIcon } from "lucide-react";
 
@@ -26,12 +27,15 @@ const ClientList = () => {
 
   const { mutate: syncAcuity, isPending: acuityPending } =
     useSyncAcuityClients();
+  const { mutate: syncSquarespace, isPending: squarespacePending } =
+    useSyncSquarespaceClients();
 
-  const syncPending = acuityPending;
+  const syncPending = acuityPending || squarespacePending;
 
   // sync acuity -> upload jane: 1668
   // upload jane -> sync acuity: 1668
   // console.log("Clients: " + clientData?.length);
+  // squarespace sync both ways: 1628
 
   return (
     <>
@@ -49,7 +53,13 @@ const ClientList = () => {
                 <RefreshCwIcon
                   className={`${syncPending ? "animate-spin" : ""}`}
                 />
-                {acuityPending ? "Syncing Acuity Clients..." : "Sync Services"}
+                {
+                  acuityPending ?
+                    "Syncing Acuity Clients..."
+                    : squarespacePending ?
+                      "Syncing Squarespace Clients..."
+                      : "Sync Services"
+                }
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-white">
@@ -57,9 +67,8 @@ const ClientList = () => {
               <DropdownMenuItem onClick={() => syncAcuity()}>
                 Acuity
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => syncSquarespace()}>Squarespace</DropdownMenuItem>
               <DropdownMenuItem disabled>Booqable</DropdownMenuItem>
-              <DropdownMenuItem disabled>Stripe</DropdownMenuItem>
-              <DropdownMenuItem disabled>Square</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

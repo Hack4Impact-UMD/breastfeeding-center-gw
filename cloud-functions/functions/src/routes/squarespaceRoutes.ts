@@ -28,7 +28,7 @@ router.get("/orders", [isAuthenticated], async (req: Request, res: Response) => 
   }
 });
 
-router.get("/orders/customer/:customerId", [isAuthenticated], async (req: Request, res: Response) => {
+router.get("/orders/customer/:customerId", [], async (req: Request, res: Response) => {
   const { customerId } = req.params;
 
   if (!customerId) {

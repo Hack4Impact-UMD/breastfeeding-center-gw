@@ -149,7 +149,7 @@ export async function getPaginatedOrders(cursor: string) {
 
 export async function getOrdersInRange(startDate: string, endDate: string) {
   const client = squarespaceClient();
-  const resp = await client.get<SquarespaceOrdersResponse>(`/1.0/commerce/orders?modifiedAfter=${startDate}&modifiedBefore=${endDate}&fulfillmentStatus=FULFILLED`);
+  const resp = await client.get<SquarespaceOrdersResponse>(`/1.0/commerce/orders?modifiedAfter=${encodeURIComponent(startDate)}&modifiedBefore=${encodeURIComponent(endDate)}&fulfillmentStatus=FULFILLED`);
   const { result: orders, pagination } = resp.data;
 
   if (pagination.hasNextPage) {
@@ -180,7 +180,7 @@ export async function getCustomersByIds(ids: string[]) {
 
   for (let i = 0; i < ids.length; i += chunkSize) {
     const chunk = ids.slice(i, i + chunkSize);
-    const resp = await client.get<SquarespaceProfilesResponse>(`/1.0/commerce/profiles/${chunk.join(",")}`);
+    const resp = await client.get<SquarespaceProfilesResponse>(`/1.0/profiles/${chunk.join(",")}`);
 
     customers.push(...resp.data.profiles);
   }
