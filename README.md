@@ -34,8 +34,7 @@ Authentication, Database, and Hosting: [Firebase](https://firebase.google.com/)
 **APIs:**
 - [Acuity](https://developers.acuityscheduling.com/)
 - [Booqable](https://developers.booqable.com/)
-- [Square](https://developer.squareup.com/reference/square) 
-- [Stripe](https://docs.stripe.com/api)
+- [Squarespace](https://developers.squarespace.com/commerce-apis/overview) 
 - [Jane](https://jane.app/) (imported via Excel sheet)
 
 
@@ -44,8 +43,7 @@ Authentication, Database, and Hosting: [Firebase](https://firebase.google.com/)
         mc[(Jane)] --> back
         ac[(Acuity)] --> back
         ps[(Booqable)] --> back
-        sq[(Square)] --> back
-        pp[(Stripe)] --> back
+        sq[(Squarespace)] --> back
         back[Firebase] --> front
         front[React/TS] --> build
         build[Vite] --> app
