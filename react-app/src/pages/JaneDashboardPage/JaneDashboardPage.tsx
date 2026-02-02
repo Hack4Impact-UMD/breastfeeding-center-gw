@@ -155,177 +155,175 @@ const JaneDashboardPage = () => {
     );
 
   return (
-    <>
-      <div className="flex flex-col py-14">
-        <div className="flex flex-col-reverse gap-4  md:flex-row md:items-center justify-between mb-4">
-          <h1 className="font-semibold text-4xl lg:text-5xl">Jane</h1>
-          <div className="w-full flex justify-end">
-            <DateRangePicker
-              enableYearNavigation
-              value={dateRange}
-              onChange={(range) => setDateRange(range)}
-              presets={defaultPresets}
-              className="w-60"
-            />
-          </div>
+    <div className="h-full flex flex-col py-14">
+      <div className="flex flex-col-reverse gap-4  md:flex-row md:items-center justify-between mb-4">
+        <h1 className="font-semibold text-4xl lg:text-5xl">Jane</h1>
+        <div className="w-full flex justify-end">
+          <DateRangePicker
+            enableYearNavigation
+            value={dateRange}
+            onChange={(range) => setDateRange(range)}
+            presets={defaultPresets}
+            className="w-60"
+          />
         </div>
+      </div>
 
-        <div className={`${centerItemsInDiv} basis-20xs`}>
-          <Link to="/services/jane/data">
-            <Button
-              variant={"yellow"}
-              className={"rounded-full text-lg w-full py-6 px-8"}
-            >
-              VIEW UPLOADED DATA
-            </Button>
-          </Link>
-        </div>
+      <div className={`${centerItemsInDiv} basis-20xs`}>
+        <Link to="/services/jane/data">
+          <Button
+            variant={"yellow"}
+            className={"rounded-full text-lg w-full py-6 px-8"}
+          >
+            VIEW UPLOADED DATA
+          </Button>
+        </Link>
+      </div>
 
-        <div className="flex flex-col lg:flex-row gap-8 pt-3">
-          <Export title={`VisitsBreakdown${dateRangeLabel}`}>
-            <div className="flex-[0_0_100%] max-w-full min-w-[200px] md:flex-[0_0_48%] lg:w-1/2">
-              <div className="flex items-center justify-between w-full pt-4 mb-6">
-                <div className="flex flex-row ">
-                  <button
-                    className={`${graphTableButtonStyle} ${visitDisplay === "graph"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#CED8E1]"
-                      }`}
-                    onClick={() => setVisitDisplay("graph")}
-                  >
-                    Graph
-                  </button>
-                  <button
-                    className={`${graphTableButtonStyle} ${visitDisplay === "table"
-                      ? "bg-bcgw-gray-light"
-                      : "bg-[#CED8E1]"
-                      }`}
-                    onClick={() => setVisitDisplay("table")}
-                  >
-                    Table
-                  </button>
-                </div>
-                {visitDisplay === "table" ? (
+      <div className="flex flex-col lg:flex-row gap-8 pt-3">
+        <Export title={`VisitsBreakdown${dateRangeLabel}`}>
+          <div className="flex-[0_0_100%] max-w-full min-w-[200px] md:flex-[0_0_48%] lg:w-1/2">
+            <div className="flex items-center justify-between w-full pt-4 mb-6">
+              <div className="flex flex-row ">
+                <button
+                  className={`${graphTableButtonStyle} ${visitDisplay === "graph"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#CED8E1]"
+                    }`}
+                  onClick={() => setVisitDisplay("graph")}
+                >
+                  Graph
+                </button>
+                <button
+                  className={`${graphTableButtonStyle} ${visitDisplay === "table"
+                    ? "bg-bcgw-gray-light"
+                    : "bg-[#CED8E1]"
+                    }`}
+                  onClick={() => setVisitDisplay("table")}
+                >
+                  Table
+                </button>
+              </div>
+              {visitDisplay === "table" ? (
+                <Button
+                  variant={"outlineGray"}
+                  className={
+                    "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
+                  }
+                  onClick={() =>
+                    exportCsv(
+                      visitBreakdownData,
+                      `jane_visit_breakdown_${dateRange?.from?.toISOString()}_${dateRange?.to?.toISOString()}`,
+                    )
+                  }
+                >
+                  Export
+                </Button>
+              ) : (
+                <ExportTrigger
+                  disabled={chartData.length === 0 || isLoading}
+                  asChild
+                >
                   <Button
                     variant={"outlineGray"}
                     className={
                       "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
                     }
-                    onClick={() =>
-                      exportCsv(
-                        visitBreakdownData,
-                        `jane_visit_breakdown_${dateRange?.from?.toISOString()}_${dateRange?.to?.toISOString()}`,
-                      )
-                    }
                   >
                     Export
                   </Button>
-                ) : (
-                  <ExportTrigger
-                    disabled={chartData.length === 0 || isLoading}
-                    asChild
-                  >
-                    <Button
-                      variant={"outlineGray"}
-                      className={
-                        "text-md rounded-full border-2 py-4 px-6 shadow-md hover:bg-bcgw-gray-light"
-                      }
-                    >
-                      Export
-                    </Button>
-                  </ExportTrigger>
-                )}
-              </div>
-
-              {visitDisplay === "graph" ? (
-                <>
-                  <span className="self-start font-semibold text-2xl mb-20">
-                    Visit Breakdown, {dateRangeLabel}
-                  </span>
-                  <div className="flex flex-col items-center justify-start bg-white h-116 border-2 border-black p-5 mt-5 rounded-2xl">
-                    <ExportContent
-                      className={`w-full grow flex flex-col justify-center`}
-                    >
-                      {isLoading ? (
-                        <Loading />
-                      ) : chartData.length === 0 ? (
-                        <div className="w-full flex grow items-center justify-center p-2">
-                          <p className="text-center">
-                            No data. Check the selected date range.
-                          </p>
-                        </div>
-                      ) : (
-                        <>
-                          <ExportOnly>
-                            <h1 className="text-xl font-bold text-black">
-                              Visit Breakdown
-                            </h1>
-                            <span className="text-base text-black">
-                              {dateRangeLabel}
-                            </span>
-                          </ExportOnly>
-                          <div className="flex items-center justify-center w-full">
-                            <div className="relative">
-                              <PieChart
-                                data={chartData}
-                                series={
-                                  <PieArcSeries
-                                    doughnut={true}
-                                    colorScheme={chartColors}
-                                    label={null}
-                                  />
-                                }
-                                width={300}
-                                height={300}
-                              />
-                              {visitBreakdownPieChartLabels}
-                            </div>
-                          </div>
-                        </>
-                      )}
-                      <div className="mt-4 flex flex-wrap justify-center gap-4">
-                        {chartData.map((item, index) => (
-                          <div
-                            key={item.key}
-                            className="flex items-center gap-2"
-                          >
-                            <div
-                              className="w-10 h-4"
-                              style={{
-                                backgroundColor:
-                                  chartColors[index % chartColors.length],
-                              }}
-                            />
-                            <span>{item.key}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </ExportContent>
-                  </div>
-                </>
-              ) : (
-                <div className="space-y-2">
-                  <span className="font-semibold text-2xl">
-                    Visit Breakdown, {dateRangeLabel}
-                  </span>
-                  <DataTable
-                    rowClassName="h-16"
-                    columns={visitBreakdownColumns}
-                    data={visitBreakdownData}
-                    tableType="default"
-                  />
-                </div>
+                </ExportTrigger>
               )}
             </div>
-          </Export>
 
-          <JaneRetention
-            startDate={dateRange?.from}
-            endDate={dateRange?.to}
-          ></JaneRetention>
-        </div>
+            {visitDisplay === "graph" ? (
+              <>
+                <span className="self-start font-semibold text-2xl mb-20">
+                  Visit Breakdown, {dateRangeLabel}
+                </span>
+                <div className="flex flex-col items-center justify-start bg-white h-116 border-2 border-black p-5 mt-5 rounded-2xl">
+                  <ExportContent
+                    className={`w-full grow flex flex-col justify-center`}
+                  >
+                    {isLoading ? (
+                      <Loading />
+                    ) : chartData.length === 0 ? (
+                      <div className="w-full flex grow items-center justify-center p-2">
+                        <p className="text-center">
+                          No data. Check the selected date range.
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        <ExportOnly>
+                          <h1 className="text-xl font-bold text-black">
+                            Visit Breakdown
+                          </h1>
+                          <span className="text-base text-black">
+                            {dateRangeLabel}
+                          </span>
+                        </ExportOnly>
+                        <div className="flex items-center justify-center w-full">
+                          <div className="relative">
+                            <PieChart
+                              data={chartData}
+                              series={
+                                <PieArcSeries
+                                  doughnut={true}
+                                  colorScheme={chartColors}
+                                  label={null}
+                                />
+                              }
+                              width={300}
+                              height={300}
+                            />
+                            {visitBreakdownPieChartLabels}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                    <div className="mt-4 flex flex-wrap justify-center gap-4">
+                      {chartData.map((item, index) => (
+                        <div
+                          key={item.key}
+                          className="flex items-center gap-2"
+                        >
+                          <div
+                            className="w-10 h-4"
+                            style={{
+                              backgroundColor:
+                                chartColors[index % chartColors.length],
+                            }}
+                          />
+                          <span>{item.key}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </ExportContent>
+                </div>
+              </>
+            ) : (
+              <div className="space-y-2">
+                <span className="font-semibold text-2xl">
+                  Visit Breakdown, {dateRangeLabel}
+                </span>
+                <DataTable
+                  rowClassName="h-16"
+                  columns={visitBreakdownColumns}
+                  data={visitBreakdownData}
+                  tableType="default"
+                />
+              </div>
+            )}
+          </div>
+        </Export>
+
+        <JaneRetention
+          startDate={dateRange?.from}
+          endDate={dateRange?.to}
+        ></JaneRetention>
       </div>
-    </>
+    </div>
   );
 };
 
