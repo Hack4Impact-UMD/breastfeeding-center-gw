@@ -210,7 +210,7 @@ export const booqableColumns: ColumnDef<BooqableRental>[] = [
       const value = getValue() as string | undefined;
       if (!value) return "N/A";
       const date = new Date(value);
-      return isNaN(date.getTime()) ? "N/A" : Intl.DateTimeFormat("en-US", {
+      return isNaN(date.getTime()) ? "N/A" : new Intl.DateTimeFormat("en-US", {
         dateStyle: "short",
         timeStyle: "short"
       }).format(date);
