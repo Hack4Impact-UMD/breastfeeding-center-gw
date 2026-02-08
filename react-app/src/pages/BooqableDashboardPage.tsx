@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { BarChart, BarSeries, Bar, BarProps, LineChart } from "reaviz";
+import { Bar, BarProps, LineChart } from "reaviz";
 import {
   DateRangePicker,
   defaultPresets,
@@ -7,7 +7,7 @@ import {
   DateRange,
 } from "@/components/DateRangePicker/DateRangePicker";
 import { DataTable } from "@/components/DataTable/DataTable";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import ColumnSortButton from "@/components/DataTable/ColumnSortButton";
 import { Button } from "@/components/ui/button";
 import { Export } from "@/components/export/Export";
@@ -20,28 +20,12 @@ import { BooqableRental } from "@/services/booqableService";
 import { DateTime } from "luxon";
 import Loading from "@/components/Loading";
 
-// record of colors to use for each rental item
-const colors: Record<string, string> = {
-  "Medela Symphony": "#05182A",
-  "Ameda Platinum": "#FFB726",
-  "Spectra S3": "#1264B1",
-  "Medela BabyWeigh Scale": "#FFDD98",
-  "Medela BabyCheck Scale": "#7EC8FF",
+type RentalTableRow = {
+  week: Date;
+  rentals: number,
+  totalRentalAmount: number,
+  averageRentalAmount: number
 };
-
-// custom bar component
-function CustomBar(props: Partial<BarProps>) {
-  console.log("CustomBar:", props.data?.key, colors[props.data!.key as string]);
-  const label = props.data?.key;
-  return (
-    <Bar
-      {...props}
-      style={{
-        fill: colors[label! as string] || "#000000",
-      }}
-    />
-  );
-}
 
 // format the date to put in title
 function formatDate(date: Date) {
@@ -50,6 +34,43 @@ function formatDate(date: Date) {
   const y = date.getFullYear().toString().slice(-2);
   return `${m}/${d}/${y}`;
 }
+
+const helper = createColumnHelper<RentalTableRow>()
+const tableColumns = [
+  helper.accessor("week", {
+    header: ({ column }) => (
+      <ColumnSortButton column={column}>
+        Week Starting
+      </ColumnSortButton>
+    ),
+    cell: ({ getValue }) => Intl.DateTimeFormat("en-us", {
+      dateStyle: "short",
+    }).format(getValue())
+  }),
+  helper.accessor("rentals", {
+    header: ({ column }) => (
+      <ColumnSortButton column={column}>
+        Rentals
+      </ColumnSortButton>
+    )
+  }),
+  helper.accessor("averageRentalAmount", {
+    header: ({ column }) => (
+      <ColumnSortButton column={column}>
+        Average Rental Amount
+      </ColumnSortButton>
+    ),
+    cell: ({ getValue }) => `$${getValue().toFixed(2)}`
+  }),
+  helper.accessor("totalRentalAmount", {
+    header: ({ column }) => (
+      <ColumnSortButton column={column}>
+        Total Rental Amount
+      </ColumnSortButton>
+    ),
+    cell: ({ getValue }) => `$${getValue().toFixed(2)}`
+  })
+] as ColumnDef<RentalTableRow>[];
 
 function useRentalsByWeek(rentals: BooqableRental[], startDate?: string, endDate?: string) {
   return useMemo(() => {
@@ -85,14 +106,14 @@ function useRentalsByWeek(rentals: BooqableRental[], startDate?: string, endDate
 }
 
 export default function BooqableDashboardPage() {
-  // use state for toggles/buttons/changing of information
   const [rentalDisplay, setRentalDisplay] = useState("graph");
   const [dateRange, setDateRange] = useState<DateRange | undefined>(
     defaultDateRange,
   );
   const { data: rentals, isPending, error } = useBooqableRentalsInRange(dateRange?.from?.toISOString(), dateRange?.to?.toISOString())
 
-  const rentalsByWeek = useRentalsByWeek(rentals ?? [], dateRange?.from?.toISOString(), dateRange?.to?.toISOString());
+  const rentalsByWeek: Map<string, BooqableRental[]> = useRentalsByWeek(rentals ?? [], dateRange?.from?.toISOString(), dateRange?.to?.toISOString());
+
   const chartData = useMemo(() => {
     const points = []
     for (const [week, rentals] of rentalsByWeek.entries()) {
@@ -104,6 +125,20 @@ export default function BooqableDashboardPage() {
     return points.sort((a, b) => a.key.getTime() - b.key.getTime())
   }, [rentalsByWeek]);
 
+  const tableData = useMemo(() => {
+    const rows: RentalTableRow[] = []
+    for (const [week, rentals] of rentalsByWeek.entries()) {
+      const totalAmount = rentals.reduce((acc, r) => (r.amount / 100) + acc, 0);
+      const avgAmount = rentals.length > 0 ? totalAmount / rentals.length : 0;
+      rows.push({
+        averageRentalAmount: avgAmount,
+        totalRentalAmount: totalAmount,
+        rentals: rentals.length,
+        week: new Date(week)
+      });
+    }
+    return rows;
+  }, [rentalsByWeek])
 
   const dateRangeLabel =
     dateRange?.from && dateRange?.to
@@ -113,37 +148,6 @@ export default function BooqableDashboardPage() {
   const graphTableButtonStyle =
     "py-1 px-4 text-center shadow-sm bg-[#f5f5f5] hover:shadow-md text-black cursor-pointer";
   const centerItemsInDiv = "flex justify-between items-center";
-
-  // // sample data
-  // type RentalTableRow = {
-  //   week: Date;
-  //   rentals: number,
-  //   totalRentalAmount: number,
-  //   averageRentalAmount: number
-  // };
-
-  // data for table
-  // const columns: ColumnDef<Rental>[] = [
-  //   {
-  //     accessorKey: "item",
-  //     header: ({ column }) => {
-  //       return <ColumnSortButton column={column}>Week</ColumnSortButton>;
-  //     },
-  //     cell: ({ row }) => (
-  //       <span className="font-bold">{row.getValue("item")}</span>
-  //     ),
-  //   },
-  //   {
-  //     accessorKey: "durationMonths",
-  //     header: ({ column }) => {
-  //       return (
-  //         <ColumnSortButton column={column}>
-  //           Average Rental Duration (Months)
-  //         </ColumnSortButton>
-  //       );
-  //     },
-  //   },
-  // ];
 
   return (
     <>
@@ -244,7 +248,7 @@ export default function BooqableDashboardPage() {
                     </ExportContent>
                   </div>
                 ) : (
-                  <DataTable columns={[]} data={[]} tableType="default" />
+                  <DataTable columns={tableColumns} data={tableData} tableType="default" />
                 )}
               </Export>
             </>
