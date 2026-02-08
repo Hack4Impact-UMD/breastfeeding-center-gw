@@ -20,6 +20,7 @@
   "dependencies": {
     "@types/busboy": "^1.5.4",
     "axios": "^1.12.2",
+    "axios-rate-limit": "^1.4.0",
     "busboy": "^1.6.0",
     "csvtojson": "^2.0.14",
     "dotenv": "^16.5.0",
@@ -28,6 +29,7 @@
     "firebase-functions": "^7.0.2",
     "luxon": "^3.7.2",
     "nodemailer": "^7.0.12",
+    "stripe": "^20.3.1",
     "uuid": "^13.0.0",
     "xlsx": "^0.18.5"
   },

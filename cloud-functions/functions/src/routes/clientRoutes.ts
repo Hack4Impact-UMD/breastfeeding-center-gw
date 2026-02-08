@@ -12,6 +12,8 @@ import { db } from "../services/firebase";
 import { getAllClients } from "../services/client";
 import { CLIENTS_COLLECTION } from "../types/collections";
 import { Client } from "../types/clientType";
+import { syncSquarespaceClients } from "../services/sync/squarespaceSync";
+import { syncBooqableClients } from "../services/sync/booqableSync";
 
 const router = Router();
 
@@ -24,6 +26,42 @@ router.post(
     const endDate = req.body.endDate ?? DateTime.now().toISO();
 
     const result = await syncAcuityClients(startDate, endDate);
+
+    if (result.status === "OK") {
+      return res.json(result);
+    } else {
+      return res.status(400).json(result);
+    }
+  },
+);
+
+router.post(
+  "/sync/squarespace",
+  [isAuthenticated],
+  async (req: Request, res: Response) => {
+    const startDate =
+      req.body.startDate ?? DateTime.now().minus({ months: 1 }).toISO();
+    const endDate = req.body.endDate ?? DateTime.now().toISO();
+
+    const result = await syncSquarespaceClients(startDate, endDate);
+
+    if (result.status === "OK") {
+      return res.json(result);
+    } else {
+      return res.status(400).json(result);
+    }
+  },
+);
+
+router.post(
+  "/sync/booqable",
+  [isAuthenticated],
+  async (req: Request, res: Response) => {
+    const startDate =
+      req.body.startDate ?? DateTime.now().minus({ months: 1 }).toISO();
+    const endDate = req.body.endDate ?? DateTime.now().toISO();
+
+    const result = await syncBooqableClients(startDate, endDate);
 
     if (result.status === "OK") {
       return res.json(result);

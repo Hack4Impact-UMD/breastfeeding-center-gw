@@ -30,6 +30,8 @@ const siteDomain = defineString("SITE_DOMAIN", {
 const emailClientSecret = defineString("EMAIL_CLIENT_SECRET");
 const emailRefreshToken = defineString("EMAIL_REFRESH_TOKEN");
 const emailClientId = defineString("EMAIL_CLIENT_ID");
+const squarespaceAPIKey = defineString("SQUARESPACE_API_KEY");
+const stripeAPIKey = defineString("STRIPE_API_KEY");
 
 const config = {
   rootUserEmail,
@@ -40,7 +42,9 @@ const config = {
   siteDomain,
   emailClientSecret,
   emailRefreshToken,
-  emailClientId
+  emailClientId,
+  squarespaceAPIKey,
+  stripeAPIKey
 };
 
 export { config };

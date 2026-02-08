@@ -1,4 +1,6 @@
 import { Client } from "../../types/clientType";
+import { CLIENTS_COLLECTION } from "../../types/collections";
+import { db } from "../firebase";
 export type PrimaryClientEmailMap = Map<string, Client>;
 
 export type SuccessSyncResult = {
@@ -35,4 +37,19 @@ export function findExistingPrimaryClientByEmail(
   email: string,
 ) {
   return emailMap.get(email);
+}
+
+
+export async function writeClients(clients: Client[]) {
+  const CHUNK_SIZE = 500;
+
+  for (let i = 0; i < clients.length; i += CHUNK_SIZE) {
+    const batch = db.batch();
+    const chunk = clients.slice(i, i + CHUNK_SIZE);
+
+    chunk.forEach((c) =>
+      batch.set(db.collection(CLIENTS_COLLECTION).doc(c.id), c),
+    );
+    await batch.commit();
+  }
 }

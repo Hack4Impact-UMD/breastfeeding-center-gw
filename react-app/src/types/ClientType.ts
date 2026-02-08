@@ -1,6 +1,7 @@
 export interface Client {
   id: string;
   janeId?: string; // Jane patient_number
+  stripeId?: string;
   firstName: string;
   middleName?: string;
   lastName: string;
@@ -9,6 +10,7 @@ export interface Client {
   phone?: string;
   insurance?: string;
   paysimpleId?: string; // Paysimple customer id
+  squarespaceCustomerId?: string; // Squarespace customer ID
   baby: Baby[];
   associatedClients: Client[];
 }

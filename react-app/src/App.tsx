@@ -27,6 +27,7 @@ import { showErrorToast } from "./components/Toasts/ErrorToast";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 import MfaEnrollPage from "./pages/MfaEnrollPage";
 import HomePage from "./pages/HomePage/HomePage";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
@@ -47,124 +48,127 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <AuthProvider>
-            <Routes>
-              <Route
-                path="/login"
-                element={
-                  <RequireNoAuth>
-                    <LoginPage />
-                  </RequireNoAuth>
-                }
-              />
-              <Route path="/logout" element={<LogoutPage />} />
-              <Route
-                path="/register-success"
-                element={<RegisterSuccessPage />}
-              />
-              <Route
-                path="/register/:inviteId"
-                element={
-                  <RequireNoAuth>
-                    <NewUserPage />
-                  </RequireNoAuth>
-                }
-              />
+            <ScrollToTop>
 
-              <Route
-                element={
-                  <RequireAuth>
-                    <LayoutShell />
-                  </RequireAuth>
-                }
-              >
-                <Route path="/" element={<HomePage />} />
-                <Route path="/services/jane" element={<JaneDashboard />} />
-                <Route path="/services/jane/data" element={<JaneDataPage />} />
-                <Route path="/services/acuity" element={<AcuityDashboard />} />
+              <Routes>
                 <Route
-                  path="/services/booqable"
-                  element={<BooqableDashboard />}
+                  path="/login"
+                  element={
+                    <RequireNoAuth>
+                      <LoginPage />
+                    </RequireNoAuth>
+                  }
                 />
-                <Route path="/clients" element={<ClientListPage />} />
+                <Route path="/logout" element={<LogoutPage />} />
                 <Route
-                  path="/clients/journey/:id"
-                  element={<ClientJourneyPage />}
+                  path="/register-success"
+                  element={<RegisterSuccessPage />}
                 />
-                <Route path="/profile" element={<ProfilePage />} />
                 <Route
-                  path="/user-management"
-                  element={<UserManagementPage />}
+                  path="/register/:inviteId"
+                  element={
+                    <RequireNoAuth>
+                      <NewUserPage />
+                    </RequireNoAuth>
+                  }
                 />
-              </Route>
 
-              <Route
-                path="/testfunctions"
-                element={
-                  <RequireAuth>
-                    <div className="flex flex-col gap-2 p-2">
-                      <div className="space-x-3">
-                        <strong>Yellow: </strong>
-                        <Button variant={"yellow"}>TEST</Button>
-                        <Button variant={"yellow"} size="lg" disabled>
-                          TEST
-                        </Button>
-                        <Button
-                          onClick={() => showErrorToast("Hello world")}
-                          variant={"yellow"}
-                          className="rounded-full"
-                        >
-                          toast
-                        </Button>
+                <Route
+                  element={
+                    <RequireAuth>
+                      <LayoutShell />
+                    </RequireAuth>
+                  }
+                >
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/services/jane" element={<JaneDashboard />} />
+                  <Route path="/services/jane/data" element={<JaneDataPage />} />
+                  <Route path="/services/acuity" element={<AcuityDashboard />} />
+                  <Route
+                    path="/services/booqable"
+                    element={<BooqableDashboard />}
+                  />
+                  <Route path="/clients" element={<ClientListPage />} />
+                  <Route
+                    path="/clients/journey/:id"
+                    element={<ClientJourneyPage />}
+                  />
+                  <Route path="/profile" element={<ProfilePage />} />
+                  <Route
+                    path="/user-management"
+                    element={<UserManagementPage />}
+                  />
+                </Route>
+
+                <Route
+                  path="/testfunctions"
+                  element={
+                    <RequireAuth>
+                      <div className="flex flex-col gap-2 p-2">
+                        <div className="space-x-3">
+                          <strong>Yellow: </strong>
+                          <Button variant={"yellow"}>TEST</Button>
+                          <Button variant={"yellow"} size="lg" disabled>
+                            TEST
+                          </Button>
+                          <Button
+                            onClick={() => showErrorToast("Hello world")}
+                            variant={"yellow"}
+                            className="rounded-full"
+                          >
+                            toast
+                          </Button>
+                        </div>
+                        <div className="space-x-3">
+                          <strong>Outline: </strong>
+                          <Button variant={"outline"}>TEST</Button>
+                          <Button variant={"outline"} className="rounded-full">
+                            TEST
+                          </Button>
+                          <Button
+                            variant={"outline"}
+                            disabled
+                            className="rounded-full"
+                          >
+                            TEST
+                          </Button>
+                        </div>
+                        <div className="space-x-3">
+                          <strong>Gray: </strong>
+                          <Button variant={"gray"}>TEST</Button>
+                          <Button variant={"gray"} className="rounded-full">
+                            TEST
+                          </Button>
+                          <Button
+                            variant={"gray"}
+                            className="rounded-full"
+                            onClick={async () => {
+                              const axiosInstance = await axiosClient();
+                              await axiosInstance
+                                .get("/jane/appointments?clientId=14806")
+                                .then((response) => console.log(response))
+                                .catch((error) => console.log(error));
+                            }}
+                          >
+                            TEST HERE!!
+                          </Button>
+                        </div>
                       </div>
-                      <div className="space-x-3">
-                        <strong>Outline: </strong>
-                        <Button variant={"outline"}>TEST</Button>
-                        <Button variant={"outline"} className="rounded-full">
-                          TEST
-                        </Button>
-                        <Button
-                          variant={"outline"}
-                          disabled
-                          className="rounded-full"
-                        >
-                          TEST
-                        </Button>
-                      </div>
-                      <div className="space-x-3">
-                        <strong>Gray: </strong>
-                        <Button variant={"gray"}>TEST</Button>
-                        <Button variant={"gray"} className="rounded-full">
-                          TEST
-                        </Button>
-                        <Button
-                          variant={"gray"}
-                          className="rounded-full"
-                          onClick={async () => {
-                            const axiosInstance = await axiosClient();
-                            await axiosInstance
-                              .get("/jane/appointments?clientId=14806")
-                              .then((response) => console.log(response))
-                              .catch((error) => console.log(error));
-                          }}
-                        >
-                          TEST HERE!!
-                        </Button>
-                      </div>
-                    </div>
-                  </RequireAuth>
-                }
-              />
-              <Route path="/verify" element={<VerifyEmailPage />} />
-              <Route path="/mfa-enroll" element={<MfaEnrollPage />} />
-              <Route
-                path="/*"
-                element={
-                  <RequireAuth>
-                    <NotFoundPage />
-                  </RequireAuth>
-                }
-              />
-            </Routes>
+                    </RequireAuth>
+                  }
+                />
+                <Route path="/verify" element={<VerifyEmailPage />} />
+                <Route path="/mfa-enroll" element={<MfaEnrollPage />} />
+                <Route
+                  path="/*"
+                  element={
+                    <RequireAuth>
+                      <NotFoundPage />
+                    </RequireAuth>
+                  }
+                />
+              </Routes>
+            </ScrollToTop>
           </AuthProvider>
         </BrowserRouter>
       </QueryClientProvider>

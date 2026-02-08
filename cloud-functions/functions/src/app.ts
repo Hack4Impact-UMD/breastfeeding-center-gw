@@ -7,6 +7,8 @@ import janeRouter from "./routes/janeRoutes";
 import inviteRouter from "./routes/inviteRoutes";
 import acuityRouter from "./routes/acuityRoutes";
 import clientRouter from "./routes/clientRoutes";
+import squarespaceRouter from "./routes/squarespaceRoutes";
+import booqableRouter from "./routes/booqableRoutes";
 
 const app = express();
 
@@ -21,6 +23,8 @@ app.use("/users", userRouter);
 app.use("/invites", inviteRouter);
 app.use("/acuity", acuityRouter);
 app.use("/clients", clientRouter);
+app.use("/squarespace", squarespaceRouter);
+app.use("/booqable", booqableRouter);
 
 app.get("/", (_, res) => {
   res.status(200).json({
