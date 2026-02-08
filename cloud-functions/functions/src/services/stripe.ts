@@ -9,6 +9,7 @@ export type BooqableRental = {
   firstPayDate: string;
   returnDate?: string;
   amount: number;
+  customerName?: string
 };
 
 let stripe: Stripe | null = null;
@@ -149,6 +150,7 @@ export async function getBooqableRentalsForCustomer(customerId: string) {
         : undefined,
       customerEmail: customer.email ?? undefined,
       customerId: customer.id,
+      customerName: customer.name ?? undefined
     };
 
     rentals.push(rental);
@@ -197,6 +199,7 @@ export async function getBooqableRentalsInRange(
         : undefined,
       customerEmail: customer.email ?? undefined,
       customerId: customer.id,
+      customerName: customer.name ?? undefined
     };
 
     rentals.push(rental);

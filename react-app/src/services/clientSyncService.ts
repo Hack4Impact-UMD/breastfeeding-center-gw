@@ -42,3 +42,21 @@ export async function syncSquarespaceClients(
     throw error;
   }
 }
+
+
+export async function syncBooqableClients(
+  startDate?: string,
+  endDate?: string,
+): Promise<ClientSyncResult> {
+  try {
+    const axios = await axiosClient();
+    const response = await axios.post("/clients/sync/booqable", {
+      startDate,
+      endDate,
+    });
+    return response.data as ClientSyncResult;
+  } catch (error) {
+    console.error("Error syncing Booqable clients:", error);
+    throw error;
+  }
+}

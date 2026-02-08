@@ -7,6 +7,7 @@ export type BooqableRental = {
   firstPayDate: string;
   returnDate?: string;
   amount: number;
+  customerName?: string
 };
 
 export async function getAllBooqableRentalsInRange(startDate: string, endDate: string) {

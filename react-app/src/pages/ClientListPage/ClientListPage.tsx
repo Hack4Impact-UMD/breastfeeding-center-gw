@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx";
 import { useSyncAcuityClients } from "@/hooks/mutations/useSyncAcuityClients.ts";
+import { useSyncBooqableClients } from "@/hooks/mutations/useSyncBooqableClients.ts";
 import { useSyncSquarespaceClients } from "@/hooks/mutations/useSyncSquarespaceClients.ts";
 import { useClientListRows } from "@/hooks/queries/useClientListRows.ts";
 import { RefreshCwIcon } from "lucide-react";
@@ -29,13 +30,15 @@ const ClientList = () => {
     useSyncAcuityClients();
   const { mutate: syncSquarespace, isPending: squarespacePending } =
     useSyncSquarespaceClients();
+  const { mutate: syncBooqable, isPending: booqablePending } =
+    useSyncBooqableClients();
 
-  const syncPending = acuityPending || squarespacePending;
+  const syncPending = acuityPending || squarespacePending || booqablePending;
 
   // sync acuity -> upload jane: 1668
   // upload jane -> sync acuity: 1668
   // console.log("Clients: " + clientData?.length);
-  // squarespace sync both ways: 1628
+  // squarespace sync: 1628
 
   return (
     <>
@@ -58,7 +61,9 @@ const ClientList = () => {
                     "Syncing Acuity Clients..."
                     : squarespacePending ?
                       "Syncing Squarespace Clients..."
-                      : "Sync Services"
+                      : booqablePending ?
+                        "Syncing Booqable Clients..."
+                        : "Sync Services"
                 }
               </Button>
             </DropdownMenuTrigger>
@@ -68,7 +73,7 @@ const ClientList = () => {
                 Acuity
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => syncSquarespace()}>Squarespace</DropdownMenuItem>
-              <DropdownMenuItem disabled>Booqable</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => syncBooqable()}>Booqable</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
