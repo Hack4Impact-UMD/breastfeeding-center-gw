@@ -16,7 +16,7 @@ export async function getAllBooqableRentalsInRange(startDate: string, endDate: s
   return resp.data;
 }
 
-export async function getBooqableRentalsForCustomerByEmail(email: string) {
+export async function getAllBooqableRentalsForClientByEmail(email: string) {
   const axios = await axiosClient();
   const resp = await axios.get<BooqableRental[]>(`/booqable/rentals/customer?email=${email}`);
 

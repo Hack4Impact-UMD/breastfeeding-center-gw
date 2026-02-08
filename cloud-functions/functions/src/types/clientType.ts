@@ -12,6 +12,7 @@ export interface Client {
   squarespaceCustomerId?: string;
   baby: Baby[];
   associatedClients: Client[];
+  stripeId?: string;
 }
 
 export interface Baby {

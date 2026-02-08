@@ -1,6 +1,7 @@
 export interface Client {
   id: string;
   janeId?: string; // Jane patient_number
+  stripeId?: string;
   firstName: string;
   middleName?: string;
   lastName: string;

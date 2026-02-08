@@ -8,6 +8,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import ColumnSortButton from "@/components/DataTable/ColumnSortButton";
+import { BooqableRental } from "@/services/booqableService";
 
 export type AcuityData = {
   class: string | null;
@@ -21,15 +22,6 @@ export type JaneConsults = {
   service: string;
   visitType: VisitType;
   insurance: string;
-};
-
-export type BooqableRentals = {
-  item: string;
-  totalCost: number;
-  rate: number;
-  startDate: string;
-  endDate: string;
-  rentalLength: number;
 };
 
 export type OneTimePurchase = {
@@ -169,21 +161,21 @@ export const janeConsultsColumns: ColumnDef<JaneConsults>[] = [
   },
 ];
 
-export const booqableColumns: ColumnDef<BooqableRentals>[] = [
+export const booqableColumns: ColumnDef<BooqableRental>[] = [
   {
-    accessorKey: "item",
+    accessorKey: "order",
     header: ({ column }) => {
       return (
         <ColumnSortButton
           column={column}
         >
-          Item
+          Order #
         </ColumnSortButton>
       );
     },
   },
   {
-    accessorKey: "totalCost",
+    accessorKey: "amount",
     header: ({ column }) => {
       return (
         <ColumnSortButton
@@ -193,8 +185,8 @@ export const booqableColumns: ColumnDef<BooqableRentals>[] = [
         </ColumnSortButton>
       );
     },
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("totalCost"));
+    cell: ({ getValue }) => {
+      const amount = getValue() as number / 100;
       const formatted = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
@@ -204,31 +196,23 @@ export const booqableColumns: ColumnDef<BooqableRentals>[] = [
     },
   },
   {
-    accessorKey: "rate",
+    accessorKey: "firstPayDate",
     header: ({ column }) => {
       return (
         <ColumnSortButton
           column={column}
         >
-          Rate
+          First Payment Date
         </ColumnSortButton>
       );
     },
+    cell: ({ getValue }) => Intl.DateTimeFormat("en-US", {
+      dateStyle: "short",
+      timeStyle: "short"
+    }).format(new Date(getValue() as string))
   },
   {
-    accessorKey: "startDate",
-    header: ({ column }) => {
-      return (
-        <ColumnSortButton
-          column={column}
-        >
-          Start Date
-        </ColumnSortButton>
-      );
-    },
-  },
-  {
-    accessorKey: "endDate",
+    accessorKey: "returnDate",
     header: ({ column }) => {
       return (
         <ColumnSortButton
@@ -238,18 +222,10 @@ export const booqableColumns: ColumnDef<BooqableRentals>[] = [
         </ColumnSortButton>
       );
     },
-  },
-  {
-    accessorKey: "rentalLength",
-    header: ({ column }) => {
-      return (
-        <ColumnSortButton
-          column={column}
-        >
-          Rental Length
-        </ColumnSortButton>
-      );
-    },
+    cell: ({ getValue }) => getValue() ? Intl.DateTimeFormat("en-US", {
+      dateStyle: "short",
+      timeStyle: "short"
+    }).format(new Date(getValue() as string)) : "N/A"
   },
 ];
 

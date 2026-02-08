@@ -5,6 +5,7 @@ import { inviteQueries } from "./inviteQueries.ts";
 import { acuityQueries } from "./acuityQueries.ts";
 import { clientQueries } from "./clientQueries.ts";
 import { squarespaceQueries } from "./squarespaceQueries.ts";
+import { booqableQueries } from "./booqableQueries.ts";
 
 const queries = mergeQueryKeys(
   userQueries,
@@ -12,7 +13,8 @@ const queries = mergeQueryKeys(
   inviteQueries,
   acuityQueries,
   clientQueries,
-  squarespaceQueries
+  squarespaceQueries,
+  booqableQueries
 );
 
 export default queries;

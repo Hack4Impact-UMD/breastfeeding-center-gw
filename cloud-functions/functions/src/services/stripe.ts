@@ -11,14 +11,16 @@ export type BooqableRental = {
   amount: number;
 };
 
-const stripe: Stripe | null = null;
+let stripe: Stripe | null = null;
 
 const stripeClient = () => {
   if (stripe) return stripe;
 
-  return new Stripe(config.stripeAPIKey.value(), {
+  stripe = new Stripe(config.stripeAPIKey.value(), {
     apiVersion: "2026-01-28.clover",
   });
+
+  return stripe;
 };
 
 export async function getBooqablePaymentIntents(

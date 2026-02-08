@@ -16,6 +16,7 @@ import { useJaneApptsForClient } from "@/hooks/queries/useJaneApptsForClient.ts"
 import { useAcuityApptsForClients } from "@/hooks/queries/useAcuityApptsForClient.ts";
 import { useMemo } from "react";
 import { useSquarespaceOrdersForClients } from "@/hooks/queries/useSquarespaceOrdersForClient.ts";
+import { useBooqableRentalsForClients } from "@/hooks/queries/useBooqableRentalsForClient.ts";
 
 const ClientJourney = () => {
   //styles
@@ -56,6 +57,13 @@ const ClientJourney = () => {
     isPending: squarespacePending,
     error: squarespaceError,
   } = useSquarespaceOrdersForClients(associatedClients);
+
+  // get booqable data
+  const {
+    data: booqableRentals,
+    isPending: booqablePending,
+    error: booqableError,
+  } = useBooqableRentalsForClients(associatedClients);
 
   const sampleBooqable: BooqableRentals[] = [
     {
@@ -219,12 +227,22 @@ const ClientJourney = () => {
             <h2 className="font-bold text-base sm:text-3xl">
               Booqable Rentals
             </h2>
-            <DataTable
-              columns={booqableColumns}
-              data={sampleBooqable}
-              tableType="default"
-              pageSize={5}
-            />
+            {booqablePending ? (
+              <Loading />
+            ) : booqableError ? (
+              <p className="text-red-600">
+                Failed to load Booqable rentals: {booqableError.message}
+              </p>
+            ) : (
+              <DataTable
+                columns={booqableColumns}
+                data={booqableRentals}
+                tableType="default"
+                pageSize={5}
+              />
+            )
+
+            }
           </div>
 
           <div className={tableSection}>
