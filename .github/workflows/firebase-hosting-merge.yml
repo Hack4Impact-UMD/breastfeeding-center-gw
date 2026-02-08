@@ -19,6 +19,8 @@ jobs:
       EMAIL_CLIENT_SECRET: ${{ secrets.EMAIL_CLIENT_SECRET }}
       EMAIL_REFRESH_TOKEN: ${{ secrets.EMAIL_REFRESH_TOKEN }}
       SITE_DOMAIN: breastfeeding-center-gw.web.app
+      SQUARESPACE_API_KEY: ${{ secrets.SQUARESPACE_API_KEY }}
+      STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
     steps:
       - uses: actions/checkout@v4
 
@@ -60,6 +62,8 @@ jobs:
           echo "EMAIL_CLIENT_SECRET=${EMAIL_CLIENT_SECRET}" >> cloud-functions/functions/.env
           echo "EMAIL_REFRESH_TOKEN=${EMAIL_REFRESH_TOKEN}" >> cloud-functions/functions/.env
           echo "SITE_DOMAIN=${SITE_DOMAIN}" >> cloud-functions/functions/.env
+          echo "SQUARESPACE_API_KEY=${SQUARESPACE_API_KEY}" >> cloud-functions/functions/.env
+          echo "STRIPE_API_KEY=${STRIPE_API_KEY}" >> cloud-functions/functions/.env
 
       - name: Deploy to Firebase
         run: firebase deploy
