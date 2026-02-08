@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios, { AxiosInstance } from "axios"
 import axiosRateLimit from "axios-rate-limit"
 import { config } from "../config"
 import { logger } from "firebase-functions/v1"
@@ -92,15 +92,19 @@ type SquarespacePagination = {
   nextPageUrl: string
 }
 
+let ssClient: AxiosInstance | null = null;
+
 const squarespaceClient = () => {
-  const client = axiosRateLimit(axios.create({
+  if (ssClient) return ssClient;
+
+  ssClient = axiosRateLimit(axios.create({
     baseURL: "https://api.squarespace.com",
     headers: {
       Authorization: `Bearer ${config.squarespaceAPIKey.value()}`
     }
   }), { maxRPS: 5 });
 
-  return client;
+  return ssClient;
 }
 
 export async function getSquarespaceCustomer(email: string) {
@@ -118,7 +122,7 @@ export async function getAllCustomers() {
   const client = squarespaceClient();
   const resp = await client.get<SquarespaceProfilesResponse>("/1.0/commerce/profiles?filter=isCustomer,true");
   let pagination = resp.data.pagination;
-  const collectedProfiles: SquarespaceProfile[] = [];
+  const collectedProfiles: SquarespaceProfile[] = [...resp.data.profiles];
 
   while (pagination.hasNextPage) {
     const nextPageResp = await client.get<SquarespaceProfilesResponse>(`/1.0/commerce/profiles?cursor=${pagination.nextPageCursor}`);

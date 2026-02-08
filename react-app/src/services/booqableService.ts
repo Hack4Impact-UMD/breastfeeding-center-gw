@@ -12,20 +12,33 @@ export type BooqableRental = {
 
 export async function getAllBooqableRentalsInRange(startDate: string, endDate: string) {
   const axios = await axiosClient();
-  const resp = await axios.get<BooqableRental[]>(`/booqable/rentals?startDate=${startDate}&endDate=${endDate}`);
+  const resp = await axios.get<BooqableRental[]>(`/booqable/rentals`, {
+    params: {
+      startDate,
+      endDate
+    }
+  });
 
   return resp.data;
 }
 
 export async function getAllBooqableRentalsForClientByEmail(email: string) {
   const axios = await axiosClient();
-  const resp = await axios.get<BooqableRental[]>(`/booqable/rentals/customer?email=${email}`);
+  const resp = await axios.get<BooqableRental[]>(`/booqable/rentals/customer`, {
+    params: {
+      email
+    }
+  });
 
   return resp.data;
 }
 export async function getAllBooqableRentalsForClientById(id: string) {
   const axios = await axiosClient();
-  const resp = await axios.get<BooqableRental[]>(`/booqable/rentals/customer?stripeId=${id}`);
+  const resp = await axios.get<BooqableRental[]>(`/booqable/rentals/customer`, {
+    params: {
+      stripeId: id
+    }
+  });
 
   return resp.data;
 }

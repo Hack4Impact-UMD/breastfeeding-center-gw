@@ -15,9 +15,8 @@ export async function syncSquarespaceClients(
       groupPrimaryClientsByEmail(allExistingClients);
 
     const squarespaceOrders = await getOrdersInRange(startDate, endDate);
-    const profiles = await getCustomersByIds(squarespaceOrders.map(o => o.customerId).filter(id => id !== null))
-
-    logger.log(profiles);
+    const uniqueCustomerIds = [...new Set(squarespaceOrders.map(o => o.customerId).filter((id): id is string => id !== null))];
+    const profiles = await getCustomersByIds(uniqueCustomerIds);
 
     const { newClients, mergedClients, mergeResult } = mergeSquarespaceProfiles(emailToPrimaryClientMap, profiles);
 

@@ -13,7 +13,7 @@ import { getAllClients } from "../services/client";
 import { CLIENTS_COLLECTION } from "../types/collections";
 import { Client } from "../types/clientType";
 import { syncSquarespaceClients } from "../services/sync/squarespaceSync";
-import { syncBooqableClients } from "../services/sync/booqableSyc";
+import { syncBooqableClients } from "../services/sync/booqableSync";
 
 const router = Router();
 

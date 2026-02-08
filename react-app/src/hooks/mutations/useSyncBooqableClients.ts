@@ -17,7 +17,7 @@ export function useSyncBooqableClients() {
       }
     },
     onError: (err) => {
-      showErrorToast("Failed to sync Squarespace clients.");
+      showErrorToast("Failed to sync Booqable clients.");
       console.error(err);
     },
     onSettled: async () => {

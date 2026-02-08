@@ -137,7 +137,7 @@ export default function BooqableDashboardPage() {
         week: new Date(week)
       });
     }
-    return rows;
+    return rows.sort((a, b) => b.week.getTime() - a.week.getTime());
   }, [rentalsByWeek])
 
   const dateRangeLabel =
@@ -208,7 +208,7 @@ export default function BooqableDashboardPage() {
                       }
                       onClick={() =>
                         exportCsv(
-                          [],
+                          tableData ?? [],
                           `booqable_avg_rental_duration${dateRange?.from?.toISOString()}_${dateRange?.to?.toISOString()}`,
                         )
                       }

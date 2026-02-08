@@ -46,20 +46,22 @@ export function useClientListRows() {
 
       const squarespaceOrderCounts: Map<string, number> = new Map();
       for (const order of squarespaceOrders) {
-        if (order.customerEmail) {
+        const email = order.customerEmail?.toLowerCase();
+        if (email) {
           squarespaceOrderCounts.set(
-            order.customerEmail,
-            (squarespaceOrderCounts.get(order.customerEmail) ?? 0) + 1
+            email,
+            (squarespaceOrderCounts.get(email) ?? 0) + 1
           )
         }
       }
 
       const rentalCounts: Map<string, number> = new Map();
       for (const rental of booqableRentals) {
-        if (rental.customerEmail) {
+        const email = rental.customerEmail?.toLowerCase();
+        if (email) {
           rentalCounts.set(
-            rental.customerEmail,
-            (rentalCounts.get(rental.customerEmail) ?? 0) + 1
+            email,
+            (rentalCounts.get(email) ?? 0) + 1
           )
         }
       }
@@ -77,8 +79,8 @@ export function useClientListRows() {
         janeConsults: client.janeId
           ? (clientAppts.get(client.id)?.length ?? 0)
           : "N/A",
-        rentals: rentalCounts.get(client.email) ?? 0,
-        purchases: squarespaceOrderCounts.get(client.email) ?? 0,
+        rentals: rentalCounts.get(client.email.toLowerCase()) ?? 0,
+        purchases: squarespaceOrderCounts.get(client.email.toLowerCase()) ?? 0,
       }));
     },
   });

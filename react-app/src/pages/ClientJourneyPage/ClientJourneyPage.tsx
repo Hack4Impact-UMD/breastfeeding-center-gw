@@ -216,7 +216,7 @@ const ClientJourney = () => {
             ) : (
               <DataTable
                 columns={booqableColumns}
-                data={booqableRentals}
+                data={booqableRentals ?? []}
                 tableType="default"
                 pageSize={5}
               />

@@ -206,10 +206,15 @@ export const booqableColumns: ColumnDef<BooqableRental>[] = [
         </ColumnSortButton>
       );
     },
-    cell: ({ getValue }) => Intl.DateTimeFormat("en-US", {
-      dateStyle: "short",
-      timeStyle: "short"
-    }).format(new Date(getValue() as string))
+    cell: ({ getValue }) => {
+      const value = getValue() as string | undefined;
+      if (!value) return "N/A";
+      const date = new Date(value);
+      return isNaN(date.getTime()) ? "N/A" : Intl.DateTimeFormat("en-US", {
+        dateStyle: "short",
+        timeStyle: "short"
+      }).format(date);
+    }
   },
   {
     accessorKey: "returnDate",

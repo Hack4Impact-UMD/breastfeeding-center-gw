@@ -61,7 +61,7 @@ router.get("/profile", [isAuthenticated], async (req: Request, res: Response) =>
 
     return res.status(200).send(profile);
   } catch (err) {
-    logger.error(`Failed to fetch customer ${email}`);
+    logger.error(`Failed to fetch customer`);
     logger.error(err);
 
     if (err instanceof Error) {

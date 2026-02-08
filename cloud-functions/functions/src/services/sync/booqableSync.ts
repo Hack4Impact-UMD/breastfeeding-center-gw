@@ -21,12 +21,22 @@ export async function syncBooqableClients(
     const emailToPrimaryClientMap =
       groupPrimaryClientsByEmail(allExistingClients);
 
-    const rentals = await getBooqableRentalsInRange(DateTime.fromISO(startDate), DateTime.fromISO(endDate));
-    const profiles: BooqableProfile[] = rentals.map(r => ({
+    const start = DateTime.fromISO(startDate);
+    const end = DateTime.fromISO(endDate);
+
+    if (!start.isValid || !end.isValid) {
+      return { status: "ERROR", message: "Invalid date range provided" };
+    }
+
+    const rentals = await getBooqableRentalsInRange(start, end);
+
+    const profileMap: Map<string, BooqableProfile> = new Map(rentals.map(r => [r.customerId, {
       email: r.customerEmail,
       name: r.customerName,
       stripeId: r.customerId
-    }))
+    }]));
+
+    const profiles: BooqableProfile[] = Array.from(profileMap.values());
 
     const { newClients, mergedClients, mergeResult } = mergeBooqableProfiles(emailToPrimaryClientMap, profiles);
 
