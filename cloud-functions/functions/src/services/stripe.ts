@@ -29,6 +29,7 @@ export async function getBooqablePaymentIntents(
   const intents = [];
   for await (const intent of client.paymentIntents.search({
     query: `-metadata["order_url"]:null AND created>${startDate.toUnixInteger()} AND created<${endDate.toUnixInteger()} AND status:"succeeded"`,
+    expand: ["data.customer"]
   })) {
     if (intent.amount_received > 0) intents.push(intent);
   }
@@ -79,7 +80,7 @@ export async function getBooqablePaymentIntentsForCustomer(customerId: string) {
   const intents = [];
   for await (const intent of client.paymentIntents.search({
     query: `-metadata["order_url"]:null AND customer:"${customerId}" AND status:"succeeded"`,
-    expand: ["customer"],
+    expand: ["data.customer"],
   })) {
     if (intent.amount_received > 0) intents.push(intent);
   }
