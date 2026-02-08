@@ -28,12 +28,10 @@ type SquarespaceOrder = {
       value: string,
       currency: string
     },
-    variantOptions: [
-      {
-        optionName: string,
-        value: string
-      }
-    ],
+    variantOptions: {
+      optionName: string,
+      value: string
+    }[]
     imageUrl: string,
     lineItemType: string
   }[],
@@ -113,7 +111,7 @@ export async function getSquarespaceCustomer(email: string) {
   const resp = await axios.get<SquarespaceProfilesResponse>(`/1.0/profiles?filter=email,${encodeURIComponent(email)}`);
   const { profiles } = resp.data;
 
-  if (profiles.length === 0 || !profiles[0].isCustomer) throw new Error(`No customers found with email ${email}`)
+  if (profiles.length === 0 || !profiles[0].isCustomer) throw new Error(`No customers found with email`)
 
   return profiles[0];
 }

@@ -50,7 +50,7 @@ export function useClientListRows() {
         if (email) {
           squarespaceOrderCounts.set(
             email,
-            (squarespaceOrderCounts.get(email) ?? 0) + 1
+            (squarespaceOrderCounts.get(email) ?? 0) + order.lineItems.length
           )
         }
       }

@@ -118,7 +118,7 @@ function booqableProfileToClient(profile: BooqableProfile): Client | null {
   if (profile.name && profile.email) {
     const parts = profile.name.split(" ");
     const firstName = parts[0];
-    const lastName = parts[1] ?? "";
+    const lastName = parts.slice(1).join(" ") ?? "";
 
     return {
       id: uuidv7(),

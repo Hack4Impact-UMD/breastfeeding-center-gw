@@ -227,10 +227,15 @@ export const booqableColumns: ColumnDef<BooqableRental>[] = [
         </ColumnSortButton>
       );
     },
-    cell: ({ getValue }) => getValue() ? Intl.DateTimeFormat("en-US", {
-      dateStyle: "short",
-      timeStyle: "short"
-    }).format(new Date(getValue() as string)) : "N/A"
+    cell: ({ getValue }) => {
+      const value = getValue() as string | undefined;
+      if (!value) return "N/A";
+      const date = new Date(value);
+      return isNaN(date.getTime()) ? "N/A" : new Intl.DateTimeFormat("en-US", {
+        dateStyle: "short",
+        timeStyle: "short",
+      }).format(date);
+    }
   },
 ];
 
@@ -279,10 +284,15 @@ export const oneTimePurchaseColumns: ColumnDef<OneTimePurchase>[] = [
         </ColumnSortButton>
       );
     },
-    cell: ({ getValue }) => Intl.DateTimeFormat("en-us", {
-      dateStyle: "short",
-      timeStyle: "short"
-    }).format(new Date(getValue() as string))
+    cell: ({ getValue }) => {
+      const value = getValue() as string | undefined;
+      if (!value) return "N/A";
+      const date = new Date(value);
+      return isNaN(date.getTime()) ? "N/A" : new Intl.DateTimeFormat("en-US", {
+        dateStyle: "short",
+        timeStyle: "short",
+      }).format(date);
+    }
   },
   {
     accessorKey: "platform",
