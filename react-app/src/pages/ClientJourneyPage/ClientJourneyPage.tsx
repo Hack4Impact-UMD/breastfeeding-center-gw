@@ -6,7 +6,6 @@ import {
   OneTimePurchase,
   oneTimePurchaseColumns,
   booqableColumns,
-  BooqableRentals,
 } from "./ClientJourneyTableColumns.tsx";
 import { DataTable } from "../../components/DataTable/DataTable.tsx";
 import { Navigate, useParams } from "react-router";
@@ -64,25 +63,6 @@ const ClientJourney = () => {
     isPending: booqablePending,
     error: booqableError,
   } = useBooqableRentalsForClients(associatedClients);
-
-  const sampleBooqable: BooqableRentals[] = [
-    {
-      item: "Item A",
-      totalCost: 20,
-      rate: 10,
-      startDate: "2/2/2024",
-      endDate: "2/9/2024",
-      rentalLength: 7,
-    },
-    {
-      item: "Item B",
-      totalCost: 30,
-      rate: 10,
-      startDate: "2/2/2024",
-      endDate: "2/9/2024",
-      rentalLength: 14,
-    },
-  ];
 
   const otps: OneTimePurchase[] = useMemo(
     () =>

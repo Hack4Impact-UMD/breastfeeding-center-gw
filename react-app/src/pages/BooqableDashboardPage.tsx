@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Bar, BarProps, LineChart } from "reaviz";
+import { LineChart } from "reaviz";
 import {
   DateRangePicker,
   defaultPresets,
