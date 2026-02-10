@@ -8,6 +8,10 @@ admin.initializeApp();
 import app from "./app";
 import { config } from "./config";
 import { logger, onInit } from "firebase-functions";
+import { onSchedule } from "firebase-functions/v2/scheduler";
+import { syncBooqableClients } from "./services/sync/booqableSync";
+import { DateTime } from "luxon";
+import { syncSquarespaceClients } from "./services/sync/squarespaceSync";
 
 onInit(() => {
   logger.info("====CONFIG DETAILS BELOW====");
@@ -17,6 +21,34 @@ onInit(() => {
 });
 
 exports.api = onRequest(
-  { region: "us-east4", timeoutSeconds: 120, memory: "512MiB" },
+  { region: "us-east4", timeoutSeconds: 120, memory: "512MiB", maxInstances: 10 },
   app,
 );
+
+exports.booqableSync = onSchedule({ schedule: 'every 6 hours', region: 'us-east4' }, async () => {
+  logger.info("Running scheduled Booqable sync...");
+  const start = DateTime.now().minus({ week: 1 });
+  const end = DateTime.now();
+
+  const result = await syncBooqableClients(start.toISO(), end.toISO());
+
+  if (result.status === "OK") {
+    logger.info(`Booqable sync successful: ${result.stats.newClients} new clients, ${result.stats.updatedClients} updated clients!`);
+  } else {
+    logger.error("Booqable sync failed: " + result.message);
+  }
+})
+
+exports.squarespaceSync = onSchedule({ schedule: 'every 6 hours', region: 'us-east4' }, async () => {
+  logger.info("Running scheduled Squarespace sync...");
+  const start = DateTime.now().minus({ week: 1 });
+  const end = DateTime.now();
+
+  const result = await syncSquarespaceClients(start.toISO(), end.toISO());
+
+  if (result.status === "OK") {
+    logger.info(`Squarespace sync successful: ${result.stats.newClients} new clients, ${result.stats.updatedClients} updated clients!`);
+  } else {
+    logger.error("Squarespace sync failed: " + result.message);
+  }
+})
