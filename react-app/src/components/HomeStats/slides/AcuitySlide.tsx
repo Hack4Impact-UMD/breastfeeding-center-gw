@@ -104,12 +104,12 @@ export default function AcuitySlide() {
                 </div>
               ))}
               <div className="flex flex-row items-center gap-4">
+                <span className="text-white lg:text-xl ">
+                  Total Attendance:
+                </span>
                 <h1 className="text-bcgw-yellow-dark font-medium text-3xl md:text-6xl">
                   {acuityAttendance}
                 </h1>
-                <span className="text-white lg:text-xl ">
-                  Clients Attending Classes
-                </span>
               </div>
             </div>
           </div>
