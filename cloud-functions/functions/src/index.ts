@@ -8,7 +8,7 @@ admin.initializeApp();
 import app from "./app";
 import { config } from "./config";
 import { logger, onInit } from "firebase-functions";
-import { onSchedule } from "firebase-functions/scheduler";
+import { onSchedule } from "firebase-functions/v2/scheduler";
 import { syncBooqableClients } from "./services/sync/booqableSync";
 import { DateTime } from "luxon";
 import { syncSquarespaceClients } from "./services/sync/squarespaceSync";
