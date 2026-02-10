@@ -21,11 +21,11 @@ onInit(() => {
 });
 
 exports.api = onRequest(
-  { region: "us-east4", timeoutSeconds: 120, memory: "512MiB" },
+  { region: "us-east4", timeoutSeconds: 120, memory: "512MiB", maxInstances: 10 },
   app,
 );
 
-exports.booqableSync = onSchedule('every 6 hours', async () => {
+exports.booqableSync = onSchedule({ schedule: 'every 6 hours', region: 'us-east4' }, async () => {
   logger.info("Running scheduled Booqable sync...");
   const start = DateTime.now().minus({ week: 1 });
   const end = DateTime.now();
@@ -39,7 +39,7 @@ exports.booqableSync = onSchedule('every 6 hours', async () => {
   }
 })
 
-exports.squarespaceSync = onSchedule('every 6 hours', async () => {
+exports.squarespaceSync = onSchedule({ schedule: 'every 6 hours', region: 'us-east4' }, async () => {
   logger.info("Running scheduled Squarespace sync...");
   const start = DateTime.now().minus({ week: 1 });
   const end = DateTime.now();
