@@ -138,8 +138,9 @@ export async function getAllSquarespaceOrdersInRangeWithProfiles(
       getSquarespaceCustomerByEmail(email).catch(() => null),
     ),
   );
+
   const profileByEmail = new Map(
-    profiles.filter(Boolean).map((p) => [p.email, p]),
+    profiles.filter((p) => p !== null).map((p) => [p.email, p]),
   );
 
   return orders.map((order) => ({
