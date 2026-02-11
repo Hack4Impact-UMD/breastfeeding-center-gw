@@ -194,7 +194,7 @@ export async function getBooqableRentalsInRange(
       order: order,
       amount: orderPI.amount,
       firstPayDate: DateTime.fromSeconds(orderPI.created).toISO()!,
-      returnDate: refund
+      returnDate: refund && refund.created > orderPI.created
         ? DateTime.fromSeconds(refund.created).toISO()!
         : undefined,
       customerEmail: customer.email ?? undefined,
