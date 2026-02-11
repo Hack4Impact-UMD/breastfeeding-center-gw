@@ -66,7 +66,8 @@ const MobileNavigationBar = () => {
     return (
       location.pathname.includes("/services/jane") ||
       location.pathname.includes("/services/acuity") ||
-      location.pathname.includes("/services/booqable")
+      location.pathname.includes("/services/booqable") ||
+      location.pathname.includes("/services/squarespace")
     );
   };
 
@@ -200,6 +201,18 @@ const MobileNavigationBar = () => {
                   }
                 >
                   Booqable
+                </NavLink>
+                <NavLink
+                  to="/services/squarespace"
+                  className={({ isActive }) =>
+                    `block px-6 py-3 text-base font-medium ${
+                      isActive
+                        ? "bg-bcgw-yellow-dark"
+                        : "bg-white hover:bg-bcgw-yellow-light"
+                    }`
+                  }
+                >
+                  Squarespace
                 </NavLink>
               </div>
             )}

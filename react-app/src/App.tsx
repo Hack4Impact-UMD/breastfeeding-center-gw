@@ -9,6 +9,7 @@ import BooqableDashboard from "./pages/BooqableDashboardPage";
 import { AuthProvider } from "./auth/AuthProvider";
 import AcuityDashboard from "./pages/AcuityDashboardPage/AcuityDashboardPage";
 import JaneDashboard from "./pages/JaneDashboardPage/JaneDashboardPage";
+import SquarespaceDashboard from "./pages/SquarespaceDashboardPage/SquarespaceDashboardPage";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./config/query";
 import ClientListPage from "./pages/ClientListPage/ClientListPage";
@@ -49,7 +50,6 @@ function App() {
         <BrowserRouter>
           <AuthProvider>
             <ScrollToTop>
-
               <Routes>
                 <Route
                   path="/login"
@@ -82,11 +82,21 @@ function App() {
                 >
                   <Route path="/" element={<HomePage />} />
                   <Route path="/services/jane" element={<JaneDashboard />} />
-                  <Route path="/services/jane/data" element={<JaneDataPage />} />
-                  <Route path="/services/acuity" element={<AcuityDashboard />} />
+                  <Route
+                    path="/services/jane/data"
+                    element={<JaneDataPage />}
+                  />
+                  <Route
+                    path="/services/acuity"
+                    element={<AcuityDashboard />}
+                  />
                   <Route
                     path="/services/booqable"
                     element={<BooqableDashboard />}
+                  />
+                  <Route
+                    path="/services/squarespace"
+                    element={<SquarespaceDashboard />}
                   />
                   <Route path="/clients" element={<ClientListPage />} />
                   <Route

@@ -27,6 +27,7 @@ import { Button } from "../ui/button";
 import { ClientTableRow } from "@/pages/ClientListPage/ClientListTableColumns";
 import { useAuth } from "@/auth/AuthProvider";
 import { cn } from "@/lib/utils";
+import { SquarespaceOrder } from "@/pages/SquarespaceDashboardPage/SquarespaceTableColumns";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -130,7 +131,9 @@ export function DataTable<TData, TValue>({
               : "flex items-center gap-3 w-full"
           }
         >
-          {(tableType === "clientList" || tableType === "janeData") && (
+          {(tableType === "clientList" ||
+            tableType === "janeData" ||
+            tableType === "squarespaceData") && (
             <div className="flex items-center w-full max-w-sm border bg-bcgw-gray-light p-1.5">
               <input
                 type="text"
@@ -201,13 +204,19 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => {
-                const client = row.original as ClientTableRow;
+                const client = row.original as
+                  | ClientTableRow
+                  | SquarespaceOrder;
+
+                const rowClickable =
+                  tableType === "clientList" ||
+                  (tableType === "squarespaceData" && client.id);
 
                 return (
                   <TableRow
                     key={row.id}
                     onClick={() => {
-                      if (tableType === "clientList") {
+                      if (rowClickable) {
                         navigate(`/clients/journey/${client.id}`);
                       }
                     }}
@@ -217,21 +226,22 @@ export function DataTable<TData, TValue>({
                       rowClassName,
                     )}
                   >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell
-                        key={cell.id}
-                        className={`${
-                          tableType === "clientList"
-                            ? "cursor-pointer group-hover:bg-[#F5BB4782] group-active:bg-bcgw-yellow-dark transition-colors px-4"
-                            : "px-3"
-                        }`}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
+                    {row.getVisibleCells().map((cell) => {
+                      const cellClass = rowClickable
+                        ? "cursor-pointer group-hover:bg-[#F5BB4782] group-active:bg-bcgw-yellow-dark transition-colors px-4"
+                        : tableType === "squarespaceData"
+                          ? "cursor-not-allowed px-4"
+                          : "px-3";
+
+                      return (
+                        <TableCell key={cell.id} className={cellClass}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </TableCell>
+                      );
+                    })}
                   </TableRow>
                 );
               })
