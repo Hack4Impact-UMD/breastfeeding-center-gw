@@ -27,7 +27,7 @@ import { Button } from "../ui/button";
 import { ClientTableRow } from "@/pages/ClientListPage/ClientListTableColumns";
 import { useAuth } from "@/auth/AuthProvider";
 import { cn } from "@/lib/utils";
-import { SquarespaceOrder } from "@/services/squarespaceService";
+import { SquarespaceOrder } from "@/pages/SquarespaceDashboardPage/SquarespaceTableColumns";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

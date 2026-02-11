@@ -25,7 +25,7 @@ export function useSquarespaceOrdersInRangeWithProfiles(
         const emailToClientMap: Map<string, Client> = new Map();
         for (const client of clients) {
           emailToClientMap.set(client.email, client);
-          for (const assoc of client.associatedClients) {
+          for (const assoc of client.associatedClients ?? []) {
             emailToClientMap.set(assoc.email, client);
           }
         }

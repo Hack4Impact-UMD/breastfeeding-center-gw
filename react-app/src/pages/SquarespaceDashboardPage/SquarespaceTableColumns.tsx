@@ -8,6 +8,7 @@ export type SquarespaceOrder = {
   cost: number;
   date: string;
   channel: string;
+  id: string | undefined;
 };
 
 export const squarespaceColumns: ColumnDef<SquarespaceOrder>[] = [

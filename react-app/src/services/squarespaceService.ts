@@ -139,9 +139,12 @@ export async function getAllSquarespaceOrdersInRangeWithProfiles(
     ),
   );
 
-  const profileByEmail = new Map(
-    profiles.filter((p) => p !== null).map((p) => [p.email, p]),
-  );
+  const profileByEmail = new Map<string, SquarespaceProfile>();
+  for (const p of profiles) {
+    if (p?.email) {
+      profileByEmail.set(p.email, p);
+    }
+  }
 
   return orders.map((order) => ({
     ...order,
