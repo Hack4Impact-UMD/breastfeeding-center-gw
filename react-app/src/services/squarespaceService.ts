@@ -102,7 +102,7 @@ export async function getAllSquarespaceOrdersInRange(
 export async function getSquarespaceCustomerByEmail(email: string) {
   const axios = await axiosClient();
   const resp = await axios.get<SquarespaceProfile>(
-    `/squarespace/profile?email=${email}`,
+    `/squarespace/profile?email=${encodeURIComponent(email)}`,
   );
 
   return resp.data;
