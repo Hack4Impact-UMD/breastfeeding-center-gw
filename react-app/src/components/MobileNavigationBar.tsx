@@ -66,7 +66,8 @@ const MobileNavigationBar = () => {
     return (
       location.pathname.includes("/services/jane") ||
       location.pathname.includes("/services/acuity") ||
-      location.pathname.includes("/services/booqable")
+      location.pathname.includes("/services/booqable") ||
+      location.pathname.includes("/services/squarespace")
     );
   };
 
