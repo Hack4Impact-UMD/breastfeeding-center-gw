@@ -59,8 +59,12 @@ router.get(
       if (stripeId) {
         customerId = stripeId;
       } else {
-        const customer = await getStripeCustomerByEmail(email!);
-        customerId = customer.id;
+        try {
+          const customer = await getStripeCustomerByEmail(email!);
+          customerId = customer.id;
+        } catch {
+          return res.status(200).json([]);
+        }
       }
 
       const rentals = await getBooqableRentalsForCustomer(customerId);
