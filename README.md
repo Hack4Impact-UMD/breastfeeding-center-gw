@@ -42,7 +42,7 @@ Authentication, Database, and Hosting: [Firebase](https://firebase.google.com/)
     flowchart TD
         mc[(Jane)] --> back
         ac[(Acuity)] --> back
-        ps[(Stripe (Booqable))] --> back
+        ps[(Stripe \(Booqable\))] --> back
         sq[(Squarespace)] --> back
         back[Firebase] --> front
         front[React/TS] --> build
