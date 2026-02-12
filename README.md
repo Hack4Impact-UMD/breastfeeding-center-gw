@@ -33,7 +33,7 @@ Authentication, Database, and Hosting: [Firebase](https://firebase.google.com/)
 
 **APIs:**
 - [Acuity](https://developers.acuityscheduling.com/)
-- [Booqable](https://developers.booqable.com/)
+- [Stripe (for Booqable data)](https://stripe.dev)
 - [Squarespace](https://developers.squarespace.com/commerce-apis/overview) 
 - [Jane](https://jane.app/) (imported via Excel sheet)
 
@@ -42,7 +42,7 @@ Authentication, Database, and Hosting: [Firebase](https://firebase.google.com/)
     flowchart TD
         mc[(Jane)] --> back
         ac[(Acuity)] --> back
-        ps[(Booqable)] --> back
+        ps[(Stripe (Booqable))] --> back
         sq[(Squarespace)] --> back
         back[Firebase] --> front
         front[React/TS] --> build
