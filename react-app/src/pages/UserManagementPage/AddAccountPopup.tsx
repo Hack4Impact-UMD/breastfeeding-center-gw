@@ -110,7 +110,7 @@ const AddAccountPopup: React.FC<AddAccountModalProps> = ({
             onBlur={() => setTouched(true)}
           />
         </div>
-        <div className="mb-8 flex items-center justify-center">
+        <div className="mb-4 flex items-center justify-center">
           <SelectDropdown
             options={roleOptions}
             selected={role}
@@ -118,8 +118,8 @@ const AddAccountPopup: React.FC<AddAccountModalProps> = ({
             className={"w-36 sm:w-36 flex justify-center"}
           />
         </div>
-        <div className="text-sm text-gray-700 mb-3 text-center">
-          Are you sure you would like to create a new account?
+        <div className="text-sm text-gray-700 mb-3 text-center p-2">
+          <strong>Are you sure you would like to create a new account?</strong> Note: clicking confirm will send an invite email allowing the new user to complete the process of creating their account. <strong>Please remind the recipient that this email may go to spam.</strong>
         </div>
         <div className="flex gap-4 justify-center mb-3">
           <Button variant="outline" onClick={handleClose} disabled={disabled}>
@@ -145,7 +145,7 @@ const AddAccountPopup: React.FC<AddAccountModalProps> = ({
           </Button>
         </div>
         {error && (
-          <div className="text-xs text-red-600 text-center">{error}</div>
+          <div className="text-xs text-red-600 text-center pb-2">{error}</div>
         )}
       </div>
     </Modal>
