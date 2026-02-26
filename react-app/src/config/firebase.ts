@@ -18,7 +18,7 @@ export const API_URL = import.meta.env.DEV
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC1Tiq6fpX9_sfOrSSo_xKUT60_dPRXMlo",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "breastfeeding-center-gw.firebaseapp.com",
   projectId: "breastfeeding-center-gw",
   storageBucket: "breastfeeding-center-gw.firebasestorage.app",

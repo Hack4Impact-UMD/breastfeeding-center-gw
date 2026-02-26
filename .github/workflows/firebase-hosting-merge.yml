@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GOOGLE_APPLICATION_CREDENTIALS: /tmp/credentials.json
+      VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
       ROOT_USER_EMAIL: ${{ secrets.ROOT_USER_EMAIL }}
       ROOT_USER_SECRET: ${{ secrets.ROOT_USER_SECRET }}
       ACUITY_API_KEY: ${{ secrets.ACUITY_API_KEY }}

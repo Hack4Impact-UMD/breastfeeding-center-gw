@@ -29,11 +29,11 @@ type UserRegisterForm = {
 
   Example request:
   ```
-  http POST http://127.0.0.1:5001/breastfeeding-center-gw/us-east4/api/auth/register/root/67ce28d3-be0d-46a6-863f-a5fc0169d9b6 email="root@test.com" firstName="Admin" lastName="User" password="password123"
+  http POST http://127.0.0.1:5001/breastfeeding-center-gw/us-east4/api/auth/register/root X-Root-Secret:67ce28d3-be0d-46a6-863f-a5fc0169d9b6 email="root@test.com" firstName="Admin" lastName="User" password="password123"
   ```
 */
-router.post("/register/root/:secret", async (req: Request, res: Response) => {
-  const secret = req.params.secret;
+router.post("/register/root", async (req: Request, res: Response) => {
+  const secret = req.headers["x-root-secret"] as string | undefined;
 
   logger.info("Root user register request received!");
 

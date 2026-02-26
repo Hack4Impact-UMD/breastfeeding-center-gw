@@ -9,11 +9,22 @@ import acuityRouter from "./routes/acuityRoutes";
 import clientRouter from "./routes/clientRoutes";
 import squarespaceRouter from "./routes/squarespaceRoutes";
 import booqableRouter from "./routes/booqableRoutes";
+import { config } from "./config";
 
 const app = express();
 
-//TODO: Enforce stricter cors rules when this is deployed, currently all origins are allowed
-app.use(cors());
+app.use((req, res, next) => {
+  const allowedOrigins =
+    process.env.FUNCTIONS_EMULATOR === "true"
+      ? ["http://localhost:5173"]
+      : [`https://${config.siteDomain.value()}`];
+
+  cors({
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Root-Secret"],
+  })(req, res, next);
+});
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 

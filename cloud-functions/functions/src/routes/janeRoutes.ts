@@ -5,9 +5,8 @@ import { parseAppointmentSheet, RawJaneAppt } from "../utils/janeUploadAppts";
 import { parseClientSheet } from "../utils/janeUploadClients";
 import { JaneAppt } from "../types/janeType";
 import { Client, Baby } from "../types/clientType";
-import { Role } from "../types/userType";
-import { auth, db } from "../services/firebase";
-import { isAuthenticated } from "../middleware/authMiddleware";
+import { db } from "../services/firebase";
+import { hasRoles, isAuthenticated } from "../middleware/authMiddleware";
 import { CLIENTS_COLLECTION, JANE_APPT_COLLECTION } from "../types/collections";
 import { getAllJaneApptsInRange, hasRecentBirth } from "../services/jane";
 import { CollectionReference } from "firebase-admin/firestore";
@@ -436,17 +435,9 @@ router.get(
 // delete a specific appointment
 router.delete(
   "/appointments/:id",
-  [isAuthenticated],
+  [isAuthenticated, hasRoles(["ADMIN", "DIRECTOR"])],
   async (req: Request, res: Response) => {
     const { id } = req.params;
-
-    const currentUserRole = (await auth.getUser(req.token!.uid)).customClaims
-      ?.role as Role;
-
-    if (currentUserRole === "VOLUNTEER") {
-      // volunteers cannot delete appointments
-      return res.status(403).send("Forbidden");
-    }
 
     if (!id) return res.status(400).send();
 
@@ -461,17 +452,9 @@ router.delete(
 // bulk delete appts
 router.post(
   "/bulk/appointments/delete",
-  [isAuthenticated],
+  [isAuthenticated, hasRoles(["ADMIN", "DIRECTOR"])],
   async (req: Request, res: Response) => {
     const { ids } = req.body as { ids: string[] };
-
-    const currentUserRole = (await auth.getUser(req.token!.uid)).customClaims
-      ?.role as Role;
-
-    if (currentUserRole === "VOLUNTEER") {
-      // volunteers cannot delete appointments
-      return res.status(403).send("Forbidden");
-    }
 
     if (!ids || ids.length == 0) {
       return res.status(400).send("No ids provided");

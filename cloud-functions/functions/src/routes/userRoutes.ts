@@ -205,18 +205,31 @@ router.put(
     // the user whose role will be updated
     const userToUpdate = (await userDoc.get()).data() as User;
 
-    if (
-      !userToUpdate ||
-      (currentUserRole !== "DIRECTOR" &&
-        userToUpdate.auth_id !== req.token?.uid &&
-        RoleLevels[userToUpdate.type] >= RoleLevels[currentUserRole])
-    ) {
-      return res.status(403).send("Cannot update user's role!");
+    if (!userToUpdate) {
+      return res.status(404).send("User not found!");
     }
 
-    // trying to give a user a role that is higher than the current user's role
+    if (!Object.keys(RoleLevels).includes(newRole)) {
+      return res.status(400).send("Invalid role!");
+    }
+
+    // cannot assign a role higher than your own
     if (RoleLevels[newRole] > RoleLevels[currentUserRole]) {
       return res.status(403).send("Forbidden");
+    }
+
+    // self-update: only allow demoting yourself (new role <= current role)
+    // the check above already guarantees newRole <= currentUserRole,
+    // so self-updates are permitted here (demotion or no-op)
+    const isSelfUpdate = userToUpdate.auth_id === req.token?.uid;
+
+    // updating another user: must be DIRECTOR, or outrank the target
+    if (
+      !isSelfUpdate &&
+      currentUserRole !== "DIRECTOR" &&
+      RoleLevels[userToUpdate.type] >= RoleLevels[currentUserRole]
+    ) {
+      return res.status(403).send("Cannot update user's role!");
     }
 
     if (userToUpdate.type === "DIRECTOR" && newRole !== "DIRECTOR") {
