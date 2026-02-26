@@ -47,7 +47,7 @@ jobs:
             ${{ runner.os }}-npm-react-app-
 
       - name: Install Firebase CLI
-        run: npm i -g firebase-tools@15.6.0
+        run: npm i -g firebase-tools
 
       - name: Create GAC File
         run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_BREASTFEEDING_CENTER_GW }}' > $GOOGLE_APPLICATION_CREDENTIALS
