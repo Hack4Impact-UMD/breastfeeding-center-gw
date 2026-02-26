@@ -144,12 +144,21 @@ export type AcuityAttendanceBreakdown = Map<
 export function computeAttendanceBreakdown(
   appts: AcuityAppointment[],
   shouldGroupByWeek: boolean,
+  startDate: DateTime,
+  endDate: DateTime
 ) {
   // <interval, <classCategory, <class, <instructor, attendance>>>
   const instructorAttendanceByInterval: AcuityAttendanceBreakdown = new Map<
     string,
     Map<string, Map<string, Map<string, number>>>
   >();
+
+  let cursor = startDate.startOf(shouldGroupByWeek ? "week" : "month");
+  while (cursor < endDate) {
+    const key = getIntervalKey(cursor, shouldGroupByWeek)
+    instructorAttendanceByInterval.set(key, new Map());
+    cursor = cursor.plus(shouldGroupByWeek ? { week: 1 } : { month: 1 });
+  }
 
   appts.forEach((appt) => {
     if (!appt.datetime) return;

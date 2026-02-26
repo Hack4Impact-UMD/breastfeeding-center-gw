@@ -127,8 +127,11 @@ export default function AcuityDashboardPage() {
   }, [dateRange]);
 
   const attendanceBreakdown = useMemo(
-    () => computeAttendanceBreakdown(appointmentData ?? [], shouldGroupByWeek),
-    [appointmentData, shouldGroupByWeek],
+    () => {
+      if (!dateRange || !dateRange.from || !dateRange.to) return new Map();
+      return computeAttendanceBreakdown(appointmentData ?? [], shouldGroupByWeek, DateTime.fromJSDate(dateRange.from), DateTime.fromJSDate(dateRange?.to))
+    },
+    [appointmentData, dateRange, shouldGroupByWeek],
   );
 
   const allInstructors = useMemo(
