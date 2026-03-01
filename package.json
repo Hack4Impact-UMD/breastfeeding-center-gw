@@ -1,0 +1,7 @@
+{
+  "name": "breastfeeding-center-gw",
+  "private": true,
+  "scripts": {
+    "dev": "node scripts/dev.mjs"
+  }
+}
