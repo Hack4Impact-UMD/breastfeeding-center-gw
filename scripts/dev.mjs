@@ -2,6 +2,7 @@ import { spawn } from "node:child_process";
 import { createConnection } from "node:net";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
+import { stripVTControlCharacters } from "node:util";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");
@@ -32,7 +33,7 @@ function pipeLogs(proc, label, color) {
       const lines = data.toString().split("\n");
       for (const line of lines) {
         if (line.trim()) {
-          process.stdout.write(`${tag} ${line}\n`);
+          process.stdout.write(`${tag} ${stripVTControlCharacters(line)}\n`);
         }
       }
     });
@@ -50,7 +51,7 @@ function waitForPort(port, { timeout = 120_000, interval = 1000 } = {}) {
       if (Date.now() > deadline) {
         return reject(new Error(`Timed out waiting for port ${port}`));
       }
-      const socket = createConnection({ port, host: "127.0.0.1" });
+      const socket = createConnection({ port, host: "localhost" });
       socket.once("connect", () => {
         socket.destroy();
         resolve(true);
@@ -88,7 +89,7 @@ const fnBuild = spawn("npm", ["run", "build:watch"], {
   stdio: ["ignore", "pipe", "pipe"],
   env: { ...process.env },
 });
-pipeLogs(fnBuild, "functions", colors.magenta);
+pipeLogs(fnBuild, "functions-build", colors.magenta);
 children.push(fnBuild);
 
 // 3. Vite frontend dev server
@@ -149,7 +150,7 @@ function shutdown(code = 0) {
       child.kill("SIGTERM");
     }
   }
-  setTimeout(() => process.exit(code), 2000);
+  setTimeout(() => process.exit(code), 5000);
 }
 
 process.on("SIGINT", () => shutdown(0));
@@ -158,7 +159,7 @@ process.on("SIGTERM", () => shutdown(0));
 // If any child exits unexpectedly, shut everything down
 for (const child of children) {
   child.on("exit", (code, signal) => {
-    if (signal !== "SIGTERM" && signal !== "SIGINT") {
+    if (signal !== "SIGTERM" && signal !== "SIGINT" && code !== 0) {
       console.error(
         `\n${colors.red}A child process exited unexpectedly (code: ${code}, signal: ${signal}). Shutting down.${colors.reset}`,
       );

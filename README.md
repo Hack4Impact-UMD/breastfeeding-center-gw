@@ -55,8 +55,9 @@ Authentication, Database, and Hosting: [Firebase](https://firebase.google.com/)
 
 1. Clone the repo and ```cd``` into it
 2. run ```npm install``` in the ```react-app``` directory
-3. run ```npm run dev``` in the ```react-app``` directory
-4. Navigate to http://localhost:5173 in your browser (typically pops up automatically)
+2. run ```npm install``` in the ```cloud-functions/functions``` directory
+3. run ```npm run dev``` in the root directory
+4. Wait for the "All Services are running!" message, then navigate to http://localhost:5173 in your browser
 
 # Points of Contact
 
