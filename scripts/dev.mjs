@@ -67,6 +67,9 @@ function waitForPort(port, { timeout = 120_000, interval = 1000 } = {}) {
 
 // ── Spawn all three processes ──────────────────────────────────────────
 
+/***
+ * @type {import("node:child_process").ChildProcessByStdio[]}
+ */
 const children = [];
 
 // 1. Firebase emulators (with test data import)
