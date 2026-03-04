@@ -36,7 +36,6 @@ router.get(
 );
 
 // deletes user with the specified auth_id
-// TODO: The restrictions in this function need to be double checked.
 router.delete(
   "/id/:auth_id",
   [isAuthenticated],

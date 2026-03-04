@@ -66,7 +66,6 @@ router.post(
 
     await inviteDoc.set(invite);
 
-    //TODO: this link should start with the website url
     const siteURL =
       process.env.FUNCTIONS_EMULATOR === "true"
         ? "http://localhost:5173"
@@ -86,7 +85,6 @@ router.post(
     }
     logger.info(`Invite for user ${firstName} ${lastName} (${email}) created.`);
     logger.info(`Use the following link to register: ${registerLink}`);
-    //TODO: send the link by email
 
     return res.status(200).send("Invite successfully created");
   },
